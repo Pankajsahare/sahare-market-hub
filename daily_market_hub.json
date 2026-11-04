@@ -1,119 +1,36 @@
-{
-  "updated_at_utc": "2026-11-04T12:00:21.923148Z",
-  "as_of_date": "2026-11-04",
-  "advisor": {
-    "firm": "Sahare Financial Services",
-    "arn": "ARN-151469",
-    "euin": "E266872",
-    "whatsapp": "+919405908605",
-    "website": "https://www.advisor4u.in"
-  },
-  "valuation_signal": {
-    "zone": "Fairly Valued Zone — Continue Regular SIPs & Balanced Allocation",
-    "color": "#3b82f6",
-    "pe": 22.4
-  },
-  "ai_verdict": "Markets are driven by earnings and asset allocation. Stay disciplined with your SIPs and review portfolio weights periodically.",
-  "indices_and_benchmarks": {
-    "raw_text": "Input validation error: Invalid arguments for tool get_quotes: instruments: Invalid input: expected array, received undefined"
-  },
-  "mutual_funds": [
-    {
-      "name": "Parag Parikh Flexi Cap Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      },
-      "health": {
-        "health_score": 75,
-        "health_status": "Healthy — Outperforming"
-      }
-    },
-    {
-      "name": "HDFC Flexi Cap Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      },
-      "health": {
-        "health_score": 75,
-        "health_status": "Healthy — Outperforming"
-      }
-    },
-    {
-      "name": "ICICI Prudential Bluechip Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      },
-      "health": {
-        "health_score": 75,
-        "health_status": "Healthy — Outperforming"
-      }
-    },
-    {
-      "name": "Nippon India Small Cap Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      },
-      "health": {
-        "health_score": 75,
-        "health_status": "Healthy — Outperforming"
-      }
-    },
-    {
-      "name": "Motilal Oswal Midcap Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      },
-      "health": {
-        "health_score": 75,
-        "health_status": "Healthy — Outperforming"
-      }
-    }
-  ],
-  "gift_city_funds": [
-    {
-      "name": "Parag Parikh IFSC S&P 500 Fund of Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    },
-    {
-      "name": "Parag Parikh IFSC Nasdaq 100 Fund of Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    },
-    {
-      "name": "DSP Global Equity Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    },
-    {
-      "name": "HDFC International Developed Markets Equity Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    },
-    {
-      "name": "HDFC International Emerging Markets Equity Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    },
-    {
-      "name": "Marcellus Global Equities Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    },
-    {
-      "name": "Edelweiss Greater China Equity Fund",
-      "details": {
-        "raw_text": "Input validation error: Invalid arguments for tool get_fund_details: fund: Invalid input: expected string, received undefined"
-      }
-    }
-  ],
-  "top_pms_schemes": {
-    "raw_text": "Input validation error: Invalid arguments for tool screen_pms_schemes: sort_by: Invalid option: expected one of \"y3\"|\"y1\"|\"y5\"|\"since_inception\"|\"aum\""
-  }
-}
+name: Daily Foliyo Market Intelligence Sync
+
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  harvest-market-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Foliyo MCP Harvester & AI Verdict Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python fetch_foliyo_hub.py
+
+      - name: Commit & Push Updated Market Hub JSON
+        run: |
+          git config user.name "Sahare-Wealth-Bot"
+          git config user.email "info@advisor4u.in"
+          git add daily_market_hub.json
+          git diff --staged --quiet || git commit -m "chore: update EOD market intelligence snapshot"
+          git push
