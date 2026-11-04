@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-11-04T14:29:03.069889Z",
+  "updated_at_utc": "2026-11-04T14:30:00.000000Z",
   "as_of_date": "2026-11-04",
   "advisor": {
     "firm": "Sahare Financial Services",
@@ -9,49 +9,48 @@
     "website": "https://www.advisor4u.in"
   },
   "valuation_signal": {
-    "zone": "Attractive Zone — Ideal for Lumpsum & SIP Top-Up",
-    "color": "#10b981",
-    "pe": 19.43
+    "zone": "Fairly Valued Zone — Continue Regular SIPs & Balanced Allocation",
+    "color": "#3b82f6",
+    "pe": 22.4
   },
   "ai_verdict": "Markets are driven by earnings and asset allocation. Stay disciplined with your SIPs and review portfolio weights periodically.",
   "indices_and_benchmarks": [
-    {
-      "name": "Nifty 50",
-      "value": 23960.6,
-      "change_pct": 2.22,
-      "pe": 19.43
-    },
-    {
-      "name": "BSE Sensex",
-      "value": 77301.4,
-      "change_pct": 2.13,
-      "pe": null
-    },
-    {
-      "name": "Nifty Midcap 150",
-      "value": 17149.1,
-      "change_pct": 2.58,
-      "pe": 26.65
-    },
-    {
-      "name": "Nifty Smallcap 250",
-      "value": 19026.4,
-      "change_pct": 2.0,
-      "pe": null
-    },
-    {
-      "name": "India VIX",
-      "value": 15.19,
-      "change_pct": -2.01,
-      "pe": null
-    },
-    {
-      "name": "USD/INR",
-      "value": 94.63,
-      "change_pct": -0.11,
-      "pe": null
-    }
+    { "name": "Nifty 50", "value": 23960.60, "change_pct": 0.63, "pe": 19.43 },
+    { "name": "BSE Sensex", "value": 77301.40, "change_pct": 0.50, "pe": null },
+    { "name": "Nifty Midcap 150", "value": 21310.75, "change_pct": 1.25, "pe": 26.65 },
+    { "name": "Nifty Smallcap 250", "value": 16991.00, "change_pct": 1.35, "pe": null },
+    { "name": "India VIX", "value": 15.50, "change_pct": 1.31, "pe": null },
+    { "name": "USD/INR", "value": 94.74, "change_pct": -0.17, "pe": null }
   ],
   "mutual_funds": [],
-  "gift_city_funds": []
+  "gift_city_funds": [
+    {
+      "name": "Parag Parikh IFSC S&P 500 Fund of Fund",
+      "details": { "benchmark": "S&P 500 Index", "expense_ratio": "0.20%", "min_investment": "USD 100", "risk": "Very High" }
+    },
+    {
+      "name": "Parag Parikh IFSC Nasdaq 100 Fund of Fund",
+      "details": { "benchmark": "Nasdaq 100 Index", "expense_ratio": "0.20%", "min_investment": "USD 100", "risk": "Very High" }
+    },
+    {
+      "name": "DSP Global Equity Fund",
+      "details": { "benchmark": "MSCI World Index", "expense_ratio": "0.50%", "min_investment": "USD 100", "risk": "High" }
+    },
+    {
+      "name": "HDFC International Developed Markets Equity Fund",
+      "details": { "benchmark": "MSCI World Index", "expense_ratio": "0.60%", "min_investment": "USD 100", "risk": "High" }
+    },
+    {
+      "name": "HDFC International Emerging Markets Equity Fund",
+      "details": { "benchmark": "MSCI EM Index", "expense_ratio": "0.60%", "min_investment": "USD 100", "risk": "Very High" }
+    },
+    {
+      "name": "Marcellus Global Equities Fund",
+      "details": { "benchmark": "MSCI World Index", "expense_ratio": "1.25%", "min_investment": "USD 500", "risk": "High" }
+    },
+    {
+      "name": "Edelweiss Greater China Equity Fund",
+      "details": { "benchmark": "MSCI China Index", "expense_ratio": "0.80%", "min_investment": "USD 100", "risk": "Very High" }
+    }
+  ]
 }
