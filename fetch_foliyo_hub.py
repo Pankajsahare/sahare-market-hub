@@ -2,6 +2,7 @@ import os
 import json
 import time
 import urllib.request
+import re
 from datetime import datetime
 
 MARKETS_MCP_URL = "https://mcp.foliyo.ai/markets"
@@ -10,6 +11,46 @@ OUTPUT_FILE = "daily_market_hub.json"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+
+def fetch_yahoo_live(symbol):
+    """Fetches live index/forex data from Yahoo Finance without an API key."""
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+            result = data['chart']['result'][0]
+            meta = result['meta']
+            price = meta.get('regularMarketPrice')
+            prev_close = meta.get('chartPreviousClose')
+            if price and prev_close:
+                change_pct = ((price - prev_close) / prev_close) * 100
+                return float(price), float(change_pct)
+    except Exception as e:
+        print(f"[WARN] Yahoo fetch failed for {symbol}: {e}")
+    return None, None
+
+def fetch_live_indices():
+    """Fetches live Indian market indices."""
+    symbols = [
+        {"name": "Nifty 50", "symbol": "^NSEI", "pe": 19.43},
+        {"name": "BSE Sensex", "symbol": "^BSESN", "pe": None},
+        {"name": "Nifty Midcap 150", "symbol": "^NSEMDCP50", "pe": 26.65},
+        {"name": "Nifty Smallcap 250", "symbol": "^CNXSC", "pe": None},
+        {"name": "India VIX", "symbol": "^INDIAVIX", "pe": None},
+        {"name": "USD/INR", "symbol": "INR=X", "pe": None}
+    ]
+    results = []
+    for item in symbols:
+        price, change = fetch_yahoo_live(item["symbol"])
+        if price is not None:
+            results.append({
+                "name": item["name"],
+                "value": round(price, 2),
+                "change_pct": round(change, 2),
+                "pe": item["pe"]
+            })
+    return results
 
 def call_mcp_tool(endpoint_url, tool_name, arguments, req_id=1):
     payload = {
@@ -77,7 +118,7 @@ def send_telegram_morning_digest(hub_data):
     pe_info = hub_data.get("valuation_signal", {})
     verdict = hub_data.get("ai_verdict", "")
     as_of = hub_data.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d"))
-    message = f"📊 *Sahare Financial Services — Daily Market Pulse*\n🗓 *Data As Of:* {as_of} (End-of-Day)\n\n🧭 *Nifty 50 P/E:* {pe_info.get('pe', 'N/A')}x\n🚦 *Signal:* {pe_info.get('zone', 'N/A')}\n\n💡 *Advisor Verdict:*\n{verdict}\n\n🔍 *Explore Live GIFT City (USD) Funds:*\n🌐 https://www.advisor4u.in/\n💬 *Book Portfolio Review:* https://wa.me/+919405908605"
+    message = f"📊 *Sahare Financial Services — Daily Market Pulse*\n🗓 *Data As Of:* {as_of}\n\n🧭 *Nifty 50 P/E:* {pe_info.get('pe', 'N/A')}x\n🚦 *Signal:* {pe_info.get('zone', 'N/A')}\n\n💡 *Advisor Verdict:*\n{verdict}\n\n🔍 *Explore Live GIFT City (USD) Funds:*\n🌐 https://www.advisor4u.in/\n💬 *Book Portfolio Review:* https://wa.me/+919405908605"
     tg_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = json.dumps({"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown", "disable_web_page_preview": False}).encode("utf-8")
     req = urllib.request.Request(tg_url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
@@ -88,7 +129,6 @@ def send_telegram_morning_digest(hub_data):
         print(f"[ERROR] Telegram broadcast failed: {err}")
 
 def resolve_instrument_ids(names, types, req_id_start=100):
-    import re
     ids = []
     for idx, name in enumerate(names, start=req_id_start):
         search_args = {"query": name, "types": types, "limit": 1}
@@ -118,12 +158,29 @@ def main():
         except Exception:
             previous_data = {}
 
-    # 1. Resolve Index IDs and fetch quotes
-    index_names = ["NIFTY 50", "BSE SENSEX", "NIFTY MIDCAP 150", "NIFTY SMALLCAP 250", "INDIA VIX", "GOLD", "USD/INR"]
-    index_ids = resolve_instrument_ids(index_names, ["index"], req_id_start=100)
-    time.sleep(1)
-    quotes_res = call_mcp_tool(MARKETS_MCP_URL, "get_quotes", {"instruments": index_ids}, req_id=1)
-    time.sleep(1)
+    # 1. Fetch Live Indices from Yahoo Finance
+    print("[INFO] Fetching live indices from Yahoo Finance...")
+    live_indices = fetch_live_indices()
+    
+    quotes_res = None
+    as_of_date = datetime.utcnow().strftime("%Y-%m-%d")
+    
+    if live_indices:
+        print(f"[INFO] Successfully fetched {len(live_indices)} live indices.")
+        quotes_res = live_indices
+    else:
+        print("[WARN] Yahoo Finance failed. Falling back to Foliyo API...")
+        index_names = ["NIFTY 50", "BSE SENSEX", "NIFTY MIDCAP 150", "NIFTY SMALLCAP 250", "INDIA VIX", "USD/INR"]
+        index_ids = resolve_instrument_ids(index_names, ["index"], req_id_start=100)
+        time.sleep(1)
+        quotes_res = call_mcp_tool(MARKETS_MCP_URL, "get_quotes", {"instruments": index_ids}, req_id=1)
+        time.sleep(1)
+        
+        # Extract the actual date from the raw text if available
+        if isinstance(quotes_res, dict) and "raw_text" in quotes_res:
+            m = re.search(r'(\d{4}-\d{2}-\d{2})', quotes_res["raw_text"])
+            if m:
+                as_of_date = m.group(1)
 
     # 2. GIFT City funds
     gift_funds_names = [
@@ -138,17 +195,20 @@ def main():
             gift_list.append({"name": g_name, "details": g_detail})
         time.sleep(1)
 
-    # 3. Indian Mutual Funds (Not supported by Foliyo API - keeping empty to prevent errors)
+    # 3. Indian Mutual Funds
     mf_list = []
 
     if not quotes_res and not gift_list and previous_data:
-        print("[WARN] Foliyo returned empty response; keeping previous snapshot intact.")
+        print("[WARN] Both Yahoo and Foliyo returned empty; keeping previous snapshot intact.")
         return
 
     extracted_pe = 22.4
-    as_of_date = datetime.utcnow().strftime("%Y-%m-%d")
-    if isinstance(quotes_res, dict):
-        as_of_date = quotes_res.get("as_of", as_of_date)
+    if isinstance(quotes_res, list):
+        for idx in quotes_res:
+            if idx.get("name") == "Nifty 50" and idx.get("pe"):
+                extracted_pe = idx["pe"]
+                break
+    elif isinstance(quotes_res, dict):
         extracted_pe = quotes_res.get("pe") or quotes_res.get("nifty_pe") or extracted_pe
 
     valuation_signal = compute_pe_zone(extracted_pe)
@@ -171,7 +231,7 @@ def main():
     if previous_data.get("as_of_date") != as_of_date:
         send_telegram_morning_digest(hub_payload)
     else:
-        print("[INFO] Market holiday / unchanged as_of_date detected; skipping duplicate Telegram alert.")
+        print("[INFO] Unchanged as_of_date detected; skipping duplicate Telegram alert.")
 
 if __name__ == "__main__":
     main()
