@@ -5,7 +5,6 @@ import urllib.request
 from datetime import datetime
 
 MARKETS_MCP_URL = "https://mcp.foliyo.ai/markets"
-PMS_MCP_URL = "https://mcp.foliyo.ai/pms"
 OUTPUT_FILE = "daily_market_hub.json"
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
@@ -78,7 +77,7 @@ def send_telegram_morning_digest(hub_data):
     pe_info = hub_data.get("valuation_signal", {})
     verdict = hub_data.get("ai_verdict", "")
     as_of = hub_data.get("as_of_date", datetime.utcnow().strftime("%Y-%m-%d"))
-    message = f"📊 *Sahare Financial Services — Daily Market Pulse*\n🗓 *Data As Of:* {as_of} (End-of-Day)\n\n🧭 *Nifty 50 P/E:* {pe_info.get('pe', 'N/A')}x\n🚦 *Signal:* {pe_info.get('zone', 'N/A')}\n\n💡 *Advisor Verdict:*\n{verdict}\n\n🔍 *Explore Live GIFT City (USD) & PMS Rankings:*\n🌐 https://www.advisor4u.in/\n💬 *Book Portfolio Review:* https://wa.me/+919405908605"
+    message = f"📊 *Sahare Financial Services — Daily Market Pulse*\n🗓 *Data As Of:* {as_of} (End-of-Day)\n\n🧭 *Nifty 50 P/E:* {pe_info.get('pe', 'N/A')}x\n🚦 *Signal:* {pe_info.get('zone', 'N/A')}\n\n💡 *Advisor Verdict:*\n{verdict}\n\n🔍 *Explore Live GIFT City (USD) Funds:*\n🌐 https://www.advisor4u.in/\n💬 *Book Portfolio Review:* https://wa.me/+919405908605"
     tg_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = json.dumps({"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown", "disable_web_page_preview": False}).encode("utf-8")
     req = urllib.request.Request(tg_url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
@@ -139,14 +138,10 @@ def main():
             gift_list.append({"name": g_name, "details": g_detail})
         time.sleep(1)
 
-    # 3. PMS schemes
-    pms_res = call_mcp_tool(PMS_MCP_URL, "screen_pms_schemes", {"sort_by": "y3", "limit": 10}, req_id=30)
-    time.sleep(1)
-
-    # 4. Indian Mutual Funds (Not supported by Foliyo API - keeping empty to prevent errors)
+    # 3. Indian Mutual Funds (Not supported by Foliyo API - keeping empty to prevent errors)
     mf_list = []
 
-    if not quotes_res and not gift_list and not pms_res and previous_data:
+    if not quotes_res and not gift_list and previous_data:
         print("[WARN] Foliyo returned empty response; keeping previous snapshot intact.")
         return
 
@@ -168,7 +163,6 @@ def main():
         "indices_and_benchmarks": quotes_res,
         "mutual_funds": mf_list,
         "gift_city_funds": gift_list,
-        "top_pms_schemes": pms_res,
     }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
