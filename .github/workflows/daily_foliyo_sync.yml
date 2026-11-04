@@ -1,0 +1,37 @@
+# हा वर्कफ्लो दररोज सकाळी 8:00 IST (02:30 UTC) ला आपोआप चालतो आणि JSON फाईल अपडेट करतो.
+name: Daily Foliyo Market Intelligence Sync
+
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  harvest-market-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Foliyo MCP Harvester & AI Verdict Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python fetch_foliyo_hub.py
+
+      - name: Commit & Push Updated Market Hub JSON
+        run: |
+          git config user.name "Sahare-Wealth-Bot"
+          git config user.email "info@advisor4u.in"
+          git add daily_market_hub.json
+          git diff --staged --quiet || git commit -m "chore: update EOD market intelligence snapshot"
+          git push
