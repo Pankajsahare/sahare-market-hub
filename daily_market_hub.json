@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-11-04T14:09:25.879045Z",
+  "updated_at_utc": "2026-11-04T14:29:03.069889Z",
   "as_of_date": "2026-11-04",
   "advisor": {
     "firm": "Sahare Financial Services",
@@ -9,14 +9,49 @@
     "website": "https://www.advisor4u.in"
   },
   "valuation_signal": {
-    "zone": "Fairly Valued Zone — Continue Regular SIPs & Balanced Allocation",
-    "color": "#3b82f6",
-    "pe": 22.4
+    "zone": "Attractive Zone — Ideal for Lumpsum & SIP Top-Up",
+    "color": "#10b981",
+    "pe": 19.43
   },
   "ai_verdict": "Markets are driven by earnings and asset allocation. Stay disciplined with your SIPs and review portfolio weights periodically.",
-  "indices_and_benchmarks": {
-    "raw_text": "Nifty 50 (index:NIFTY_50) 23,440.80 index level, 2026-11-02 · 1D +1.68% · 7D +3.02% · 30D +4.54% · 180D -3.66% · 365D -8.87% · 52W 22,179.90–26,373.20 · P/E 19.43 · P/B 2.88 · div yield 1.39%\nBSE Sensex (index:SENSEX) 76,917.85 index level, 2026-11-03 · 1D +1.62% · 7D +4.51% · 30D +6.96% · 180D -1.19% · 365D -8.41% · 52W 71,292.88–86,159.02\nNifty Midcap 150 (index:NIFTY_MIDCAP_150) 21,310.75 index level, 2026-11-02 · 1D +1.25% · 7D +2.40% · 30D -1.54% · 180D -5.52% · 365D -3.33% · 52W 19,218.00–23,647.50 · P/E 26.65 · P/B 3.73 · div yield 1.02%\nNifty Smallcap 250 (index:NIFTY_SMALLCAP_250) 16,991.00 index level, 2026-11-02 · 1D +1.35% · 7D +2.54% · 30D -3.40% · 180D -1.41% · 365D -1.86% · 52W 14,143.45–18,551.00\nIndia VIX (index:INDIA_VIX) 15.50 index level, 2026-11-02 · 1D +1.31% · 7D -9.67% · 30D +7.19% · 180D -7.07% · 365D +27.57% · 52W 8.86–28.91 (volatility index, not a price index)\nUSD/INR (index:USD_INR) 94.7400 rate [INR per USD], 2026-11-03 · 1D -0.17% · 7D -0.40% · 30D -1.62% · 180D +0.14% · 365D +6.71% · 52W 85.8600–97.0500 (latest stored value, dated in India time; can be an intraday value, not a session close)\n'GOLD' matches more than one instrument. Choose one: index:GOLD_USD (Gold (USD)), index:GOLD_INR (Gold (INR, ETF proxy))"
-  },
+  "indices_and_benchmarks": [
+    {
+      "name": "Nifty 50",
+      "value": 23960.6,
+      "change_pct": 2.22,
+      "pe": 19.43
+    },
+    {
+      "name": "BSE Sensex",
+      "value": 77301.4,
+      "change_pct": 2.13,
+      "pe": null
+    },
+    {
+      "name": "Nifty Midcap 150",
+      "value": 17149.1,
+      "change_pct": 2.58,
+      "pe": 26.65
+    },
+    {
+      "name": "Nifty Smallcap 250",
+      "value": 19026.4,
+      "change_pct": 2.0,
+      "pe": null
+    },
+    {
+      "name": "India VIX",
+      "value": 15.19,
+      "change_pct": -2.01,
+      "pe": null
+    },
+    {
+      "name": "USD/INR",
+      "value": 94.63,
+      "change_pct": -0.11,
+      "pe": null
+    }
+  ],
   "mutual_funds": [],
   "gift_city_funds": []
 }
