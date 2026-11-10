@@ -1,4 +1,3 @@
-import csv
 import io
 import urllib.request
 import zipfile
@@ -15,44 +14,73 @@ def get(url, ref=None):
     if ref:
         h["Referer"] = ref
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=30) as r:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=40) as r:
             return r.status, r.read()
     except Exception as e:
         return getattr(e, "code", str(e)[:80]), b""
 
 
-def rows(raw, url):
-    if url.endswith(".zip"):
+def show_text(name, raw, n=4):
+    txt = raw.decode("utf-8", "replace").splitlines()
+    print(f"   [{name}] lines={len(txt)}")
+    for line in txt[:n]:
+        print("     ", line[:400])
+
+
+# 1) NSE PR zip (market activity) — look for corpbond file
+for d in ["091126", "061126"]:
+    st, raw = get(f"https://nsearchives.nseindia.com/archives/equities/bhavcopy/pr/PR{d}.zip", "https://www.nseindia.com/")
+    print("NSE PR", d, st, len(raw))
+    if st == 200:
         z = zipfile.ZipFile(io.BytesIO(raw))
-        raw = z.read(z.namelist()[0])
-    return list(csv.reader(io.StringIO(raw.decode("utf-8", "replace"))))
+        print("   files:", z.namelist())
+        for f in z.namelist():
+            if "corp" in f.lower() or "bond" in f.lower():
+                show_text(f, z.read(f), 6)
+        break
 
+# 2) NSE CM UDiFF: non-equity series sample (NCDs)
+st, raw = get("https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_20261109_F_0000.csv.zip", "https://www.nseindia.com/")
+if st == 200:
+    z = zipfile.ZipFile(io.BytesIO(raw))
+    lines = z.read(z.namelist()[0]).decode("utf-8", "replace").splitlines()
+    import collections
+    ser = collections.Counter(l.split(",")[8] for l in lines[1:])
+    print("NSE UDiFF series:", ser.most_common(40))
+    nc = [l for l in lines if any(k in l.upper() for k in ("NCD", "SEC RE", "%"))][:6]
+    for l in nc:
+        print("   ", l[:300])
 
-for d, ymd in [("09112026", "20261109"), ("06112026", "20261106")]:
-    tests = {
-        "NSE old full": f"https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{d}.csv",
-        "NSE UDiFF": f"https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{ymd}_F_0000.csv.zip",
-        "BSE UDiFF": f"https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_{ymd}_F_0000.CSV",
-    }
-    for name, url in tests.items():
-        ref = "https://www.nseindia.com/" if "nse" in url else "https://www.bseindia.com/"
-        st, raw = get(url, ref)
-        info = ""
-        if st == 200 and raw:
-            try:
-                rs = rows(raw, url)
-                info = f"rows={len(rs)} hdr={[c.strip() for c in rs[0]][:16]}"
-                hits = [r for r in rs if any(x.strip().upper().startswith(("SGB", "718GS", "740GS")) for x in r[:8])]
-                info += f" bondhits={len(hits)} sample={hits[:5]}"
-            except Exception as e:
-                info = f"parse err {e}"
-        print(d, name, st, info, flush=True)
+# 3) BSE debt candidates
+for u in [
+    "https://www.bseindia.com/download/Bhavcopy/Debt/DEBTBHAVCOPY09112026.zip",
+    "https://www.bseindia.com/download/Bhavcopy/Debt/DEBTBHAVCOPY09112026.csv",
+    "https://www.bseindia.com/download/Bhavcopy/Debt/fgdebt091126.zip",
+    "https://www.bseindia.com/download/BhavCopy/Debt/BhavCopy_BSE_DB_0_0_0_20261109_F_0000.CSV",
+    "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_20261109_F_0000.CSV",
+]:
+    st, raw = get(u, "https://www.bseindia.com/")
+    print("BSE", u.rsplit("/", 1)[1], st, len(raw))
+    if st == 200 and raw:
+        if u.endswith(".zip"):
+            z = zipfile.ZipFile(io.BytesIO(raw))
+            print("   files:", z.namelist())
+            show_text(z.namelist()[0], z.read(z.namelist()[0]))
+        elif "BSE_CM" in u:
+            lines = raw.decode("utf-8", "replace").splitlines()
+            import collections
+            print("   series:", collections.Counter(l.split(",")[8] for l in lines[1:]).most_common(30))
+            for l in [l for l in lines if "%" in l][:5]:
+                print("    ", l[:300])
+        else:
+            show_text("csv", raw)
 
+# 4) NSDL India Bond Info + others
 for name, url in {
-    "FBIL home": "https://www.fbil.org.in/",
-    "CCIL home": "https://www.ccilindia.com/",
-    "RBI home": "https://www.rbi.org.in/",
-    "Yahoo chart": "https://query1.finance.yahoo.com/v8/finance/chart/GOLDBEES.NS?range=5d&interval=1d",
+    "NSDL IBI home": "https://www.indiabondinfo.nsdl.com/",
+    "NSDL IBI api?": "https://www.indiabondinfo.nsdl.com/bds-service/v1/public/bdsinfo/isin?isin=INE248U07FU9",
+    "NSE debt home": "https://www.nseindia.com/market-data/debt-market-reports",
+    "FBIL": "https://www.fbil.org.in/",
 }.items():
     st, raw = get(url)
-    print(name, st, len(raw), flush=True)
+    print(name, st, len(raw), raw[:200])
