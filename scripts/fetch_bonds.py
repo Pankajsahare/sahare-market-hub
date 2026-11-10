@@ -1,72 +1,120 @@
 #!/usr/bin/env python3
 """
-A4U Bond Data Fetcher v2.0
---------------------------
-काय करतो: data/bonds_config.json वाचतो → NSE वरून ताजा भाव आणतो → data/bonds.json लिहितो.
-WordPress चा Bond Dashboard हाच bonds.json वाचतो.
+A4U Bond Data Fetcher v2.1 — पूर्ण automatic
+--------------------------------------------
+काय करतो:
+  1. NSE ची दररोजची bhavcopy (सगळ्या व्यवहारांची अधिकृत CSV) download करतो;
+     NSE मिळाली नाही तर BSE ची. मागच्या 7 दिवसांतली सगळ्यात नवीन file घेतो.
+  2. त्यातून सगळे SGB आणि G-Secs आपोआप शोधतो.
+  3. सगळ्यात जास्त व्यवहार झालेले निवडतो (SGB: प्रत्येक maturity वर्षाचा 1; G-Sec: top N).
+  4. G-Sec चा अंदाजे yield मोजतो → data/bonds.json लिहितो (WordPress हाच वाचतो).
 
-bonds_config.json मधले fields (साध्या भाषेत):
-  id             – प्रत्येक bond चं वेगळं छोटं नाव (English, space नको)
-  name, type     – पानावर दिसणारं नाव आणि प्रकार (SGB / G-Sec / Corporate AAA ...)
-  risk           – low / medium / high
-  maturity_date  – पैसे परत मिळण्याची तारीख, YYYY-MM-DD
-  liquidity      – low / medium / high (बाजारात विकायला किती सोपं)
-  coupon         – वार्षिक व्याज % (G-Sec चा yield मोजायला लागतो)
-  yield_note     – yield खाली दिसणारी छोटी टीप (ऐच्छिक)
-  tax_note       – कराबद्दल 1 ओळ
-  nse_symbol     – NSE वरचं symbol; रिकामं ठेवलं तर manual_price / manual_yield वापरले जातात
-  manual_price, manual_yield – NSE नसेल तेव्हा हाताने टाकायचे आकडे (null चालेल → पानावर "—")
+Settings: data/bonds_config.json
+  max_sgb          – जास्तीत जास्त किती SGB दाखवायचे
+  max_gsec         – जास्तीत जास्त किती G-Secs दाखवायचे
+  min_years_left   – यापेक्षा कमी कालावधी उरलेले बाँड वगळायचे (वर्षात)
+  exclude_symbols  – कधीच दाखवायचे नाहीत असे symbols, उदा. ["SGBNOV26"]
 
-Fail-safe: NSE कडून भाव आला नाही तर आधीच्या bonds.json मधला शेवटचा भाव ठेवतो ("stale": true)
-आणि (secrets असतील तर) Telegram वर alert पाठवतो. फक्त Python standard library वापरली आहे.
+Fail-safe: दोन्ही स्रोत fail झाले तर आधीचा bonds.json तसाच ठेवतो ("stale": true)
+आणि Telegram alert पाठवतो. फक्त Python standard library वापरली आहे.
 """
 from __future__ import annotations
 
+import csv
 import datetime as dt
-import http.cookiejar
+import io
 import json
 import os
+import re
 import sys
-import time
 import urllib.parse
 import urllib.request
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG_FILE = ROOT / "data" / "bonds_config.json"
 OUTPUT_FILE = ROOT / "data" / "bonds.json"
 IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-)
+LOOKBACK_DAYS = 7
+
+BROWSER_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "Accept": "*/*",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+SOURCES = [
+    ("NSE", "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{ymd}_F_0000.csv.zip",
+     "https://www.nseindia.com/"),
+    ("BSE", "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_{ymd}_F_0000.CSV",
+     "https://www.bseindia.com/"),
+]
+MONTHS = {m: i for i, m in enumerate(
+    ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], start=1)}
+GSEC_RE = re.compile(r"^(\d{3,4})GS(20\d{2})[A-Z]?$")
+SGB_RE = re.compile(r"^SGB([A-Z]*?)(\d{2})")
+
+SGB_TAX = "Interest taxable at slab rate; capital gains on redemption at maturity exempt for individuals"
+GSEC_TAX = "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%"
 
 
-def make_nse_session() -> urllib.request.OpenerDirector:
-    """NSE आधी homepage उघडून cookies देतो; त्याशिवाय API उत्तर देत नाही."""
-    jar = http.cookiejar.CookieJar()
-    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-    opener.addheaders = [
-        ("User-Agent", USER_AGENT),
-        ("Accept", "application/json,text/html;q=0.9,*/*;q=0.8"),
-        ("Accept-Language", "en-US,en;q=0.9"),
-        ("Referer", "https://www.nseindia.com/"),
-    ]
-    opener.open("https://www.nseindia.com/", timeout=20).read()
-    return opener
+# ---------- download ----------
+def download(url: str, referer: str) -> bytes | None:
+    """File आणतो; 404/403/timeout झाल्यास None."""
+    headers = dict(BROWSER_HEADERS, Referer=referer)
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=40) as resp:
+            return resp.read() if resp.status == 200 else None
+    except Exception:
+        return None
 
 
-def fetch_quote(opener: urllib.request.OpenerDirector, symbol: str) -> tuple[float, float]:
-    """एका symbol चा शेवटचा भाव आणि दिवसातला % बदल परत देतो."""
-    url = "https://www.nseindia.com/api/quote-equity?symbol=" + urllib.parse.quote(symbol)
-    with opener.open(url, timeout=20) as resp:
-        data = json.load(resp)
-    info = data.get("priceInfo") or {}
-    price = info.get("lastPrice")
-    change = info.get("pChange") or 0
-    if not isinstance(price, (int, float)) or price <= 0:
-        raise ValueError("price missing in NSE response")
-    return float(price), float(change)
+def parse_csv(raw: bytes, is_zip: bool) -> list[dict]:
+    if is_zip:
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            raw = z.read(z.namelist()[0])
+    text = raw.decode("utf-8", "replace")
+    return [{(k or "").strip(): (v or "").strip() for k, v in row.items()}
+            for row in csv.DictReader(io.StringIO(text))]
+
+
+def latest_bhavcopy(today: dt.date) -> tuple[str, dt.date, list[dict]] | None:
+    """आजपासून मागे जात सगळ्यात नवीन bhavcopy शोधतो (आधी NSE, मग BSE)."""
+    for back in range(LOOKBACK_DAYS + 1):
+        day = today - dt.timedelta(days=back)
+        if day.weekday() >= 5:  # शनिवार/रविवार बाजार बंद
+            continue
+        ymd = day.strftime("%Y%m%d")
+        for name, pattern, referer in SOURCES:
+            url = pattern.format(ymd=ymd)
+            raw = download(url, referer)
+            if not raw:
+                continue
+            try:
+                rows = parse_csv(raw, url.endswith(".zip"))
+            except Exception as exc:
+                print(f"{name} {ymd}: parse failed: {exc}")
+                continue
+            if rows and "ClsPric" in rows[0]:
+                return name, day, rows
+    return None
+
+
+# ---------- helpers ----------
+def to_float(value: str) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def liquidity_from_turnover(turnover_inr: float) -> str:
+    if turnover_inr >= 1_00_00_000:   # ≥ ₹1 कोटी
+        return "high"
+    if turnover_inr >= 5_00_000:      # ≥ ₹5 लाख
+        return "medium"
+    return "low"
 
 
 def ytm_percent(price: float, coupon: float, maturity: dt.date, today: dt.date) -> float | None:
@@ -81,7 +129,7 @@ def ytm_percent(price: float, coupon: float, maturity: dt.date, today: dt.date) 
         r = y / 2
         return sum(half_coupon / (1 + r) ** k for k in range(1, periods + 1)) + 100 / (1 + r) ** periods
 
-    low, high = -0.05, 0.50  # yield वाढला की PV कमी होतो → bisection
+    low, high = -0.05, 0.50
     for _ in range(100):
         mid = (low + high) / 2
         if present_value(mid) > price:
@@ -91,8 +139,121 @@ def ytm_percent(price: float, coupon: float, maturity: dt.date, today: dt.date) 
     return round((low + high) / 2 * 100, 2)
 
 
+def base_record(row: dict) -> dict | None:
+    """एका ओळीतून भाव, बदल, उलाढाल काढतो."""
+    close = to_float(row.get("ClsPric"))
+    if not close or close <= 0:
+        return None
+    prev = to_float(row.get("PrvsClsgPric"))
+    change = round((close - prev) / prev * 100, 2) if prev and prev > 0 else 0.0
+    turnover = to_float(row.get("TtlTrfVal")) or 0.0
+    return {"price": round(close, 2), "change": change, "turnover": turnover}
+
+
+# ---------- SGB / G-Sec ओळखणे ----------
+def parse_sgb(row: dict, today: dt.date) -> dict | None:
+    symbol = row.get("TckrSymb", "").upper()
+    m = SGB_RE.match(symbol)
+    if not m:
+        return None
+    year = 2000 + int(m.group(2))
+    month_code = m.group(1)[:3]
+    month = MONTHS.get(month_code, 6)  # महिना symbol मध्ये नसेल तर जून गृहीत (±6 महिने)
+    maturity = dt.date(year, month, 15)
+    rec = base_record(row)
+    if not rec:
+        return None
+    label = maturity.strftime("%b %Y") if month_code in MONTHS else str(year)
+    rec.update({
+        "id": "sgb-" + symbol.lower(),
+        "symbol": symbol,
+        "name": f"SGB {label} ({symbol})",
+        "type": "SGB",
+        "risk": "low",
+        "maturity": maturity,
+        "yield": None,
+        "yield_note": "2.50% p.a. on issue price + gold price change",
+        "tax_note": SGB_TAX,
+    })
+    return rec
+
+
+def parse_gsec(row: dict, today: dt.date) -> dict | None:
+    symbol = row.get("TckrSymb", "").upper()
+    m = GSEC_RE.match(symbol)
+    if not m:
+        return None
+    coupon = int(m.group(1)) / 100
+    year = int(m.group(2))
+    maturity = dt.date(year, 6, 30)  # bhavcopy मध्ये फक्त वर्ष असतं → मध्य-वर्ष गृहीत
+    rec = base_record(row)
+    if not rec:
+        return None
+    rec.update({
+        "id": "gs-" + symbol.lower(),
+        "symbol": symbol,
+        "name": f"{coupon:.2f}% GS {year}",
+        "type": "G-Sec",
+        "risk": "low",
+        "maturity": maturity,
+        "yield": ytm_percent(rec["price"], coupon, maturity, today),
+        "yield_note": "Approx. yield to maturity",
+        "tax_note": GSEC_TAX,
+    })
+    return rec
+
+
+def select_bonds(rows: list[dict], cfg: dict, today: dt.date) -> list[dict]:
+    exclude = {s.upper() for s in cfg.get("exclude_symbols", [])}
+    min_left = float(cfg.get("min_years_left", 0.25))
+
+    def usable(rec: dict | None) -> bool:
+        return bool(rec) and rec["symbol"] not in exclude and \
+            (rec["maturity"] - today).days / 365.25 >= min_left and rec["turnover"] > 0
+
+    sgbs = [r for r in (parse_sgb(x, today) for x in rows) if usable(r)]
+    gsecs = [r for r in (parse_gsec(x, today) for x in rows) if usable(r)]
+
+    # SGB: प्रत्येक maturity वर्षाचा सगळ्यात जास्त उलाढालीचा एक
+    best_per_year: dict[int, dict] = {}
+    for r in sgbs:
+        y = r["maturity"].year
+        if y not in best_per_year or r["turnover"] > best_per_year[y]["turnover"]:
+            best_per_year[y] = r
+    chosen_sgb = sorted(best_per_year.values(), key=lambda r: r["maturity"])[: int(cfg.get("max_sgb", 6))]
+
+    # G-Sec: एकाच symbol चे duplicates टाळून top उलाढाल
+    unique: dict[str, dict] = {}
+    for r in gsecs:
+        if r["symbol"] not in unique or r["turnover"] > unique[r["symbol"]]["turnover"]:
+            unique[r["symbol"]] = r
+    top_gsec = sorted(unique.values(), key=lambda r: r["turnover"], reverse=True)[: int(cfg.get("max_gsec", 6))]
+    chosen_gsec = sorted(top_gsec, key=lambda r: r["maturity"])
+
+    return chosen_sgb + chosen_gsec
+
+
+def to_output(rec: dict) -> dict:
+    return {
+        "id": rec["id"],
+        "symbol": rec["symbol"],
+        "name": rec["name"],
+        "type": rec["type"],
+        "risk": rec["risk"],
+        "maturity_date": rec["maturity"].isoformat(),
+        "liquidity": liquidity_from_turnover(rec["turnover"]),
+        "price": rec["price"],
+        "change": rec["change"],
+        "yield": rec["yield"],
+        "yield_note": rec["yield_note"],
+        "tax_note": rec["tax_note"],
+        "source": "live",
+        "stale": False,
+    }
+
+
+# ---------- alert ----------
 def notify_telegram(message: str) -> None:
-    """Secrets सेट असतील तरच Telegram alert; नसतील तर शांतपणे पुढे."""
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not token or not chat_id:
@@ -100,101 +261,48 @@ def notify_telegram(message: str) -> None:
     body = urllib.parse.urlencode({"chat_id": chat_id, "text": message}).encode()
     try:
         urllib.request.urlopen(f"https://api.telegram.org/bot{token}/sendMessage", data=body, timeout=15)
-    except Exception as exc:  # alert fail झाला तरी डेटा update थांबवायचा नाही
+    except Exception as exc:
         print("Telegram alert failed:", exc)
 
 
-def load_previous() -> dict[str, dict]:
-    """आधीचा bonds.json (असल्यास) id नुसार map मध्ये."""
-    if not OUTPUT_FILE.exists():
-        return {}
-    try:
-        old = json.loads(OUTPUT_FILE.read_text(encoding="utf-8"))
-        return {b["id"]: b for b in old.get("bonds", []) if "id" in b}
-    except (ValueError, KeyError, TypeError):
-        return {}
+def keep_previous(reason: str) -> int:
+    """नवीन डेटा नाही → जुना डेटा "stale" म्हणून ठेवतो."""
+    print("No fresh data:", reason)
+    if OUTPUT_FILE.exists():
+        try:
+            old = json.loads(OUTPUT_FILE.read_text(encoding="utf-8"))
+            for b in old.get("bonds", []):
+                b["stale"] = True
+            OUTPUT_FILE.write_text(json.dumps(old, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        except (ValueError, TypeError) as exc:
+            print("Could not mark old data stale:", exc)
+    notify_telegram(f"⚠️ Bond data not updated: {reason}. Website shows last available prices.")
+    return 0
 
 
 def main() -> int:
-    config = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
-    previous = load_previous()
-    now = dt.datetime.now(IST)
-    today = now.date()
+    cfg = json.loads(CONFIG_FILE.read_text(encoding="utf-8")) if CONFIG_FILE.exists() else {}
+    today = dt.datetime.now(IST).date()
 
-    opener = None
-    if any((b.get("nse_symbol") or "").strip() for b in config.get("bonds", [])):
-        try:
-            opener = make_nse_session()
-        except Exception as exc:
-            print("NSE session failed:", exc)
+    found = latest_bhavcopy(today)
+    if not found:
+        return keep_previous(f"no NSE/BSE bhavcopy found in last {LOOKBACK_DAYS} days")
+    source, trade_day, rows = found
+    print(f"Using {source} bhavcopy for {trade_day} ({len(rows)} rows)")
 
-    output: list[dict] = []
-    failures: list[str] = []
+    chosen = select_bonds(rows, cfg, today)
+    if not chosen:
+        return keep_previous(f"{source} file for {trade_day} had no usable SGB/G-Sec rows (format change?)")
 
-    for bond in config.get("bonds", []):
-        bond_id = bond.get("id", "?")
-        try:
-            maturity = dt.date.fromisoformat(bond["maturity_date"])
-        except (KeyError, ValueError):
-            print(f"Skipping {bond_id}: invalid maturity_date")
-            continue
-        if maturity <= today:
-            print(f"Skipping {bond_id}: already matured")
-            continue
-
-        price = bond.get("manual_price")
-        change = 0.0
-        source, stale = "manual", False
-
-        symbol = (bond.get("nse_symbol") or "").strip()
-        if symbol:
-            try:
-                if opener is None:
-                    raise RuntimeError("no NSE session")
-                price, change = fetch_quote(opener, symbol)
-                source = "live"
-                time.sleep(1)  # NSE वर ताण नको
-            except Exception as exc:
-                failures.append(f"{bond_id} ({symbol}): {exc}")
-                old = previous.get(bond_id)
-                if old and old.get("price") is not None:
-                    price = old["price"]
-                    change = old.get("change", 0.0)
-                    source = old.get("source", "manual")
-                    stale = True
-
-        coupon = bond.get("coupon")
-        if bond.get("type") == "G-Sec" and price and coupon:
-            bond_yield = ytm_percent(float(price), float(coupon), maturity, today)
-        elif bond.get("type") == "SGB" and coupon:
-            bond_yield = float(coupon)
-        else:
-            bond_yield = bond.get("manual_yield")
-
-        output.append({
-            "id": bond_id,
-            "name": bond.get("name", bond_id),
-            "type": bond.get("type", ""),
-            "risk": bond.get("risk", "medium"),
-            "maturity_date": bond["maturity_date"],
-            "liquidity": bond.get("liquidity", "medium"),
-            "price": price,
-            "change": round(float(change), 2),
-            "yield": bond_yield,
-            "yield_note": bond.get("yield_note", ""),
-            "tax_note": bond.get("tax_note", ""),
-            "source": source,
-            "stale": stale,
-        })
-
-    payload = {"generated_at": now.isoformat(timespec="seconds"), "bonds": output}
+    payload = {
+        "generated_at": f"{trade_day.isoformat()}T15:30:00+05:30",  # भाव = त्या दिवसाचा closing
+        "source": f"{source} bhavcopy",
+        "bonds": [to_output(r) for r in chosen],
+    }
     OUTPUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {len(output)} bonds to {OUTPUT_FILE.name}; fetch failures: {len(failures)}")
-
-    if failures:
-        for line in failures:
-            print(" -", line)
-        notify_telegram("⚠️ Bond data: NSE price fetch failed for:\n" + "\n".join(failures))
+    print(f"Wrote {len(chosen)} bonds:")
+    for r in chosen:
+        print(f"  {r['symbol']:<12} ₹{r['price']:>10.2f}  yield={r['yield']}  maturity={r['maturity']}")
     return 0
 
 
