@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-11-10T14:38:11+05:30",
+  "bonds": [
+    {
+      "id": "sgb-2030",
+      "name": "SGB 2030 (verify series)",
+      "type": "SGB",
+      "risk": "low",
+      "maturity_date": "2030-12-31",
+      "liquidity": "medium",
+      "price": null,
+      "change": 0.0,
+      "yield": 2.5,
+      "yield_note": "2.50% interest on issue price + gold price change",
+      "tax_note": "Interest taxable at slab rate; capital gains on redemption at maturity exempt for individuals",
+      "source": "manual",
+      "stale": false
+    },
+    {
+      "id": "gs-2033-718",
+      "name": "7.18% GS 2033",
+      "type": "G-Sec",
+      "risk": "low",
+      "maturity_date": "2033-08-14",
+      "liquidity": "high",
+      "price": null,
+      "change": 0.0,
+      "yield": null,
+      "yield_note": "Indicative yield to maturity",
+      "tax_note": "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%",
+      "source": "manual",
+      "stale": false
+    },
+    {
+      "id": "gs-2035-740",
+      "name": "7.40% GS 2035",
+      "type": "G-Sec",
+      "risk": "low",
+      "maturity_date": "2035-09-09",
+      "liquidity": "high",
+      "price": null,
+      "change": 0.0,
+      "yield": null,
+      "yield_note": "Indicative yield to maturity",
+      "tax_note": "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%",
+      "source": "manual",
+      "stale": false
+    },
+    {
+      "id": "corp-aaa-sample",
+      "name": "Sample AAA Corporate Bond",
+      "type": "Corporate AAA",
+      "risk": "medium",
+      "maturity_date": "2029-06-30",
+      "liquidity": "low",
+      "price": null,
+      "change": 0.0,
+      "yield": null,
+      "yield_note": "",
+      "tax_note": "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%",
+      "source": "manual",
+      "stale": false
+    },
+    {
+      "id": "corp-aa-sample",
+      "name": "Sample AA Corporate Bond",
+      "type": "Corporate AA",
+      "risk": "high",
+      "maturity_date": "2031-03-31",
+      "liquidity": "low",
+      "price": null,
+      "change": 0.0,
+      "yield": null,
+      "yield_note": "",
+      "tax_note": "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%",
+      "source": "manual",
+      "stale": false
+    }
+  ]
+}
