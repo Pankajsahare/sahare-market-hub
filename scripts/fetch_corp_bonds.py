@@ -26,7 +26,9 @@ import io
 import json
 import os
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 import urllib.parse
 import urllib.request
 import zipfile
@@ -42,6 +44,7 @@ RATING_REFRESH_DAYS = 7   # ratings किती दिवसांनी पु
 MAX_NSDL_CALLS = int(os.environ.get("MAX_NSDL_CALLS", "2400"))
 MAX_NSDL_SECONDS = int(os.environ.get("MAX_NSDL_SECONDS", "1800"))  # एका run मध्ये NSDL ला जास्तीत जास्त 30 मिनिटं
 NSDL_DELAY = 0.6
+NSDL_WORKERS = 3          # एकाच वेळी जास्तीत जास्त 3 requests (NSDL वर ताण नको)
 HIGH_YIELD = 14.0
 
 BROWSER = {
@@ -226,24 +229,28 @@ class Nsdl:
         self.calls = 0
         self.errors = 0
         self.started = time.monotonic()
+        self.lock = threading.Lock()
 
     def get(self, path: str, isin: str | None = None):
         """JSON परत देतो; 400 = "No Record" → {}; network चूक → None."""
-        if self.calls >= self.budget or time.monotonic() - self.started > MAX_NSDL_SECONDS:
-            raise BudgetOver
+        with self.lock:
+            if self.calls >= self.budget or time.monotonic() - self.started > MAX_NSDL_SECONDS:
+                raise BudgetOver
+            self.calls += 1
         url = NSDL_BASE + path + (("?isin=" + urllib.parse.quote(isin)) if isin else "")
-        self.calls += 1
         time.sleep(NSDL_DELAY)
         st, raw = http_get(url, "https://www.indiabondinfo.nsdl.com/", "application/json, text/plain, */*", timeout=20)
         if st == 400:
             return {}
         if st != 200:
-            self.errors += 1
+            with self.lock:
+                self.errors += 1
             return None
         try:
             return json.loads(raw.decode("utf-8", "replace"))
         except ValueError:
-            self.errors += 1
+            with self.lock:
+                self.errors += 1
             return None
 
 
@@ -386,29 +393,44 @@ def save_cache(cache: dict) -> None:
 
 
 def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
+    """सगळ्यात जास्त व्यवहार झालेल्या bonds पासून सुरुवात; आधी ratings, मग बाकीची माहिती.
+    3 workers एकत्र चालतात; वेळ/requests ची मर्यादा संपली की उरलेलं पुढच्या run मध्ये."""
     api = Nsdl(MAX_NSDL_CALLS)
     stale_cut = (today - dt.timedelta(days=RATING_REFRESH_DAYS)).isoformat()
-    need_static = [i for i in isins if "staticAt" not in cache.get(i, {})]
-    need_dyn = [i for i in isins if cache.get(i, {}).get("dynamicAt", "") < stale_cut]
-    need_dyn.sort(key=lambda i: cache.get(i, {}).get("dynamicAt", ""))
-    print(f"NSDL: {len(need_static)} new bonds, {len(need_dyn)} rating refreshes due, budget {api.budget}")
-    try:
-        for isin in need_static:
-            parts = [api.get("isins", isin), api.get("bdsinfo/instruments", isin),
-                     api.get("bdsinfo/coupondetail", isin), api.get("bdsinfo/redemptions", isin),
-                     api.get("bdsinfo/keydocuments", isin), api.get("bdsinfo/keycontacts", isin)]
-            if parts[0] is None and parts[1] is None:
-                continue  # NSDL पोहोचलं नाही → पुढच्या run मध्ये
-            cache.setdefault(isin, {}).update(parse_static(*parts, today))
-            if api.calls % 300 < 6:
-                save_cache(cache)
-        for isin in need_dyn:
-            rat = api.get("bdsinfo/credit-ratings", isin)
-            if rat is None:
-                continue
-            dfl = api.get("bdsinfo/defaultdetail", isin)
-            cache.setdefault(isin, {}).update(parse_dynamic(rat, dfl, today))
-    except BudgetOver:
+    jobs = [i for i in isins if "staticAt" not in cache.get(i, {}) or cache.get(i, {}).get("dynamicAt", "") < stale_cut]
+    print(f"NSDL: {len(jobs)} bonds need work, budget {api.budget} calls / {MAX_NSDL_SECONDS}s, {NSDL_WORKERS} workers")
+    lock = threading.Lock()
+    stop = threading.Event()
+
+    def work(isin: str) -> None:
+        if stop.is_set():
+            return
+        try:
+            rec = cache.get(isin, {})
+            upd: dict = {}
+            if rec.get("dynamicAt", "") < stale_cut:
+                rat = api.get("bdsinfo/credit-ratings", isin)
+                if rat is not None:
+                    dfl = api.get("bdsinfo/defaultdetail", isin)
+                    upd.update(parse_dynamic(rat, dfl, today))
+            if "staticAt" not in rec:
+                parts = [api.get("isins", isin), api.get("bdsinfo/instruments", isin),
+                         api.get("bdsinfo/coupondetail", isin), api.get("bdsinfo/redemptions", isin),
+                         api.get("bdsinfo/keydocuments", isin), api.get("bdsinfo/keycontacts", isin)]
+                if parts[0] is not None or parts[1] is not None:
+                    upd.update(parse_static(*parts, today))
+            if upd:
+                with lock:
+                    cache.setdefault(isin, {}).update(upd)
+        except BudgetOver:
+            stop.set()
+
+    with ThreadPoolExecutor(max_workers=NSDL_WORKERS) as pool:
+        for n, _ in enumerate(pool.map(work, jobs), 1):
+            if n % 60 == 0:
+                with lock:
+                    save_cache(cache)
+    if stop.is_set():
         print("NSDL call/time budget reached; remaining bonds continue in next run")
     print(f"NSDL calls: {api.calls}, errors: {api.errors}")
     return {"calls": api.calls, "errors": api.errors}
@@ -536,7 +558,7 @@ def main() -> int:
         notify("⚠️ Corporate bonds: no BSE/NSE debt file found and no previous data.")
         return 0
     book = merge(trades, previous, today)
-    stats = enrich(sorted(book), cache, today)
+    stats = enrich(sorted(book, key=lambda i: -(book[i].get("turnover") or 0)), cache, today)
 
     bonds = build_output(book, cache, today)
     rated_dates = sorted(x["dynamicAt"] for x in cache.values() if x.get("dynamicAt"))
