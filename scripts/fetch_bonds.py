@@ -56,6 +56,11 @@ MONTHS = {m: i for i, m in enumerate(
 GSEC_RE = re.compile(r"^(\d{3,4})GS(20\d{2})[A-Z]?$")
 SGB_RE = re.compile(r"^SGB([A-Z]*?)(\d{2})")
 
+try:
+    GSEC_MATURITY = json.loads((ROOT / "data" / "bond_market.json").read_text(encoding="utf-8")).get("gsecMaturity", {})
+except (OSError, ValueError):
+    GSEC_MATURITY = {}
+
 SGB_TAX = "Interest taxable at slab rate; capital gains on redemption at maturity exempt for individuals"
 GSEC_TAX = "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%"
 
@@ -186,7 +191,8 @@ def parse_gsec(row: dict, today: dt.date) -> dict | None:
         return None
     coupon = int(m.group(1)) / 100
     year = int(m.group(2))
-    maturity = dt.date(year, 6, 30)  # bhavcopy मध्ये फक्त वर्ष असतं → मध्य-वर्ष गृहीत
+    exact = GSEC_MATURITY.get(f"{coupon:.2f}-{year}")  # fetch_market.py ने BSE WDM मधून आणलेली नेमकी तारीख
+    maturity = dt.date.fromisoformat(exact) if exact else dt.date(year, 6, 30)  # नसेल तर मध्य-वर्ष गृहीत
     rec = base_record(row)
     if not rec:
         return None
@@ -200,7 +206,7 @@ def parse_gsec(row: dict, today: dt.date) -> dict | None:
         "type": "G-Sec",
         "risk": "low",
         "maturity": maturity,
-        "yield_note": "Approx. yield to maturity",
+        "yield_note": "Approx. yield to maturity" if not exact else "Yield to maturity (indicative)",
         "tax_note": GSEC_TAX,
     })
     return rec
