@@ -13,6 +13,7 @@ Settings: data/bonds_config.json
   max_sgb          – जास्तीत जास्त किती SGB दाखवायचे
   max_gsec         – जास्तीत जास्त किती G-Secs दाखवायचे
   min_years_left   – यापेक्षा कमी कालावधी उरलेले बाँड वगळायचे (वर्षात)
+  gsec_min_years_left – G-Sec साठी वेगळी मर्यादा (जवळच्या maturity चा yield अविश्वसनीय असतो)
   exclude_symbols  – कधीच दाखवायचे नाहीत असे symbols, उदा. ["SGBNOV26"]
 
 Fail-safe: दोन्ही स्रोत fail झाले तर आधीचा bonds.json तसाच ठेवतो ("stale": true)
@@ -189,6 +190,9 @@ def parse_gsec(row: dict, today: dt.date) -> dict | None:
     rec = base_record(row)
     if not rec:
         return None
+    # कमी व्यवहार / जवळची maturity असेल तर yield विचित्र येतो → 3%–12% बाहेर असेल तर दाखवत नाही
+    est = ytm_percent(rec["price"], coupon, maturity, today)
+    rec["yield"] = est if est is not None and 3.0 <= est <= 12.0 else None
     rec.update({
         "id": "gs-" + symbol.lower(),
         "symbol": symbol,
@@ -196,7 +200,6 @@ def parse_gsec(row: dict, today: dt.date) -> dict | None:
         "type": "G-Sec",
         "risk": "low",
         "maturity": maturity,
-        "yield": ytm_percent(rec["price"], coupon, maturity, today),
         "yield_note": "Approx. yield to maturity",
         "tax_note": GSEC_TAX,
     })
@@ -212,7 +215,9 @@ def select_bonds(rows: list[dict], cfg: dict, today: dt.date) -> list[dict]:
             (rec["maturity"] - today).days / 365.25 >= min_left and rec["turnover"] > 0
 
     sgbs = [r for r in (parse_sgb(x, today) for x in rows) if usable(r)]
-    gsecs = [r for r in (parse_gsec(x, today) for x in rows) if usable(r)]
+    gsec_min_left = float(cfg.get("gsec_min_years_left", 1.0))
+    gsecs = [r for r in (parse_gsec(x, today) for x in rows)
+             if usable(r) and (r["maturity"] - today).days / 365.25 >= gsec_min_left]
 
     # SGB: प्रत्येक maturity वर्षाचा सगळ्यात जास्त उलाढालीचा एक
     best_per_year: dict[int, dict] = {}
