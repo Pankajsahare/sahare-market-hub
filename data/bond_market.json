@@ -1,17 +1,7 @@
 {
- "updated": "2026-11-10T18:33+05:30",
+ "updated": "2026-11-10T19:49+05:30",
  "pricesAsOf": "2026-11-09",
  "curve": [
-  {
-   "t": 1,
-   "label": "1Y",
-   "ytm": 4.08,
-   "n": 2,
-   "bonds": [
-    "8.24% GS 2027",
-    "8.26% GS 2027"
-   ]
-  },
   {
    "t": 2,
    "label": "2Y",
@@ -789,46 +779,11 @@
     "maturity": "2029-04-17"
    },
    {
-    "isin": "INE549K07JZ2",
+    "isin": "INE549K07JP3",
     "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 38.0,
+    "sizeCr": 43.0,
     "allotted": "2026-11-09",
     "maturity": "2028-11-09"
-   },
-   {
-    "isin": "INE549K07JT5",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 11.0,
-    "allotted": "2026-11-09",
-    "maturity": "2031-11-09"
-   },
-   {
-    "isin": "INE549K07JQ1",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 22.0,
-    "allotted": "2026-11-09",
-    "maturity": "2032-11-09"
-   },
-   {
-    "isin": "INE549K07JV1",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 46.0,
-    "allotted": "2026-11-09",
-    "maturity": "2029-11-09"
-   },
-   {
-    "isin": "INE549K07JY5",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 66.0,
-    "allotted": "2026-11-09",
-    "maturity": "2029-11-09"
-   },
-   {
-    "isin": "INE549K07KA3",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 20.0,
-    "allotted": "2026-11-09",
-    "maturity": "2031-11-09"
    },
    {
     "isin": "INE549K07JS7",
@@ -845,11 +800,53 @@
     "maturity": "2031-11-09"
    },
    {
-    "isin": "INE549K07JP3",
+    "isin": "INE549K07JW9",
     "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 43.0,
+    "sizeCr": 51.0,
     "allotted": "2026-11-09",
     "maturity": "2028-11-09"
+   },
+   {
+    "isin": "INE549K07JQ1",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 22.0,
+    "allotted": "2026-11-09",
+    "maturity": "2032-11-09"
+   },
+   {
+    "isin": "INE549K07KA3",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 20.0,
+    "allotted": "2026-11-09",
+    "maturity": "2031-11-09"
+   },
+   {
+    "isin": "INE549K07JZ2",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 38.0,
+    "allotted": "2026-11-09",
+    "maturity": "2028-11-09"
+   },
+   {
+    "isin": "INE549K07JT5",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 11.0,
+    "allotted": "2026-11-09",
+    "maturity": "2031-11-09"
+   },
+   {
+    "isin": "INE549K07JY5",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 66.0,
+    "allotted": "2026-11-09",
+    "maturity": "2029-11-09"
+   },
+   {
+    "isin": "INE549K07JV1",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 46.0,
+    "allotted": "2026-11-09",
+    "maturity": "2029-11-09"
    },
    {
     "isin": "INE549K07JX7",
@@ -864,13 +861,6 @@
     "sizeCr": 54.0,
     "allotted": "2026-11-09",
     "maturity": "2029-11-09"
-   },
-   {
-    "isin": "INE549K07JW9",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 51.0,
-    "allotted": "2026-11-09",
-    "maturity": "2028-11-09"
    },
    {
     "isin": "INE0DG907396",
@@ -910,20 +900,6 @@
     "maturity": "2026-11-10"
    },
    {
-    "isin": "INE321N07368",
-    "issuer": "Incred Financial Services Limited",
-    "sizeCr": 57.2845,
-    "allotted": "2023-11-10",
-    "maturity": "2026-11-10"
-   },
-   {
-    "isin": "INE321N07368",
-    "issuer": "Incred Financial Services Limited",
-    "sizeCr": 57.2845,
-    "allotted": "2023-11-10",
-    "maturity": "2026-11-10"
-   },
-   {
     "isin": "INE321N07376",
     "issuer": "Incred Financial Services Limited",
     "sizeCr": 86.9739,
@@ -934,6 +910,20 @@
     "isin": "INE321N07376",
     "issuer": "Incred Financial Services Limited",
     "sizeCr": 86.9739,
+    "allotted": "2023-11-10",
+    "maturity": "2026-11-10"
+   },
+   {
+    "isin": "INE321N07368",
+    "issuer": "Incred Financial Services Limited",
+    "sizeCr": 57.2845,
+    "allotted": "2023-11-10",
+    "maturity": "2026-11-10"
+   },
+   {
+    "isin": "INE321N07368",
+    "issuer": "Incred Financial Services Limited",
+    "sizeCr": 57.2845,
     "allotted": "2023-11-10",
     "maturity": "2026-11-10"
    },
