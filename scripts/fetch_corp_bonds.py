@@ -40,6 +40,7 @@ IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
 KEEP_DAYS = 30            # इतक्या दिवसांत व्यवहार झालेले bonds यादीत ठेवायचे
 RATING_REFRESH_DAYS = 7   # ratings किती दिवसांनी पुन्हा तपासायचे
 MAX_NSDL_CALLS = int(os.environ.get("MAX_NSDL_CALLS", "2400"))
+MAX_NSDL_SECONDS = int(os.environ.get("MAX_NSDL_SECONDS", "1800"))  # एका run मध्ये NSDL ला जास्तीत जास्त 30 मिनिटं
 NSDL_DELAY = 0.6
 HIGH_YIELD = 14.0
 
@@ -224,15 +225,16 @@ class Nsdl:
         self.budget = budget
         self.calls = 0
         self.errors = 0
+        self.started = time.monotonic()
 
     def get(self, path: str, isin: str | None = None):
         """JSON परत देतो; 400 = "No Record" → {}; network चूक → None."""
-        if self.calls >= self.budget:
+        if self.calls >= self.budget or time.monotonic() - self.started > MAX_NSDL_SECONDS:
             raise BudgetOver
         url = NSDL_BASE + path + (("?isin=" + urllib.parse.quote(isin)) if isin else "")
         self.calls += 1
         time.sleep(NSDL_DELAY)
-        st, raw = http_get(url, "https://www.indiabondinfo.nsdl.com/", "application/json, text/plain, */*")
+        st, raw = http_get(url, "https://www.indiabondinfo.nsdl.com/", "application/json, text/plain, */*", timeout=20)
         if st == 400:
             return {}
         if st != 200:
@@ -378,6 +380,11 @@ def parse_dynamic(rat_j, def_j, today: dt.date) -> dict:
     return d
 
 
+def save_cache(cache: dict) -> None:
+    """मधे-मधे cache साठवतो, म्हणजे run अर्धवट थांबला तरी झालेलं काम वाया जात नाही."""
+    CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+
 def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
     api = Nsdl(MAX_NSDL_CALLS)
     stale_cut = (today - dt.timedelta(days=RATING_REFRESH_DAYS)).isoformat()
@@ -393,6 +400,8 @@ def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
             if parts[0] is None and parts[1] is None:
                 continue  # NSDL पोहोचलं नाही → पुढच्या run मध्ये
             cache.setdefault(isin, {}).update(parse_static(*parts, today))
+            if api.calls % 300 < 6:
+                save_cache(cache)
         for isin in need_dyn:
             rat = api.get("bdsinfo/credit-ratings", isin)
             if rat is None:
@@ -400,7 +409,7 @@ def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
             dfl = api.get("bdsinfo/defaultdetail", isin)
             cache.setdefault(isin, {}).update(parse_dynamic(rat, dfl, today))
     except BudgetOver:
-        print("NSDL budget reached; remaining bonds continue in next run")
+        print("NSDL call/time budget reached; remaining bonds continue in next run")
     print(f"NSDL calls: {api.calls}, errors: {api.errors}")
     return {"calls": api.calls, "errors": api.errors}
 
