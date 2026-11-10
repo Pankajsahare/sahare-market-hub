@@ -2,5 +2,6 @@
   "max_sgb": 6,
   "max_gsec": 6,
   "min_years_left": 0.25,
+  "gsec_min_years_left": 1.0,
   "exclude_symbols": []
 }
