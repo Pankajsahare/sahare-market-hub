@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-10T21:15+05:30",
+ "updated": "2026-11-10T22:36+05:30",
  "pricesAsOf": "2026-11-09",
  "curve": [
   {
@@ -779,23 +779,9 @@
     "maturity": "2029-04-17"
    },
    {
-    "isin": "INE549K07JP3",
+    "isin": "INE549K07JT5",
     "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 43.0,
-    "allotted": "2026-11-09",
-    "maturity": "2028-11-09"
-   },
-   {
-    "isin": "INE549K07JV1",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 46.0,
-    "allotted": "2026-11-09",
-    "maturity": "2029-11-09"
-   },
-   {
-    "isin": "INE549K07KA3",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 20.0,
+    "sizeCr": 11.0,
     "allotted": "2026-11-09",
     "maturity": "2031-11-09"
    },
@@ -812,6 +798,34 @@
     "sizeCr": 38.0,
     "allotted": "2026-11-09",
     "maturity": "2028-11-09"
+   },
+   {
+    "isin": "INE549K07JP3",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 43.0,
+    "allotted": "2026-11-09",
+    "maturity": "2028-11-09"
+   },
+   {
+    "isin": "INE549K07JV1",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 46.0,
+    "allotted": "2026-11-09",
+    "maturity": "2029-11-09"
+   },
+   {
+    "isin": "INE549K07JR9",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 18.0,
+    "allotted": "2026-11-09",
+    "maturity": "2031-11-09"
+   },
+   {
+    "isin": "INE549K07KA3",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 20.0,
+    "allotted": "2026-11-09",
+    "maturity": "2031-11-09"
    },
    {
     "isin": "INE549K07JQ1",
@@ -842,25 +856,11 @@
     "maturity": "2028-11-09"
    },
    {
-    "isin": "INE549K07JT5",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 11.0,
-    "allotted": "2026-11-09",
-    "maturity": "2031-11-09"
-   },
-   {
     "isin": "INE549K07JS7",
     "issuer": "Muthoot Fincorp Limited",
     "sizeCr": 20.0,
     "allotted": "2026-11-09",
     "maturity": "2032-11-09"
-   },
-   {
-    "isin": "INE549K07JR9",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 18.0,
-    "allotted": "2026-11-09",
-    "maturity": "2031-11-09"
    },
    {
     "isin": "INE0DG907396",
