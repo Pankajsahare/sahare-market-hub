@@ -25,6 +25,7 @@ import datetime as dt
 import io
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -281,6 +282,20 @@ def clean(v):
         return None
     s = str(v).strip()
     return None if s in ("", "-", "null", "None", "NA", "N.A.") else s
+
+
+# NSDL चं "owner" field बहुतेक वेळा रिकामं असतं — म्हणून सरकारी कंपन्यांची नावं ओळखतो.
+PSU_RE = re.compile(
+    r"FOOD CORPORATION OF INDIA|HOUSING AND URBAN DEVELOPMENT|INDIA INFRASTRUCTURE FINANCE|INDIAN RAILWAY|"
+    r"INDIAN RENEWABLE ENERGY|NATIONAL BANK FOR|NATIONAL HIGHWAYS AUTHORITY|NHPC|NTPC|POWER FINANCE CORP|"
+    r"POWER GRID|^REC LIMITED|RURAL ELECTRIFICATION|SMALL INDUSTRIES DEVELOPMENT BANK|NATIONAL HOUSING BANK|"
+    r"EXPORT[- ]IMPORT BANK|NUCLEAR POWER CORP|SJVN|NLC INDIA|NEYVELI|COAL INDIA|STEEL AUTHORITY|OIL AND NATURAL GAS|"
+    r"INDIAN OIL CORP|BHARAT PETROLEUM|HINDUSTAN PETROLEUM|GAIL|BHARAT SANCHAR|MAHANAGAR TELEPHONE|AIR INDIA ASSETS|"
+    r"KONKAN RAILWAY|RAIL VIKAS|IRCON|NBCC|STATE BANK OF INDIA|BANK OF BARODA|PUNJAB NATIONAL BANK|CANARA BANK|"
+    r"UNION BANK OF INDIA|BANK OF INDIA|INDIAN BANK|CENTRAL BANK OF INDIA|INDIAN OVERSEAS BANK|UCO BANK|"
+    r"PUNJAB (AND|&) SIND BANK|BANK OF MAHARASHTRA|DAMODAR VALLEY|NORTH EASTERN ELECTRIC|NATIONAL THERMAL|"
+    r"IIFCL|HUDCO|IRFC|IREDA|NABARD|NABFID|SIDBI|INDIA EXIM",
+    re.I)
 
 
 def parse_static(isins_j, inst_j, coup_j, red_j, docs_j, contacts_j, today: dt.date) -> dict:
@@ -610,7 +625,7 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
             "face": face, "freq": freq, "freqText": n.get("freqText"),
             "cumulative": bool(n.get("cumulative")), "floating": bool(n.get("floating")),
             "rating": n.get("rating"), "ratings": ratings,
-            "psu": n.get("psu"), "sector": n.get("sector"), "industry": n.get("industry"),
+            "psu": bool(n.get("psu")) or bool(PSU_RE.search(n.get("issuer") or b.get("srcName") or "")), "sector": n.get("sector"), "industry": n.get("industry"),
             "taxFree": n.get("taxFree"), "secured": n.get("secured"), "seniority": n.get("seniority"),
             "guarantee": n.get("guarantee"), "assetCover": n.get("assetCover"),
             "callable": n.get("callable"), "callDate": n.get("callDate"),
