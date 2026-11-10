@@ -37,6 +37,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT_FILE = ROOT / "data" / "corp_bonds.json"
 CACHE_FILE = ROOT / "data" / "nsdl_cache.json"
+SCHED_FILE = ROOT / "data" / "corp_schedules.json"   # प्रत्येक bond चं पुढचं payout schedule (पान गरजेनुसार वाचतं)
 IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
 
 KEEP_DAYS = 30            # इतक्या दिवसांत व्यवहार झालेले bonds यादीत ठेवायचे
@@ -343,6 +344,7 @@ def parse_static(isins_j, inst_j, coup_j, red_j, docs_j, contacts_j, today: dt.d
     if isinstance(contacts_j, dict):
         d["trustee"] = clean(contacts_j.get("debtTrusteeName"))
         d["registrar"] = clean(contacts_j.get("registrar"))
+        d["address"] = clean(contacts_j.get("issuerRegAddr"))
     d["staticAt"] = today.isoformat()
     return d
 
@@ -518,11 +520,37 @@ def build_output(book: dict, cache: dict, today: dt.date) -> list[dict]:
             "nextPay": {"d": nxt["d"], "a": nxt["a"], "e": nxt["e"]} if nxt else None,
             "docs": n.get("docs", []), "trustee": n.get("trustee"), "registrar": n.get("registrar"),
             "issueMode": n.get("issueMode"), "category": n.get("category"),
+            "address": n.get("address"),
+            "schedule": any(f["d"] >= today.isoformat() for f in n.get("flows", [])),
             "flags": sorted(set(flags)),
             "nsdl": "dynamicAt" in n,
         })
     out.sort(key=lambda x: x["issuer"])
     return out
+
+
+def event_code(e: str | None) -> str:
+    """I = व्याज, R = मुद्दल परतफेड (partial/full redemption), O = इतर."""
+    e = (e or "").lower()
+    if "redemp" in e or "principal" in e or "maturity" in e:
+        return "R"
+    if "interest" in e or "coupon" in e:
+        return "I"
+    return "O"
+
+
+def write_schedules(bonds: list[dict], cache: dict, today: dt.date) -> None:
+    """{ISIN: [[तारीख, रक्कम प्रति bond, I/R/O], ...]} — फक्त आजपासूनचे payouts."""
+    t = today.isoformat()
+    out = {}
+    for b in bonds:
+        flows = [[f["d"], f["a"], event_code(f.get("e"))] for f in cache.get(b["isin"], {}).get("flows", [])
+                 if f["d"] >= t and f.get("a") is not None]
+        if flows:
+            out[b["isin"]] = flows
+    SCHED_FILE.write_text(json.dumps({"asOf": t, "basis": "per bond (one unit of face value)",
+                                      "schedules": out}, separators=(",", ":")), encoding="utf-8")
+    print(f"Schedules written for {len(out)} bonds")
 
 
 def notify(msg: str) -> None:
@@ -572,6 +600,7 @@ def main() -> int:
         "bonds": bonds,
     }
     OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_schedules(bonds, cache, today)
     # cache: फक्त सध्या यादीत असलेले + मागचे 120 दिवस वापरलेले bonds ठेवतो (file छोटी राहते)
     keep_cut = (today - dt.timedelta(days=120)).isoformat()
     for isin in list(cache):
