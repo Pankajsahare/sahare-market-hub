@@ -163,6 +163,10 @@ def curve_points(bonds: list[dict], today: dt.date) -> list[dict]:
     """प्रत्येक tenor साठी जवळच्या maturity चे bonds; उलाढालीनुसार भारित सरासरी yield."""
     for b in bonds:
         b["years"] = (dt.date.fromisoformat(b["maturity"]) - today).days / 365.25
+    ys = sorted(b["ytm"] for b in bonds)
+    med = ys[len(ys) // 2] if ys else 0
+    # कमी व्यवहार / maturity जवळ असलेल्या bonds चे विचित्र yields वगळतो
+    bonds = [b for b in bonds if b["years"] >= 0.75 and abs(b["ytm"] - med) <= 1.5]
     pts = []
     for t in TENORS:
         near = [b for b in bonds if abs(b["years"] - t) <= max(0.6, t * 0.18)]
