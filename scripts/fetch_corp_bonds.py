@@ -574,6 +574,8 @@ def liquidity(h: dict, file_days: list[str], today: dt.date) -> dict | None:
     turn = sum(h[d][0] for d in traded)
     n = len(traded)
     label = "frequent" if n >= max(3, len(window) * 0.5) else ("occasional" if n >= max(2, len(window) * 0.15) else "rare")
+    if len(window) < 5:      # फार कमी दिवसांची माहिती — अजून निष्कर्ष काढत नाही
+        label = None
     return {"days": n, "of": len(window), "since": min(window),
             "avgTurnover": round(turn / n) if n else 0,
             "trades": sum(h[d][1] for d in traded), "label": label}
