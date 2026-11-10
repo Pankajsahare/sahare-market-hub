@@ -1,14 +1,17 @@
-# A4U Bond prices — सोम ते शुक्र, संध्याकाळी 7:00 IST ला आपोआप चालतो (NSE/BSE bhavcopy प्रसिद्ध झाल्यावर)
+# A4U Bond Centre data — सोम ते शुक्र, संध्याकाळी 7:30 IST ला आपोआप चालतो
+#   1) fetch_market.py     → data/bond_market.json  (G-Sec curve, NSDL बाजार आकडे, RBI rates)
+#   2) fetch_bonds.py      → data/bonds.json        (SGB + G-Sec)
+#   3) fetch_corp_bonds.py → data/corp_bonds.json   (corporate bonds + NSDL ratings/माहिती)
 # हाताने चालवायचं असेल: Actions टॅब → "Update bond prices" → "Run workflow"
 name: Update bond prices
 
 on:
   schedule:
-    - cron: "30 13 * * 1-5"   # 13:30 UTC = 7:00 PM IST
+    - cron: "0 14 * * 1-5"   # 14:00 UTC = 7:30 PM IST
   workflow_dispatch:
 
 permissions:
-  contents: write              # bonds.json commit करायला लागतं
+  contents: write
 
 concurrency:
   group: bonds-update
@@ -17,7 +20,10 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 90
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -25,22 +31,25 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Fetch bond prices
-        env:
-          # Telegram alert — Foliyo sync चेच secrets वापरतो
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Market snapshot (curve, NSDL stats)
+        run: python scripts/fetch_market.py
+
+      - name: SGB + G-Sec prices
         run: python scripts/fetch_bonds.py
 
+      - name: Corporate bonds + NSDL details
+        run: python scripts/fetch_corp_bonds.py
+
       - name: Commit if changed
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add data/bonds.json
+          git add data/*.json
           if git diff --cached --quiet; then
             echo "No change"
           else
-            git commit -m "Update bond prices"
+            git commit -m "Update bond data"
             git pull --rebase
             git push
           fi

@@ -1,0 +1,19 @@
+{
+  "policy": {
+    "repo": 5.50,
+    "sdf": 5.25,
+    "msf": 5.75,
+    "bankRate": 5.75,
+    "stance": "Calibrated tightening",
+    "effective": "2026-10-07",
+    "nextMeeting": "2026-12-02 to 2026-12-04",
+    "source": "RBI MPC resolution, 7 Oct 2026"
+  },
+  "inflation": {
+    "cpi": 5.54,
+    "food": 7.74,
+    "month": "Sep 2026",
+    "nextRelease": "2026-11-12",
+    "source": "MoSPI, released 12 Oct 2026 (provisional)"
+  }
+}
