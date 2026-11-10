@@ -1,0 +1,46 @@
+# A4U Bond prices — सोम ते शुक्र, दुपारी 4:15 IST ला आपोआप चालतो
+# हाताने चालवायचं असेल: Actions टॅब → "Update bond prices" → "Run workflow"
+name: Update bond prices
+
+on:
+  schedule:
+    - cron: "45 10 * * 1-5"   # 10:45 UTC = 4:15 PM IST
+  workflow_dispatch:
+
+permissions:
+  contents: write              # bonds.json commit करायला लागतं
+
+concurrency:
+  group: bonds-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch bond prices
+        env:
+          # TODO [Telegram, ऐच्छिक]: repo मध्ये या नावाचे secrets नसतील तर alert फक्त बंद राहील
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/fetch_bonds.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/bonds.json
+          if git diff --cached --quiet; then
+            echo "No change"
+          else
+            git commit -m "Update bond prices"
+            git pull --rebase
+            git push
+          fi
