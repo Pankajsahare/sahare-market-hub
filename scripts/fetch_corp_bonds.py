@@ -360,6 +360,30 @@ def rating_key(r: str) -> int:
     return RANK.index(base) if base in RANK else 99
 
 
+def clean_watch(w):
+    """NSDL "No Watch" / "Not under watch" = watch नाही."""
+    w = (w or "").strip()
+    return None if not w or w.lower().startswith(("no", "not")) else w
+
+
+def rating_flags(ratings: list[dict]) -> list[str]:
+    flags = []
+    text = " ".join(f"{x.get('r') or ''} {x.get('o') or ''} {x.get('act') or ''}" for x in ratings).lower()
+    if "negative" in text:
+        flags.append("neg")
+    if "not cooperating" in text or "non cooperat" in text or "inc" in text.split():
+        flags.append("inc")
+    if any(clean_watch(x.get("w")) for x in ratings):
+        flags.append("watch")
+    if "withdraw" in text:
+        flags.append("withdrawn")
+    if any(x.get("p") for x in ratings):
+        flags.append("provisional")
+    if "(ce)" in text or "(so)" in text:
+        flags.append("ce")
+    return flags
+
+
 def parse_dynamic(rat_j, def_j, today: dt.date) -> dict:
     d: dict = {"ratings": [], "flags": []}
     cur = (rat_j or {}).get("currentRatings") if isinstance(rat_j, dict) else None
@@ -374,19 +398,7 @@ def parse_dynamic(rat_j, def_j, today: dt.date) -> dict:
         })
     valid = [x for x in d["ratings"] if rating_key(x["r"]) < 99]
     d["rating"] = min(valid, key=lambda x: rating_key(x["r"]))["r"] if valid else None
-    text = " ".join(f"{x['r']} {x['o'] or ''} {x['w'] or ''} {x['act'] or ''}" for x in d["ratings"]).lower()
-    if "negative" in text:
-        d["flags"].append("neg")
-    if "not cooperating" in text or "non cooperat" in text or "inc" in text.split():
-        d["flags"].append("inc")
-    if "watch" in text:
-        d["flags"].append("watch")
-    if "withdraw" in text:
-        d["flags"].append("withdrawn")
-    if any(x["p"] for x in d["ratings"]):
-        d["flags"].append("provisional")
-    if "(ce)" in text or "(so)" in text:
-        d["flags"].append("ce")
+    d["flags"] = rating_flags(d["ratings"])
     d["defaulted"] = isinstance(def_j, (dict, list)) and bool(def_j) and not (
         isinstance(def_j, dict) and def_j.get("status") == 400)
     d["dynamicAt"] = today.isoformat()
@@ -526,7 +538,8 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
             elif coupon and perp:
                 ytm = round(coupon / price * 100, 2)
         nxt = next((f for f in n.get("flows", []) if f["d"] >= today.isoformat()), None)
-        flags = list(n.get("flags", []))
+        ratings = [dict(r, w=clean_watch(r.get("w"))) for r in n.get("ratings", [])]
+        flags = rating_flags(ratings)
         if ytm and ytm > HIGH_YIELD:
             flags.append("highyield")
         if n.get("defaulted") or n.get("defaultedRedemption"):
@@ -543,7 +556,7 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
             "turnover": round(b.get("turnover") or 0),
             "face": face, "freq": freq, "freqText": n.get("freqText"),
             "cumulative": bool(n.get("cumulative")), "floating": bool(n.get("floating")),
-            "rating": n.get("rating"), "ratings": n.get("ratings", []),
+            "rating": n.get("rating"), "ratings": ratings,
             "psu": n.get("psu"), "sector": n.get("sector"), "industry": n.get("industry"),
             "taxFree": n.get("taxFree"), "secured": n.get("secured"), "seniority": n.get("seniority"),
             "guarantee": n.get("guarantee"), "assetCover": n.get("assetCover"),
