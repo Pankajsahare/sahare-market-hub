@@ -38,6 +38,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT_FILE = ROOT / "data" / "corp_bonds.json"
 CACHE_FILE = ROOT / "data" / "nsdl_cache.json"
 SCHED_FILE = ROOT / "data" / "corp_schedules.json"
+PRICE_FILE = ROOT / "data" / "corp_prices.json"   # 90 दिवसांचा भाव-इतिहास (chart साठी)
 HIST_FILE = ROOT / "data" / "corp_history.json"     # प्रत्येक bond चे रोजचे व्यवहार (liquidity साठी)   # प्रत्येक bond चं पुढचं payout schedule (पान गरजेनुसार वाचतं)
 IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
 
@@ -482,18 +483,70 @@ def merge(trades: list[dict], previous: dict, today: dt.date) -> dict:
     return {k: v for k, v in book.items() if v.get("tradeDate", "") >= cut}
 
 
-def update_history(hist: dict, trades: list[dict], today: dt.date) -> dict:
-    """{ISIN: {day: [उलाढाल ₹, trades]}} — मागचे 45 दिवस ठेवतो."""
+HIST_KEEP_DAYS = 100   # liquidity (30 दिवस) + price chart (90 दिवस) साठी पुरेसं
+
+
+def backfill(hist_days: list[str], today: dt.date, max_secs: int = 420) -> list[dict]:
+    """पहिल्यांदाच: मागच्या 90 दिवसांच्या files एकदाच आणतो (chart लगेच भरलेला दिसावा).
+    आधीच 15+ दिवस असतील तर काहीच करत नाही. वेळ-मर्यादा 7 मिनिटं."""
+    if len(hist_days) >= 15:
+        return []
+    have = set(hist_days)
+    start, rows = time.time(), []
+    for back in range(1, 91):
+        day = today - dt.timedelta(days=back)
+        if day.weekday() >= 5 or day.isoformat() in have:
+            continue
+        if time.time() - start > max_secs:
+            break
+        try:
+            rows += bse_debt(day) + nse_cm(day)
+        except Exception as e:   # एखादा दिवस न मिळाल्यास पुढे चालू
+            print(f"backfill {day}: {e}")
+    print(f"Backfill: {len(rows)} rows from {len({r['day'] for r in rows})} days")
+    return rows
+
+
+def update_history(hist: dict, trades: list[dict], today: dt.date, faces: dict | None = None) -> dict:
+    """{ISIN: {day: [उलाढाल ₹, trades, close ₹/100]}} — मागचे 100 दिवस ठेवतो.
+    close = त्या दिवशी सगळ्यात जास्त उलाढाल झालेल्या व्यवहाराचा भाव (₹100 face प्रमाणे)."""
+    faces = faces or {}
+    agg: dict = {}    # या run मधले दिवस नव्याने मोजतो — तोच file परत आला तरी दुप्पट मोजणी होत नाही
+    best: dict = {}
     for t in trades:
-        d = hist.setdefault(t["isin"], {}).setdefault(t["day"], [0.0, 0])
+        key = (t["isin"], t["day"])
+        d = agg.setdefault(key, [0.0, 0, None])
         d[0] += t.get("turnover") or 0
         d[1] += t.get("trades") or 0
-    cut = (today - dt.timedelta(days=45)).isoformat()
+        p = t.get("price100")
+        face = t.get("face") or faces.get(t["isin"])
+        if not p and t.get("price_unit") and face:
+            p = t["price_unit"] / face * 100
+        if p and 20 < p < 400:
+            tv = t.get("turnover") or 0
+            if key not in best or tv > best[key]:
+                best[key] = tv
+                d[2] = round(p, 4)
+    for (isin, day), d in agg.items():
+        hist.setdefault(isin, {})[day] = d
+    cut = (today - dt.timedelta(days=HIST_KEEP_DAYS)).isoformat()
     for isin in list(hist):
         hist[isin] = {k: v for k, v in hist[isin].items() if k >= cut}
         if not hist[isin]:
             del hist[isin]
     return hist
+
+
+def write_prices(hist: dict, isins: set[str]) -> None:
+    """पानासाठी छोटी file: {ISIN: [[day, close], ...]} — bond उघडल्यावरच load होते."""
+    out = {}
+    for isin in isins:
+        rows = [[d, v[2]] for d, v in sorted(hist.get(isin, {}).items()) if len(v) > 2 and v[2]]
+        if rows:
+            out[isin] = rows
+    PRICE_FILE.write_text(json.dumps({"asOf": max((r[-1][0] for r in out.values()), default=None),
+                                      "basis": "Daily close per Rs 100 face (BSE/NSE, highest-turnover trade)",
+                                      "prices": out}, separators=(",", ":")), encoding="utf-8")
 
 
 def liquidity(h: dict, file_days: list[str], today: dt.date) -> dict | None:
@@ -634,9 +687,12 @@ def main() -> int:
         return 0
     book = merge(trades, previous, today)
     hist_all = load_json(HIST_FILE, {})
-    days_seen = sorted(set(hist_all.pop("_days", [])) | {t["day"] for t in trades})
-    hist = update_history(hist_all, trades, today) if trades else hist_all
-    hist["_days"] = [d for d in days_seen if d >= (today - dt.timedelta(days=45)).isoformat()]
+    old_days = hist_all.pop("_days", [])
+    extra = backfill(old_days, today) if trades else []
+    days_seen = sorted(set(old_days) | {t["day"] for t in trades + extra})
+    faces = {i: (cache.get(i, {}).get("face") or book[i].get("srcFace")) for i in book}
+    hist = update_history(hist_all, extra + trades, today, faces) if trades else hist_all
+    hist["_days"] = [d for d in days_seen if d >= (today - dt.timedelta(days=HIST_KEEP_DAYS)).isoformat()]
     HIST_FILE.write_text(json.dumps(hist, separators=(",", ":")), encoding="utf-8")
     file_days = hist["_days"]
     stats = enrich(sorted(book, key=lambda i: -(book[i].get("turnover") or 0)), cache, today)
@@ -654,6 +710,7 @@ def main() -> int:
     }
     OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     write_schedules(bonds, cache, today)
+    write_prices(hist, {b["isin"] for b in bonds})
     # cache: फक्त सध्या यादीत असलेले + मागचे 120 दिवस वापरलेले bonds ठेवतो (file छोटी राहते)
     keep_cut = (today - dt.timedelta(days=120)).isoformat()
     for isin in list(cache):
