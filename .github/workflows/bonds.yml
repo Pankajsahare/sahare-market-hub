@@ -1,10 +1,10 @@
-# A4U Bond prices — सोम ते शुक्र, दुपारी 4:15 IST ला आपोआप चालतो
+# A4U Bond prices — सोम ते शुक्र, संध्याकाळी 7:00 IST ला आपोआप चालतो (NSE/BSE bhavcopy प्रसिद्ध झाल्यावर)
 # हाताने चालवायचं असेल: Actions टॅब → "Update bond prices" → "Run workflow"
 name: Update bond prices
 
 on:
   schedule:
-    - cron: "45 10 * * 1-5"   # 10:45 UTC = 4:15 PM IST
+    - cron: "30 13 * * 1-5"   # 13:30 UTC = 7:00 PM IST
   workflow_dispatch:
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
 
       - name: Fetch bond prices
         env:
-          # TODO [Telegram, ऐच्छिक]: repo मध्ये या नावाचे secrets नसतील तर alert फक्त बंद राहील
+          # Telegram alert — Foliyo sync चेच secrets वापरतो
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python scripts/fetch_bonds.py
