@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-10T17:13+05:30",
+ "updated": "2026-11-10T18:33+05:30",
  "pricesAsOf": "2026-11-09",
  "curve": [
   {
@@ -789,18 +789,11 @@
     "maturity": "2029-04-17"
    },
    {
-    "isin": "INE549K07JQ1",
+    "isin": "INE549K07JZ2",
     "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 22.0,
+    "sizeCr": 38.0,
     "allotted": "2026-11-09",
-    "maturity": "2032-11-09"
-   },
-   {
-    "isin": "INE549K07KA3",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 20.0,
-    "allotted": "2026-11-09",
-    "maturity": "2031-11-09"
+    "maturity": "2028-11-09"
    },
    {
     "isin": "INE549K07JT5",
@@ -810,18 +803,11 @@
     "maturity": "2031-11-09"
    },
    {
-    "isin": "INE549K07JY5",
+    "isin": "INE549K07JQ1",
     "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 66.0,
+    "sizeCr": 22.0,
     "allotted": "2026-11-09",
-    "maturity": "2029-11-09"
-   },
-   {
-    "isin": "INE549K07JZ2",
-    "issuer": "Muthoot Fincorp Limited",
-    "sizeCr": 38.0,
-    "allotted": "2026-11-09",
-    "maturity": "2028-11-09"
+    "maturity": "2032-11-09"
    },
    {
     "isin": "INE549K07JV1",
@@ -829,6 +815,20 @@
     "sizeCr": 46.0,
     "allotted": "2026-11-09",
     "maturity": "2029-11-09"
+   },
+   {
+    "isin": "INE549K07JY5",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 66.0,
+    "allotted": "2026-11-09",
+    "maturity": "2029-11-09"
+   },
+   {
+    "isin": "INE549K07KA3",
+    "issuer": "Muthoot Fincorp Limited",
+    "sizeCr": 20.0,
+    "allotted": "2026-11-09",
+    "maturity": "2031-11-09"
    },
    {
     "isin": "INE549K07JS7",
@@ -917,16 +917,16 @@
     "maturity": "2026-11-10"
    },
    {
-    "isin": "INE321N07376",
+    "isin": "INE321N07368",
     "issuer": "Incred Financial Services Limited",
-    "sizeCr": 86.9739,
+    "sizeCr": 57.2845,
     "allotted": "2023-11-10",
     "maturity": "2026-11-10"
    },
    {
-    "isin": "INE321N07368",
+    "isin": "INE321N07376",
     "issuer": "Incred Financial Services Limited",
-    "sizeCr": 57.2845,
+    "sizeCr": 86.9739,
     "allotted": "2023-11-10",
     "maturity": "2026-11-10"
    },
@@ -994,16 +994,16 @@
     "maturity": "2026-11-11"
    },
    {
-    "isin": "INE296Q07068",
+    "isin": "IN8296Q07018",
     "issuer": "Moneyboxx Finance Limited",
-    "sizeCr": 62.0,
+    "sizeCr": 0.0,
     "allotted": "2024-11-11",
     "maturity": "2026-11-11"
    },
    {
-    "isin": "IN8296Q07018",
+    "isin": "INE296Q07068",
     "issuer": "Moneyboxx Finance Limited",
-    "sizeCr": 0.0,
+    "sizeCr": 62.0,
     "allotted": "2024-11-11",
     "maturity": "2026-11-11"
    },
