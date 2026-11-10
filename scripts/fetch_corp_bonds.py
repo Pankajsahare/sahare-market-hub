@@ -37,7 +37,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT_FILE = ROOT / "data" / "corp_bonds.json"
 CACHE_FILE = ROOT / "data" / "nsdl_cache.json"
-SCHED_FILE = ROOT / "data" / "corp_schedules.json"   # प्रत्येक bond चं पुढचं payout schedule (पान गरजेनुसार वाचतं)
+SCHED_FILE = ROOT / "data" / "corp_schedules.json"
+HIST_FILE = ROOT / "data" / "corp_history.json"     # प्रत्येक bond चे रोजचे व्यवहार (liquidity साठी)   # प्रत्येक bond चं पुढचं payout schedule (पान गरजेनुसार वाचतं)
 IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
 
 KEEP_DAYS = 30            # इतक्या दिवसांत व्यवहार झालेले bonds यादीत ठेवायचे
@@ -153,6 +154,7 @@ def bse_debt(day: dt.date) -> list[dict]:
                         "price100": price, "yield": fnum(r.get("Weighted Average Yield")),
                         "face": fnum(r.get("Face Value")),
                         "turnover": (fnum(r.get("Turnover (Rs. Lakh)")) or 0) * 1e5,
+                        "trades": 1,
                         "exch": "BSE", "day": day.isoformat(),
                     })
             elif low.startswith("fgroup"):
@@ -169,6 +171,7 @@ def bse_debt(day: dt.date) -> list[dict]:
                         "price100": (close / face * 100) if close and face else None,
                         "price_unit": close, "yield": None, "face": face,
                         "turnover": fnum(r.get("Total Turnover")) or 0,
+                        "trades": int(fnum(r.get("Number of Trades")) or 0),
                         "exch": "BSE", "day": day.isoformat(),
                     })
     return out
@@ -191,6 +194,7 @@ def nse_cm(day: dt.date) -> list[dict]:
             "isin": isin, "name": (r.get("FinInstrmNm") or "").strip(),
             "coupon": None, "maturity": None, "price100": None, "price_unit": close,
             "yield": None, "face": None, "turnover": fnum(r.get("TtlTrfVal")) or 0,
+            "trades": int(fnum(r.get("TtlNbOfTxsExctd")) or 0),
             "exch": "NSE", "day": day.isoformat(),
         })
     return out
@@ -466,7 +470,36 @@ def merge(trades: list[dict], previous: dict, today: dt.date) -> dict:
     return {k: v for k, v in book.items() if v.get("tradeDate", "") >= cut}
 
 
-def build_output(book: dict, cache: dict, today: dt.date) -> list[dict]:
+def update_history(hist: dict, trades: list[dict], today: dt.date) -> dict:
+    """{ISIN: {day: [उलाढाल ₹, trades]}} — मागचे 45 दिवस ठेवतो."""
+    for t in trades:
+        d = hist.setdefault(t["isin"], {}).setdefault(t["day"], [0.0, 0])
+        d[0] += t.get("turnover") or 0
+        d[1] += t.get("trades") or 0
+    cut = (today - dt.timedelta(days=45)).isoformat()
+    for isin in list(hist):
+        hist[isin] = {k: v for k, v in hist[isin].items() if k >= cut}
+        if not hist[isin]:
+            del hist[isin]
+    return hist
+
+
+def liquidity(h: dict, file_days: list[str], today: dt.date) -> dict | None:
+    """मागच्या 30 दिवसांत (आपल्याकडे file असलेले trading days) किती दिवस व्यवहार झाला."""
+    cut = (today - dt.timedelta(days=30)).isoformat()
+    window = [d for d in file_days if d >= cut]
+    if not window:
+        return None
+    traded = [d for d in window if d in h]
+    turn = sum(h[d][0] for d in traded)
+    n = len(traded)
+    label = "frequent" if n >= max(3, len(window) * 0.5) else ("occasional" if n >= max(2, len(window) * 0.15) else "rare")
+    return {"days": n, "of": len(window), "since": min(window),
+            "avgTurnover": round(turn / n) if n else 0,
+            "trades": sum(h[d][1] for d in traded), "label": label}
+
+
+def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = None, file_days: list[str] | None = None) -> list[dict]:
     out = []
     for isin, b in book.items():
         n = cache.get(isin, {})
@@ -523,6 +556,7 @@ def build_output(book: dict, cache: dict, today: dt.date) -> list[dict]:
             "address": n.get("address"),
             "schedule": any(f["d"] >= today.isoformat() for f in n.get("flows", [])),
             "flags": sorted(set(flags)),
+            "liq": liquidity((hist or {}).get(isin, {}), file_days or [], today),
             "nsdl": "dynamicAt" in n,
         })
     out.sort(key=lambda x: x["issuer"])
@@ -586,9 +620,15 @@ def main() -> int:
         notify("⚠️ Corporate bonds: no BSE/NSE debt file found and no previous data.")
         return 0
     book = merge(trades, previous, today)
+    hist_all = load_json(HIST_FILE, {})
+    days_seen = sorted(set(hist_all.pop("_days", [])) | {t["day"] for t in trades})
+    hist = update_history(hist_all, trades, today) if trades else hist_all
+    hist["_days"] = [d for d in days_seen if d >= (today - dt.timedelta(days=45)).isoformat()]
+    HIST_FILE.write_text(json.dumps(hist, separators=(",", ":")), encoding="utf-8")
+    file_days = hist["_days"]
     stats = enrich(sorted(book, key=lambda i: -(book[i].get("turnover") or 0)), cache, today)
 
-    bonds = build_output(book, cache, today)
+    bonds = build_output(book, cache, today, hist, file_days)
     rated_dates = sorted(x["dynamicAt"] for x in cache.values() if x.get("dynamicAt"))
     payload = {
         "updated": dt.datetime.now(IST).isoformat(timespec="minutes"),
