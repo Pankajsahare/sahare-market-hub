@@ -1,0 +1,156 @@
+{
+ "asOf": "31-Oct-2026",
+ "asOfISO": "2026-10-31",
+ "period": "October 16-31, 2026",
+ "source": "NSDL FPI Monitor — Fortnightly Sector-wise Investment",
+ "sourceUrl": "https://www.fpi.nsdl.co.in/web/StaticReports/Fortnightly_Sector_wise_FII_Investment_Data/FIIInvestSector_Oct312026.html",
+ "mode": "total",
+ "yearWindowFortnights": 24,
+ "generatedAt": "2026-11-14T21:01:39+05:30",
+ "sectors": [
+  {
+   "name": "Financial Services",
+   "aum": 27.2,
+   "fortnight": -1577,
+   "year": -147854
+  },
+  {
+   "name": "Healthcare",
+   "aum": 7.3,
+   "fortnight": -57,
+   "year": -14652
+  },
+  {
+   "name": "Automobile and Auto Components",
+   "aum": 6.5,
+   "fortnight": -1098,
+   "year": -51188
+  },
+  {
+   "name": "Capital Goods",
+   "aum": 6.2,
+   "fortnight": -825,
+   "year": 8693
+  },
+  {
+   "name": "Information Technology",
+   "aum": 5.9,
+   "fortnight": 10915,
+   "year": -18663
+  },
+  {
+   "name": "Oil, Gas & Consumable Fuels",
+   "aum": 5.7,
+   "fortnight": -945,
+   "year": -31503
+  },
+  {
+   "name": "Telecommunication",
+   "aum": 5.4,
+   "fortnight": 11065,
+   "year": -14915
+  },
+  {
+   "name": "Sovereign",
+   "aum": 5.3,
+   "fortnight": -1053,
+   "year": 53810
+  },
+  {
+   "name": "Others",
+   "aum": 4.1,
+   "fortnight": 9565,
+   "year": 32507
+  },
+  {
+   "name": "Consumer Services",
+   "aum": 4.0,
+   "fortnight": -662,
+   "year": -2727
+  },
+  {
+   "name": "Fast Moving Consumer Goods",
+   "aum": 3.5,
+   "fortnight": -1559,
+   "year": -53078
+  },
+  {
+   "name": "Metals & Mining",
+   "aum": 3.5,
+   "fortnight": -904,
+   "year": 14519
+  },
+  {
+   "name": "Power",
+   "aum": 3.4,
+   "fortnight": -775,
+   "year": -16958
+  },
+  {
+   "name": "Services",
+   "aum": 2.7,
+   "fortnight": 603,
+   "year": 6192
+  },
+  {
+   "name": "Consumer Durables",
+   "aum": 2.4,
+   "fortnight": -402,
+   "year": 4698
+  },
+  {
+   "name": "Realty",
+   "aum": 1.9,
+   "fortnight": 621,
+   "year": -12710
+  },
+  {
+   "name": "Construction",
+   "aum": 1.6,
+   "fortnight": -517,
+   "year": -5740
+  },
+  {
+   "name": "Chemicals",
+   "aum": 1.5,
+   "fortnight": -862,
+   "year": -2896
+  },
+  {
+   "name": "Construction Materials",
+   "aum": 1.3,
+   "fortnight": -196,
+   "year": -11607
+  },
+  {
+   "name": "Textiles",
+   "aum": 0.3,
+   "fortnight": -21,
+   "year": -964
+  },
+  {
+   "name": "Media, Entertainment & Publication",
+   "aum": 0.2,
+   "fortnight": 140,
+   "year": -1310
+  },
+  {
+   "name": "Diversified",
+   "aum": 0.1,
+   "fortnight": -16,
+   "year": 479
+  },
+  {
+   "name": "Forest Materials",
+   "aum": 0.0,
+   "fortnight": -58,
+   "year": -193
+  },
+  {
+   "name": "Utilities",
+   "aum": 0.0,
+   "fortnight": -27,
+   "year": 55
+  }
+ ]
+}
