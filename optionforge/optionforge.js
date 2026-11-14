@@ -217,8 +217,10 @@ function boot(root){
   }
   function demoTick(){var d=MKd();if(!d||!d.demo)return;var C=MK(),now=Date.now();
     d.spot*=1+(Math.random()-0.5)*(C.kind==='index'?0.0012:0.003);
+    // v3.3: सगळ्या strikes ना एकच हळू बदलणारा IV shift — smile smooth राहते
+    d.ivShift=clamp((d.ivShift||0)*0.9+(Math.random()-0.5)*0.004,-0.03,0.03);
     d.instruments.forEach(function(i){var T=Math.max((i.expiry-now)/YEAR,1e-6);
-      i.fwd=d.spot*Math.exp(C.rate*T);i.iv=clamp(i.base+(Math.random()-0.5)*0.01,0.05,2.5);
+      i.fwd=d.spot*Math.exp(C.rate*T);i.iv=clamp(i.base+d.ivShift,0.05,2.5);
       i.mark=bs(i.fwd,i.strike,T,i.iv,i.type,C.rate).price;i.bid=i.mark*0.985;i.ask=i.mark*1.015;});
     d.at=now;}
   function fetchJSON(url,ms){var c=new AbortController(),t=setTimeout(function(){c.abort();},ms||12000);
@@ -290,10 +292,11 @@ function boot(root){
       // इथे फक्त खरे feed errors येतात — render errors आता safe() मध्ये अडकतात
       if(!S.data[m]){S.data[m]=demoData(m);setStatus('demo');
         banner('warn',MK().kind==='index'
-          ? m+' chain is SIMULATED — '+(e.message||'feed unavailable')+'. Configure the proxy for live NSE data. Never trade on these numbers.'
+          ? m+' chain is SIMULATED — live NSE data is not connected on this site. Never trade on these numbers.'
           : 'Simulated preview — live feed unreachable ('+e.message+'). Auto-retrying. Do not trade on these numbers.');
         afterData(true);}
-      else if(S.data[m].demo){setStatus('demo');}
+      else if(S.data[m].demo){setStatus('demo');
+        banner('warn',MK().kind==='index'?m+' chain is SIMULATED — live NSE data is not connected on this site. Never trade on these numbers.':'Simulated preview — live feed unreachable ('+e.message+'). Auto-retrying. Do not trade on these numbers.');}
       else{setStatus('stale');banner('err','Live feed hiccup ('+e.message+') — showing snapshot from '+new Date(S.data[m].at).toLocaleTimeString()+'. Retrying…');}
       wsClose();
     }).then(function(){fetching=false;});
@@ -424,7 +427,13 @@ function boot(root){
     var p=null;PRESETS.forEach(function(x){if(x.id===id)p=x;});if(!p)return;
     ensureExpiry();
     var e=selExp()||d.expiries[0],e2=d.expiries.filter(function(x){return x>e;})[0]||e;
-    var specs=p.b(function(pct){return nearest(e,d.spot*(1+pct/100));},e,e2);
+    // v3.3: strikes expected-move (σ√T) प्रमाणे — BTC (high IV) आणि NIFTY (low IV, short expiry) दोन्हीवर योग्य आकार.
+    // 0.08 = reference 1σ (8%); preset मधले % याच्या प्रमाणात लहान/मोठे होतात.
+    var Te=Math.max((e-Date.now())/YEAR,1/365),m1=atmIvAt(e)*Math.sqrt(Te);
+    var ks0=strikesAt(e),gap=MK().step;
+    if(ks0.length>1){var ai=ks0.indexOf(nearest(e,d.spot));gap=Math.abs(ks0[Math.min(ai+1,ks0.length-1)]-ks0[Math.max(ai-1,0)])/((ai>0&&ai<ks0.length-1)?2:1)||gap;}
+    var scMin=Math.max(0.12,0.6*gap/(0.01*d.spot)),sc=clamp(m1/0.08,scMin,1.5);
+    var specs=p.b(function(pct){return nearest(e,d.spot*Math.exp(pct/100*sc));},e,e2);
     if(!silent)pushHist();
     S.legs=specs.map(function(s){return makeLeg(s.t,s.s,s.k,s.e,s.q);});S.sel={};S.autoLeg=!!silent;
     S.presetName=p.name;persist();
@@ -515,7 +524,8 @@ function boot(root){
     S.legs.forEach(function(l){var Te=Math.max((l.expiry-Date.now())/YEAR-S.ui.days/365,0),s2=Math.max(legIv(l)+S.ui.iv/100,0.02);
       var o=Te<=1e-9?{delta:l.type==='C'?(Sx>l.strike?1:0):(Sx<l.strike?-1:0),gamma:0,theta:0,vega:0}:bs(Sx,l.strike,Te,s2,l.type,MK().rate);
       var w=l.side*l.qty*L;g.d+=w*o.delta;g.g+=w*o.gamma;g.t+=w*o.theta;g.v+=w*o.vega;});
-    var netPrem=S.legs.reduce(function(a,l){return a+l.side*l.qty*l.premium;},0)*(isCoin()?1/sp:L);
+    // v3.3: + = credit (पैसे मिळतात), − = debit (पैसे भरतो) — आधी हे उलटं होतं
+    var netPrem=-S.legs.reduce(function(a,l){return a+l.side*l.qty*l.premium;},0)*(isCoin()?1/sp:L);
     var margin=0,notional=0;
     S.legs.forEach(function(l){var w=l.qty*L;notional+=w*sp;
       if(l.side===-1){var otm=l.type==='C'?Math.max(l.strike-sp,0):Math.max(sp-l.strike,0);
@@ -1410,7 +1420,8 @@ function boot(root){
   ensureExpiry();
   if(!S.legs.length)loadPreset('ironCondor',true);
   setStatus('demo');
-  banner('warn','Simulated preview while the live '+S.market+' feed connects. Do not trade on these numbers.');
+  banner('warn',(MK().kind==='index'&&!CONFIG.NSE_PROXY_URL)?S.market+' chain is SIMULATED — live NSE data is not connected on this site. Never trade on these numbers.'
+    :'Simulated preview while the live '+S.market+' feed connects. Do not trade on these numbers.');
   bind();
   renderAll();
   sizeAll();
