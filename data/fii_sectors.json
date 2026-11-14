@@ -2,155 +2,799 @@
  "asOf": "31-Oct-2026",
  "asOfISO": "2026-10-31",
  "period": "October 16-31, 2026",
+ "prevPeriod": "October 01-15, 2026",
+ "fxRate": 95.2492,
+ "othersTop10": [
+  {
+   "name": "PORTEAST INVESTMENT PRIVATE LIMITED",
+   "cr": 25342
+  },
+  {
+   "name": "EQYIZEN INVESTMENT PRIVATE LIMITED SR A",
+   "cr": 23044
+  },
+  {
+   "name": "RELIANCE LOGISTICS AND WAREHOUSE HOLDING GS LIMITED",
+   "cr": 5275
+  },
+  {
+   "name": "JSW KALINGA STEEL LIMITED",
+   "cr": 4700
+  },
+  {
+   "name": "RELIANCE CAPITAL LIMITED",
+   "cr": 3490
+  },
+  {
+   "name": "FULLERTON INDIA CREDIT COMPANY LTD",
+   "cr": 2044
+  },
+  {
+   "name": "BILT GRAPHIC PAPER PRODUCTS LIMITED",
+   "cr": 1313
+  },
+  {
+   "name": "CONVENIENT HOSPITALS LIMITED EQ",
+   "cr": 1225
+  },
+  {
+   "name": "TATA CAPITAL HOUSING FINANCE LIMITED",
+   "cr": 1175
+  },
+  {
+   "name": "TATA CAPITAL FINANCIAL SERVICES LIMITED",
+   "cr": 1104
+  }
+ ],
  "source": "NSDL FPI Monitor — Fortnightly Sector-wise Investment",
  "sourceUrl": "https://www.fpi.nsdl.co.in/web/StaticReports/Fortnightly_Sector_wise_FII_Investment_Data/FIIInvestSector_Oct312026.html",
  "mode": "total",
  "yearWindowFortnights": 24,
- "generatedAt": "2026-11-14T21:01:39+05:30",
+ "generatedAt": "2026-11-14T21:51:05+05:30",
  "sectors": [
   {
    "name": "Financial Services",
    "aum": 27.2,
    "fortnight": -1577,
-   "year": -147854
+   "year": -147854,
+   "prevFortnight": -10628,
+   "aumEq": 30.1,
+   "fortnightEq": -883,
+   "yearEq": -138022,
+   "prevFortnightEq": -8634,
+   "aucCr": 1983600,
+   "aucCrEq": 1962000,
+   "aucUsdMn": 208254,
+   "fortnightUsdMn": -166,
+   "breakdown": {
+    "net": {
+     "equity": -883,
+     "debt": -1001,
+     "hybrid": 0,
+     "mf": 307,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 1962000,
+     "debt": 20841,
+     "hybrid": 0,
+     "mf": 759,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Healthcare",
    "aum": 7.3,
    "fortnight": -57,
-   "year": -14652
+   "year": -14652,
+   "prevFortnight": -5497,
+   "aumEq": 8.1,
+   "fortnightEq": -57,
+   "yearEq": -15466,
+   "prevFortnightEq": -5497,
+   "aucCr": 530564,
+   "aucCrEq": 528015,
+   "aucUsdMn": 55703,
+   "fortnightUsdMn": -6,
+   "breakdown": {
+    "net": {
+     "equity": -57,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 528015,
+     "debt": 2549,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Automobile and Auto Components",
    "aum": 6.5,
    "fortnight": -1098,
-   "year": -51188
+   "year": -51188,
+   "prevFortnight": -6533,
+   "aumEq": 7.3,
+   "fortnightEq": -1098,
+   "yearEq": -49873,
+   "prevFortnightEq": -6533,
+   "aucCr": 474532,
+   "aucCrEq": 474488,
+   "aucUsdMn": 49820,
+   "fortnightUsdMn": -115,
+   "breakdown": {
+    "net": {
+     "equity": -1098,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 474488,
+     "debt": 44,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Capital Goods",
    "aum": 6.2,
    "fortnight": -825,
-   "year": 8693
+   "year": 8693,
+   "prevFortnight": -3886,
+   "aumEq": 6.9,
+   "fortnightEq": -825,
+   "yearEq": 9242,
+   "prevFortnightEq": -3886,
+   "aucCr": 449525,
+   "aucCrEq": 449447,
+   "aucUsdMn": 47194,
+   "fortnightUsdMn": -87,
+   "breakdown": {
+    "net": {
+     "equity": -825,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 449447,
+     "debt": 78,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Information Technology",
    "aum": 5.9,
    "fortnight": 10915,
-   "year": -18663
+   "year": -18663,
+   "prevFortnight": 2599,
+   "aumEq": 6.6,
+   "fortnightEq": 10915,
+   "yearEq": -18938,
+   "prevFortnightEq": 2599,
+   "aucCr": 430166,
+   "aucCrEq": 429892,
+   "aucUsdMn": 45161,
+   "fortnightUsdMn": 1145,
+   "breakdown": {
+    "net": {
+     "equity": 10915,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 429892,
+     "debt": 274,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Oil, Gas & Consumable Fuels",
    "aum": 5.7,
    "fortnight": -945,
-   "year": -31503
+   "year": -31503,
+   "prevFortnight": -3681,
+   "aumEq": 6.3,
+   "fortnightEq": -970,
+   "yearEq": -32641,
+   "prevFortnightEq": -3680,
+   "aucCr": 411800,
+   "aucCrEq": 410364,
+   "aucUsdMn": 43234,
+   "fortnightUsdMn": -99,
+   "breakdown": {
+    "net": {
+     "equity": -970,
+     "debt": 25,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 410364,
+     "debt": 1177,
+     "hybrid": 259,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Telecommunication",
    "aum": 5.4,
    "fortnight": 11065,
-   "year": -14915
+   "year": -14915,
+   "prevFortnight": -3930,
+   "aumEq": 5.7,
+   "fortnightEq": 11065,
+   "yearEq": -9848,
+   "prevFortnightEq": -3928,
+   "aucCr": 389729,
+   "aucCrEq": 372809,
+   "aucUsdMn": 40916,
+   "fortnightUsdMn": 1162,
+   "breakdown": {
+    "net": {
+     "equity": 11065,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 372809,
+     "debt": 8020,
+     "hybrid": 8900,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Sovereign",
    "aum": 5.3,
    "fortnight": -1053,
-   "year": 53810
+   "year": 53810,
+   "prevFortnight": -1308,
+   "aumEq": 0.0,
+   "fortnightEq": 0,
+   "yearEq": 0,
+   "prevFortnightEq": 0,
+   "aucCr": 389592,
+   "aucCrEq": 0,
+   "aucUsdMn": 40903,
+   "fortnightUsdMn": -111,
+   "breakdown": {
+    "net": {
+     "equity": 0,
+     "debt": -1053,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 0,
+     "debt": 389592,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Others",
    "aum": 4.1,
    "fortnight": 9565,
-   "year": 32507
+   "year": 32507,
+   "prevFortnight": 5308,
+   "aumEq": 0.5,
+   "fortnightEq": 594,
+   "yearEq": 8754,
+   "prevFortnightEq": -372,
+   "aucCr": 302091,
+   "aucCrEq": 29724,
+   "aucUsdMn": 31717,
+   "fortnightUsdMn": 1006,
+   "breakdown": {
+    "net": {
+     "equity": 594,
+     "debt": -520,
+     "hybrid": 0,
+     "mf": 9491,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 29724,
+     "debt": 239121,
+     "hybrid": 9749,
+     "mf": 23464,
+     "aif": 33
+    }
+   }
   },
   {
    "name": "Consumer Services",
    "aum": 4.0,
    "fortnight": -662,
-   "year": -2727
+   "year": -2727,
+   "prevFortnight": -1931,
+   "aumEq": 4.4,
+   "fortnightEq": -662,
+   "yearEq": -2657,
+   "prevFortnightEq": -1931,
+   "aucCr": 290857,
+   "aucCrEq": 289957,
+   "aucUsdMn": 30536,
+   "fortnightUsdMn": -70,
+   "breakdown": {
+    "net": {
+     "equity": -662,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 289957,
+     "debt": 900,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Fast Moving Consumer Goods",
    "aum": 3.5,
    "fortnight": -1559,
-   "year": -53078
+   "year": -53078,
+   "prevFortnight": -8172,
+   "aumEq": 3.9,
+   "fortnightEq": -1559,
+   "yearEq": -53054,
+   "prevFortnightEq": -8172,
+   "aucCr": 255780,
+   "aucCrEq": 255495,
+   "aucUsdMn": 26854,
+   "fortnightUsdMn": -164,
+   "breakdown": {
+    "net": {
+     "equity": -1559,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 255495,
+     "debt": 285,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Metals & Mining",
    "aum": 3.5,
    "fortnight": -904,
-   "year": 14519
+   "year": 14519,
+   "prevFortnight": -3693,
+   "aumEq": 3.9,
+   "fortnightEq": -904,
+   "yearEq": 14269,
+   "prevFortnightEq": -3693,
+   "aucCr": 257254,
+   "aucCrEq": 256759,
+   "aucUsdMn": 27009,
+   "fortnightUsdMn": -95,
+   "breakdown": {
+    "net": {
+     "equity": -904,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 256759,
+     "debt": 495,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Power",
    "aum": 3.4,
    "fortnight": -775,
-   "year": -16958
+   "year": -16958,
+   "prevFortnight": -1881,
+   "aumEq": 3.6,
+   "fortnightEq": -765,
+   "yearEq": -13539,
+   "prevFortnightEq": -1732,
+   "aucCr": 244643,
+   "aucCrEq": 236637,
+   "aucUsdMn": 25685,
+   "fortnightUsdMn": -81,
+   "breakdown": {
+    "net": {
+     "equity": -765,
+     "debt": 0,
+     "hybrid": -10,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 236637,
+     "debt": 3522,
+     "hybrid": 4484,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Services",
    "aum": 2.7,
    "fortnight": 603,
-   "year": 6192
+   "year": 6192,
+   "prevFortnight": 265,
+   "aumEq": 2.9,
+   "fortnightEq": 658,
+   "yearEq": 8241,
+   "prevFortnightEq": 262,
+   "aucCr": 198889,
+   "aucCrEq": 186538,
+   "aucUsdMn": 20880,
+   "fortnightUsdMn": 63,
+   "breakdown": {
+    "net": {
+     "equity": 658,
+     "debt": -9,
+     "hybrid": -46,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 186538,
+     "debt": 3603,
+     "hybrid": 8748,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Consumer Durables",
    "aum": 2.4,
    "fortnight": -402,
-   "year": 4698
+   "year": 4698,
+   "prevFortnight": -586,
+   "aumEq": 2.6,
+   "fortnightEq": -402,
+   "yearEq": 4698,
+   "prevFortnightEq": -586,
+   "aucCr": 172174,
+   "aucCrEq": 172174,
+   "aucUsdMn": 18076,
+   "fortnightUsdMn": -42,
+   "breakdown": {
+    "net": {
+     "equity": -402,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 172174,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Realty",
    "aum": 1.9,
    "fortnight": 621,
-   "year": -12710
+   "year": -12710,
+   "prevFortnight": -679,
+   "aumEq": 1.7,
+   "fortnightEq": -438,
+   "yearEq": -10647,
+   "prevFortnightEq": -578,
+   "aucCr": 137829,
+   "aucCrEq": 109566,
+   "aucUsdMn": 14470,
+   "fortnightUsdMn": 65,
+   "breakdown": {
+    "net": {
+     "equity": -438,
+     "debt": 1182,
+     "hybrid": -123,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 109566,
+     "debt": 5000,
+     "hybrid": 23263,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Construction",
    "aum": 1.6,
    "fortnight": -517,
-   "year": -5740
+   "year": -5740,
+   "prevFortnight": -1225,
+   "aumEq": 1.8,
+   "fortnightEq": -516,
+   "yearEq": -5428,
+   "prevFortnightEq": -1224,
+   "aucCr": 116243,
+   "aucCrEq": 116201,
+   "aucUsdMn": 12205,
+   "fortnightUsdMn": -54,
+   "breakdown": {
+    "net": {
+     "equity": -516,
+     "debt": 0,
+     "hybrid": -1,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 116201,
+     "debt": 24,
+     "hybrid": 18,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Chemicals",
    "aum": 1.5,
    "fortnight": -862,
-   "year": -2896
+   "year": -2896,
+   "prevFortnight": 41,
+   "aumEq": 1.7,
+   "fortnightEq": -862,
+   "yearEq": -2804,
+   "prevFortnightEq": 41,
+   "aucCr": 112682,
+   "aucCrEq": 112251,
+   "aucUsdMn": 11830,
+   "fortnightUsdMn": -91,
+   "breakdown": {
+    "net": {
+     "equity": -862,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 112251,
+     "debt": 431,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Construction Materials",
    "aum": 1.3,
    "fortnight": -196,
-   "year": -11607
+   "year": -11607,
+   "prevFortnight": -564,
+   "aumEq": 1.5,
+   "fortnightEq": -196,
+   "yearEq": -11589,
+   "prevFortnightEq": -564,
+   "aucCr": 96002,
+   "aucCrEq": 94752,
+   "aucUsdMn": 10079,
+   "fortnightUsdMn": -21,
+   "breakdown": {
+    "net": {
+     "equity": -196,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 94752,
+     "debt": 1250,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Textiles",
    "aum": 0.3,
    "fortnight": -21,
-   "year": -964
+   "year": -964,
+   "prevFortnight": -59,
+   "aumEq": 0.3,
+   "fortnightEq": -21,
+   "yearEq": -906,
+   "prevFortnightEq": -59,
+   "aucCr": 20888,
+   "aucCrEq": 20480,
+   "aucUsdMn": 2193,
+   "fortnightUsdMn": -2,
+   "breakdown": {
+    "net": {
+     "equity": -21,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 20480,
+     "debt": 408,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Media, Entertainment & Publication",
    "aum": 0.2,
    "fortnight": 140,
-   "year": -1310
+   "year": -1310,
+   "prevFortnight": 252,
+   "aumEq": 0.2,
+   "fortnightEq": 140,
+   "yearEq": -1310,
+   "prevFortnightEq": 252,
+   "aucCr": 11409,
+   "aucCrEq": 11409,
+   "aucUsdMn": 1198,
+   "fortnightUsdMn": 15,
+   "breakdown": {
+    "net": {
+     "equity": 140,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 11409,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Diversified",
    "aum": 0.1,
    "fortnight": -16,
-   "year": 479
+   "year": 479,
+   "prevFortnight": 43,
+   "aumEq": 0.0,
+   "fortnightEq": -16,
+   "yearEq": 63,
+   "prevFortnightEq": 43,
+   "aucCr": 3866,
+   "aucCrEq": 3257,
+   "aucUsdMn": 406,
+   "fortnightUsdMn": -2,
+   "breakdown": {
+    "net": {
+     "equity": -16,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 3257,
+     "debt": 609,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Forest Materials",
    "aum": 0.0,
    "fortnight": -58,
-   "year": -193
+   "year": -193,
+   "prevFortnight": -50,
+   "aumEq": 0.0,
+   "fortnightEq": -58,
+   "yearEq": -154,
+   "prevFortnightEq": -50,
+   "aucCr": 1476,
+   "aucCrEq": 1064,
+   "aucUsdMn": 155,
+   "fortnightUsdMn": -6,
+   "breakdown": {
+    "net": {
+     "equity": -58,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 1064,
+     "debt": 412,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   },
   {
    "name": "Utilities",
    "aum": 0.0,
    "fortnight": -27,
-   "year": 55
+   "year": 55,
+   "prevFortnight": -34,
+   "aumEq": 0.0,
+   "fortnightEq": -27,
+   "yearEq": 79,
+   "prevFortnightEq": -34,
+   "aucCr": 2579,
+   "aucCrEq": 2529,
+   "aucUsdMn": 270,
+   "fortnightUsdMn": -3,
+   "breakdown": {
+    "net": {
+     "equity": -27,
+     "debt": 0,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    },
+    "auc": {
+     "equity": 2529,
+     "debt": 50,
+     "hybrid": 0,
+     "mf": 0,
+     "aif": 0
+    }
+   }
   }
  ]
 }
