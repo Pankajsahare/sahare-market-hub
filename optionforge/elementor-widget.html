@@ -1,0 +1,316 @@
+<!-- ============================================================
+  OptionForge v3.2 (CDN version) — CSS/JS GitHub + jsDelivr वरून येतात; इथे फक्त HTML
+  OptionForge v3.2 — WordPress/Elementor (सर्व .of-root खाली scoped)
+  v3.2: header-offset fix, heatmap live update, Clear-bug fix, typing-safe refresh, नवीन lot size (65/30),
+  import-undo fix, on-demand rendering (battery बचत), हलकं CSS/fonts, drawer portal, mobile hero, metric tooltips
+============================================================ -->
+<!-- # TODO [मॅन्युअल बदल]: NSE proxy URL (Cloudflare Worker) | उदा.: https://nse-proxy.yourname.workers.dev
+     कुठे मिळेल: Worker मध्ये NSE option-chain JSON pass-through करा (CDN version मध्ये: window.OPTIONFORGE_CONFIG मध्ये टाका) | न बदलल्यास: NIFTY/BANKNIFTY फक्त SIMULATED दिसतील.
+     सूचना: NSE चा endpoint अनधिकृत आहे — कधीही बदलू/बंद होऊ शकतो; 30s पेक्षा जास्त वेळा विनंती नका, cache वापरा,
+     आणि अधिकृत पर्याय (NSE/BSE published बुलेटिन, Yahoo Finance) fallback म्हणून ठेवा. -->
+<!-- # TODO [मॅन्युअल बदल]: ब्रँड logo URL | उदा.: https://www.advisor4u.in/wp-content/uploads/logo.png
+     कुठे मिळेल: WP Dashboard → Media → Library → logo वर क्लिक → "Copy URL" | न बदलल्यास: text-monogram दिसेल. -->
+<!-- # TODO [मॅन्युअल बदल]: थीम header खाली पट्टी अडकल्यास data-header-offset मध्ये उंची px टाका | उदा.: 90
+     न बदलल्यास: auto-detect चालते; थीमचा header वेगळा असेल तर manual value वापरा. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Pankajsahare/sahare-market-hub@of-v3.2/optionforge/optionforge.min.css">
+
+<div class="of-root" data-of-root data-header-offset="0" data-brand-logo="">
+<div class="mesh"></div><div class="grain"></div>
+<div class="app">
+
+<nav class="nav" data-of="nav">
+  <a class="brand" href="#" data-act="home"><span class="bmark" data-of="bmark">S</span>Option<em>Forge</em></a>
+  <div class="navlinks" data-of="navlinks">
+    <a href="#lab" data-act="goto" data-sec="lab" class="on">Lab</a>
+    <a href="#chain" data-act="goto" data-sec="chain">Chain</a>
+    <a href="#playbook" data-act="goto" data-sec="playbook">Playbook</a>
+    <a href="#faq" data-act="goto" data-sec="faq">FAQ</a>
+  </div>
+  <div class="navr">
+    <span class="pill sync" data-of="pill"><span class="dot"></span><span data-of="statusTxt">SYNC</span><span data-of="streamTag" style="display:none;color:#fbbf24">⚡</span></span>
+    <span class="spot mono" data-of="spot">—</span>
+    <button class="rbtn" type="button" data-act="refresh" aria-label="Refresh market data">
+      <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><circle class="rbg" cx="12" cy="12" r="8.5"/><circle class="rfg" data-of="ring" cx="12" cy="12" r="8.5" stroke-dasharray="53.4" stroke-dashoffset="0" transform="rotate(-90 12 12)"/></svg>
+      <span data-of="secs">20s</span></button>
+    <button class="mbtn" type="button" data-act="menu" aria-label="Menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<!-- Mobile compact पट्टी — प्रत्येक control ला data-of आहे (v3.0 crash चं मूळ कारण इथेच होतं) -->
+<div class="quick" data-of="quick">
+  <div class="qg">
+    <div><label>Market</label><select data-in="qMarket" data-of="qMarket" aria-label="Market"><option>BTC</option><option>ETH</option><option>NIFTY</option><option>BANKNIFTY</option></select></div>
+    <div><label>Expiry</label><select data-in="qExpiry" data-of="qExpiry" aria-label="Expiry"></select></div>
+    <div><label>Preset</label><select data-in="qPreset" data-of="qPreset" aria-label="Preset"></select></div>
+    <div><label>Mode</label><button class="btn bl" type="button" data-act="qside" data-of="qSide">BUY</button></div>
+    <div><label>Days <span data-of="qDaysV">0</span></label><input type="range" data-in="qDays" data-of="qDays" min="0" max="60" value="0" aria-label="Days forward"></div>
+    <div><label>IV <span data-of="qIvV">0</span></label><input type="range" data-in="qIv" data-of="qIv" min="-20" max="20" value="0" aria-label="IV shift"></div>
+    <div><label>Spot <span data-of="qShockV">0</span>%</label><input type="range" data-in="qShock" data-of="qShock" min="-18" max="18" step="0.5" value="0" aria-label="Spot shock"></div>
+    <div><label>&nbsp;</label><button class="btn bl" type="button" data-act="reset-scen">Reset</button></div>
+  </div>
+</div>
+
+<header class="hero" data-of="hero">
+  <div class="kick">Sahare Financial Services · advisor4u.in</div>
+  <h2>Advanced option strategies on a <span>living market</span>.</h2>
+  <p class="sub" data-act="hero-more" title="Tap to read more">Build multi-leg structures on live BTC/ETH options (Deribit) or Indian index options (NIFTY / BANKNIFTY). Read exact breakevens, coin- or cash-settled P&amp;L, fees, margin, Greeks and probability of profit — then stress the position across price, time and volatility, and turn it into a client-ready report.</p>
+  <div class="chips">
+    <span class="chip"><b>⚡</b> streaming ticks</span><span class="chip"><b>4</b> markets</span><span class="chip"><b>12</b> presets</span>
+    <span class="chip"><b>USD / Coin</b> P&amp;L</span><span class="chip"><b>±1σ ±2σ</b> cone</span><span class="chip"><b>PDF</b> report</span>
+  </div>
+  <div class="ticker"><div class="ttrack" data-of="ttrack"></div></div>
+</header>
+
+<div class="banner" data-of="banner"><div class="bin"><span>⚠</span><span data-of="bannerTxt"></span><button class="btn sm" type="button" data-act="refresh">Retry now</button></div></div>
+
+<main>
+<section data-of="lab">
+  <div class="sech"><span class="kick">01</span><h3>Strategy Lab</h3><span class="hint">Drag legs to reorder · tick to bulk-edit · Ctrl+Z to undo.</span></div>
+  <div class="lab">
+    <aside class="deck">
+      <div class="card"><div class="ch"><h4>Market &amp; Structure</h4></div>
+        <div class="cb">
+          <div><label class="lb">Market</label><div class="seg" data-of="curSeg">
+            <button type="button" data-act="market" data-cur="BTC" class="on">BTC</button><button type="button" data-act="market" data-cur="ETH">ETH</button>
+            <button type="button" data-act="market" data-cur="NIFTY">NIFTY</button><button type="button" data-act="market" data-cur="BANKNIFTY">BNF</button></div></div>
+          <div><label class="lb">Base expiry</label><select data-in="expiry" data-of="expiry" aria-label="Base expiry"></select></div>
+          <div><label class="lb">Click-to-add mode</label><div class="seg" data-of="sideSeg"><button type="button" data-act="side" data-side="1" class="on">BUY</button><button type="button" data-act="side" data-side="-1">SELL</button></div></div>
+          <div><label class="lb">Playbook preset</label><div class="row"><select data-in="preset" data-of="preset" aria-label="Preset"></select><button class="btn" type="button" data-act="shuffle" title="Random strategy">🎲</button></div></div>
+          <div><label class="lb">P&amp;L denomination</label><div class="seg" data-of="denSeg"><button type="button" data-act="den" data-den="USD" class="on">Cash (USD)</button><button type="button" data-act="den" data-den="COIN">Coin</button></div></div>
+          <div class="g2">
+            <div><label class="lb">Account size</label><input type="text" inputmode="numeric" data-in="account" data-of="account" value="100000" aria-label="Account size"></div>
+            <div data-of="lotBox" style="display:none"><label class="lb">Lot size</label><input type="text" inputmode="numeric" data-in="lot" data-of="lot" value="65" aria-label="Lot size"></div>
+          </div>
+          <div class="g2">
+            <div><label class="lb">Fill price</label><select data-in="entryMode" data-of="entryMode" aria-label="Fill price"><option value="mark">Mark</option><option value="mid">Mid</option><option value="ba">Bid / Ask</option></select></div>
+            <div><label class="lb">Slippage %</label><input type="text" inputmode="decimal" data-in="slip" data-of="slip" value="1" aria-label="Slippage percent"></div>
+          </div>
+          <div class="g2">
+            <div><label class="lb">Fee / contract</label><input type="text" inputmode="decimal" data-in="fee" data-of="fee" value="2" aria-label="Fee per contract"></div>
+            <div><label class="lb">Risk % to size</label><input type="text" inputmode="decimal" data-in="risk" data-of="risk" value="2" aria-label="Risk percent"></div>
+          </div>
+          <button class="btn bl" type="button" data-act="size">⚖ Size position to risk</button>
+        </div>
+      </div>
+
+      <div class="card"><div class="ch"><h4>Legs</h4>
+        <label class="chw sp"><input type="checkbox" class="chk" data-in="selAll" data-of="selAll"><span>all</span></label>
+        <button class="btn sm" type="button" data-act="undo" data-of="undoBtn" title="Undo (Ctrl+Z)">↶</button>
+        <button class="btn sm" type="button" data-act="redo" data-of="redoBtn" title="Redo (Ctrl+Shift+Z)">↷</button>
+        <span class="chip" data-of="legCount">0</span>
+        <button class="btn sm dgr" type="button" data-act="clear">Clear</button></div>
+        <div class="cb">
+          <div class="bulk" data-of="bulk" style="display:none"><span data-of="bulkCount">0 selected</span>
+            <button class="btn sm" type="button" data-act="bulk" data-bulk="flip">Flip</button>
+            <button class="btn sm" type="button" data-act="bulk" data-bulk="dup">Duplicate</button>
+            <button class="btn sm dgr" type="button" data-act="bulk" data-bulk="del">Delete</button>
+            <button class="btn sm" type="button" data-act="bulk" data-bulk="none">✕</button></div>
+          <div class="legs" data-of="legs"></div>
+        </div>
+      </div>
+
+      <div class="card"><div class="ch"><h4>Scenario Dials</h4><button class="btn sm sp" type="button" data-act="reset-scen">Reset</button></div>
+        <div class="cb">
+          <div class="scen">
+            <button type="button" data-act="scen" data-scen="flat">Flat</button><button type="button" data-act="scen" data-scen="rally">Rally +8%</button>
+            <button type="button" data-act="scen" data-scen="crash">Crash −10%</button><button type="button" data-act="scen" data-scen="vol">Vol spike</button>
+            <button type="button" data-act="scen" data-scen="theta">Theta T+7</button><button type="button" data-act="scen" data-scen="crush">IV crush</button>
+          </div>
+          <div class="sbox"><div class="sbig" data-of="scenPnl">—</div><div class="ssub" data-of="scenSub">P&amp;L under your scenario</div></div>
+          <div class="srow"><div class="stop"><label class="lb" style="margin:0">Days forward</label><output data-of="daysV">T+0d</output></div><input type="range" data-in="days" data-of="days" min="0" max="60" step="1" value="0" aria-label="Days forward"></div>
+          <div class="srow"><div class="stop"><label class="lb" style="margin:0">IV shift (pts)</label><output data-of="ivV">+0</output></div><input type="range" data-in="iv" data-of="iv" min="-20" max="20" step="1" value="0" aria-label="IV shift"></div>
+          <div class="srow"><div class="stop"><label class="lb" style="margin:0">Spot shock</label><output data-of="shockV">0%</output></div><input type="range" data-in="shock" data-of="shock" min="-18" max="18" step="0.5" value="0" aria-label="Spot shock"></div>
+          <div class="srow"><div class="stop"><label class="lb" style="margin:0">Chart range ±</label><output data-of="rangeV">18%</output></div><input type="range" data-in="range" data-of="range" min="5" max="40" step="1" value="18" aria-label="Chart range"></div>
+          <div class="trow"><span>T+N model curve</span><span class="sw"><input type="checkbox" data-in="t0" data-of="t0" checked><i></i></span></div>
+          <div class="trow"><span>Profit / loss shading</span><span class="sw"><input type="checkbox" data-in="fill" data-of="fill" checked><i></i></span></div>
+          <div class="trow"><span>Probability cone (±1σ ±2σ)</span><span class="sw"><input type="checkbox" data-in="cone" data-of="cone" checked><i></i></span></div>
+          <div class="row wr"><button class="btn sm" type="button" data-act="pin">📌 Pin to compare</button><button class="btn sm" type="button" data-act="unpin" data-of="unpinBtn" disabled>Unpin</button></div>
+        </div>
+      </div>
+
+      <div class="card"><div class="ch"><h4>Saved &amp; Share</h4></div>
+        <div class="cb">
+          <div class="row"><input type="text" data-in="saveName" data-of="saveName" maxlength="40" placeholder="Name this setup…" aria-label="Strategy name"><button class="btn pri" type="button" data-act="save">Save</button></div>
+          <div class="g2"><input type="text" data-in="savedSearch" data-of="savedSearch" placeholder="Search saved…" aria-label="Search saved"><select data-in="savedSort" data-of="savedSort" aria-label="Sort saved"><option value="new">Newest</option><option value="name">Name A–Z</option><option value="legs">Most legs</option></select></div>
+          <div data-of="savedList" style="display:flex;flex-direction:column;gap:6px"></div>
+          <div class="row wr">
+            <button class="btn sm" type="button" data-act="report">🖨 PDF report</button>
+            <button class="btn sm" type="button" data-act="share">💬 WhatsApp</button>
+            <button class="btn sm" type="button" data-act="copylink">🔗 Copy link</button>
+            <button class="btn sm" type="button" data-act="export-json">⬇ JSON</button>
+            <button class="btn sm" type="button" data-act="import">⬆ Import</button>
+            <input type="file" data-of="importFile" accept=".json,application/json" hidden>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="stage">
+      <div class="card">
+        <div class="ch"><h4>Payoff Forge</h4>
+          <div class="legend sp"><span><i style="background:#e8eefc"></i>Expiry</span><span><i style="background:#22d3ee"></i>T+N</span><span><i style="background:#fbbf24"></i>Spot</span><span><i style="background:#e879f9"></i>BE</span><span><i style="background:#8b5cf6"></i>Pinned</span><span><i style="background:#334a7a"></i>±1σ/2σ</span></div>
+          <button class="btn sm" type="button" data-act="export-png">⬇ PNG</button></div>
+        <div class="cwrap" data-of="chartWrap"><canvas data-of="chartBase" role="img" aria-label="Strategy payoff chart"></canvas><canvas class="top" data-of="chartOver"></canvas><div class="tip" data-of="chartTip"></div></div>
+        <div class="csub" data-of="chartSub">Preparing market…</div>
+        <p class="sr" data-of="chartSummary"></p>
+      </div>
+
+      <div class="metrics">
+        <div class="met" style="--ac:#22c55e"><div class="k">Max Profit<button type="button" class="info" data-act="tip" data-tip="Best possible result at the payoff horizon, after fees. An infinity sign means there is no upper cap." aria-label="What is Max Profit?">i</button></div><div class="v up" data-of="mMaxP">—</div><div class="s">at expiry horizon</div></div>
+        <div class="met" style="--ac:#f43f5e"><div class="k">Max Loss<button type="button" class="info" data-act="tip" data-tip="Worst possible result at the payoff horizon, after fees. This is the money you could lose." aria-label="What is Max Loss?">i</button></div><div class="v dn" data-of="mMaxL">—</div><div class="s" data-of="mRisk">capital at risk</div></div>
+        <div class="met" style="--ac:#e879f9"><div class="k">Breakevens<button type="button" class="info" data-act="tip" data-tip="Underlying prices at which the position neither gains nor loses at the horizon." aria-label="What is Breakevens?">i</button></div><div class="v" data-of="mBE" style="font-size:12.5px">—</div><div class="s" data-of="mBEnote">exact</div></div>
+        <div class="met" style="--ac:#fbbf24"><div class="k"><span data-of="mPremK">Net Premium</span><button type="button" class="info" data-act="tip" data-tip="Credit means you receive money when you open the trade. Debit means you pay money to open it." aria-label="What is Net Premium?">i</button></div><div class="v" data-of="mPrem">—</div><div class="s" data-of="mFees">fees included</div></div>
+        <div class="met" style="--ac:#3b82f6"><div class="k">Reward : Risk<button type="button" class="info" data-act="tip" data-tip="Max profit divided by max loss. Above 1x means the best case is bigger than the worst case." aria-label="What is Reward to Risk?">i</button></div><div class="v" data-of="mRR">—</div><div class="s">max gain / max loss</div></div>
+        <div class="met" style="--ac:#22d3ee"><div class="k">Prob. of Profit<button type="button" class="info" data-act="tip" data-tip="Model estimate of the chance this position ends in profit. It is an estimate, not a guarantee." aria-label="What is Probability of Profit?">i</button></div><div class="v" data-of="mPOP">—</div><div class="pbar"><i data-of="popBar" style="width:0%"></i></div></div>
+        <div class="met" style="--ac:#8b5cf6"><div class="k">Est. Margin<button type="button" class="info" data-act="tip" data-tip="Rough capital a broker may block for short options. Your broker's actual figure will differ." aria-label="What is Margin?">i</button></div><div class="v" data-of="mMargin">—</div><div class="s">naked rule, no spread offset</div></div>
+        <div class="met" style="--ac:#34d399"><div class="k">Notional<button type="button" class="info" data-act="tip" data-tip="Total market value controlled by the position at today's price." aria-label="What is Notional?">i</button></div><div class="v" data-of="mNotional">—</div><div class="s" data-of="mLot">exposure at spot</div></div>
+      </div>
+
+      <div class="greeks">
+        <div class="gk"><span class="sy" style="color:#22d3ee">Δ</span><div><div class="gv" data-of="gD">—</div><div class="gl">Delta · per 1<button type="button" class="info" data-act="tip" data-tip="How much the P&amp;L changes when the underlying moves up by 1 point." aria-label="What is Delta?">i</button></div></div></div>
+        <div class="gk"><span class="sy" style="color:#3b82f6">Γ</span><div><div class="gv" data-of="gG">—</div><div class="gl">Gamma<button type="button" class="info" data-act="tip" data-tip="How fast Delta itself changes as the price moves." aria-label="What is Gamma?">i</button></div></div></div>
+        <div class="gk"><span class="sy" style="color:#fbbf24">Θ</span><div><div class="gv" data-of="gT">—</div><div class="gl">Theta / day<button type="button" class="info" data-act="tip" data-tip="Money gained or lost each day just from time passing, if nothing else changes." aria-label="What is Theta?">i</button></div></div></div>
+        <div class="gk"><span class="sy" style="color:#e879f9">ν</span><div><div class="gv" data-of="gV">—</div><div class="gl">Vega / vol pt<button type="button" class="info" data-act="tip" data-tip="P&amp;L change if implied volatility rises by 1 point." aria-label="What is Vega?">i</button></div></div></div>
+      </div>
+
+      <div class="an">
+        <div class="card"><div class="ch"><h4>P&amp;L Heatmap</h4><span class="hint sp">price × time · click or arrow-keys + Enter</span></div>
+          <div class="hwrap" data-of="heatWrap"><canvas data-of="heatCv" tabindex="0" role="img" aria-label="P and L heatmap. Use arrow keys to move, Enter to apply the scenario."></canvas><div class="tip" data-of="heatTip"></div></div>
+          <div class="scale"><span data-of="scaleMin">—</span><i></i><span data-of="scaleMax">—</span></div>
+          <p class="sr" data-of="heatSummary" aria-live="polite"></p>
+        </div>
+        <div class="card"><div class="ch"><h4>Volatility</h4><div class="seg sp" data-of="volSeg" style="width:160px"><button type="button" data-act="vol" data-vol="smile" class="on">Smile</button><button type="button" data-act="vol" data-vol="term">Term</button></div></div>
+          <div class="vwrap" data-of="volWrap"><canvas data-of="volCv" role="img" aria-label="Volatility smile and term structure"></canvas></div>
+          <div class="scale"><span data-of="volInfo">—</span></div>
+          <p class="sr" data-of="volSummary"></p>
+        </div>
+      </div>
+
+      <div class="card"><div class="ch"><h4>Explain this strategy</h4><span class="hint sp">plain English, client-ready</span></div>
+        <div class="explain" data-of="explain">Load a preset to see a plain-English explanation.</div></div>
+      <div class="hint" data-of="note">Educational estimates only.</div>
+    </div>
+  </div>
+</section>
+
+<section data-of="chain">
+  <div class="sech"><span class="kick">02</span><h3>Option Chain</h3><span class="hint">Click a premium to add a leg · click a strike for full stats.</span></div>
+  <div class="card">
+    <div class="tabs" data-of="tabs"></div>
+    <div class="ctools">
+      <button class="mode b" type="button" data-act="qside" data-of="chainMode">MODE: BUY</button>
+      <div class="stepper"><button type="button" data-act="win" data-d="-1">−</button><span data-of="winVal">±8</span><button type="button" data-act="win" data-d="1">+</button></div>
+      <input type="text" data-in="filter" data-of="filter" placeholder="Filter strike…" inputmode="numeric" aria-label="Filter strike">
+      <button class="btn sm" type="button" data-act="sort" data-of="sortBtn">↑ Strikes</button>
+      <span class="chip sp" data-of="chainInfo">—</span>
+    </div>
+    <div class="chainwrap" data-of="chainWrap">
+      <table class="chain" data-of="chainTable"><thead data-of="chainHead"></thead><tbody data-of="chainBody"></tbody></table>
+      <div class="empty" data-of="chainEmpty" style="border:none">Preparing market…</div>
+    </div>
+    <div class="cinfo" data-of="chainNote">Prices in quote currency. Magenta = IV heat · cyan bar = open interest.</div>
+  </div>
+</section>
+
+<section data-of="playbook">
+  <div class="sech"><span class="kick">03</span><h3>Strategy Playbook</h3><span class="hint">Twelve structures with payoff shapes — load, then reshape.</span></div>
+  <div class="pb" data-of="pbGrid">
+    <article class="pbc"><div class="pbt"><h4>Long Call</h4><span class="tag" style="color:#34d399;background:rgba(52,211,153,.13);border:1px solid #34d39955">Bullish</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp1a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp1b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,52 L126,52 L248,6 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp1a)"/><path d="M4,40 L4,52 L126,52 L248,6 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp1b)"/><path d="M4,52 L126,52 L248,6" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy one at-the-money call. Unlimited upside, and the premium paid is the entire worst case.</p><p class="pbr">Max loss: premium · Max gain: unlimited</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="longCall">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Long Put</h4><span class="tag" style="color:#fb4d6d;background:rgba(251,77,109,.12);border:1px solid #fb4d6d55">Bearish</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp2a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp2b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,6 L126,52 L248,52 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp2a)"/><path d="M4,40 L4,6 L126,52 L248,52 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp2b)"/><path d="M4,6 L126,52 L248,52" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy one at-the-money put. Sharp falls pay you; time decay is the cost of the insurance.</p><p class="pbr">Max loss: premium · Large downside gain</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="longPut">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Bull Call Spread</h4><span class="tag" style="color:#34d399;background:rgba(52,211,153,.13);border:1px solid #34d39955">Bullish</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp3a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp3b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,50 L110,50 L190,26 L248,26 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp3a)"/><path d="M4,40 L4,50 L110,50 L190,26 L248,26 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp3b)"/><path d="M4,50 L110,50 L190,26 L248,26" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy the near call and sell a higher strike against it. Cheaper than a naked call, with a defined ceiling.</p><p class="pbr">Defined risk · Defined reward</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="bullCall">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Bear Put Spread</h4><span class="tag" style="color:#fb4d6d;background:rgba(251,77,109,.12);border:1px solid #fb4d6d55">Bearish</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp4a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp4b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,26 L60,26 L140,50 L248,50 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp4a)"/><path d="M4,40 L4,26 L60,26 L140,50 L248,50 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp4b)"/><path d="M4,26 L60,26 L140,50 L248,50" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy the near put and finance it by selling a lower strike — a measured way to lean short.</p><p class="pbr">Defined risk · Defined reward</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="bearPut">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Long Straddle</h4><span class="tag" style="color:#e879f9;background:rgba(232,121,249,.12);border:1px solid #e879f955">Volatility</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp5a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp5b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,8 L126,56 L248,8 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp5a)"/><path d="M4,40 L4,8 L126,56 L248,8 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp5b)"/><path d="M4,8 L126,56 L248,8" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy the ATM call and put together. Direction is irrelevant — you need a move big enough to beat both premiums.</p><p class="pbr">Max loss: premiums · Gain: unlimited</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="straddle">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Long Strangle</h4><span class="tag" style="color:#e879f9;background:rgba(232,121,249,.12);border:1px solid #e879f955">Volatility</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp6a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp6b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,10 L96,54 L156,54 L248,10 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp6a)"/><path d="M4,40 L4,10 L96,54 L156,54 L248,10 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp6b)"/><path d="M4,10 L96,54 L156,54 L248,10" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">The straddle's cheaper cousin: an OTM call plus an OTM put. Lower cost, but the move must be larger.</p><p class="pbr">Max loss: premiums · Gain: unlimited</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="strangle">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Iron Condor</h4><span class="tag" style="color:#fbbf24;background:rgba(251,191,36,.12);border:1px solid #fbbf2455">Income</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp7a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp7b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,50 L60,50 L96,30 L156,30 L192,50 L248,50 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp7a)"/><path d="M4,40 L4,50 L60,50 L96,30 L156,30 L192,50 L248,50 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp7b)"/><path d="M4,50 L60,50 L96,30 L156,30 L192,50 L248,50" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Sell an OTM put spread and an OTM call spread. Collect theta while price stays between the short strikes.</p><p class="pbr">Defined risk · Credit income</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="ironCondor">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Iron Butterfly</h4><span class="tag" style="color:#fbbf24;background:rgba(251,191,36,.12);border:1px solid #fbbf2455">Income</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp8a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp8b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,50 L60,50 L126,10 L192,50 L248,50 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp8a)"/><path d="M4,40 L4,50 L60,50 L126,10 L192,50 L248,50 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp8b)"/><path d="M4,50 L60,50 L126,10 L192,50 L248,50" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">A short ATM straddle wrapped in protective wings. Fat credit, best outcome if price pins the strike.</p><p class="pbr">Defined risk · Narrow profit tent</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="ironFly">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Call Butterfly</h4><span class="tag" style="color:#22d3ee;background:rgba(34,211,238,.12);border:1px solid #22d3ee55">Neutral</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp9a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp9b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,46 L80,46 L126,16 L172,46 L248,46 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp9a)"/><path d="M4,40 L4,46 L80,46 L126,16 L172,46 L248,46 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp9b)"/><path d="M4,46 L80,46 L126,16 L172,46 L248,46" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy one lower call, sell two ATM, buy one higher. A cheap, precise bet on where price will settle.</p><p class="pbr">Small debit · Sharp profit tent</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="butterfly">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Calendar Call</h4><span class="tag" style="color:#3b82f6;background:rgba(59,130,246,.14);border:1px solid #3b82f655">Time</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp10a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp10b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,48 L70,46 L126,14 L182,46 L248,48 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp10a)"/><path d="M4,40 L4,48 L70,46 L126,14 L182,46 L248,48 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp10b)"/><path d="M4,48 L70,46 L126,14 L182,46 L248,48" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Sell the near-dated ATM call and buy the far-dated one to harvest faster front-month decay.</p><p class="pbr">Debit risk · Profits from term decay</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="calendar">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Jade Lizard</h4><span class="tag" style="color:#fbbf24;background:rgba(251,191,36,.12);border:1px solid #fbbf2455">Income</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp11a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp11b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,58 L70,58 L110,28 L180,28 L210,34 L248,34 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp11a)"/><path d="M4,40 L4,58 L70,58 L110,28 L180,28 L210,34 L248,34 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp11b)"/><path d="M4,58 L70,58 L110,28 L180,28 L210,34 L248,34" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Short OTM put plus a short OTM call spread. If the credit exceeds the call width, upside risk disappears.</p><p class="pbr">Downside risk only · No upside risk if credit &gt; width</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="jadeLizard">Load in Lab →</button></article>
+    <article class="pbc"><div class="pbt"><h4>Call Ratio 1×2</h4><span class="tag" style="color:#8b5cf6;background:rgba(139,92,246,.14);border:1px solid #8b5cf655">Advanced</span></div>
+      <div class="spark"><svg viewBox="0 0 252 64" width="100%" height="64" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="ofp12a"><rect x="0" y="0" width="252" height="40"/></clipPath><clipPath id="ofp12b"><rect x="0" y="40" width="252" height="24"/></clipPath></defs><line x1="0" y1="40" x2="252" y2="40" stroke="#2a3a5f"/><path d="M4,40 L4,46 L90,46 L140,20 L248,60 L248,40 Z" fill="rgba(34,197,94,.3)" clip-path="url(#ofp12a)"/><path d="M4,40 L4,46 L90,46 L140,20 L248,60 L248,40 Z" fill="rgba(244,63,94,.28)" clip-path="url(#ofp12b)"/><path d="M4,46 L90,46 L140,20 L248,60" fill="none" stroke="#e8eefc" stroke-width="1.6"/></svg></div>
+      <p class="pbd">Buy one near call, sell two far calls. Often near zero cost — but a runaway rally hurts. Keep size small.</p><p class="pbr">Unlimited upside risk · Manage size</p>
+      <button class="btn bl" type="button" data-act="preset-load" data-preset="ratio">Load in Lab →</button></article>
+  </div>
+</section>
+
+<section data-of="faq" class="faq">
+  <div class="sech"><span class="kick">04</span><h3>Options Strategy FAQ</h3></div>
+  <details><summary>What is an iron condor and when does it work?</summary><p>An iron condor sells an out-of-the-money put spread and an out-of-the-money call spread on the same expiry. It collects a net credit and keeps most of it if the underlying stays between the two short strikes until expiry. Both wings cap the worst case, so risk is defined. It works best when implied volatility is high and you expect a range, not a trend.</p></details>
+  <details><summary>Why does coin-settled P&amp;L differ from cash P&amp;L?</summary><p>Deribit BTC and ETH options are inverse: premium and settlement are paid in the coin, not in dollars. The cash value of an expiring call is still strike-to-spot in dollars, but the coin amount is that value divided by the settlement price. So in coin terms a call's upside flattens as price rises, while a put's downside grows faster as price falls. Switch the denomination toggle to see the number your exchange account will actually show.</p></details>
+  <details><summary>How is probability of profit calculated here?</summary><p>The tool assumes a lognormal price distribution at the at-the-money implied volatility of the payoff horizon expiry, with the risk-free rate used for the forward drift. It then adds up the probability of all price regions where the expiry payoff is positive after fees. It is an estimate, not a forecast: real markets have fatter tails and volatility changes.</p></details>
+  <details><summary>What does the P&amp;L heatmap show?</summary><p>Each column is a possible underlying price and each row is a number of days forward. The colour is the model P&amp;L at that price and time, using your IV shift. The dotted white curve marks zero P&amp;L, the amber line is current spot, and the ring is your active scenario. Click a cell, or focus the heatmap and use arrow keys plus Enter, to steer the scenario dials.</p></details>
+  <details><summary>Is the NIFTY and BANKNIFTY data live?</summary><p>Only if a data proxy has been configured by the site owner. Indian exchange feeds do not allow direct browser requests, so without a proxy the index chain is a clearly labelled simulation built from a seeded spot, a volatility smile and current lot sizes. Never place a trade from simulated numbers — verify the live chain with your broker first.</p></details>
+  <details><summary>Is this investment advice?</summary><p>No. This is an educational analytics tool from Sahare Financial Services. It does not place orders, it is not affiliated with Deribit or any exchange, and every figure is an estimate. Crypto derivatives are unregulated in India and carry substantial risk. Please consult a registered adviser before acting.</p></details>
+</section>
+</main>
+
+<footer>
+  <div class="fg">
+    <div><div class="fb">Option<span style="color:#22d3ee">Forge</span> <span style="font-size:10.5px;color:#5d6c92">v3.2</span></div>
+      <div class="ml">Sahare Financial Services · Black-76 engine · Deribit REST + WebSocket · NSE via optional proxy</div>
+      <div class="ml">© 2026 · <a href="https://www.advisor4u.in/" target="_blank" rel="noopener">advisor4u.in</a> · <a href="mailto:info@advisor4u.in">info@advisor4u.in</a></div></div>
+    <p><b style="color:#8b9bc0">Disclaimer:</b> Educational analytics only — not investment advice, not a solicitation, and not affiliated with Deribit, NSE or BSE. Options and crypto derivatives carry substantial risk of loss; crypto derivatives are unregulated in India. Simulated data is labelled and must never be used for trading decisions. Margin, fees and probability figures are approximations — verify every quote and margin requirement with your broker.</p>
+    <a class="btn sm" href="https://wa.me/919405908605" target="_blank" rel="noopener">💬 WhatsApp an adviser</a>
+  </div>
+</footer>
+</div>
+
+<div class="dscrim" data-of="scrim"></div>
+<aside class="drawer" data-of="drawer" role="dialog" aria-modal="true" aria-label="Strike details" aria-hidden="true">
+  <div class="dh"><h4 data-of="drawerTitle">Strike</h4><button class="btn sm sp" type="button" data-act="drawer-close" data-of="drawerClose" aria-label="Close details">✕</button></div>
+  <div class="dbody" data-of="drawerBody"></div>
+</aside>
+<div class="toasts" data-of="toasts" aria-live="polite"></div>
+<p class="sr" data-of="live" aria-live="polite"></p>
+<noscript><div style="padding:34px;text-align:center;color:#8b9bc0">OptionForge needs JavaScript for live data and charts.</div></noscript>
+</div>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is an iron condor and when does it work?","acceptedAnswer":{"@type":"Answer","text":"An iron condor sells an out-of-the-money put spread and an out-of-the-money call spread on the same expiry. It collects a net credit and keeps most of it if the underlying stays between the two short strikes until expiry. Both wings cap the worst case, so risk is defined. It works best when implied volatility is high and a range is expected."}},
+{"@type":"Question","name":"Why does coin-settled P&L differ from cash P&L?","acceptedAnswer":{"@type":"Answer","text":"Deribit BTC and ETH options are inverse: premium and settlement are paid in the coin. The coin payoff equals the dollar payoff divided by the settlement price, so a call's upside flattens as price rises while a put's downside grows faster as price falls."}},
+{"@type":"Question","name":"How is probability of profit calculated?","acceptedAnswer":{"@type":"Answer","text":"A lognormal price distribution is assumed at the at-the-money implied volatility of the payoff horizon expiry, and the probabilities of all price regions with a positive expiry payoff after fees are added together. It is an estimate, not a forecast."}},
+{"@type":"Question","name":"What does the P&L heatmap show?","acceptedAnswer":{"@type":"Answer","text":"Columns are possible underlying prices and rows are days forward. Colour is model P&L at that price and time under the chosen IV shift, with a dotted zero-P&L curve, current spot line and the active scenario marker."}},
+{"@type":"Question","name":"Is the NIFTY and BANKNIFTY data live?","acceptedAnswer":{"@type":"Answer","text":"Only if the site owner has configured a data proxy. Indian exchange feeds block direct browser requests, so without a proxy the index chain is a clearly labelled simulation. Always verify the live chain with your broker."}},
+{"@type":"Question","name":"Is this investment advice?","acceptedAnswer":{"@type":"Answer","text":"No. It is an educational analytics tool from Sahare Financial Services. It places no orders, is not affiliated with any exchange, and all figures are estimates. Crypto derivatives are unregulated in India and carry substantial risk."}}]}
+</script>
+
+<!-- # TODO [मॅन्युअल बदल]: NSE proxy URL इथे टाका (रिकामं = NIFTY/BANKNIFTY SIMULATED). JS file बदलायची गरज नाही. -->
+<script>window.OPTIONFORGE_CONFIG={NSE_PROXY_URL:""};</script>
+<script defer src="https://cdn.jsdelivr.net/gh/Pankajsahare/sahare-market-hub@of-v3.2/optionforge/optionforge.min.js"></script>
