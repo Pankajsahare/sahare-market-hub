@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-A4U FII Sector Flow fetcher v1.0
+A4U FII Sector Flow fetcher v2.0
 --------------------------------
 काय करतो:
   1. NSDL च्या "Fortnightly Sector-wise FPI Investment" पानावरून सगळ्या reports ची यादी घेतो.
@@ -10,7 +10,9 @@ A4U FII Sector Flow fetcher v1.0
        - year      = शेवटच्या 24 पंधरवड्यांची बेरीज (≈ 1 वर्ष)
        - aum       = एकूण FPI AUC मधला त्या sector चा % हिस्सा
   4. data/fii_sectors.json लिहितो — हाच JSON advisor4u.in वरचा FII dashboard वाचतो.
-  5. नवा पंधरवडा आला तर Telegram वर छोटा summary पाठवतो (secrets असतील तरच).
+  5. v2: Total आणि Equity दोन्ही आकडे, आधीचा पंधरवडा, AUC ₹ Cr + USD,
+     Equity/Debt/Hybrid/MF/AIF breakdown, Others मधल्या Top 10 कंपन्या, RBI rate.
+  6. नवा पंधरवडा आला तर Telegram वर छोटा summary पाठवतो (secrets असतील तरच).
 
 MODE (env FII_MODE):
   "total"  (default) = Equity + Debt + Hybrid + MF + AIF — Sovereign (G-Sec) पण दिसतो, आधीच्या dashboard सारखं
@@ -39,6 +41,7 @@ SELECT_URL = "https://www.fpi.nsdl.co.in/web/Reports/FPI_Fortnightly_Selection.a
 WEB_BASE = "https://www.fpi.nsdl.co.in/web/"
 SOURCE = "NSDL FPI Monitor — Fortnightly Sector-wise Investment"
 MODE = os.environ.get("FII_MODE", "total").strip().lower()
+SCHEMA = 2                # JSON रचना बदलली की हा वाढवा → नवीन report पुन्हा वाचला जातो
 YEAR_FORTNIGHTS = 24      # 24 पंधरवडे ≈ 1 वर्ष
 KEEP_FORTNIGHTS = 30      # history मध्ये किती ठेवायचे
 IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
@@ -129,6 +132,12 @@ class TableParser(HTMLParser):
             self._cell.append(data)
 
 
+# सध्याच्या report मधले प्रत्येक गटातले 12 columns
+PART_COLS_12 = ["Equity", "Debt General Limit", "Debt VRR", "Debt-FAR", "Hybrid",
+                "MF Equity", "MF Debt", "MF Hybrid", "MF Solution oriented", "MF Other", "AIF", "Total"]
+PART_GROUPS = {"equity": [0], "debt": [1, 2, 3], "hybrid": [4], "mf": [5, 6, 7, 8, 9], "aif": [10]}
+
+
 def to_num(s: str) -> float | None:
     s = s.replace(",", "").replace("−", "-").strip()
     if s in ("", "-"):
@@ -167,18 +176,57 @@ def parse_report(page: str) -> dict:
             def g(group: int, col: str) -> float:
                 return nums[group * k + (0 if col == "eq" else k - 1)]
 
+            def parts(group: int) -> dict | None:
+                """Equity/Debt/Hybrid/MF/AIF — फक्त सध्याच्या 12-column रचनेसाठी."""
+                if k != len(PART_COLS_12):
+                    return None
+                base = group * k
+                return {name: sum(nums[base + i] for i in idx) for name, idx in PART_GROUPS.items()}
+
             rec = {
                 "net_prev": {"eq": g(2, "eq"), "total": g(2, "total")},
                 "net_cur": {"eq": g(4, "eq"), "total": g(4, "total")},
                 "auc_cur": {"eq": g(6, "eq"), "total": g(6, "total")},
+                "usd": {"net_cur": g(5, "total"), "net_cur_eq": g(5, "eq"),
+                        "auc_cur": g(7, "total"), "auc_cur_eq": g(7, "eq")},
+                "parts": {"net": parts(4), "auc": parts(6)},
             }
             if name.lower() == "grand total":
                 grand = rec
             elif row[0].strip().isdigit():
                 sectors[name] = rec
         if len(sectors) >= 15 and grand:
-            return {"sectors": sectors, "grand": grand, "periods": periods}
+            return {"sectors": sectors, "grand": grand, "periods": periods,
+                    "others_top10": parse_top10(p.tables), "fx": parse_fx(p.tables)}
     raise ValueError("Sector table not found / format changed")
+
+
+def parse_top10(tables: list) -> list[dict]:
+    """"Others" मधल्या Top 10 कंपन्या (सध्याच्या तारखेचे column)."""
+    for table in tables:
+        if not any("Companies" in " ".join(r) for r in table[:3]):
+            continue
+        out = []
+        for r in table:
+            if len(r) >= 3 and r[0].strip().isdigit():
+                val = to_num(r[2])
+                if r[1].strip() and val is not None:
+                    out.append({"name": html.unescape(r[1]).strip(), "cr": int(val)})
+        if out:
+            return out[:10]
+    return []
+
+
+def parse_fx(tables: list) -> float | None:
+    """RBI reference rate — शेवटची "AUC as on ..." ओळ (सध्याची तारीख)."""
+    rate = None
+    for table in tables:
+        for r in table:
+            if len(r) >= 2 and r[0].startswith("AUC as on"):
+                v = to_num(r[-1])
+                if v and 30 < v < 500:
+                    rate = v
+    return rate
 
 
 # ---------------------------------------------------------------- history
@@ -196,7 +244,7 @@ def update_history(reports: list[dict], hist: dict) -> int:
     for i, rep in enumerate(reports[:YEAR_FORTNIGHTS]):
         key = rep["date"].isoformat()
         # सगळ्यात नवीन पंधरवड्याला AUC लागतो; बाकीच्यांना फक्त net पुरे
-        if key in fn and (i > 0 or "auc" in fn[key]):
+        if key in fn and (i > 0 or fn[key].get("schema") == SCHEMA):
             continue
         # आधीचा पंधरवडा पण ह्याच report मधून भरता येतो
         prev_key = reports[i + 1]["date"].isoformat() if i + 1 < len(reports) else None
@@ -206,19 +254,30 @@ def update_history(reports: list[dict], hist: dict) -> int:
         cur_period = data["periods"][1] if len(data["periods"]) > 1 else ""
         prev_period = data["periods"][0] if data["periods"] else ""
         fn[key] = {
+            "schema": SCHEMA,
             "period": cur_period,
+            "prev_period": prev_period,
             "net": {s: v["net_cur"] for s, v in data["sectors"].items()},
             "auc": {s: v["auc_cur"] for s, v in data["sectors"].items()},
             "grand_auc": data["grand"]["auc_cur"],
             "url": rep["url"],
+            "detail": {s: {"usd": v["usd"], "parts": v["parts"]} for s, v in data["sectors"].items()},
+            "others_top10": data["others_top10"],
+            "fx": data["fx"],
         }
-        if prev_key and prev_key not in fn:
+        if prev_key:
             fn[prev_key] = {
                 "period": prev_period,
                 "net": {s: v["net_prev"] for s, v in data["sectors"].items()},
             }
         print(f"  parsed {rep['date']} ({len(data['sectors'])} sectors)")
         time.sleep(1.5)  # NSDL वर हलका load
+    # फक्त सगळ्यात नवीन पंधरवड्याचा detail ठेवा (file लहान राहते)
+    newest = max(fn)
+    for d_key, entry in fn.items():
+        if d_key != newest:
+            for heavy in ("detail", "others_top10", "auc", "grand_auc"):
+                entry.pop(heavy, None)
     # जुने काढून टाका
     for old in sorted(fn)[:-KEEP_FORTNIGHTS]:
         del fn[old]
@@ -233,24 +292,57 @@ def build_output(hist: dict) -> dict:
     latest_key = next(d for d in dates if "auc" in fn[d])
     latest = fn[latest_key]
     window = [d for d in dates if d <= latest_key][:YEAR_FORTNIGHTS]
+    prev_key = next((d for d in dates if d < latest_key), None)
     m = "eq" if MODE == "equity" else "total"
-    grand_auc = latest["grand_auc"][m] or 1
+    detail = latest.get("detail", {})
+
+    def flow(d_key: str | None, name: str, col: str) -> int:
+        if not d_key:
+            return 0
+        return int(round(fn[d_key]["net"].get(name, {}).get(col, 0)))
+
+    def share(auc: dict, col: str) -> float:
+        g = latest["grand_auc"][col] or 1
+        return round(auc[col] / g * 100, 1)
 
     sectors = []
     for name, auc in latest["auc"].items():
-        year = sum(fn[d]["net"].get(name, {}).get(m, 0) for d in window)
-        sectors.append({
+        det = detail.get(name, {})
+        usd = det.get("usd", {})
+        rec = {
             "name": name,
-            "aum": round(auc[m] / grand_auc * 100, 1),
-            "fortnight": int(round(latest["net"].get(name, {}).get(m, 0))),
-            "year": int(round(year)),
-        })
+            # मुख्य आकडे (MODE नुसार) — dashboard default हेच वापरतो
+            "aum": share(auc, m),
+            "fortnight": flow(latest_key, name, m),
+            "year": int(round(sum(fn[d]["net"].get(name, {}).get(m, 0) for d in window))),
+            "prevFortnight": flow(prev_key, name, m),
+            # फक्त Equity (toggle साठी)
+            "aumEq": share(auc, "eq"),
+            "fortnightEq": flow(latest_key, name, "eq"),
+            "yearEq": int(round(sum(fn[d]["net"].get(name, {}).get("eq", 0) for d in window))),
+            "prevFortnightEq": flow(prev_key, name, "eq"),
+            # प्रत्यक्ष रक्कम
+            "aucCr": int(round(auc[m])),
+            "aucCrEq": int(round(auc["eq"])),
+            "aucUsdMn": int(round(usd.get("auc_cur", 0))),
+            "fortnightUsdMn": int(round(usd.get("net_cur", 0))),
+        }
+        parts = det.get("parts") or {}
+        if parts.get("net") and parts.get("auc"):
+            rec["breakdown"] = {
+                "net": {k: int(round(v)) for k, v in parts["net"].items()},
+                "auc": {k: int(round(v)) for k, v in parts["auc"].items()},
+            }
+        sectors.append(rec)
     sectors.sort(key=lambda s: s["aum"], reverse=True)
     d = dt.date.fromisoformat(latest_key)
     return {
         "asOf": d.strftime("%d-%b-%Y"),
         "asOfISO": latest_key,
         "period": latest.get("period", ""),
+        "prevPeriod": latest.get("prev_period", ""),
+        "fxRate": latest.get("fx"),
+        "othersTop10": latest.get("others_top10", []),
         "source": SOURCE,
         "sourceUrl": latest.get("url", SELECT_URL),
         "mode": MODE,
