@@ -1,0 +1,53 @@
+# FII Sector Flow data — रोज रात्री 8:47 IST ला तपासतो; NSDL ने नवा पंधरवडा टाकला असेल तरच JSON अपडेट होतो
+#   scripts/fetch_fii_sectors.py → data/fii_sectors.json (dashboard हाच वाचतो)
+#                                → data/fii_sectors_history.json (जुने पंधरवडे, 1Y बेरजेसाठी)
+# हाताने चालवायचं असेल: Actions टॅब → "Update FII sector flows" → "Run workflow"
+name: Update FII sector flows
+
+on:
+  schedule:
+    - cron: "17 15 * * *"   # 15:17 UTC = 8:47 PM IST
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "total (Equity+Debt+MF+AIF) किंवा equity (फक्त Equity)"
+        required: false
+        default: "total"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fii-sectors-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FII_MODE: ${{ github.event.inputs.mode || 'total' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch NSDL fortnightly sector data
+        run: python scripts/fetch_fii_sectors.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/fii_sectors.json data/fii_sectors_history.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No change"
+          else
+            git commit -m "Update FII sector flows"
+            git pull --rebase
+            git push
+          fi
