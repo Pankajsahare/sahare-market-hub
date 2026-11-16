@@ -258,3 +258,5 @@
 #a4u-bc .mbar svg{width:18px;height:18px;fill:#fff;flex:none}#a4u-bc .mbar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #a4u-bc .md-back{top:var(--bc-top,0px)}
 @media(max-width:820px){#a4u-bc .stats{grid-template-columns:repeat(2,1fr)}#a4u-bc .stats b{font-size:1.1rem}}
+/* Elementor कधी कधी widget ला overflow:auto देतो → sticky tabs चालत नाहीत. फक्त Bond Centre च्या widget साठी काढतो. */
+.elementor-element:has(> #a4u-bc),.elementor-widget-container:has(> #a4u-bc){overflow:visible!important}
