@@ -36,11 +36,18 @@
 
   if(CFG.fd) FD_RATES = CFG.fd;
   /* साईटचा fixed header (आणि admin bar) किती उंच आहे ते मोजतो → tabs त्याच्या खाली चिकटतात, popup header खाली जात नाही */
+  var FX=null, fxAt=0;
+  function fixedEls(){   // साईटचे fixed/sticky पट्टे (header, admin bar, bottom nav) — 3 सेकंदांनी एकदाच पुन्हा शोधतो
+    if(FX&&Date.now()-fxAt<3000) return FX; FX=[]; fxAt=Date.now();
+    document.querySelectorAll("body > *, body > * > *, body > * > * > *").forEach(function(e){
+      if(root.contains(e)||e===root) return; var st=getComputedStyle(e); if(st.position==="fixed"||st.position==="sticky") FX.push(e);
+    }); return FX;
+  }
   function edgeFixed(edge){
-    var L=[]; document.querySelectorAll("body > *, body > * > *, body > * > * > *").forEach(function(e){
-      if(root.contains(e)||e===root) return; var st=getComputedStyle(e); if(st.position!=="fixed"&&st.position!=="sticky") return;
-      if(st.display==="none"||st.visibility==="hidden"||+st.opacity===0) return; var r=e.getBoundingClientRect(); if(r.width<innerWidth*0.6||r.height<8||r.height>innerHeight*0.4) return;
-      L.push(edge==="top"?[r.top,r.bottom]:[innerHeight-r.bottom,innerHeight-r.top]);
+    var L=[]; fixedEls().forEach(function(e){
+      var st=getComputedStyle(e); if(st.display==="none"||st.visibility==="hidden"||+st.opacity===0) return;
+      var r=e.getBoundingClientRect(); if(r.width<innerWidth*0.6||r.height<8||r.height>innerHeight*0.4||r.bottom<=0||r.top>=innerHeight) return;
+      L.push(edge==="top"?[Math.max(0,r.top),r.bottom]:[innerHeight-r.bottom,innerHeight-r.top]);
     });
     // admin bar + त्याखालचा header असे एकावर एक असले तरी एकूण उंची मोजतो
     L.sort(function(a,b){return a[0]-b[0];}); var m=0; L.forEach(function(x){ if(x[0]<=m+2) m=Math.max(m,x[1]); });
@@ -1098,6 +1105,8 @@
     var m=(location.hash||"").match(/^#bond-([A-Z0-9]{12})$/); if(m&&S.corp){ showTab("corp",false); openBond(m[1],false); }
   });
   syncTop(); setTimeout(syncTop,800); window.addEventListener("resize",syncTop);
-  var stk=false; window.addEventListener("scroll",function(){ if(!stk){ stk=true; setTimeout(function(){ stk=false; syncTop(); },250); } },{passive:true});   // header scroll नंतर लहान होतो
+  // header खाली scroll केल्यावर लपतो / लहान होतो — त्याच्या हालचालीबरोबर tabs पण हलतात
+  var stk=false; function tick(n){ syncTop(); if(n>0) requestAnimationFrame(function(){ tick(n-1); }); }
+  window.addEventListener("scroll",function(){ if(!stk){ stk=true; requestAnimationFrame(function(){ stk=false; tick(20); }); } },{passive:true});
   var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(S.mkt) drawCurve((S.mkt.curve||[]).slice().sort(function(a,b){return a.t-b.t;})); },150); });
 })();
