@@ -311,7 +311,7 @@
       '<td class="iss">'+esc(b.issuer)+'<span class="isin">'+esc(b.isin)+'</span>'+tagsHtml(b)+'</td><td>'+ratingPill(b)+'</td>'+
       '<td class="r num">'+pct(b.coupon)+'</td><td class="r num">'+n2(b.price)+'</td><td class="r num y">'+ytmTxt(b)+'</td>'+
       '<td>'+matTxt(b)+'</td><td>'+freqTxt(b)+'</td><td>'+fd(b.tradeDate)+'<span class="isin">'+esc(b.exch||"")+'</span></td>'+
-      '<td><div class="acts"><button type="button" class="btn solid" data-open="'+esc(b.isin)+'">Details</button><button type="button" class="btn" data-calc="'+esc(b.isin)+'">Calculate</button>'+waBond(b,true)+'</div></td></tr>';
+      '<td><div class="acts col"><button type="button" class="btn solid" data-open="'+esc(b.isin)+'">Details</button><button type="button" class="btn" data-calc="'+esc(b.isin)+'">Calculate</button>'+waBond(b,true)+'</div></td></tr>';
   }
   function cardHtml(b){
     var on=S.picked.indexOf(b.isin)>=0;
@@ -319,7 +319,7 @@
       '<h4>'+esc(b.issuer)+'</h4><span class="isin">'+esc(b.isin)+'</span>'+
       '<div class="yl"><b class="num">'+ytmTxt(b)+'</b><span>yield to maturity</span></div>'+
       '<dl class="kv"><div><dt>Coupon</dt><dd>'+pct(b.coupon)+'</dd></div><div><dt>Price (per ₹100)</dt><dd class="num">'+n2(b.price)+'</dd></div><div><dt>Maturity</dt><dd>'+matTxt(b)+'</dd></div><div><dt>Interest paid</dt><dd>'+freqTxt(b)+'</dd></div><div><dt>Last trade</dt><dd>'+fd(b.tradeDate)+'</dd></div><div><dt>Face value</dt><dd>'+(b.face?inr(b.face):"–")+'</dd></div></dl>'+
-      tagsHtml(b)+'<div class="acts" style="margin-top:.6rem"><button type="button" class="btn solid" data-open="'+esc(b.isin)+'">Details &amp; payouts</button><button type="button" class="btn" data-calc="'+esc(b.isin)+'">Calculate</button>'+waBond(b)+'</div></div>';
+      tagsHtml(b)+'<div class="acts row3" style="margin-top:.6rem"><button type="button" class="btn solid" data-open="'+esc(b.isin)+'">Details</button><button type="button" class="btn" data-calc="'+esc(b.isin)+'">Calculate</button>'+waBond(b,true)+'</div></div>';
   }
   var COLS=[["","",0],["issuer","Issuer",1],["rating","Rating",1],["coupon","Coupon",1,1],["price","Price (per ₹100)",1,1],["ytm","Yield",1,1],["maturity","Maturity",1],["freq","Interest paid",0],["tradeDate","Last trade",1],["","",0]];
   function renderCorp(){
@@ -518,7 +518,26 @@
     var sim=similar(b);
     if(sim.length) h+='<div class="md-sec"><h4>Similar bonds</h4><div class="sim">'+sim.map(function(x){ return '<button type="button" data-md-open="'+esc(x.isin)+'"><b>'+esc(x.issuer)+'</b><small>'+(x.rating?esc(x.rating)+" · ":"")+"Yield "+ytmTxt(x)+" · "+matTxt(x)+'</small></button>'; }).join("")+'</div></div>';
     h+='<div class="md-sec acts" style="align-items:center">'+waBond(b)+'<button type="button" class="btn" data-calc="'+esc(b.isin)+'">Open in calculator</button>'+(BOND_PAGE_BASE?'<a class="btn" href="'+esc(BOND_PAGE_BASE+b.isin+"/")+'" target="_blank" rel="noopener">Bond page ↗</a>':"")+'<span class="muted">Information only, not a recommendation.</span></div></div>';
-    $("md-box").innerHTML=h;
+    patchBox(h);
+  }
+  /* Popup पुन्हा काढताना: ज्या box मध्ये टाइप चालू आहे तो तसाच ठेवतो, फक्त बदललेले भाग बदलतो.
+     (नाहीतर प्रत्येक अक्षरानंतर box नवा बनतो → mobile चा keyboard बंद होतो, आकडा टाकता येत नाही.) */
+  function patchNode(oldP,newP,act){
+    var o=oldP.children, n=newP.children;
+    if(o.length!==n.length){ oldP.innerHTML=newP.innerHTML; return; }
+    for(var i=o.length-1;i>=0;i--){
+      var a=o[i], b=n[i];
+      if(a===act) continue;                                   // टाइप होत असलेला box: हात लावत नाही
+      if(act&&a.contains(act)){ if(a.tagName===b.tagName) patchNode(a,b,act); continue; }
+      if(a.outerHTML!==b.outerHTML) oldP.replaceChild(b.cloneNode(true),a);
+    }
+  }
+  function patchBox(h){
+    var box=$("md-box"), act=document.activeElement;
+    if(!act||!box.contains(act)||!/^(INPUT|SELECT|TEXTAREA)$/.test(act.tagName)||!act.id){ box.innerHTML=h; return; }
+    var t=document.createElement("div"); t.innerHTML=h;
+    if(!t.querySelector("#"+act.id)){ box.innerHTML=h; return; }
+    patchNode(box,t,act);
   }
   function inr2(v){ return (typeof v==="number"&&isFinite(v)) ? "₹"+v.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}) : "–"; }
   function openBond(isin,push){
@@ -531,8 +550,10 @@
     setTimeout(function(){ var x=root.querySelector(".md-x"); if(x) x.focus(); },30);
   }
   function closeBond(){ $("md").classList.remove("on"); document.body.style.overflow=""; MD.b=null; if(history.replaceState){ var fq=curTab==="corp"?filterQuery():""; history.replaceState(null,"",hashReady?"#bonds-"+curTab+(fq?"?"+fq:""):location.href.split("#")[0]); } }
+  var mdDown=null;
+  $("md").addEventListener("pointerdown",function(e){ mdDown=e.target; },true);
   $("md").addEventListener("click",function(e){
-    if(e.target===$("md")){ closeBond(); return; }
+    if(e.target===$("md")){ if(mdDown===$("md")) closeBond(); return; }   // बाहेरच दाबून बाहेरच सोडलं तरच बंद (आतून ओढत बाहेर गेलं तर नाही)
     var a=e.target.closest("[data-md]"), o=e.target.closest("[data-md-open]"), c=e.target.closest("[data-calc]");
     if(o){ openBond(o.getAttribute("data-md-open"),true); $("md").scrollTop=0; return; }
     var pd=e.target.closest("[data-md-pd]"); if(pd){ var st=$("md").scrollTop; MD.pdays=+pd.getAttribute("data-md-pd"); renderModal(); $("md").scrollTop=st; return; }
@@ -552,8 +573,10 @@
     var id=e.target.id; if(id!=="md-units"&&id!=="md-qy") return;
     if(id==="md-units") MD.units=Math.max(1,Math.floor(+e.target.value||1));
     else { var q=parseFloat(e.target.value); if(!isFinite(q)||q<=0||q>40) return; MD.qy=(MD.b&&MD.b.ytm!=null&&Math.abs(q-MD.b.ytm)<0.005)?null:q; track("bond_quote_yield",{isin:MD.b.isin}); }
-    var val=e.target.value; renderModal(); var f=$(id); if(f){ f.focus(); f.value=val; try{ f.setSelectionRange(val.length,val.length); }catch(er){} }
+    renderModal();   // patchBox: टाइप होत असलेला box तसाच राहतो
   });
+  // box सोडल्यावर (blur) रिकामा/चुकीचा आकडा नीट करून दाखवतो
+  $("md").addEventListener("change",function(e){ var id=e.target.id; if(id==="md-units") e.target.value=MD.units; else if(id==="md-qy"&&MD.b){ var v=MD.qy!=null?MD.qy:MD.b.ytm; if(v!=null) e.target.value=(+v).toFixed(2); } });
   document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&$("md").classList.contains("on")) closeBond(); });
 
   function fileName(b,ext){ return (MD.qy!=null?"Quote_":"")+"Payout-Schedule_"+b.isin+"_"+MD.units+"-bond"+(MD.units>1?"s":"")+"_"+(MD.tds?"post":"pre")+"-TDS."+ext; }
