@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-16T19:42+05:30",
+ "updated": "2026-11-16T20:34+05:30",
  "pricesAsOf": "2026-11-16",
  "curve": [
   {
@@ -747,14 +747,14 @@
     "maturity": "2026-11-16"
    },
    {
-    "isin": "INE093JA70G0",
+    "isin": "INE093JA72G6",
     "issuer": "Anand Rathi Global Finance Limited",
     "sizeCr": 50.6,
     "allotted": "2021-09-28",
     "maturity": "2026-11-16"
    },
    {
-    "isin": "INE093JA72G6",
+    "isin": "INE093JA70G0",
     "issuer": "Anand Rathi Global Finance Limited",
     "sizeCr": 50.6,
     "allotted": "2021-09-28",
@@ -782,6 +782,13 @@
     "maturity": "2026-11-16"
    },
    {
+    "isin": "INE050N07GA4",
+    "issuer": "Kings Infra Ventures Limited",
+    "sizeCr": 0.03,
+    "allotted": "2025-10-17",
+    "maturity": "2026-11-16"
+   },
+   {
     "isin": "INE050N07GD8",
     "issuer": "Kings Infra Ventures Limited",
     "sizeCr": 0.1,
@@ -792,13 +799,6 @@
     "isin": "INE050N07GG1",
     "issuer": "Kings Infra Ventures Limited",
     "sizeCr": 0.24,
-    "allotted": "2025-10-17",
-    "maturity": "2026-11-16"
-   },
-   {
-    "isin": "INE050N07GA4",
-    "issuer": "Kings Infra Ventures Limited",
-    "sizeCr": 0.03,
     "allotted": "2025-10-17",
     "maturity": "2026-11-16"
    },
@@ -859,17 +859,17 @@
     "maturity": "2026-11-16"
    },
    {
-    "isin": "INE918K07KW4",
-    "issuer": "Nuvama Wealth Finance Limited",
-    "sizeCr": 30.0,
-    "allotted": "2023-07-03",
-    "maturity": "2026-11-16"
-   },
-   {
     "isin": "INE918K07JX4",
     "issuer": "Nuvama Wealth Finance Limited",
     "sizeCr": 10.0,
     "allotted": "2023-05-18",
+    "maturity": "2026-11-16"
+   },
+   {
+    "isin": "INE918K07KW4",
+    "issuer": "Nuvama Wealth Finance Limited",
+    "sizeCr": 30.0,
+    "allotted": "2023-07-03",
     "maturity": "2026-11-16"
    },
    {
