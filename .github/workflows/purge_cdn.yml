@@ -1,0 +1,20 @@
+# Bond Centre चे JS/CSS बदलले की jsDelivr (CDN) ला लगेच नवीन file घ्यायला सांगतो,
+# म्हणजे साईटवर बदल काही मिनिटांत दिसतो (नाहीतर 12 तासांपर्यंत जुनी file दिसू शकते).
+name: Purge jsDelivr cache
+
+on:
+  push:
+    branches: [main]
+    paths: ["assets/bond-centre/**"]
+  workflow_dispatch:
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Purge
+        run: |
+          for f in bond-centre.js bond-centre.css logo.png; do
+            curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/assets/bond-centre/$f" | head -c 300; echo
+          done
