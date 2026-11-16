@@ -25,26 +25,16 @@ import csv
 import datetime as dt
 import io
 import json
-import os
 import re
 import sys
-import urllib.parse
-import urllib.request
 import zipfile
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from common import IST, ROOT, fetch_file, load_json, notify as notify_telegram, write_json
+
 CONFIG_FILE = ROOT / "data" / "bonds_config.json"
 OUTPUT_FILE = ROOT / "data" / "bonds.json"
-IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
 LOOKBACK_DAYS = 7
 
-BROWSER_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-    "Accept": "*/*",
-    "Accept-Language": "en-US,en;q=0.9",
-}
 SOURCES = [
     ("NSE", "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{ymd}_F_0000.csv.zip",
      "https://www.nseindia.com/"),
@@ -56,10 +46,7 @@ MONTHS = {m: i for i, m in enumerate(
 GSEC_RE = re.compile(r"^(\d{3,4})GS(20\d{2})[A-Z]?$")
 SGB_RE = re.compile(r"^SGB([A-Z]*?)(\d{2})")
 
-try:
-    GSEC_MATURITY = json.loads((ROOT / "data" / "bond_market.json").read_text(encoding="utf-8")).get("gsecMaturity", {})
-except (OSError, ValueError):
-    GSEC_MATURITY = {}
+GSEC_MATURITY = load_json(ROOT / "data" / "bond_market.json", {}).get("gsecMaturity", {})
 
 SGB_TAX = "Interest taxable at slab rate; capital gains on redemption at maturity exempt for individuals"
 GSEC_TAX = "Interest taxable at slab rate; LTCG (listed, held over 12 months) at 12.5%"
@@ -67,13 +54,8 @@ GSEC_TAX = "Interest taxable at slab rate; LTCG (listed, held over 12 months) at
 
 # ---------- download ----------
 def download(url: str, referer: str) -> bytes | None:
-    """File आणतो; 404/403/timeout झाल्यास None."""
-    headers = dict(BROWSER_HEADERS, Referer=referer)
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=40) as resp:
-            return resp.read() if resp.status == 200 else None
-    except Exception:
-        return None
+    """File आणतो; 404/403/timeout झाल्यास None. (त्याच run मध्ये आधी आणलेली असेल तर पुन्हा download नाही.)"""
+    return fetch_file(url, referer)
 
 
 def parse_csv(raw: bytes, is_zip: bool) -> list[dict]:
@@ -264,18 +246,6 @@ def to_output(rec: dict) -> dict:
 
 
 # ---------- alert ----------
-def notify_telegram(message: str) -> None:
-    token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
-    if not token or not chat_id:
-        return
-    body = urllib.parse.urlencode({"chat_id": chat_id, "text": message}).encode()
-    try:
-        urllib.request.urlopen(f"https://api.telegram.org/bot{token}/sendMessage", data=body, timeout=15)
-    except Exception as exc:
-        print("Telegram alert failed:", exc)
-
-
 def keep_previous(reason: str) -> int:
     """नवीन डेटा नाही → जुना डेटा "stale" म्हणून ठेवतो."""
     print("No fresh data:", reason)
@@ -284,7 +254,7 @@ def keep_previous(reason: str) -> int:
             old = json.loads(OUTPUT_FILE.read_text(encoding="utf-8"))
             for b in old.get("bonds", []):
                 b["stale"] = True
-            OUTPUT_FILE.write_text(json.dumps(old, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            write_json(OUTPUT_FILE, old, indent=2)
         except (ValueError, TypeError) as exc:
             print("Could not mark old data stale:", exc)
     notify_telegram(f"⚠️ Bond data not updated: {reason}. Website shows last available prices.")
@@ -292,7 +262,7 @@ def keep_previous(reason: str) -> int:
 
 
 def main() -> int:
-    cfg = json.loads(CONFIG_FILE.read_text(encoding="utf-8")) if CONFIG_FILE.exists() else {}
+    cfg = load_json(CONFIG_FILE, {})
     today = dt.datetime.now(IST).date()
 
     found = latest_bhavcopy(today)
@@ -310,7 +280,7 @@ def main() -> int:
         "source": f"{source} bhavcopy",
         "bonds": [to_output(r) for r in chosen],
     }
-    OUTPUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json(OUTPUT_FILE, payload, indent=2)
     print(f"Wrote {len(chosen)} bonds:")
     for r in chosen:
         print(f"  {r['symbol']:<12} ₹{r['price']:>10.2f}  yield={r['yield']}  maturity={r['maturity']}")
