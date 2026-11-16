@@ -20,40 +20,15 @@ import json
 import re
 import sys
 import time
-import urllib.request
 import zipfile
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from common import BSE_REF, IST, NSE_REF, ROOT, bse_debt_url, fetch_file, fnum, http_get, load_json, nse_cm_url, write_json
+
 OUT_FILE = ROOT / "data" / "bond_market.json"
 CONFIG_FILE = ROOT / "data" / "market_config.json"
-IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
-BROWSER = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-    "Accept-Language": "en-US,en;q=0.9",
-}
 TENORS = [1, 2, 3, 5, 7, 10, 15, 20, 30, 40]
 GS_RE = re.compile(r"^(\d{3,4})GS(20\d{2})[A-Z]?$")
 WDM_DESC_RE = re.compile(r"^(\d+(?:\.\d+)?)\s*(?:%\s*)?(?:GOI|GS)\s*(20\d{2})", re.I)
-
-
-def http_get(url: str, referer: str, accept: str = "*/*") -> tuple[int, bytes]:
-    try:
-        req = urllib.request.Request(url, headers=dict(BROWSER, Accept=accept, Referer=referer))
-        with urllib.request.urlopen(req, timeout=40) as r:
-            return r.status, r.read()
-    except urllib.error.HTTPError as exc:
-        return exc.code, b""
-    except Exception:
-        return 0, b""
-
-
-def fnum(v):
-    try:
-        return float(str(v).replace(",", "").strip())
-    except (TypeError, ValueError):
-        return None
 
 
 def ytm_semi(price: float, coupon: float, maturity: dt.date, today: dt.date) -> float | None:
@@ -93,9 +68,8 @@ def latest_files(today: dt.date):
         if day.weekday() >= 5:
             continue
         if not wdm:
-            st, raw = http_get(f"https://www.bseindia.com/download/Bhavcopy/Debt/DEBTBHAVCOPY{day:%d%m%Y}.zip",
-                               "https://www.bseindia.com/")
-            if st == 200 and raw.startswith(b"PK"):
+            raw = fetch_file(bse_debt_url(day), BSE_REF)
+            if raw and raw.startswith(b"PK"):
                 with zipfile.ZipFile(io.BytesIO(raw)) as z:
                     for n in z.namelist():
                         if n.lower().startswith("wdm"):
@@ -104,9 +78,8 @@ def latest_files(today: dt.date):
                             for r in wdm:
                                 r["_day"] = day.isoformat()
         if not nse:
-            st, raw = http_get(f"https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{day:%Y%m%d}_F_0000.csv.zip",
-                               "https://www.nseindia.com/")
-            if st == 200 and raw.startswith(b"PK"):
+            raw = fetch_file(nse_cm_url(day), NSE_REF)
+            if raw and raw.startswith(b"PK"):
                 with zipfile.ZipFile(io.BytesIO(raw)) as z:
                     rows = csv.DictReader(io.StringIO(z.read(z.namelist()[0]).decode("utf-8", "replace")))
                     nse = [r for r in rows if (r.get("SctySrs") or "").strip() == "GS"]
@@ -209,16 +182,8 @@ def tidy_list(rows, limit=25):
 
 def main() -> int:
     today = dt.datetime.now(IST).date()
-    prev = {}
-    try:
-        prev = json.loads(OUT_FILE.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        pass
-    cfg = {}
-    try:
-        cfg = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        pass
+    prev = load_json(OUT_FILE, {})
+    cfg = load_json(CONFIG_FILE, {})
 
     wdm, nse, day = latest_files(today)
     bonds, maturities = gsec_list(wdm, nse, today)
@@ -246,7 +211,7 @@ def main() -> int:
             "maturingSoon": tidy_list(nm.get("dueforredemption")),
         } if nm else prev.get("nsdl"),
     }
-    OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    write_json(OUT_FILE, payload, indent=1)
     for p in pts:
         print(f"  {p['label']:>4}  {p['ytm']:.2f}%  ({p['n']} bonds)")
     return 0

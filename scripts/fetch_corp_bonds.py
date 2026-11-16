@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-A4U Corporate Bond Fetcher v1.0
+A4U Corporate Bond Fetcher v2.0
 -------------------------------
 काय करतो (रोज):
   1. BSE debt bhavcopy (fgroup + ICDM) आणि NSE CM bhavcopy मधले NCD/bonds चे भाव आणतो.
@@ -8,7 +8,10 @@ A4U Corporate Bond Fetcher v1.0
   3. NSDL India Bond Info मधून प्रत्येक bond ची माहिती जोडतो:
        ratings, outlook, PSU/private, sector, tax-free, secured, perpetual, guarantee,
        interest किती वेळा, पुढचं पेमेंट, call/put, default, offer documents, trustee.
-  4. data/corp_bonds.json लिहितो (WordPress चं Bond Centre हाच वाचतो).
+  4. लिहितो:
+       data/corp_list.json    — हलकी यादी (पान सुरुवातीला हीच वाचतं)
+       data/corp_details.json — documents, सगळ्या ratings, पत्ता, trustee (bond उघडल्यावरच)
+       data/corp_bonds.json   — पूर्ण (जुन्या पानासाठी + पुढच्या run ची आठवण)
 
 NSDL ला त्रास नको म्हणून:
   - bond ची कायमची माहिती (instrument, coupon, documents...) फक्त एकदाच आणतो → data/nsdl_cache.json
@@ -33,29 +36,28 @@ from concurrent.futures import ThreadPoolExecutor
 import urllib.parse
 import urllib.request
 import zipfile
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from common import (BSE_REF, IST, NSE_REF, ROOT, bse_debt_url, fetch_file, fnum, http_get, load_json,
+                    notify, nse_cm_url, write_json)
+
 OUT_FILE = ROOT / "data" / "corp_bonds.json"
 CACHE_FILE = ROOT / "data" / "nsdl_cache.json"
 SCHED_FILE = ROOT / "data" / "corp_schedules.json"
 PRICE_FILE = ROOT / "data" / "corp_prices.json"   # 90 दिवसांचा भाव-इतिहास (chart साठी)
 HIST_FILE = ROOT / "data" / "corp_history.json"     # प्रत्येक bond चे रोजचे व्यवहार (liquidity साठी)   # प्रत्येक bond चं पुढचं payout schedule (पान गरजेनुसार वाचतं)
-IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
+LIST_FILE = ROOT / "data" / "corp_list.json"       # हलकी यादी (पानाचा पहिला load)
+DETAIL_FILE = ROOT / "data" / "corp_details.json"  # जड तपशील (bond उघडल्यावर)
+DETAIL_KEYS = ("ratings", "docs", "address", "trustee", "registrar", "issueMode", "category")
 
 KEEP_DAYS = 30            # इतक्या दिवसांत व्यवहार झालेले bonds यादीत ठेवायचे
 RATING_REFRESH_DAYS = 7   # ratings किती दिवसांनी पुन्हा तपासायचे
+DEFAULT_REFRESH_DAYS = 28 # AAA/AA (कुठलाही इशारा नसलेले) bonds ची "default" नोंद इतक्या दिवसांनी; बाकीच्यांची दर आठवड्याला
 MAX_NSDL_CALLS = int(os.environ.get("MAX_NSDL_CALLS", "2400"))
 MAX_NSDL_SECONDS = int(os.environ.get("MAX_NSDL_SECONDS", "1800"))  # एका run मध्ये NSDL ला जास्तीत जास्त 30 मिनिटं
 NSDL_DELAY = 0.6
 NSDL_WORKERS = 3          # एकाच वेळी जास्तीत जास्त 3 requests (NSDL वर ताण नको)
 HIGH_YIELD = 14.0
 
-BROWSER = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-    "Accept-Language": "en-US,en;q=0.9",
-}
 NSDL_BASE = "https://www.indiabondinfo.nsdl.com/bds-service/v1/public/"
 DEBT_TYPES = ("07", "08", "09")  # ISIN मधले 8-9 वे अक्षर: debentures / bonds
 RANK = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-",
@@ -63,25 +65,6 @@ RANK = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-",
 
 
 # ---------------- साधी मदत ----------------
-def http_get(url: str, referer: str, accept: str = "*/*", timeout: int = 40) -> tuple[int, bytes]:
-    headers = dict(BROWSER, Accept=accept, Referer=referer)
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=timeout) as r:
-            return r.status, r.read()
-    except urllib.error.HTTPError as exc:
-        return exc.code, b""
-    except Exception:
-        return 0, b""
-
-
-def fnum(v) -> float | None:
-    try:
-        x = float(str(v).replace(",", "").strip())
-        return x
-    except (TypeError, ValueError):
-        return None
-
-
 def pdate(s: str | None) -> str | None:
     """dd-mm-yyyy / dd/mm/yyyy / yyyy-mm-dd → yyyy-mm-dd."""
     if not s:
@@ -132,9 +115,8 @@ def ytm_pct(price100: float, coupon: float, years: float, freq: int) -> float | 
 
 # ---------------- 1. भाव: BSE + NSE ----------------
 def bse_debt(day: dt.date) -> list[dict]:
-    url = f"https://www.bseindia.com/download/Bhavcopy/Debt/DEBTBHAVCOPY{day:%d%m%Y}.zip"
-    st, raw = http_get(url, "https://www.bseindia.com/")
-    if st != 200 or not raw.startswith(b"PK"):
+    raw = fetch_file(bse_debt_url(day), BSE_REF)
+    if not raw or not raw.startswith(b"PK"):
         return []
     out: list[dict] = []
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
@@ -180,9 +162,8 @@ def bse_debt(day: dt.date) -> list[dict]:
 
 
 def nse_cm(day: dt.date) -> list[dict]:
-    url = f"https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{day:%Y%m%d}_F_0000.csv.zip"
-    st, raw = http_get(url, "https://www.nseindia.com/")
-    if st != 200 or not raw.startswith(b"PK"):
+    raw = fetch_file(nse_cm_url(day), NSE_REF)
+    if not raw or not raw.startswith(b"PK"):
         return []
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8", "replace")
@@ -203,29 +184,29 @@ def nse_cm(day: dt.date) -> list[dict]:
 
 
 def collect_trades(today: dt.date) -> tuple[list[dict], str | None]:
-    """मागच्या 7 दिवसांतली सगळ्यात नवीन BSE/NSE files."""
+    """मागच्या 7 दिवसांतली सगळ्यात नवीन BSE/NSE files. सगळे दिवस एकाच वेळी (parallel) तपासतो."""
+    days = [d for d in (today - dt.timedelta(days=b) for b in range(8)) if d.weekday() < 5]
+
+    def safe(fn, day):
+        try:
+            return fn(day)
+        except Exception as exc:      # एखादी बिघडलेली file → तो दिवस सोडून पुढे
+            print(f"{fn.__name__} {day}: {exc}")
+            return []
+
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        bse = list(pool.map(lambda d: safe(bse_debt, d), days))
+        nse = list(pool.map(lambda d: safe(nse_cm, d), days))
     trades: list[dict] = []
     latest = None
-    found_bse = found_nse = False
-    for back in range(8):
-        day = today - dt.timedelta(days=back)
-        if day.weekday() >= 5:
-            continue
-        if not found_bse:
-            b = bse_debt(day)
-            if b:
-                trades += b
-                found_bse = True
-                latest = max(latest or "", day.isoformat())
-        if not found_nse:
-            n = nse_cm(day)
-            if n:
-                trades += n
-                found_nse = True
-                latest = max(latest or "", day.isoformat())
-        if found_bse and found_nse:
-            break
-    print(f"Trades: {len(trades)} rows (BSE={found_bse}, NSE={found_nse}), latest file {latest}")
+    found = {}
+    for name, per_day in (("BSE", bse), ("NSE", nse)):
+        hit = next(((d, rows) for d, rows in zip(days, per_day) if rows), None)   # days: नवीन → जुने
+        found[name] = bool(hit)
+        if hit:
+            trades += hit[1]
+            latest = max(latest or "", hit[0].isoformat())
+    print(f"Trades: {len(trades)} rows (BSE={found['BSE']}, NSE={found['NSE']}), latest file {latest}")
     return trades, latest
 
 
@@ -423,7 +404,7 @@ def parse_dynamic(rat_j, def_j, today: dt.date) -> dict:
 
 def save_cache(cache: dict) -> None:
     """मधे-मधे cache साठवतो, म्हणजे run अर्धवट थांबला तरी झालेलं काम वाया जात नाही."""
-    CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_json(CACHE_FILE, cache)
 
 
 def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
@@ -431,6 +412,7 @@ def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
     3 workers एकत्र चालतात; वेळ/requests ची मर्यादा संपली की उरलेलं पुढच्या run मध्ये."""
     api = Nsdl(MAX_NSDL_CALLS)
     stale_cut = (today - dt.timedelta(days=RATING_REFRESH_DAYS)).isoformat()
+    default_cut = (today - dt.timedelta(days=DEFAULT_REFRESH_DAYS)).isoformat()
     jobs = [i for i in isins if "staticAt" not in cache.get(i, {}) or cache.get(i, {}).get("dynamicAt", "") < stale_cut]
     print(f"NSDL: {len(jobs)} bonds need work, budget {api.budget} calls / {MAX_NSDL_SECONDS}s, {NSDL_WORKERS} workers")
     lock = threading.Lock()
@@ -445,8 +427,16 @@ def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
             if rec.get("dynamicAt", "") < stale_cut:
                 rat = api.get("bdsinfo/credit-ratings", isin)
                 if rat is not None:
-                    dfl = api.get("bdsinfo/defaultdetail", isin)
-                    upd.update(parse_dynamic(rat, dfl, today))
+                    dyn = parse_dynamic(rat, {}, today)
+                    safe_now = dyn["rating"] and rating_key(dyn["rating"]) <= 3 and not dyn["flags"]
+                    if safe_now and not rec.get("defaulted") and rec.get("defaultAt", "") >= default_cut:
+                        dyn["defaulted"] = False          # AAA/AA, इशारा नाही, नुकतंच तपासलेलं → आज ही request वाचवतो
+                    else:
+                        dfl = api.get("bdsinfo/defaultdetail", isin)
+                        dyn = parse_dynamic(rat, dfl, today)
+                        if dfl is not None:
+                            dyn["defaultAt"] = today.isoformat()
+                    upd.update(dyn)
             if "staticAt" not in rec:
                 parts = [api.get("isins", isin), api.get("bdsinfo/instruments", isin),
                          api.get("bdsinfo/coupondetail", isin), api.get("bdsinfo/redemptions", isin),
@@ -467,7 +457,7 @@ def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
     if stop.is_set():
         print("NSDL call/time budget reached; remaining bonds continue in next run")
     print(f"NSDL calls: {api.calls}, errors: {api.errors}")
-    return {"calls": api.calls, "errors": api.errors}
+    return {"calls": api.calls, "errors": api.errors, "jobs": len(jobs), "partial": stop.is_set()}
 
 
 # ---------------- 3. एकत्र करणे ----------------
@@ -507,17 +497,22 @@ def backfill(hist_days: list[str], today: dt.date, max_secs: int = 420) -> list[
     if len(hist_days) >= 15:
         return []
     have = set(hist_days)
+    days = [d for d in (today - dt.timedelta(days=b) for b in range(1, 91))
+            if d.weekday() < 5 and d.isoformat() not in have]
     start, rows = time.time(), []
-    for back in range(1, 91):
-        day = today - dt.timedelta(days=back)
-        if day.weekday() >= 5 or day.isoformat() in have:
-            continue
+
+    def one(day: dt.date) -> list[dict]:
         if time.time() - start > max_secs:
-            break
+            return []
         try:
-            rows += bse_debt(day) + nse_cm(day)
+            return bse_debt(day) + nse_cm(day)
         except Exception as e:   # एखादा दिवस न मिळाल्यास पुढे चालू
             print(f"backfill {day}: {e}")
+            return []
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for part in pool.map(one, days):
+            rows += part
     print(f"Backfill: {len(rows)} rows from {len({r['day'] for r in rows})} days")
     return rows
 
@@ -559,9 +554,9 @@ def write_prices(hist: dict, isins: set[str]) -> None:
         rows = [[d, v[2]] for d, v in sorted(hist.get(isin, {}).items()) if len(v) > 2 and v[2]]
         if rows:
             out[isin] = rows
-    PRICE_FILE.write_text(json.dumps({"asOf": max((r[-1][0] for r in out.values()), default=None),
-                                      "basis": "Daily close per Rs 100 face (BSE/NSE, highest-turnover trade)",
-                                      "prices": out}, separators=(",", ":")), encoding="utf-8")
+    write_json(PRICE_FILE, {"asOf": max((r[-1][0] for r in out.values()), default=None),
+                            "basis": "Daily close per Rs 100 face (BSE/NSE, highest-turnover trade)",
+                            "prices": out})
 
 
 def liquidity(h: dict, file_days: list[str], today: dt.date) -> dict | None:
@@ -665,30 +660,44 @@ def write_schedules(bonds: list[dict], cache: dict, today: dt.date) -> None:
                  if f["d"] >= t and f.get("a") is not None]
         if flows:
             out[b["isin"]] = flows
-    SCHED_FILE.write_text(json.dumps({"asOf": t, "basis": "per bond (one unit of face value)",
-                                      "schedules": out}, separators=(",", ":")), encoding="utf-8")
+    write_json(SCHED_FILE, {"asOf": t, "basis": "per bond (one unit of face value)", "schedules": out})
     print(f"Schedules written for {len(out)} bonds")
 
 
-def notify(msg: str) -> None:
-    token, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
-    if not token or not chat:
-        return
-    try:
-        urllib.request.urlopen(f"https://api.telegram.org/bot{token}/sendMessage",
-                               data=urllib.parse.urlencode({"chat_id": chat, "text": msg}).encode(), timeout=15)
-    except Exception as exc:
-        print("Telegram alert failed:", exc)
+def split_output(payload: dict) -> None:
+    """S1: पानाचा पहिला load हलका — जड तपशील वेगळ्या file मध्ये.
+    यादीत ratings ऐवजी "rt" (tooltip साठी एक ओळ) ठेवतो."""
+    light, details = [], {}
+    for b in payload["bonds"]:
+        row = {k: v for k, v in b.items() if k not in DETAIL_KEYS}
+        row["rt"] = "; ".join(f"{r['a']}: {r['r']}" + (f" ({r['o']})" if r.get("o") else "") for r in b.get("ratings") or []) or None
+        light.append(row)
+        det = {k: b.get(k) for k in DETAIL_KEYS if b.get(k)}
+        if det:
+            details[b["isin"]] = det
+    write_json(LIST_FILE, dict(payload, bonds=light))
+    write_json(DETAIL_FILE, {"updated": payload["updated"], "details": details})
+    print(f"Split: list {LIST_FILE.stat().st_size // 1024} KB, details {DETAIL_FILE.stat().st_size // 1024} KB")
 
 
-def load_json(path: Path, default):
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return default
+def summary(payload: dict, prev_isins: set[str], stats: dict, trades: bool, secs: float) -> str:
+    """S4: रोजचा एका संदेशाचा सारांश (Telegram)."""
+    bonds = payload["bonds"]
+    new = [b for b in bonds if b["isin"] not in prev_isins]
+    rated = sum(1 for b in bonds if b.get("rating"))
+    lines = [("✅" if trades and stats["errors"] <= 50 else "⚠️") + f" Bond Centre data — prices {payload.get('pricesAsOf')}",
+             f"Corporate bonds: {len(bonds)} ({len(new)} new) · rated {rated} · NSDL details {payload['nsdlCoverage']}",
+             f"NSDL: {stats['calls']} calls, {stats['errors']} errors" + (" · unfinished, continues tomorrow" if stats.get("partial") else ""),
+             f"Run time: {secs / 60:.0f} min"]
+    if not trades:
+        lines.append("No new BSE/NSE debt file; showing last available prices.")
+    if new:
+        lines.append("New: " + ", ".join(sorted({(b["issuer"] or "")[:28] for b in new})[:6]) + ("…" if len(new) > 6 else ""))
+    return "\n".join(lines)
 
 
 def main() -> int:
+    t_start = time.time()
     today = dt.datetime.now(IST).date()
     prev_out = load_json(OUT_FILE, {})
     previous = {b["isin"]: {"isin": b["isin"], "srcName": b.get("issuer"), "srcCoupon": b.get("coupon"),
@@ -710,7 +719,7 @@ def main() -> int:
     faces = {i: (cache.get(i, {}).get("face") or book[i].get("srcFace")) for i in book}
     hist = update_history(hist_all, extra + trades, today, faces) if trades else hist_all
     hist["_days"] = [d for d in days_seen if d >= (today - dt.timedelta(days=HIST_KEEP_DAYS)).isoformat()]
-    HIST_FILE.write_text(json.dumps(hist, separators=(",", ":")), encoding="utf-8")
+    write_json(HIST_FILE, hist)
     file_days = hist["_days"]
     stats = enrich(sorted(book, key=lambda i: -(book[i].get("turnover") or 0)), cache, today)
 
@@ -725,7 +734,8 @@ def main() -> int:
         "nsdlCoverage": sum(1 for b in bonds if b["nsdl"]),
         "bonds": bonds,
     }
-    OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_json(OUT_FILE, payload)
+    split_output(payload)
     write_schedules(bonds, cache, today)
     write_prices(hist, {b["isin"] for b in bonds})
     # cache: फक्त सध्या यादीत असलेले + मागचे 120 दिवस वापरलेले bonds ठेवतो (file छोटी राहते)
@@ -733,12 +743,9 @@ def main() -> int:
     for isin in list(cache):
         if isin not in book and cache[isin].get("dynamicAt", cache[isin].get("staticAt", "")) < keep_cut:
             del cache[isin]
-    CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_json(CACHE_FILE, cache)
     print(f"Wrote {len(bonds)} bonds; NSDL coverage {payload['nsdlCoverage']}/{len(bonds)}")
-    if not trades:
-        notify("⚠️ Corporate bonds: no new BSE/NSE debt file; showing last available prices.")
-    elif stats["errors"] > 50:
-        notify(f"⚠️ Corporate bonds: NSDL returned {stats['errors']} errors in this run.")
+    notify(summary(payload, set(previous), stats, bool(trades), time.time() - t_start))
     return 0
 
 
