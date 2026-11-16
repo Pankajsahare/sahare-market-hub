@@ -37,11 +37,14 @@
   if(CFG.fd) FD_RATES = CFG.fd;
   /* साईटचा fixed header (आणि admin bar) किती उंच आहे ते मोजतो → tabs त्याच्या खाली चिकटतात, popup header खाली जात नाही */
   function edgeFixed(edge){
-    var m=0; document.querySelectorAll("body > *, body > * > *").forEach(function(e){
+    var L=[]; document.querySelectorAll("body > *, body > * > *, body > * > * > *").forEach(function(e){
       if(root.contains(e)||e===root) return; var st=getComputedStyle(e); if(st.position!=="fixed"&&st.position!=="sticky") return;
-      if(st.display==="none"||st.visibility==="hidden") return; var r=e.getBoundingClientRect(); if(r.width<innerWidth*0.6||r.height<8||r.height>innerHeight*0.4) return;
-      if(edge==="top"&&r.top<=2) m=Math.max(m,r.bottom); if(edge==="bottom"&&r.bottom>=innerHeight-2) m=Math.max(m,innerHeight-r.top);
-    }); return Math.round(m);
+      if(st.display==="none"||st.visibility==="hidden"||+st.opacity===0) return; var r=e.getBoundingClientRect(); if(r.width<innerWidth*0.6||r.height<8||r.height>innerHeight*0.4) return;
+      L.push(edge==="top"?[r.top,r.bottom]:[innerHeight-r.bottom,innerHeight-r.top]);
+    });
+    // admin bar + त्याखालचा header असे एकावर एक असले तरी एकूण उंची मोजतो
+    L.sort(function(a,b){return a[0]-b[0];}); var m=0; L.forEach(function(x){ if(x[0]<=m+2) m=Math.max(m,x[1]); });
+    return Math.round(m);
   }
   function bottomInset(){ return edgeFixed("bottom"); }
   function syncTop(){ root.style.setProperty("--bc-top",edgeFixed("top")+"px"); }
