@@ -71,6 +71,9 @@
 #a4u-bc .wa svg{width:14px;height:14px;fill:currentColor}
 #a4u-bc .wa.big{font-size:.95rem;padding:.6rem 1.1rem;background:#fff}
 #a4u-bc .acts{display:flex;flex-wrap:wrap;gap:.35rem}
+#a4u-bc .acts.col{display:grid;grid-template-columns:1fr;gap:.3rem;min-width:108px}
+#a4u-bc .acts.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+#a4u-bc .acts.col>*,#a4u-bc .acts.row3>*{width:100%;justify-content:center;text-align:center;box-sizing:border-box;padding-left:.3rem;padding-right:.3rem}
 #a4u-bc .showmore{display:block;margin:1rem auto 0;padding:.6rem 1.5rem;font-size:.92rem}
 /* cards */
 #a4u-bc .cards{display:grid;gap:.8rem}
