@@ -54,6 +54,10 @@
     return Math.round(m);
   }
   function bottomInset(){ return edgeFixed("bottom"); }
+  function siteWa(){   // साईटची स्वतःची खाली चिकटलेली पट्टी (bottom nav) आणि त्यात WhatsApp आहे का
+    FX=null; return fixedEls().some(function(e){ var r=e.getBoundingClientRect(), st=getComputedStyle(e);
+      return st.display!=="none" && r.bottom>=innerHeight-2 && r.width>=innerWidth*0.6 && r.height<innerHeight*0.4 && !!e.querySelector('a[href*="wa.me"],a[href*="whatsapp"]'); });
+  }
   function syncTop(){ root.style.setProperty("--bc-top",edgeFixed("top")+"px"); }
   var $ = function(id){ return document.getElementById(id); };
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
@@ -1032,7 +1036,7 @@
     bar.addEventListener("click",function(){ track("whatsapp_sticky_click"); });
     var hero=root.querySelector(".bc-hero"), band=$("bc-band");
     function upd(){
-      if(!mq.matches){ bar.hidden=true; return; }
+      if(!mq.matches||siteWa()){ bar.hidden=true; return; }   // साईटच्या खालच्या पट्टीत आधीच WhatsApp असेल तर दुसरं बटण नको
       var hb=hero.getBoundingClientRect().bottom, bt=band.getBoundingClientRect().top, rb=root.getBoundingClientRect().bottom;
       bar.hidden = hb>0 || (bt<innerHeight && band.getBoundingClientRect().bottom>0) || rb<innerHeight*0.6 || $("md").classList.contains("on");
       bar.style.bottom=(12+bottomInset())+"px";
