@@ -1,32 +1,78 @@
 {
- "run_at": "2026-11-17 19:55",
+ "run_at": "2026-11-17 19:57",
  "registry": {
   "url": "https://licindia.in/insurance-plan",
   "http": 200,
-  "bytes": 214113,
-  "plans_found": 0
+  "bytes": 214099,
+  "uin_matches": 0,
+  "plans_found": 0,
+  "sample": " LIC India Insurance Plans - Comprehensive Coverage for a Secure Future | Official website of Life Insurance Corporation of India. (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5WNBT5G'); var Liferay = window.Liferay || {};Liferay.Icons = Liferay.Icons || {};Liferay.Icons.basePath = '/o/icons';Liferay.Icons.sprite"
  },
  "plans": {
   "714": {
    "page_http": 200,
-   "brochure": "https://licindia.in/documents/20121/97136/LICs+New+Endowment+sales+brochure+Eng.pdf/6a335b92-128f-ea2f-2165-d3184c2c2aec?t=1752210803629",
+   "candidates": [
+    [
+     1729776062988,
+     "https://licindia.in/documents/20121/1248951/Lic+NEW+ENDOWMENT+PLAN+2024++4x9+inches+wxh+single+pages.pdf+-8th+cut+Final+-+24.10.24.pdf/8bfc1204-31c9-4dbd-95c0-0991a1c7a392?t=1729776062988",
+     "Sales brochure (From 01/10/2024 To 03/07/2025)"
+    ],
+    [
+     1752210803629,
+     "https://licindia.in/documents/20121/97136/LICs+New+Endowment+sales+brochure+Eng.pdf/6a335b92-128f-ea2f-2165-d3184c2c2aec?t=1752210803629",
+     "Sales brochure (From 04/07/2025 To 21/09/2025)"
+    ],
+    [
+     1760357386313,
+     "https://licindia.in/documents/20121/1319704/LIC%27s+NEW+ENDOWMENT+PLAN+714.pdf/77f3167c-ae64-a1ea-d348-1c66f4455aed?t=1760357386313",
+     "Sales brochure (From 22/09/2025 Onwards)"
+    ]
+   ],
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+NEW+ENDOWMENT+PLAN+714.pdf/77f3167c-ae64-a1ea-d348-1c66f4455aed?t=1760357386313",
    "pdf_http": 200,
-   "pdf_bytes": 682432,
-   "sha256": "69bde6fa84a5aa6680384f2967baa801e803560a26d90a4157e26272d06241ca",
+   "pdf_bytes": 682301,
+   "sha256": "85ec97771848cb97416517f1070080ad388b962257f1e8e76538baf1a33ca51e",
    "model": "GEMINI_API_KEY missing",
    "error": "gemini failed: GEMINI_API_KEY missing"
   },
   "715": {
    "page_http": 200,
+   "candidates": [
+    [
+     1729775710554,
+     "https://licindia.in/documents/20121/1248951/Lic+NEW+Jeevan+Anand+2024++4x9+inches+wxh+single+page+-+FINAL+-+24.10.24.pdf/d054b8f4-9cc5-2878-e794-801952ba36a9?t=1729775710554",
+     "Sales brochure (From 01/10/2024 To 03/07/2025)"
+    ],
+    [
+     1752225367341,
+     "https://licindia.in/documents/20121/1319704/LICs-New+Jeevan+Anand+sales+brochure+Eng_11072025.pdf/c557d941-c747-e31d-71e8-54ee25313fb1?t=1752225367341",
+     "Sales brochure (From 04/07/2025 To 21/09/2025)"
+    ],
+    [
+     1760418918360,
+     "https://licindia.in/documents/20121/1319704/LIC%27s+New+Jeevan+Anand+Sales+Brochure+Eng_141025.pdf/43b60cd9-f6f1-c889-734c-47c565a47ada?t=1760418918360",
+     "Sales brochure (From 22/09/2025 onwards)"
+    ]
+   ],
    "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+New+Jeevan+Anand+Sales+Brochure+Eng_141025.pdf/43b60cd9-f6f1-c889-734c-47c565a47ada?t=1760418918360",
-   "pdf_http": 200,
-   "pdf_bytes": 674195,
-   "sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "pdf_http": 0,
+   "pdf_bytes": 0,
+   "error": "pdf download failed"
   },
   "733": {
    "page_http": 200,
+   "candidates": [
+    [
+     1749117807593,
+     "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_05.06.2025.pdf/55923a7d-2a74-7490-7d5d-d6d7b6a9cb11?t=1749117807593",
+     "Sales Brochure (From 01/10/2024 To 21/09/2025)"
+    ],
+    [
+     1762449288188,
+     "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_06112025.pdf/fcc745f6-e73e-c825-d3a6-9831221c5cc9?t=1762449288188",
+     "Sales Brochure (From 22/09/2025 onwards)"
+    ]
+   ],
    "brochure": "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_06112025.pdf/fcc745f6-e73e-c825-d3a6-9831221c5cc9?t=1762449288188",
    "pdf_http": 200,
    "pdf_bytes": 380818,
@@ -36,6 +82,18 @@
   },
   "736": {
    "page_http": 200,
+   "candidates": [
+    [
+     1729142806925,
+     "https://licindia.in/documents/20121/1240315/LIC_Jeevan+labh_Sales+Brochure_4+inch+x+9+inch_Eng+%283%29.pdf/946f96e2-a568-a059-ca72-2c79256a64a9?t=1729142806925",
+     "Sales brochure (From 01/10/2024 To 21/09/2025)"
+    ],
+    [
+     1762495060800,
+     "https://licindia.in/documents/20121/1319704/LIC_Jeevan+labh_Sales+Brochure_Eng.pdf/cafcd0b7-8f9d-6b65-f5e9-b2aad0788c98?t=1762495060800",
+     "Sales brochure (From 22/09/2025 onwards)"
+    ]
+   ],
    "brochure": "https://licindia.in/documents/20121/1319704/LIC_Jeevan+labh_Sales+Brochure_Eng.pdf/cafcd0b7-8f9d-6b65-f5e9-b2aad0788c98?t=1762495060800",
    "pdf_http": 200,
    "pdf_bytes": 886534,
@@ -45,24 +103,60 @@
   },
   "745": {
    "page_http": 200,
-   "brochure": "https://licindia.in/documents/20121/1248951/LIC_Jeevan+Umang_Sales+Brochure_4+inch+x+9+inch_Eng+%281%29.pdf/1dcbc0ba-c05e-8cd7-b34c-7bcae1347271?t=1729776530358",
+   "candidates": [
+    [
+     1729776530358,
+     "https://licindia.in/documents/20121/1248951/LIC_Jeevan+Umang_Sales+Brochure_4+inch+x+9+inch_Eng+%281%29.pdf/1dcbc0ba-c05e-8cd7-b34c-7bcae1347271?t=1729776530358",
+     "Sales Brochures (01/10/2024 to 21/09/2025)"
+    ],
+    [
+     1760458103167,
+     "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
+     "Sales Brochures (From 22/09/2025 onwards)"
+    ]
+   ],
+   "brochure": "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
    "pdf_http": 200,
-   "pdf_bytes": 1380856,
-   "sha256": "1b33ad1a5a95244375cd2a1f6b104bb514d4365da7bbeeb61ddcce892df3dabe",
+   "pdf_bytes": 1440213,
+   "sha256": "6a384c31aae1140a7260fbd5c10abbe367ec75ee82919a110cf51f39dbaabef7",
    "model": "GEMINI_API_KEY missing",
    "error": "gemini failed: GEMINI_API_KEY missing"
   },
   "717": {
    "page_http": 200,
-   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Single+Premium+Endowment+plan_Sales+Brochure_4+inch+x+9+inch_Eng+..pdf/ec715d24-d6e7-7c8f-a08c-ab1311d8ab38?t=1747389560175",
+   "candidates": [
+    [
+     1747389560175,
+     "https://licindia.in/documents/20121/1319704/LIC_Single+Premium+Endowment+plan_Sales+Brochure_4+inch+x+9+inch_Eng+..pdf/ec715d24-d6e7-7c8f-a08c-ab1311d8ab38?t=1747389560175",
+     "Sales Brochure (From 01/10/2024 To 21/09/2025)"
+    ],
+    [
+     1760458103959,
+     "https://licindia.in/documents/20121/1319704/717+LIC_Single+Premium+Endowment+plan_Eng_141025.pdf/7215c5ff-2071-669a-1a4e-71182e2a102e?t=1760458103959",
+     "Sales Brochure (From 22/09/2025 onwards)"
+    ]
+   ],
+   "brochure": "https://licindia.in/documents/20121/1319704/717+LIC_Single+Premium+Endowment+plan_Eng_141025.pdf/7215c5ff-2071-669a-1a4e-71182e2a102e?t=1760458103959",
    "pdf_http": 200,
-   "pdf_bytes": 245436,
-   "sha256": "0a5e0961aff9b61929f8815ca93d3e8a770be2baef8bc14990a759c7f6460fd8",
+   "pdf_bytes": 271528,
+   "sha256": "be098c986fe9f954b3fa1f1bbd407717e2d2a8a923519022383c47982a44ab98",
    "model": "GEMINI_API_KEY missing",
    "error": "gemini failed: GEMINI_API_KEY missing"
   },
   "771": {
    "page_http": 200,
+   "candidates": [
+    [
+     1743068855706,
+     "https://licindia.in/documents/20121/911303/102268-+Jeevan+Utsav+Sales+Brochure.pdf/e7146853-9429-8df1-5796-fb079ae68df1?t=1743068855706",
+     "Sales Brochure (From 01/10/2024 To 21/09/2025)"
+    ],
+    [
+     1760429620376,
+     "https://licindia.in/documents/20121/1319704/Jeevan+Utsav+Sales+Brochure_141025.pdf/da84d78a-ef72-c80f-b8df-83bb7565f087?t=1760429620376",
+     "Sales Brochure (From 22/09/2025 onwards)"
+    ]
+   ],
    "brochure": "https://licindia.in/documents/20121/1319704/Jeevan+Utsav+Sales+Brochure_141025.pdf/da84d78a-ef72-c80f-b8df-83bb7565f087?t=1760429620376",
    "pdf_http": 200,
    "pdf_bytes": 1303195,
@@ -72,6 +166,13 @@
   },
   "883": {
    "page_http": 200,
+   "candidates": [
+    [
+     1768116819230,
+     "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399?t=1768116819230",
+     "Sales Brochure"
+    ]
+   ],
    "brochure": "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399?t=1768116819230",
    "pdf_http": 200,
    "pdf_bytes": 1041462,
