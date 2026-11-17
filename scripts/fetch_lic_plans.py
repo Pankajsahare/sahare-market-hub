@@ -147,6 +147,7 @@ Return ONLY a JSON object with these keys (use null when the brochure does not s
 
 _MODELS: list[str] | None = None
 PAGE_CACHE: dict[str, str] = {}
+QUOTA_HIT = False
 
 BONUS_PROMPT = """This PDF is an LIC of India bonus / 'Results of Valuation' circular. For EACH plan number present, return the
 Simple Reversionary Bonus and Final Additional Bonus rates per Rs.1000 Sum Assured, by policy-term band.
@@ -256,8 +257,11 @@ def gemini_call(pdf: bytes, prompt: str, model: str) -> dict:
         "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
     }).encode()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
+    global QUOTA_HIT
+    if QUOTA_HIT:
+        raise RuntimeError("Gemini quota exhausted — will retry next run")
     res = None
-    for wait in (0, 30, 75, 150):  # 429/503 आलं तर थांबून पुन्हा (free tier मर्यादा)
+    for wait in (0, 20, 60):  # 429/503 आलं तर थांबून पुन्हा (free tier मर्यादा)
         if wait:
             time.sleep(wait)
         req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
@@ -266,7 +270,9 @@ def gemini_call(pdf: bytes, prompt: str, model: str) -> dict:
                 res = json.loads(r.read().decode())
             break
         except urllib.error.HTTPError as exc:
-            if exc.code not in (429, 500, 503) or wait == 150:
+            if exc.code == 429 and wait == 60:
+                QUOTA_HIT = True  # दिवसाची मर्यादा संपली — बाकी calls न करता run लवकर संपव
+            if exc.code not in (429, 500, 503) or wait == 60:
                 raise
     time.sleep(6)  # पुढच्या call आधी थोडा श्वास
     txt = res["candidates"][0]["content"]["parts"][0]["text"]
@@ -298,6 +304,8 @@ def gemini_extract(pdf: bytes, prompt: str = "") -> tuple[dict | None, str]:
         except Exception as exc:
             errs.append(f"{used[0]}#2: {str(exc)[:100]}")
     if not reads:
+        if QUOTA_HIT:
+            STATUS["errors"].append("Gemini quota exhausted (429) — retry next run")
         return None, "; ".join(errs)[:300]
     if len(reads) == 2 and not same_core(reads[0], reads[1]):
         return None, "two reads disagree (" + ", ".join(used) + ") — needs manual check"
