@@ -1,5 +1,5 @@
 {
- "run_at": "2026-11-17 22:33",
+ "run_at": "2026-11-18 00:52",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
@@ -39,8 +39,8 @@
    "pdf_http": 200,
    "pdf_bytes": 682301,
    "sha256": "85ec97771848cb97416517f1070080ad388b962257f1e8e76538baf1a33ca51e",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 503: Service Unavailable; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 429: Too Many Requests",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 503: Service Unavailable; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 429: Too Many Requests"
+   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
+   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
   },
   "715": {
    "page_http": 200,
@@ -65,8 +65,8 @@
    "pdf_http": 200,
    "pdf_bytes": 674195,
    "sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 503: Service Unavailable",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 503: Service Unavailable"
+   "model": "gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
+   "error": "gemini failed: gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
   },
   "733": {
    "page_http": 200,
@@ -86,8 +86,8 @@
    "pdf_http": 200,
    "pdf_bytes": 380818,
    "sha256": "e83a73ed5bd065efa2f46f459b7fbbe49dd1f69c36a84cf96429143a6e09a324",
-   "model": "gemini-3.8-flash: HTTP Error 503: Service Unavailable; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 503: Service Unavailable",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 503: Service Unavailable; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 503: Service Unavailable"
+   "model": "gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
+   "error": "gemini failed: gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
   },
   "736": {
    "page_http": 200,
@@ -107,8 +107,7 @@
    "pdf_http": 200,
    "pdf_bytes": 886534,
    "sha256": "48ec80c9b1efbcaa4734a5276c7c27a726923d08dd1f0625d0e0ec55c68e404b",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 503: Service Unavailable",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 503: Service Unavailable"
+   "result": "queued for next run"
   },
   "745": {
    "page_http": 200,
@@ -128,8 +127,7 @@
    "pdf_http": 200,
    "pdf_bytes": 1440213,
    "sha256": "6a384c31aae1140a7260fbd5c10abbe367ec75ee82919a110cf51f39dbaabef7",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 429: Too Many Requests; gemini-3.5-flash: HTTP Error 503: Service Unavailable",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 429: Too Many Requests; gemini-3.5-flash: HTTP Error 503: Service Unavailable"
+   "result": "queued for next run"
   },
   "717": {
    "page_http": 200,
@@ -149,8 +147,7 @@
    "pdf_http": 200,
    "pdf_bytes": 271528,
    "sha256": "be098c986fe9f954b3fa1f1bbd407717e2d2a8a923519022383c47982a44ab98",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 503: Service Unavailable; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 429: Too Many Requests",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 503: Service Unavailable; gemini-3.6-flash: HTTP Error 503: Service Unavailable; gemini-3.5-flash: HTTP Error 429: Too Many Requests"
+   "result": "queued for next run"
   },
   "771": {
    "page_http": 200,
@@ -170,8 +167,7 @@
    "pdf_http": 200,
    "pdf_bytes": 1303195,
    "sha256": "e82dadb82de132fbcdefb95e714713dc388d2843333c7b54a3a62109d2c6290d",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 429: Too Many Requests; gemini-3.5-flash: HTTP Error 429: Too Many Requests",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 429: Too Many Requests; gemini-3.5-flash: HTTP Error 429: Too Many Requests"
+   "result": "queued for next run"
   },
   "883": {
    "page_http": 200,
@@ -186,8 +182,7 @@
    "pdf_http": 200,
    "pdf_bytes": 1041462,
    "sha256": "e2f2d79addce15b8d3efadf5da2ead03364053586264455eb1ea17538a3f8ec3",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 429: Too Many Requests; gemini-3.5-flash: HTTP Error 503: Service Unavailable",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: HTTP Error 429: Too Many Requests; gemini-3.6-flash: HTTP Error 429: Too Many Requests; gemini-3.5-flash: HTTP Error 503: Service Unavailable"
+   "result": "queued for next run"
   }
  },
  "bonus": {
@@ -199,5 +194,9 @@
   "gemini-3.6-flash",
   "gemini-3.5-flash"
  ],
- "errors": []
+ "errors": [
+  "Gemini quota exhausted (429) — retry next run",
+  "Gemini quota exhausted (429) — retry next run",
+  "Gemini quota exhausted (429) — retry next run"
+ ]
 }
