@@ -1,6 +1,6 @@
 {
  "version": 1,
- "checked_at": "2026-11-17 22:33",
+ "checked_at": "2026-11-18 00:52",
  "source": "LIC sales brochures (licindia.in), effective 22 Sept 2025 versions",
  "plans": {
   "714": {
@@ -1147,7 +1147,7 @@
   }
  },
  "registry": {
-  "fetched_at": "2026-11-17 22:33",
+  "fetched_at": "2026-11-18 00:52",
   "plans": {
    "717": "512N283V03",
    "714": "512N277V03",
