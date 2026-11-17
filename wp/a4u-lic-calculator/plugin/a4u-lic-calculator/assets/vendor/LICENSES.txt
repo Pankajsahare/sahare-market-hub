@@ -1,0 +1,4 @@
+Bundled libraries (all MIT licence):
+- jsPDF 2.5.2 — https://github.com/parallax/jsPDF
+- html2canvas 1.4.1 — https://github.com/niklasvh/html2canvas
+- qrcode-generator 1.4.4 — https://github.com/kazuhikoarase/qrcode-generator

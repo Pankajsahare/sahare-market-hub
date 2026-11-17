@@ -40,10 +40,16 @@ BROCHURES = LIC_DIR / "brochures"
 LIC_HOME = "https://licindia.in/"
 REGISTRY_URL = "https://licindia.in/insurance-plan"
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODELS = [m for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-flash,gemini-2.5-flash").split(",") if m]
+GEMINI_MODELS_ENV = [m for m in os.environ.get("GEMINI_MODELS", "").split(",") if m]  # रिकामं = आपोआप निवड
+CATEGORY_PAGES = [  # LIC च्या plan category pages (plan no + UIN यांच्या links मधून)
+    "https://licindia.in/web/guest/endowment-plans", "https://licindia.in/web/guest/whole-life-plans",
+    "https://licindia.in/web/guest/money-back-plans", "https://licindia.in/web/guest/term-assurance-plans",
+    "https://licindia.in/web/guest/pension-plans", "https://licindia.in/web/guest/unit-linked-plans",
+    "https://licindia.in/web/guest/micro-insurance-plans", "https://licindia.in/web/guest/riders",
+]
 FORCE = os.environ.get("LIC_FORCE", "") == "1"  # brochure बदललं नसलं तरी पुन्हा extract
 
-STATUS: dict = {"run_at": "", "registry": {}, "plans": {}, "bonus": {}, "errors": []}
+STATUS: dict = {"run_at": "", "registry": {}, "plans": {}, "bonus": {}, "models": [], "errors": []}
 
 
 def now_ist() -> str:
@@ -61,24 +67,25 @@ def page_text(raw: bytes) -> str:
 # ---------------- 1. Registry: LIC च्या सध्याच्या plans ची यादी ----------------
 
 def read_registry() -> dict[str, str]:
-    """{plan_no: uin} — insurance-plan page वरच्या tables मधून (UIN च्या आधीचा 3-अंकी plan no)."""
-    st, raw = get(REGISTRY_URL, "text/html")
-    STATUS["registry"] = {"url": REGISTRY_URL, "http": st, "bytes": len(raw)}
-    if st != 200:
-        return {}
-    text = html.unescape(re.sub(r"<[^>]+>", " ", page_text(raw)))
-    text = re.sub(r"[\s​ ]+", " ", text)
-    found = {}
-    for m in re.finditer(r"512[A-Z]\d{3}V\d{2}", text, flags=re.I):
-        before = text[max(0, m.start() - 160):m.start()]
-        nums = re.findall(r"(?<![\d.])(\d{3})(?![\d.])", before)
-        if nums:
-            found[nums[-1]] = m.group(0).upper()
-    STATUS["registry"]["uin_matches"] = len(re.findall(r"512[A-Z]\d{3}V\d{2}", text, flags=re.I))
-    STATUS["registry"]["plans_found"] = len(found)
-    if not found:  # debug: page मध्ये table कसं दिसतं ते पाहण्यासाठी छोटा नमुना
-        i = text.lower().find("plan no")
-        STATUS["registry"]["sample"] = text[max(0, i - 100):i + 500] if i >= 0 else text[:600]
+    """{plan_no: uin} — category pages वरच्या plan links मधून (उदा. .../lic-s-new-endowment-plan-714-512n277v03).
+    insurance-plan page ची table JavaScript ने येते, म्हणून ती वाचता येत नाही."""
+    found: dict[str, str] = {}
+    pages = {}
+    for url in CATEGORY_PAGES + [REGISTRY_URL, LIC_HOME]:
+        st, raw = get(url, "text/html")
+        pages[url.rstrip("/").rsplit("/", 1)[-1]] = st
+        if st != 200:
+            continue
+        PAGE_CACHE[url] = page_text(raw)
+        txt = html.unescape(page_text(raw))
+        for m in re.finditer(r"(?<!\d)(\d{3})(?:%09|\s|-|_|\+)+(512[a-z]\d{3}v\d{2})", txt, flags=re.I):
+            found.setdefault(m.group(1), m.group(2).upper())
+        for m in re.finditer(r"(512[A-Z]\d{3}V\d{2})", txt):  # table text असेल तर
+            before = re.sub(r"<[^>]+>", " ", txt[max(0, m.start() - 300):m.start()])
+            nums = re.findall(r"(?<![\d.])(\d{3})(?![\d.])", before)
+            if nums:
+                found.setdefault(nums[-1], m.group(1))
+    STATUS["registry"] = {"pages_http": pages, "plans_found": len(found)}
     return found
 
 
@@ -135,29 +142,176 @@ Return ONLY a JSON object with these keys (use null when the brochure does not s
 }"""
 
 
-def gemini_extract(pdf: bytes) -> tuple[dict | None, str]:
-    if not GEMINI_KEY:
-        return None, "GEMINI_API_KEY missing"
+_MODELS: list[str] | None = None
+PAGE_CACHE: dict[str, str] = {}
+
+BONUS_PROMPT = """This PDF is an LIC of India bonus / 'Results of Valuation' circular. For EACH plan number present, return the
+Simple Reversionary Bonus and Final Additional Bonus rates per Rs.1000 Sum Assured, by policy-term band.
+If rates differ by Sum Assured band, use the band that includes Rs.5,00,000. Return ONLY JSON:
+{"valuation_date": "YYYY-MM-DD or text", "plans": [{"plan_no": "714", "bands": [{"from_term": 12, "srb_per_1000": 40, "fab_per_1000": 0}, ...]}, ...]}
+Never guess; omit plans that are not in the circular."""
+
+
+def find_bonus_circular() -> str | None:
+    """S1: LIC च्या pages वर 'bonus' / 'valuation' नावाची सगळ्यात नवीन PDF."""
+    best = None
+    for page in PAGE_CACHE.values():
+        for m in re.finditer(r'<a\b[^>]*href="([^"]+?\.pdf[^"]*)"[^>]*>(.*?)</a>', page, flags=re.I | re.S):
+            href = html.unescape(m.group(1))
+            both = (href + " " + re.sub(r"<[^>]+>", " ", m.group(2))).lower()
+            if "bonus" not in both and "valuation" not in both:
+                continue
+            ts = re.search(r"[?&]t=(\d{10,})", href)
+            t = int(ts.group(1)) if ts else 0
+            if href.startswith("/"):
+                href = "https://licindia.in" + href
+            if not best or t > best[0]:
+                best = (t, href)
+    return best[1] if best else None
+
+
+def apply_bonus(data: dict) -> list[str]:
+    url = find_bonus_circular()
+    STATUS["bonus"] = {"circular": url}
+    if not url:
+        return []
+    code, pdf = http_get(url, LIC_HOME, accept="application/pdf", timeout=90, retries=3)
+    if code != 200 or not pdf.startswith(b"%PDF"):
+        STATUS["bonus"]["error"] = f"download {code}"
+        return []
+    sha = hashlib.sha256(pdf).hexdigest()
+    if data.get("bonus_circular_sha") == sha and not FORCE:
+        STATUS["bonus"]["result"] = "unchanged"
+        return []
+    x, model = gemini_extract(pdf, BONUS_PROMPT)
+    STATUS["bonus"]["model"] = model
+    if not x:
+        STATUS["bonus"]["error"] = model
+        return [f"⚠️ Bonus circular सापडलं, पण वाचता आलं नाही ({model[:80]})."]
+    changed = []
+    for row in x.get("plans") or []:
+        pid = str(row.get("plan_no", "")).strip()
+        if pid not in data["plans"]:
+            continue
+        bands = []
+        for b in row.get("bands") or []:
+            try:
+                ft, srb, fab = int(b["from_term"]), float(b["srb_per_1000"]), float(b.get("fab_per_1000") or 0)
+            except (KeyError, TypeError, ValueError):
+                continue
+            if 5 <= srb <= 120 and 0 <= fab <= 2000:
+                bands.append([ft, srb, fab])
+        if not bands:
+            continue
+        bands.sort()
+        p = data["plans"][pid]
+        if p.get("bonus_bands") != bands:
+            changed.append(pid)
+        p.update({"bonus_bands": bands, "srb": bands[0][1], "bonus_circular": True, "bonus_valuation": str(x.get("valuation_date") or "")})
+    data["bonus_circular_sha"] = sha
+    data["bonus_circular_url"] = url
+    STATUS["bonus"]["result"] = "updated " + ",".join(changed) if changed else "no plan changes"
+    return [f"💰 LIC bonus circular मधून नवीन bonus दर: {', '.join(changed)} — WordPress मध्ये Approve करा."] if changed else []
+
+
+def gemini_models() -> list[str]:
+    """तुझ्या key ला उपलब्ध असलेली PDF वाचू शकणारी models — flash आधी, नवीन version आधी."""
+    global _MODELS
+    if _MODELS is not None:
+        return _MODELS
+    if GEMINI_MODELS_ENV:
+        _MODELS = GEMINI_MODELS_ENV
+        return _MODELS
+    names = []
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key={GEMINI_KEY}"
+        with urllib.request.urlopen(url, timeout=30) as r:
+            for m in json.loads(r.read().decode()).get("models", []):
+                n = m.get("name", "").split("/")[-1]
+                if "generateContent" not in m.get("supportedGenerationMethods", []):
+                    continue
+                if not n.startswith("gemini") or any(w in n for w in ("image", "tts", "live", "audio", "embedding", "thinking", "exp", "preview", "lite")):
+                    continue
+                names.append(n)
+    except Exception as exc:
+        STATUS["errors"].append("ListModels failed: " + str(exc)[:120])
+
+    def score(n: str):
+        ver = re.findall(r"(\d+(?:\.\d+)?)", n)
+        return (1 if "flash" in n else 0, float(ver[0]) if ver else 0, -len(n))
+    _MODELS = sorted(set(names), key=score, reverse=True)[:4]
+    STATUS["models"] = _MODELS
+    return _MODELS
+
+
+def gemini_call(pdf: bytes, prompt: str, model: str) -> dict:
     body = json.dumps({
         "contents": [{"parts": [
             {"inline_data": {"mime_type": "application/pdf", "data": base64.b64encode(pdf).decode()}},
-            {"text": PROMPT},
+            {"text": prompt},
         ]}],
         "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
     }).encode()
-    last_err = ""
-    for model in GEMINI_MODELS:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
-        req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
+    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
+    with urllib.request.urlopen(req, timeout=240) as r:
+        res = json.loads(r.read().decode())
+    txt = res["candidates"][0]["content"]["parts"][0]["text"]
+    txt = re.sub(r"^```(?:json)?|```$", "", txt.strip()).strip()
+    return json.loads(txt)
+
+
+def gemini_extract(pdf: bytes, prompt: str = "") -> tuple[dict | None, str]:
+    """S3: दोन वेगवेगळ्या models (नसेल तर एकाच model ने दोनदा) वाचून, मुख्य आकडे जुळले तरच स्वीकार."""
+    if not GEMINI_KEY:
+        return None, "GEMINI_API_KEY missing"
+    prompt = prompt or PROMPT
+    models = gemini_models()
+    if not models:
+        return None, "no Gemini model available for this key"
+    reads, used, errs = [], [], []
+    for m in models:
         try:
-            with urllib.request.urlopen(req, timeout=180) as r:
-                res = json.loads(r.read().decode())
-            txt = res["candidates"][0]["content"]["parts"][0]["text"]
-            txt = re.sub(r"^```(?:json)?|```$", "", txt.strip()).strip()
-            return json.loads(txt), model
-        except Exception as exc:  # पुढचं model वापरून बघ
-            last_err = f"{model}: {str(exc)[:160]}"
-    return None, last_err
+            reads.append(gemini_call(pdf, prompt, m))
+            used.append(m)
+        except Exception as exc:
+            errs.append(f"{m}: {str(exc)[:100]}")
+        if len(reads) == 2:
+            break
+    if len(reads) == 1:  # दुसरं model नाही — तेच model पुन्हा, वेगळ्या सूचनेने
+        try:
+            reads.append(gemini_call(pdf, prompt + "\nRead the tables slowly, cell by cell, and double-check every number.", used[0]))
+            used.append(used[0] + "#2")
+        except Exception as exc:
+            errs.append(f"{used[0]}#2: {str(exc)[:100]}")
+    if not reads:
+        return None, "; ".join(errs)[:300]
+    if len(reads) == 2 and not same_core(reads[0], reads[1]):
+        return None, "two reads disagree (" + ", ".join(used) + ") — needs manual check"
+    return reads[0], "+".join(used)
+
+
+def core_view(x: dict) -> str:
+    keys = ("min_entry_age", "max_entry_age", "min_bsa", "sample_bsa", "bsa_multiples", "hsa_rebate_per_1000", "sample_premiums", "plans")
+    def norm(v):
+        if isinstance(v, list):
+            return [norm(i) for i in v]
+        if isinstance(v, dict):
+            return {k: norm(v[k]) for k in sorted(v)}
+        if isinstance(v, str):
+            t = v.replace(",", "").strip()
+            try:
+                return round(float(t), 2)
+            except ValueError:
+                return t.lower()
+        if isinstance(v, (int, float)):
+            return round(float(v), 2)
+        return v
+    return json.dumps({k: norm(x.get(k)) for k in keys if k in x}, sort_keys=True)
+
+
+def same_core(a: dict, b: dict) -> bool:
+    return core_view(a) == core_view(b)
 
 
 def to_pairs(v) -> list:
@@ -241,7 +395,8 @@ def main() -> int:
     changes, alerts = [], []
 
     registry = read_registry()
-    if registry:
+    # यादी नीट वाचली गेली असेल (किमान 15 plans) तरच withdraw/new सूचना — नाहीतर खोट्या सूचना येतील
+    if len(registry) >= 15:
         for pid, w in watch.get("plans", {}).items():
             if pid not in registry:
                 alerts.append(f"⚠️ Plan {pid} ({w.get('name')}) LIC च्या सध्याच्या plans यादीत दिसला नाही — withdraw झाला असेल, तपासा.")
@@ -253,7 +408,9 @@ def main() -> int:
             alerts.append("🆕 LIC च्या यादीत नवीन/न पाहिलेले plans: " + ", ".join(f"{p} ({registry[p]})" for p in new))
         data["registry"] = {"fetched_at": STATUS["run_at"], "plans": registry}
     else:
-        STATUS["errors"].append("registry page not readable")
+        STATUS["registry"]["note"] = f"only {len(registry)} plans read — withdraw/new-plan alerts skipped this week"
+    if registry:
+        data["registry"] = {"fetched_at": STATUS["run_at"], "plans": registry}
 
     for pid, w in watch.get("plans", {}).items():
         st_plan = STATUS["plans"].setdefault(pid, {})
@@ -264,7 +421,7 @@ def main() -> int:
             st_plan["error"] = "brochure link not found"
             continue
         st_plan["brochure"] = url
-        code, pdf = get(url, "application/pdf")
+        code, pdf = http_get(url, LIC_HOME, accept="application/pdf", timeout=90, retries=4)
         st_plan["pdf_http"], st_plan["pdf_bytes"] = code, len(pdf)
         if code != 200 or not pdf.startswith(b"%PDF"):
             st_plan["error"] = "pdf download failed"
@@ -278,7 +435,7 @@ def main() -> int:
         dest = BROCHURES / pid / f"{sha[:12]}.pdf"
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(pdf)
-        extracted, model = gemini_extract(pdf)
+        extracted, model = gemini_extract(pdf, PROMPT)
         st_plan["model"] = model
         if not extracted:
             st_plan["error"] = "gemini failed: " + model
@@ -300,6 +457,10 @@ def main() -> int:
         data["plans"][pid] = merged
         st_plan["result"] = "updated"
 
+    bonus_msgs = apply_bonus(data)
+    if bonus_msgs and any("नवीन bonus" in m for m in bonus_msgs):
+        changes.append("bonus")
+    alerts.extend(bonus_msgs)
     if changes or FORCE:
         data["version"] = int(data.get("version", 0)) + 1
     data["checked_at"] = STATUS["run_at"]
