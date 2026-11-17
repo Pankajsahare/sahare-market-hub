@@ -1,0 +1,87 @@
+{
+ "run_at": "2026-11-17 19:55",
+ "registry": {
+  "url": "https://licindia.in/insurance-plan",
+  "http": 200,
+  "bytes": 214113,
+  "plans_found": 0
+ },
+ "plans": {
+  "714": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/97136/LICs+New+Endowment+sales+brochure+Eng.pdf/6a335b92-128f-ea2f-2165-d3184c2c2aec?t=1752210803629",
+   "pdf_http": 200,
+   "pdf_bytes": 682432,
+   "sha256": "69bde6fa84a5aa6680384f2967baa801e803560a26d90a4157e26272d06241ca",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "715": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+New+Jeevan+Anand+Sales+Brochure+Eng_141025.pdf/43b60cd9-f6f1-c889-734c-47c565a47ada?t=1760418918360",
+   "pdf_http": 200,
+   "pdf_bytes": 674195,
+   "sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "733": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_06112025.pdf/fcc745f6-e73e-c825-d3a6-9831221c5cc9?t=1762449288188",
+   "pdf_http": 200,
+   "pdf_bytes": 380818,
+   "sha256": "e83a73ed5bd065efa2f46f459b7fbbe49dd1f69c36a84cf96429143a6e09a324",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "736": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Jeevan+labh_Sales+Brochure_Eng.pdf/cafcd0b7-8f9d-6b65-f5e9-b2aad0788c98?t=1762495060800",
+   "pdf_http": 200,
+   "pdf_bytes": 886534,
+   "sha256": "48ec80c9b1efbcaa4734a5276c7c27a726923d08dd1f0625d0e0ec55c68e404b",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "745": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1248951/LIC_Jeevan+Umang_Sales+Brochure_4+inch+x+9+inch_Eng+%281%29.pdf/1dcbc0ba-c05e-8cd7-b34c-7bcae1347271?t=1729776530358",
+   "pdf_http": 200,
+   "pdf_bytes": 1380856,
+   "sha256": "1b33ad1a5a95244375cd2a1f6b104bb514d4365da7bbeeb61ddcce892df3dabe",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "717": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Single+Premium+Endowment+plan_Sales+Brochure_4+inch+x+9+inch_Eng+..pdf/ec715d24-d6e7-7c8f-a08c-ab1311d8ab38?t=1747389560175",
+   "pdf_http": 200,
+   "pdf_bytes": 245436,
+   "sha256": "0a5e0961aff9b61929f8815ca93d3e8a770be2baef8bc14990a759c7f6460fd8",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "771": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1319704/Jeevan+Utsav+Sales+Brochure_141025.pdf/da84d78a-ef72-c80f-b8df-83bb7565f087?t=1760429620376",
+   "pdf_http": 200,
+   "pdf_bytes": 1303195,
+   "sha256": "e82dadb82de132fbcdefb95e714713dc388d2843333c7b54a3a62109d2c6290d",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  },
+  "883": {
+   "page_http": 200,
+   "brochure": "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399?t=1768116819230",
+   "pdf_http": 200,
+   "pdf_bytes": 1041462,
+   "sha256": "e2f2d79addce15b8d3efadf5da2ead03364053586264455eb1ea17538a3f8ec3",
+   "model": "GEMINI_API_KEY missing",
+   "error": "gemini failed: GEMINI_API_KEY missing"
+  }
+ },
+ "bonus": {},
+ "errors": [
+  "registry page not readable"
+ ]
+}
