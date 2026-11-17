@@ -27,6 +27,7 @@ import os
 import re
 import sys
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -254,7 +255,7 @@ def gemini_call(pdf: bytes, prompt: str, model: str) -> dict:
     }).encode()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
     req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
-    with urllib.request.urlopen(req, timeout=240) as r:
+    with urllib.request.urlopen(req, timeout=150) as r:
         res = json.loads(r.read().decode())
     txt = res["candidates"][0]["content"]["parts"][0]["text"]
     txt = re.sub(r"^```(?:json)?|```$", "", txt.strip()).strip()
@@ -412,6 +413,7 @@ def main() -> int:
     if registry:
         data["registry"] = {"fetched_at": STATUS["run_at"], "plans": registry}
 
+    jobs = []  # (pid, url, sha, dest, pdf, old)
     for pid, w in watch.get("plans", {}).items():
         st_plan = STATUS["plans"].setdefault(pid, {})
         url, http, cands = find_brochure(w["page"], w.get("brochure"))
@@ -435,14 +437,22 @@ def main() -> int:
         dest = BROCHURES / pid / f"{sha[:12]}.pdf"
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(pdf)
-        extracted, model = gemini_extract(pdf, PROMPT)
+        jobs.append((pid, url, sha, dest, pdf, old))
+
+    # Gemini — एकाच वेळी 4 brochures (आधी एकामागून एक वाचल्याने 30 मिनिटांची मर्यादा ओलांडली जायची)
+    gemini_models()
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        results = list(ex.map(lambda j: gemini_extract(j[4], PROMPT), jobs))
+
+    for (pid, url, sha, dest, pdf, old), (extracted, model) in zip(jobs, results):
+        st_plan = STATUS["plans"][pid]
         st_plan["model"] = model
         if not extracted:
             st_plan["error"] = "gemini failed: " + model
             alerts.append(f"⚠️ {pid}: नवीन brochure मिळालं पण Gemini ने वाचलं नाही ({model[:80]}).")
             continue
         mapped, errs = validate_and_map(extracted, old)
-        (LIC_DIR / "extract" ).mkdir(parents=True, exist_ok=True)
+        (LIC_DIR / "extract").mkdir(parents=True, exist_ok=True)
         write_json(LIC_DIR / "extract" / f"{pid}.json", extracted, indent=1)
         if not mapped:
             st_plan["error"] = "; ".join(errs)
@@ -451,8 +461,8 @@ def main() -> int:
         merged = dict(old, **mapped)
         merged.update({"brochure": url, "brochure_sha256": sha, "brochure_file": str(dest.relative_to(LIC_DIR.parent.parent)),
                        "extracted_at": STATUS["run_at"], "extract_model": model})
-        if {k: v for k, v in old.items() if k not in ("brochure", "brochure_sha256", "brochure_file", "extracted_at", "extract_model")} != \
-           {k: v for k, v in merged.items() if k not in ("brochure", "brochure_sha256", "brochure_file", "extracted_at", "extract_model")}:
+        skip = ("brochure", "brochure_sha256", "brochure_file", "extracted_at", "extract_model")
+        if {k: v for k, v in old.items() if k not in skip} != {k: v for k, v in merged.items() if k not in skip}:
             changes.append(pid)
         data["plans"][pid] = merged
         st_plan["result"] = "updated"
