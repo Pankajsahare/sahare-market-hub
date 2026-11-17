@@ -189,6 +189,15 @@ function a4u_lic_admin_page() {
 			<p><a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=a4u_lic_clear_errors' ), 'a4u_lic_clear_errors' ) ); ?>">Clear error log</a></p>
 			<?php else : ?><p><em>No errors reported. 👍</em></p><?php endif; ?>
 
+			<?php $ills = (array) get_option( 'a4u_lic_ill_log', array() ); ?>
+			<h2>Illustration IDs issued (last <?php echo count( $ills ); ?>)</h2>
+			<p style="color:#666;max-width:800px;">Every PDF presentation gets an ID printed in its footer. If a client shows you a PDF, search its ID here to see the plan, Sum Assured, term and the rate version used. No client name or mobile is stored.</p>
+			<?php if ( $ills ) : ?>
+			<table class="widefat striped" style="max-width:800px;"><thead><tr><th>ID</th><th>Date</th><th>Plan</th><th>Sum Assured</th><th>Term</th><th>Rate version</th></tr></thead><tbody>
+			<?php foreach ( array_slice( $ills, 0, 100 ) as $i ) : ?><tr><td><code><?php echo esc_html( $i[0] ); ?></code></td><td><?php echo esc_html( $i[1] ); ?></td><td><?php echo esc_html( $i[2] ); ?></td><td><?php echo esc_html( number_format_i18n( (int) $i[3] ) ); ?></td><td><?php echo (int) $i[4]; ?></td><td><?php echo (int) $i[5]; ?></td></tr><?php endforeach; ?>
+			</tbody></table>
+			<?php else : ?><p><em>No presentations made yet.</em></p><?php endif; ?>
+
 		<?php elseif ( 'sync' === $tab ) :
 			$log = (array) get_option( 'a4u_lic_sync_log', array() ); $pending = get_option( 'a4u_lic_pending' );
 			$su  = wp_nonce_url( admin_url( 'admin-post.php?action=a4u_lic_sync' ), 'a4u_lic_sync' );

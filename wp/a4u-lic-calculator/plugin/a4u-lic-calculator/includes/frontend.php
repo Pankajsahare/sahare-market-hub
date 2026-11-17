@@ -12,8 +12,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_register_script( 'a4u-lic', $url . 'assets/a4u-lic.js', array(), A4U_LIC_VER, true );
 } );
 
-add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
-	$atts  = shortcode_atts( array( 'plan' => '', 'title' => '' ), $atts, 'a4u_lic_calculator' );
+// v3.1: config एकाच ठिकाणी — shortcode आणि offline file दोघांसाठी
+function a4u_lic_build_config( $init = '', $title = '' ) {
 	$d     = a4u_lic_data();
 	$s     = $d['settings'];
 	$plans = array();
@@ -65,11 +65,6 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 			$links[] = array( 'label' => $parts[0], 'url' => esc_url_raw( $parts[1] ) );
 		}
 	}
-	$init = sanitize_key( $atts['plan'] );
-	if ( '' === $init ) { $init = sanitize_key( (string) get_query_var( 'a4u_plan' ) ); }
-	$title = sanitize_text_field( $atts['title'] );
-	$cp    = a4u_lic_current_plan();
-	if ( '' === $title && $cp ) { $title = 'LIC ' . $cp[1]['name'] . ' Premium Calculator'; }
 	$cfg = array(
 		'rest'       => esc_url_raw( rest_url( 'a4u-lic/v1/' ) ),
 		'version'    => (int) $d['rate_version'],
@@ -101,6 +96,22 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 			'green'  => (string) ( $s['color_green'] ?? '#3F5A22' ),
 		),
 	);
+	return $cfg;
+}
+
+add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
+	$atts = shortcode_atts( array( 'plan' => '', 'title' => '' ), $atts, 'a4u_lic_calculator' );
+	$init = sanitize_key( $atts['plan'] );
+	if ( '' === $init ) { $init = sanitize_key( (string) get_query_var( 'a4u_plan' ) ); }
+	$title = sanitize_text_field( $atts['title'] );
+	$cp    = a4u_lic_current_plan();
+	if ( '' === $title && $cp ) { $title = 'LIC ' . $cp[1]['name'] . ' Premium Calculator'; }
+	$cfg   = a4u_lic_build_config( $init, $title );
+	$plans = $cfg['plans'];
+	$s     = a4u_lic_data()['settings'];
+	if ( $cfg['advisor'] ) {
+		$cfg['offlineUrl'] = wp_nonce_url( admin_url( 'admin-post.php?action=a4u_lic_offline' ), 'a4u_lic_offline' );
+	}
 	wp_enqueue_style( 'a4u-lic' );
 	wp_enqueue_script( 'a4u-lic' );
 	wp_add_inline_script( 'a4u-lic', 'window.A4U_LIC=' . wp_json_encode( $cfg ) . ';', 'before' );
@@ -141,3 +152,45 @@ function a4u_lic_faq_html() {
 	$out .= '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>';
 	return $out;
 }
+
+/* =====================================================================
+ * v3.1: Offline calculator — advisor साठी एकच HTML file (internet नसतानाही चालते)
+ * ===================================================================== */
+add_action( 'admin_post_a4u_lic_offline', function () {
+	if ( ! current_user_can( 'edit_posts' ) ) { wp_die( 'Not allowed' ); }
+	check_admin_referer( 'a4u_lic_offline' );
+	$dir = plugin_dir_path( A4U_LIC_FILE ) . 'assets/';
+	$d   = a4u_lic_data();
+	$cfg = a4u_lic_build_config( '', '' );
+	$cfg['advisor'] = true;
+	$cfg['offline'] = true;
+	$cfg['rest']    = '';
+	$rates = array();
+	foreach ( $d['plans'] as $id => $p ) {
+		if ( ! empty( $p['active'] ) && ! empty( $p['rates'] ) ) { $rates[ (string) $id ] = (object) $p['rates']; }
+	}
+	$cfg['offlineRates'] = (object) $rates;
+	// logo data URL मध्ये (बाहेरचा URL असेल तर default logo)
+	$logo = $dir . 'brand-logo.png';
+	if ( is_readable( $logo ) ) { $cfg['brand']['logo'] = 'data:image/png;base64,' . base64_encode( file_get_contents( $logo ) ); } // phpcs:ignore
+	$read = function ( $f ) use ( $dir ) { return is_readable( $dir . $f ) ? (string) file_get_contents( $dir . $f ) : ''; }; // phpcs:ignore
+	$js   = '';
+	foreach ( array( 'vendor/jspdf.umd.min.js', 'vendor/html2canvas.min.js', 'vendor/qrcode.js' ) as $f ) { $js .= $read( $f ) . "\n;\n"; }
+	$safe = function ( $code ) { return str_replace( '</script', '<\/script', $code ); };
+	$name = 'lic-calculator-offline-' . gmdate( 'Y-m-d' ) . '.html';
+	nocache_headers();
+	header( 'Content-Type: text/html; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename="' . $name . '"' );
+	echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">';
+	echo '<title>LIC Calculator (offline) — ' . esc_html( $cfg['brand']['name'] ) . '</title>';
+	echo '<style>body{margin:0;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#faf8f3}.a4u-offline-note{max-width:900px;margin:0 auto 12px;font-size:13px;color:#555}</style>';
+	echo '<style>' . $read( 'a4u-lic.css' ) . '</style></head><body>'; // phpcs:ignore
+	echo '<p class="a4u-offline-note">Offline copy · rates as on ' . esc_html( gmdate( 'd M Y' ) ) . ' (data version ' . (int) $d['rate_version'] . '). Download a fresh copy when LIC changes rates.</p>';
+	echo '<div id="a4u-lic-app" class="a4u-lic"></div>';
+	echo '<script>' . $safe( $js ) . '</script>'; // phpcs:ignore
+	echo '<script>window.A4U_LIC=' . wp_json_encode( $cfg ) . ';</script>';
+	echo '<script>' . $safe( $read( 'a4u-lic.js' ) ) . '</script>'; // phpcs:ignore
+	echo '<script>' . $safe( $read( 'a4u-lic-present.js' ) ) . '</script>'; // phpcs:ignore
+	echo '</body></html>';
+	exit;
+} );

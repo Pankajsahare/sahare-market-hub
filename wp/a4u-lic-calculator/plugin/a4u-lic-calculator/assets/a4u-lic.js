@@ -1,4 +1,4 @@
-/* A4U LIC Calculator v3.0 — frontend (educational illustration only) */
+/* A4U LIC Calculator v3.1 — frontend (educational illustration only) */
 (function () {
 	'use strict';
 
@@ -12,6 +12,13 @@
 	// verified rates नसतील तेव्हा फक्त अंदाजासाठी demo factor
 	var DEMO_FACTOR = { endowment: 0.98, anand: 1.02, labh: 0.84, lakshya: 0.9, umang: 1.25, utsav: 1.6 };
 	var SINGLE = { single: 1, utsav_sp: 1 };       // एकदाच premium भरायचे plans
+	var GOALS = {
+		child: { label: 'Child education / marriage', plans: ['736', '714', '733'] },
+		retire: { label: 'Retirement income', plans: ['745', '771'] },
+		save: { label: 'Savings with life cover', plans: ['715', '714', '736'] },
+		income: { label: 'Lifelong yearly income', plans: ['771', '745', '883'] },
+		lump: { label: 'One-time investment', plans: ['717', '883'] }
+	};
 	var BY_PPT = { umang: 1, utsav: 1, utsav_sp: 1 }; // rate key = PPT / GA period
 	var INCOME = { umang: 1, utsav: 1, utsav_sp: 1 }; // वार्षिक उत्पन्न देणारे plans
 	var RIDERS = { adb: 'Accident Benefit rider', addb: 'Accidental Death & Disability rider', term: 'Term Assurance rider', pwb: 'Premium Waiver Benefit rider' };
@@ -39,6 +46,7 @@
 		return C.rest + path + (qs ? sep + qs : '');
 	}
 	function post(path, body) {
+		if (C.offline) { return Promise.reject(new Error('offline')); } // offline file — server नाही
 		return fetch(api(path), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), keepalive: true });
 	}
 	function track(ev) { try { post('track', { event: ev }).catch(function () {}); } catch (e) { /* stats न गेल्यास काही बिघडत नाही */ } }
@@ -74,6 +82,9 @@
 		'<form class="a4u-form" novalidate>' +
 		'<h2 class="a4u-title">' + esc(C.title || 'LIC Premium & Benefit Calculator') + '</h2>' +
 		'<p class="a4u-sub">Educational illustration — not an official LIC quotation.</p>' +
+		(C.offlineUrl ? '<p class="a4u-note a4u-offline-dl"><a href="' + esc(C.offlineUrl) + '">Download offline copy</a> — one HTML file for your phone/laptop that works without internet (advisor only).</p>' : '') +
+		(C.advisor ? '<label class="a4u-field a4u-saved" hidden><span>Open a saved proposal</span><select data-saved></select></label>' : '') +
+		wizardHtml() +
 		'<fieldset class="a4u-client"><legend>Client details <small>(stays on this device)</small></legend>' +
 		'<div class="a4u-row a4u-row-name">' +
 		field('Title', '<select name="prefix"><option>Mr.</option><option>Mrs.</option><option>Ms.</option><option>Master</option><option>Baby</option><option>Dr.</option></select>', 'a4u-prefix') +
@@ -206,6 +217,7 @@
 	function getRates(p) {
 		if (!p.has_rates) { return Promise.resolve({}); }
 		if (rateCache[p.id]) { return Promise.resolve(rateCache[p.id]); }
+		if (C.offlineRates && C.offlineRates[p.id]) { rateCache[p.id] = C.offlineRates[p.id]; return Promise.resolve(rateCache[p.id]); }
 		return fetch(api('plan/' + encodeURIComponent(p.id), 'v=' + C.version))
 			.then(function (r) { if (!r.ok) { throw new Error('rates'); } return r.json(); })
 			.then(function (j) { rateCache[p.id] = j.rates || {}; return rateCache[p.id]; });
@@ -609,7 +621,10 @@
 			'<button type="button" data-act="print" class="a4u-btn a4u-ghost">Print</button>' +
 			'<button type="button" data-act="wa" class="a4u-btn a4u-wa">Share on WhatsApp</button>' +
 			'<button type="button" data-act="link" class="a4u-btn a4u-ghost">Copy link</button>' +
-			'</div>';
+			'<button type="button" data-act="rr" class="a4u-btn a4u-ghost">Ready Reckoner</button>' +
+			'<button type="button" data-act="mix" class="a4u-btn a4u-ghost">Add to Product Mix</button>' +
+			(C.advisor ? '<button type="button" data-act="save" class="a4u-btn a4u-ghost">Save proposal</button>' : '') +
+			'</div><div class="a4u-rr-out"></div><div class="a4u-mix-out">' + mixHtml() + '</div>';
 
 		if (C.plans.length > 1) {
 			h += '<div class="a4u-compare no-print"><h4>Compare with another plan</h4>' +
@@ -697,10 +712,15 @@
 		}
 		return scriptCache[src];
 	}
-	function vendor(file) { return loadScript((C.vendor || '') + file + '?v=' + C.version); }
+	var VENDOR_GLOBAL = { 'jspdf.umd.min.js': 'jspdf', 'html2canvas.min.js': 'html2canvas', 'qrcode.js': 'qrcode' };
+	function vendor(file) {
+		if (window[VENDOR_GLOBAL[file]]) { return Promise.resolve(); } // offline file मध्ये आधीच आहे
+		return loadScript((C.vendor || '') + file + '?v=' + C.version);
+	}
 
 	// presentation चा code वेगळ्या file मध्ये — फक्त बटण दाबल्यावर load (page हलकं)
 	function openPresentation() {
+		if (window.A4U_LIC_PRESENT) { window.A4U_LIC_PRESENT.open(); return; }
 		loadScript(C.present).then(function () { window.A4U_LIC_PRESENT.open(); }).catch(function () {
 			window.alert('Could not load the presentation. Please check your internet connection and try again.');
 		});
@@ -708,9 +728,166 @@
 	window.A4U_LIC_API = {
 		C: C, inr: inr, esc: esc, pct: pct, MODES: MODES, SINGLE: SINGLE, chartSvg: chartSvg, track: track, vendor: vendor,
 		last: function () { return last; }, cmp: function () { return lastCmp; }, client: function () { return clientInfo(); },
+		rr: function () { return lastRR && last && lastRR.r === last ? lastRR : null; }, mix: function () { return mixList.slice(); }, mixIrr: function () { return mixList.length ? mixTotals().irr : null; }, api: api, post: post,
 		// golden tests (GitHub Actions) साठी engine थेट वापरता यावा
 		compute: compute, planById: planById, resolveTerms: resolveTerms
 	};
+
+	/* ---------- v3.1: Ready Reckoner ---------- */
+	var lastRR = null;
+	function pickTerms(p, n) { // जास्तीत जास्त n terms, सगळ्या range मधून
+		var t = p.terms.slice();
+		if (t.length <= n) { return t; }
+		var out = [];
+		for (var i = 0; i < n; i++) { out.push(t[Math.round(i * (t.length - 1) / (n - 1))]); }
+		return out.filter(function (v, i, a) { return a.indexOf(v) === i; });
+	}
+	function showReckoner() {
+		var r = last, p = r.plan, box = result.querySelector('.a4u-rr-out');
+		getRates(p).then(function (rates) {
+			var terms = pickTerms(p, 6), ages = [];
+			for (var a = Math.max(p.min_age, 0); a <= p.max_age; a += 5) { ages.push(a); }
+			if (ages.indexOf(r.age) === -1) { ages.push(r.age); ages.sort(function (x, y) { return x - y; }); }
+			var single = !!SINGLE[p.type];
+			var rows = ages.map(function (age) {
+				return [age, terms.map(function (t) {
+					var x = compute(p, { age: age, term: t, sa: r.sa, by: 'sa', mode: 'yearly', gst: r.gst, income: 'regular', r: {}, srbO: null, fabO: null, doc: new Date(), gender: r.gender }, rates);
+					return x.errors ? null : (single ? x.inst : x.pr.yearPay);
+				})];
+			});
+			lastRR = { r: r, terms: terms, rows: rows, single: single };
+			box.innerHTML = '<h4>Ready Reckoner — ' + esc(p.name) + ' · SA ' + inr(r.sa) + ' · ' + (single ? 'single premium' : 'yearly premium') + '</h4>' +
+				'<div class="a4u-scroll"><table class="a4u-rr"><thead><tr><th>Age \\ ' + (BY_PPT[p.type] ? 'PPT' : 'Term') + '</th>' + terms.map(function (t) { return '<th>' + t + '</th>'; }).join('') + '</tr></thead><tbody>' +
+				rows.map(function (row) {
+					return '<tr' + (row[0] === r.age ? ' class="sel"' : '') + '><th>' + row[0] + '</th>' + row[1].map(function (v) { return '<td>' + (v ? inr(v) : '—') + '</td>'; }).join('') + '</tr>';
+				}).join('') + '</tbody></table></div><p class="a4u-note">— = not allowed for that age/term. Included in the PDF presentation.</p>';
+			box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		});
+	}
+
+	/* ---------- v3.1: Product Mix (2–3 plans एकत्र) ---------- */
+	var mixList = [];
+	function addToMix() {
+		if (!last) { return; }
+		if (mixList.some(function (m) { return m.plan.id === last.plan.id && m.sa === last.sa && m.T === last.T; })) { return refreshMix(); }
+		if (mixList.length >= 3) { mixList.shift(); }
+		mixList.push(last);
+		refreshMix();
+	}
+	function mixTotals() {
+		var n = 0, cf = [], prem = 0, ben = 0;
+		mixList.forEach(function (m) { n = Math.max(n, m.rows.length); });
+		for (var i = 0; i <= n; i++) { cf.push(0); }
+		mixList.forEach(function (m) {
+			m.rows.forEach(function (x) { cf[x[0] - 1] -= x[2]; cf[x[0]] += x[3]; prem += x[2]; ben += x[3]; });
+		});
+		return { prem: prem, ben: ben, irr: irr(cf), first: mixList.reduce(function (s, m) { return s + (SINGLE[m.plan.type] ? m.inst : m.pr.yearPay); }, 0) };
+	}
+	function mixHtml() {
+		if (!mixList.length) { return ''; }
+		var t = mixTotals();
+		return '<div class="a4u-mix"><h4>Product Mix (' + mixList.length + '/3)</h4><div class="a4u-scroll"><table><thead><tr><th>Plan</th><th>SA</th><th>Term/Pay</th><th>1st-year premium</th><th>Total premium</th><th>Total benefits</th></tr></thead><tbody>' +
+			mixList.map(function (m) {
+				return '<tr><td>' + esc(m.plan.name) + '</td><td>' + inr(m.sa) + '</td><td>' + m.T + ' / ' + (SINGLE[m.plan.type] ? '1' : m.P) + '</td><td>' + inr(SINGLE[m.plan.type] ? m.inst : m.pr.yearPay) + '</td><td>' + inr(m.totalPrem) + '</td><td>' + inr(m.totalBenefit) + '</td></tr>';
+			}).join('') +
+			'<tr class="tot"><th>Total</th><td></td><td></td><td>' + inr(t.first) + '</td><td>' + inr(t.prem) + '</td><td>' + inr(t.ben) + '</td></tr></tbody></table></div>' +
+			'<p class="a4u-note">Combined return (IRR, approx.): <b>' + pct(t.irr) + '</b>. Add another plan by calculating it and tapping "Add to Product Mix". Included in the PDF.</p>' +
+			'<button type="button" data-act="mixclear" class="a4u-btn a4u-ghost a4u-small">Clear mix</button></div>';
+	}
+	function refreshMix() { var b = result.querySelector('.a4u-mix-out'); if (b) { b.innerHTML = mixHtml(); } }
+
+	/* ---------- v3.1: Saved proposals (फक्त या device वर, advisor) ---------- */
+	var SAVE_KEY = 'a4u_lic_saved_v1';
+	function loadSaved() { try { return JSON.parse(window.localStorage.getItem(SAVE_KEY) || '[]'); } catch (e) { return []; } }
+	function storeSaved(list) { try { window.localStorage.setItem(SAVE_KEY, JSON.stringify(list.slice(0, 50))); return true; } catch (e) { return false; } }
+	var SAVE_FIELDS = ['prefix', 'cname', 'gender', 'cmobile', 'plan', 'dob', 'age', 'doc', 'sa', 'budget', 'target', 'term', 'mode', 'income', 'gst', 'b_srb', 'b_fab'];
+	function saveProposal(btn) {
+		var snap = { at: new Date().toISOString().slice(0, 16).replace('T', ' '), by: f(form, 'by').value, v: {} };
+		SAVE_FIELDS.forEach(function (n) { var el = f(form, n); if (el) { snap.v[n] = el.value; } });
+		var cl = clientInfo();
+		snap.label = (cl.name ? cl.prefix + ' ' + cl.name : 'Unnamed') + ' · ' + last.plan.name + ' · ' + inr(last.sa);
+		var list = loadSaved().filter(function (x) { return x.label !== snap.label; });
+		list.unshift(snap);
+		btn.textContent = storeSaved(list) ? 'Saved ✓' : 'Could not save';
+		setTimeout(function () { btn.textContent = 'Save proposal'; }, 2000);
+		fillSavedMenu();
+	}
+	function fillSavedMenu() {
+		var sel = root.querySelector('[data-saved]');
+		if (!sel) { return; }
+		var list = loadSaved();
+		sel.innerHTML = '<option value="">My saved proposals (' + list.length + ')</option>' + list.map(function (x, i) { return '<option value="' + i + '">' + esc(x.label + ' · ' + x.at) + '</option>'; }).join('');
+		sel.parentNode.hidden = !list.length;
+	}
+	function openSaved(i) {
+		var x = loadSaved()[i];
+		if (!x) { return; }
+		f(form, 'plan').value = x.v.plan;
+		fillPlanUI();
+		SAVE_FIELDS.forEach(function (n) { var el = f(form, n); if (el && x.v[n] !== undefined && n !== 'plan') { el.value = x.v[n]; } });
+		var rb = form.querySelector('input[name=by][value=' + (x.by || 'sa') + ']');
+		if (rb) { rb.checked = true; syncBy(); }
+		run(false);
+	}
+
+	/* ---------- v3.1: Need wizard (चर्चेसाठी पर्याय — सल्ला नाही) ---------- */
+	function wizardHtml() {
+		return '<details class="a4u-wizard"><summary>Not sure which plan? Help me choose</summary>' +
+			field('Your main goal', '<select data-wz="goal">' + Object.keys(GOALS).map(function (k) { return '<option value="' + k + '">' + GOALS[k].label + '</option>'; }).join('') + '</select>') +
+			'<div class="a4u-row">' + field('Age', '<input type="number" data-wz="age" min="0" max="65" value="30" inputmode="numeric">') +
+			field('Yearly budget (₹) / one-time amount', '<input type="number" data-wz="budget" min="5000" step="1000" value="50000" inputmode="numeric">') + '</div>' +
+			field('Years until you need the money', '<input type="number" data-wz="years" min="5" max="40" value="20" inputmode="numeric">') +
+			'<button type="button" data-wz="go" class="a4u-btn a4u-ghost">Show options</button><div data-wz="out"></div>' +
+			'<p class="a4u-note">Options to discuss with your advisor, based only on the details above — not advice. Final choice should follow a full need analysis.</p></details>';
+	}
+	function runWizard() {
+		var w = function (n) { return root.querySelector('[data-wz="' + n + '"]'); };
+		var goal = GOALS[w('goal').value], age = parseInt(w('age').value, 10), budget = parseFloat(w('budget').value), years = parseInt(w('years').value, 10);
+		var out = w('out');
+		var cands = goal.plans.map(planById).filter(function (p) { return p && age >= p.min_age && age <= p.max_age; });
+		if (!cands.length) { out.innerHTML = '<p class="a4u-note">No suitable plan for this age in the current list.</p>'; return; }
+		Promise.all(cands.map(getRates)).then(function (all) {
+			var res = [];
+			cands.forEach(function (p, i) {
+				var terms = p.terms.slice().sort(function (a, b) { return Math.abs(resolveTerms(p, age, a).T - years) - Math.abs(resolveTerms(p, age, b).T - years); });
+				for (var k = 0; k < terms.length; k++) {
+					var x = compute(p, { age: age, term: terms[k], by: 'budget', budget: budget, mode: 'yearly', gst: Number(C.gst) || 0, income: 'regular', r: {}, srbO: null, fabO: null, doc: new Date() }, all[i]);
+					if (!x.errors) { res.push(x); break; }
+				}
+			});
+			lastWizard = res;
+			out.innerHTML = res.length ? '<div class="a4u-wz-cards">' + res.map(function (x, i) {
+				return '<div class="a4u-wz-card"><b>' + esc(x.plan.name) + '</b><span>SA ' + inr(x.sa) + ' · ' + x.T + ' yrs (pay ' + (SINGLE[x.plan.type] ? 'once' : x.P + ' yrs') + ')</span>' +
+					'<span>Premium ' + inr(x.inst) + (SINGLE[x.plan.type] ? '' : ' / yr') + '</span><span>Est. benefits ' + inr(x.totalBenefit) + ' · IRR ' + pct(x.irr) + '</span>' +
+					'<button type="button" class="a4u-btn a4u-small" data-wz-use="' + i + '">Use this</button></div>';
+			}).join('') + '</div>' + (res.length > 1 ? '<button type="button" class="a4u-btn a4u-ghost" data-wz-cmp="1">Compare the first two</button>' : '') :
+				'<p class="a4u-note">Budget is below the minimum premium for these plans. Try a higher amount.</p>';
+		});
+	}
+	var lastWizard = [];
+	function useWizard(i, thenCompare) {
+		var x = lastWizard[i];
+		if (!x) { return; }
+		f(form, 'plan').value = x.plan.id;
+		fillPlanUI();
+		f(form, 'age').value = x.age; f(form, 'dob').value = '';
+		f(form, 'sa').value = x.sa;
+		var t = x.plan.type === 'utsav_sp' ? x.G : (BY_PPT[x.plan.type] ? x.P : x.T);
+		f(form, 'term').value = t;
+		f(form, 'mode').value = 'yearly';
+		form.querySelector('input[name=by][value=sa]').checked = true; syncBy();
+		run(false);
+		if (thenCompare && lastWizard[1]) {
+			setTimeout(function () {
+				var cp = result.querySelector('[data-cmp="plan"]');
+				if (!cp) { return; }
+				cp.value = lastWizard[1].plan.id; cp.dispatchEvent(new Event('change'));
+				var b = lastWizard[1], tt = b.plan.type === 'utsav_sp' ? b.G : (BY_PPT[b.plan.type] ? b.P : b.T);
+				result.querySelector('[data-cmp="term"]').value = tt;
+				runCompare();
+			}, 250);
+		}
+	}
 
 	/* ---------- Events ---------- */
 	function num(name) { var el = f(form, name); return el ? parseInt(el.value, 10) : NaN; }
@@ -794,6 +971,20 @@
 	f(form, 'age').addEventListener('input', function () { f(form, 'dob').value = ''; });
 	form.addEventListener('submit', function (e) { e.preventDefault(); run(true); });
 
+	// v3.1: wizard + saved proposals (form च्या आत, result बाहेर)
+	root.addEventListener('click', function (e) {
+		var t = e.target;
+		if (t.closest('[data-wz="go"]')) { runWizard(); return; }
+		var u = t.closest('[data-wz-use]');
+		if (u) { useWizard(parseInt(u.getAttribute('data-wz-use'), 10), false); return; }
+		if (t.closest('[data-wz-cmp]')) { useWizard(0, true); }
+	});
+	var savedSel = root.querySelector('[data-saved]');
+	if (savedSel) {
+		savedSel.addEventListener('change', function () { if (savedSel.value !== '') { openSaved(parseInt(savedSel.value, 10)); savedSel.value = ''; } });
+		fillSavedMenu();
+	}
+
 	result.addEventListener('click', function (e) {
 		var b = e.target.closest('[data-act]');
 		if (!b || !last) { return; }
@@ -808,6 +999,14 @@
 			window.open('https://wa.me/' + encodeURIComponent(C.whatsapp) + '?text=' + encodeURIComponent(waText(last)), '_blank', 'noopener');
 		} else if (act === 'present') {
 			openPresentation();
+		} else if (act === 'rr') {
+			showReckoner();
+		} else if (act === 'mix') {
+			addToMix();
+		} else if (act === 'mixclear') {
+			mixList = []; refreshMix();
+		} else if (act === 'save') {
+			saveProposal(b);
 		} else if (act === 'compare') {
 			runCompare();
 		} else if (act === 'link') {
