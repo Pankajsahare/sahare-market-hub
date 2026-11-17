@@ -61,46 +61,53 @@ def page_text(raw: bytes) -> str:
 # ---------------- 1. Registry: LIC च्या सध्याच्या plans ची यादी ----------------
 
 def read_registry() -> dict[str, str]:
-    """{plan_no: uin} — insurance-plan page वरच्या tables मधून."""
+    """{plan_no: uin} — insurance-plan page वरच्या tables मधून (UIN च्या आधीचा 3-अंकी plan no)."""
     st, raw = get(REGISTRY_URL, "text/html")
     STATUS["registry"] = {"url": REGISTRY_URL, "http": st, "bytes": len(raw)}
     if st != 200:
         return {}
-    text = re.sub(r"<[^>]+>", " | ", page_text(raw))
-    text = html.unescape(re.sub(r"\s+", " ", text))
+    text = html.unescape(re.sub(r"<[^>]+>", " ", page_text(raw)))
+    text = re.sub(r"[\s​ ]+", " ", text)
     found = {}
-    # "... Jeevan Umang | | 745 | | 512N312V03 ..." → plan no आणि त्याच्या लगेच नंतरचा UIN
-    for m in re.finditer(r"\|\s*(\d{3})\s*(?:\|\s*)+(512[NLAGB]\d{3}V\d{2})", text):
-        found[m.group(1)] = m.group(2)
+    for m in re.finditer(r"512[A-Z]\d{3}V\d{2}", text, flags=re.I):
+        before = text[max(0, m.start() - 160):m.start()]
+        nums = re.findall(r"(?<![\d.])(\d{3})(?![\d.])", before)
+        if nums:
+            found[nums[-1]] = m.group(0).upper()
+    STATUS["registry"]["uin_matches"] = len(re.findall(r"512[A-Z]\d{3}V\d{2}", text, flags=re.I))
     STATUS["registry"]["plans_found"] = len(found)
+    if not found:  # debug: page मध्ये table कसं दिसतं ते पाहण्यासाठी छोटा नमुना
+        i = text.lower().find("plan no")
+        STATUS["registry"]["sample"] = text[max(0, i - 100):i + 500] if i >= 0 else text[:600]
     return found
 
 
 # ---------------- 2. Brochure शोधणे ----------------
 
-def find_brochure(detail_url: str) -> tuple[str | None, int]:
-    """Plan page वरची सगळ्यात नवीन sales brochure PDF link."""
+SKIP_WORDS = ("hindi", "_hin", "marathi", "policy+document", "policy%20document", "policy document", "cis", "customer information",
+              "benefit illustration", "proposal", "claim", "form")
+
+
+def find_brochure(detail_url: str, known: str | None) -> tuple[str | None, int, list]:
+    """Plan page वरची सगळ्यात नवीन English sales brochure (anchor text / href मध्ये 'brochure', सगळ्यात मोठा ?t=)."""
     st, raw = get(detail_url, "text/html")
-    if st != 200:
-        return None, st
-    hrefs = re.findall(r'href="([^"]+?\.pdf[^"]*)"', page_text(raw), flags=re.I)
     cands = []
-    for h in hrefs:
-        h = html.unescape(h)
-        low = h.lower()
-        if "brochure" not in low and "sales" not in low:
-            continue
-        if any(w in low for w in ("hindi", "_hin", "marathi", "policy+document", "policy%20document")):
-            continue
-        ts = re.search(r"[?&]t=(\d{10,})", h)
-        cands.append((int(ts.group(1)) if ts else 0, h))
-    if not cands:
-        return None, st
-    cands.sort()
-    url = cands[-1][1]
-    if url.startswith("/"):
-        url = "https://licindia.in" + url
-    return url, st
+    if st == 200:
+        for m in re.finditer(r'<a\b[^>]*href="([^"]+?\.pdf[^"]*)"[^>]*>(.*?)</a>', page_text(raw), flags=re.I | re.S):
+            href = html.unescape(m.group(1))
+            label = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", m.group(2)))).strip()
+            both = (href + " " + label).lower()
+            if "brochure" not in both or any(w in both for w in SKIP_WORDS):
+                continue
+            ts = re.search(r"[?&]t=(\d{10,})", href)
+            if href.startswith("/"):
+                href = "https://licindia.in" + href
+            cands.append([int(ts.group(1)) if ts else 0, href, label[:90]])
+    if known and not any(known.split("?")[0] == c[1].split("?")[0] for c in cands):
+        ts = re.search(r"[?&]t=(\d{10,})", known)
+        cands.append([int(ts.group(1)) if ts else 0, known, "(known link)"])
+    cands.sort(key=lambda c: c[0])
+    return (cands[-1][1] if cands else None), st, cands[-6:]
 
 
 # ---------------- 3. Gemini ने brochure मधून data काढणे ----------------
@@ -250,9 +257,9 @@ def main() -> int:
 
     for pid, w in watch.get("plans", {}).items():
         st_plan = STATUS["plans"].setdefault(pid, {})
-        url, http = find_brochure(w["page"])
+        url, http, cands = find_brochure(w["page"], w.get("brochure"))
         st_plan["page_http"] = http
-        url = url or w.get("brochure")  # page वाचता आलं नाही तर माहीत असलेली link
+        st_plan["candidates"] = cands
         if not url:
             st_plan["error"] = "brochure link not found"
             continue
