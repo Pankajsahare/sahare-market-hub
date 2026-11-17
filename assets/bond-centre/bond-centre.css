@@ -301,3 +301,6 @@
 #a4u-bc .cmp .wst{font-size:.8rem}
 #a4u-bc td.iss .isin{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 #a4u-bc .mini{display:inline-flex;gap:.25rem}#a4u-bc .mini .ic{width:26px;height:26px;font-size:.85rem;border-radius:6px}
+#a4u-bc .na{font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:1px dotted var(--muted);cursor:help}
+#a4u-bc .cmpgoal{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin:0 0 .9rem}
+#a4u-bc .cmpgoal .lbl{font-size:.82rem;font-weight:600;color:var(--muted);margin-right:.3rem}
