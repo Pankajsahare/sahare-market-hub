@@ -14,5 +14,7 @@ delete_option( 'a4u_lic_sync_applied' );
 delete_option( 'a4u_lic_flush' );
 delete_transient( 'a4u_lic_update_info' );
 wp_clear_scheduled_hook( 'a4u_lic_sync' );
+delete_option( 'a4u_lic_ill_seq' );
+delete_option( 'a4u_lic_ill_log' );
 delete_option( 'a4u_lic_errors' );
 delete_option( 'a4u_lic_data_prev' );

@@ -20,6 +20,7 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( 'a4u-lic/v1', '/track', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'a4u_lic_rest_track' ) );
 	register_rest_route( 'a4u-lic/v1', '/lead', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'a4u_lic_rest_lead' ) );
 	register_rest_route( 'a4u-lic/v1', '/error', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'a4u_lic_rest_error' ) );
+	register_rest_route( 'a4u-lic/v1', '/illustration', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'a4u_lic_rest_illustration' ) );
 } );
 
 function a4u_lic_rest_plan( WP_REST_Request $req ) {
@@ -89,4 +90,21 @@ function a4u_lic_rest_error( WP_REST_Request $req ) {
 	$log = array( $key => $row ) + $log;
 	update_option( 'a4u_lic_errors', array_slice( $log, 0, 30, true ), false );
 	return array( 'ok' => 1 );
+}
+
+// v3.1: Illustration ID — फक्त ID, तारीख, plan, SA, term, rate version (नाव/mobile काहीच नाही)
+function a4u_lic_rest_illustration( WP_REST_Request $req ) {
+	if ( ! a4u_lic_throttle( 'i', 60, HOUR_IN_SECONDS ) ) {
+		return new WP_Error( 'too_many', 'Too many requests', array( 'status' => 429 ) );
+	}
+	$d    = a4u_lic_data();
+	$plan = sanitize_key( (string) $req->get_param( 'plan' ) );
+	if ( empty( $d['plans'][ $plan ] ) ) { return new WP_Error( 'bad_plan', 'Invalid plan', array( 'status' => 400 ) ); }
+	$seq = (int) get_option( 'a4u_lic_ill_seq', 0 ) + 1;
+	update_option( 'a4u_lic_ill_seq', $seq, false );
+	$id  = 'A4U-' . wp_date( 'ymd' ) . '-' . str_pad( (string) $seq, 4, '0', STR_PAD_LEFT );
+	$log = (array) get_option( 'a4u_lic_ill_log', array() );
+	array_unshift( $log, array( $id, current_time( 'mysql' ), $plan, absint( $req->get_param( 'sa' ) ), absint( $req->get_param( 'term' ) ), (int) $d['rate_version'] ) );
+	update_option( 'a4u_lic_ill_log', array_slice( $log, 0, 500 ), false );
+	return array( 'ok' => 1, 'id' => $id );
 }
