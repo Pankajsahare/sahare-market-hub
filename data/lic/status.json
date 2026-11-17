@@ -1,9 +1,9 @@
 {
- "run_at": "2026-11-17 19:57",
+ "run_at": "2026-11-17 21:34",
  "registry": {
   "url": "https://licindia.in/insurance-plan",
   "http": 200,
-  "bytes": 214099,
+  "bytes": 214113,
   "uin_matches": 0,
   "plans_found": 0,
   "sample": " LIC India Insurance Plans - Comprehensive Coverage for a Secure Future | Official website of Life Insurance Corporation of India. (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5WNBT5G'); var Liferay = window.Liferay || {};Liferay.Icons = Liferay.Icons || {};Liferay.Icons.basePath = '/o/icons';Liferay.Icons.sprite"
@@ -32,8 +32,8 @@
    "pdf_http": 200,
    "pdf_bytes": 682301,
    "sha256": "85ec97771848cb97416517f1070080ad388b962257f1e8e76538baf1a33ca51e",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "715": {
    "page_http": 200,
@@ -55,9 +55,11 @@
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+New+Jeevan+Anand+Sales+Brochure+Eng_141025.pdf/43b60cd9-f6f1-c889-734c-47c565a47ada?t=1760418918360",
-   "pdf_http": 0,
-   "pdf_bytes": 0,
-   "error": "pdf download failed"
+   "pdf_http": 200,
+   "pdf_bytes": 674195,
+   "sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "733": {
    "page_http": 200,
@@ -77,8 +79,8 @@
    "pdf_http": 200,
    "pdf_bytes": 380818,
    "sha256": "e83a73ed5bd065efa2f46f459b7fbbe49dd1f69c36a84cf96429143a6e09a324",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "736": {
    "page_http": 200,
@@ -98,8 +100,8 @@
    "pdf_http": 200,
    "pdf_bytes": 886534,
    "sha256": "48ec80c9b1efbcaa4734a5276c7c27a726923d08dd1f0625d0e0ec55c68e404b",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "745": {
    "page_http": 200,
@@ -119,8 +121,8 @@
    "pdf_http": 200,
    "pdf_bytes": 1440213,
    "sha256": "6a384c31aae1140a7260fbd5c10abbe367ec75ee82919a110cf51f39dbaabef7",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "717": {
    "page_http": 200,
@@ -140,8 +142,8 @@
    "pdf_http": 200,
    "pdf_bytes": 271528,
    "sha256": "be098c986fe9f954b3fa1f1bbd407717e2d2a8a923519022383c47982a44ab98",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "771": {
    "page_http": 200,
@@ -161,8 +163,8 @@
    "pdf_http": 200,
    "pdf_bytes": 1303195,
    "sha256": "e82dadb82de132fbcdefb95e714713dc388d2843333c7b54a3a62109d2c6290d",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   },
   "883": {
    "page_http": 200,
@@ -177,8 +179,8 @@
    "pdf_http": 200,
    "pdf_bytes": 1041462,
    "sha256": "e2f2d79addce15b8d3efadf5da2ead03364053586264455eb1ea17538a3f8ec3",
-   "model": "GEMINI_API_KEY missing",
-   "error": "gemini failed: GEMINI_API_KEY missing"
+   "model": "gemini-2.5-flash: HTTP Error 404: Not Found",
+   "error": "gemini failed: gemini-2.5-flash: HTTP Error 404: Not Found"
   }
  },
  "bonus": {},
