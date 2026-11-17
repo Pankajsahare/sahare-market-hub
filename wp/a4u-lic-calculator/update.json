@@ -1,0 +1,9 @@
+{
+ "name": "A4U LIC Calculator",
+ "version": "2.0.0",
+ "download_url": "https://raw.githubusercontent.com/Pankajsahare/sahare-market-hub/main/wp/a4u-lic-calculator/a4u-lic-calculator-2.0.0.zip",
+ "requires": "5.8",
+ "tested": "6.8",
+ "last_updated": "2026-11-17",
+ "changelog": "<h4>2.0.0</h4><ul><li>Branded presentation + PDF (English / Marathi) with IRDAI agent details, UIN and WhatsApp QR</li><li>Two bonus scenarios (current / 50% lower)</li><li>Weekly LIC brochure data sync with admin approval</li><li>Self-update from GitHub</li></ul>"
+}
