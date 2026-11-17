@@ -1,5 +1,5 @@
 {
- "_note": "pipeline कोणते plans तपासतो. नवीन plan जोडायला: plan no, LIC page URL, आणि calculator चा type (endowment/anand/lakshya/labh/umang/single/utsav/utsav_sp) लिहा.",
+ "_note": "pipeline कोणते plans तपासतो. नवीन plan जोडायला: plan no, LIC page URL, आणि calculator चा type (endowment/anand/lakshya/labh/umang/single/utsav/utsav_sp) लिहा. Gemini key जोडला: 17 Nov 2026.",
  "plans": {
   "714": {
    "name": "New Endowment",
