@@ -27,7 +27,8 @@ import os
 import re
 import sys
 import urllib.request
-from concurrent.futures import ThreadPoolExecutor
+import time
+import urllib.error
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -49,6 +50,7 @@ CATEGORY_PAGES = [  # LIC च्या plan category pages (plan no + UIN या
     "https://licindia.in/web/guest/micro-insurance-plans", "https://licindia.in/web/guest/riders",
 ]
 FORCE = os.environ.get("LIC_FORCE", "") == "1"  # brochure बदललं नसलं तरी पुन्हा extract
+MAX_EXTRACT = int(os.environ.get("LIC_MAX_EXTRACT", "3"))  # Gemini free tier — एका run मध्ये इतकेच brochures; बाकी पुढच्या दिवशी
 
 STATUS: dict = {"run_at": "", "registry": {}, "plans": {}, "bonus": {}, "models": [], "errors": []}
 
@@ -254,9 +256,19 @@ def gemini_call(pdf: bytes, prompt: str, model: str) -> dict:
         "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
     }).encode()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
-    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
-    with urllib.request.urlopen(req, timeout=150) as r:
-        res = json.loads(r.read().decode())
+    res = None
+    for wait in (0, 30, 75, 150):  # 429/503 आलं तर थांबून पुन्हा (free tier मर्यादा)
+        if wait:
+            time.sleep(wait)
+        req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=150) as r:
+                res = json.loads(r.read().decode())
+            break
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (429, 500, 503) or wait == 150:
+                raise
+    time.sleep(6)  # पुढच्या call आधी थोडा श्वास
     txt = res["candidates"][0]["content"]["parts"][0]["text"]
     txt = re.sub(r"^```(?:json)?|```$", "", txt.strip()).strip()
     return json.loads(txt)
@@ -439,10 +451,12 @@ def main() -> int:
         dest.write_bytes(pdf)
         jobs.append((pid, url, sha, dest, pdf, old))
 
-    # Gemini — एकाच वेळी 4 brochures (आधी एकामागून एक वाचल्याने 30 मिनिटांची मर्यादा ओलांडली जायची)
+    # Gemini — free tier साठी एकामागून एक, एका run मध्ये MAX_EXTRACT; बाकी पुढच्या run ला (pipeline रोज चालतो)
     gemini_models()
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        results = list(ex.map(lambda j: gemini_extract(j[4], PROMPT), jobs))
+    for j in jobs[MAX_EXTRACT:]:
+        STATUS["plans"][j[0]]["result"] = "queued for next run"
+    jobs = jobs[:MAX_EXTRACT]
+    results = [gemini_extract(j[4], PROMPT) for j in jobs]
 
     for (pid, url, sha, dest, pdf, old), (extracted, model) in zip(jobs, results):
         st_plan = STATUS["plans"][pid]

@@ -1,4 +1,5 @@
-# LIC plans data — दर सोमवारी सकाळी 9:43 IST ला LIC च्या साईटवरून brochures तपासतो
+# LIC plans data — रोज सकाळी 9:43 IST ला LIC च्या साईटवरून brochures तपासतो
+#   (काही बदललं नसेल तर Gemini वापरला जात नाही आणि run 1 मिनिटात संपतो)
 #   scripts/fetch_lic_plans.py → data/lic/lic-plans.json (A4U LIC Calculator plugin हाच वाचतो)
 #                              → data/lic/status.json (प्रत्येक URL चा निकाल)
 #                              → data/lic/brochures/<plan>/<sha>.pdf (brochure ची जपलेली copy)
@@ -7,7 +8,7 @@ name: Update LIC plans data
 
 on:
   schedule:
-    - cron: "13 4 * * 1"   # 04:13 UTC सोमवार = 9:43 AM IST
+    - cron: "13 4 * * *"   # 04:13 UTC = 9:43 AM IST, रोज
   workflow_dispatch:
     inputs:
       force:
