@@ -1,0 +1,9 @@
+{
+ "name": "A4U LIC Calculator",
+ "version": "3.0.0",
+ "download_url": "https://raw.githubusercontent.com/Pankajsahare/sahare-market-hub/main/wp/a4u-lic-calculator/a4u-lic-calculator-3.0.0.zip",
+ "requires": "5.8",
+ "tested": "6.8",
+ "last_updated": "2026-11-17",
+ "changelog": "<h4>3.0.0</h4><ul><li>Client details (title, name, gender, date of commencement, maturity date)</li><li>Calculate by Sum Assured / Premium / Maturity or Income</li><li>Advisor bonus assumptions</li><li>Actual-quotation rate points</li><li>Tax notes and today's-money value</li><li>Error log, backup/restore, beta update channel</li><li>Lazy-loaded presentation</li></ul>"
+}

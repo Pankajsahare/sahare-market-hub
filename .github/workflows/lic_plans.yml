@@ -20,6 +20,7 @@ on:
       - scripts/fetch_lic_plans.py
       - data/lic/plans_watch.json
       - .github/workflows/lic_plans.yml
+      - wp/a4u-lic-calculator/tests/golden.js
 
 permissions:
   contents: write
@@ -44,8 +45,26 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install test tool
+        run: npm install --no-save --no-audit --no-fund jsdom@24 >/dev/null
+
       - name: Check LIC brochures
         run: python scripts/fetch_lic_plans.py
+
+      # S2: golden tests — नवीन data ने calculator बिघडत असेल तर तो data commit होत नाही
+      - name: Golden tests
+        run: |
+          if ! node wp/a4u-lic-calculator/tests/golden.js data/lic/lic-plans.json > /tmp/golden.txt 2>&1; then
+            cat /tmp/golden.txt
+            git checkout -- data/lic/lic-plans.json
+            python -c "import sys; sys.path.insert(0,'scripts'); from common import notify; notify('❌ A4U LIC: नवीन LIC data golden tests मध्ये अडकला — live calculator बदललेला नाही.\n\n' + open('/tmp/golden.txt').read()[-1500:])"
+          else
+            cat /tmp/golden.txt
+          fi
 
       - name: Commit if changed
         run: |
