@@ -260,3 +260,44 @@
 @media(max-width:820px){#a4u-bc .stats{grid-template-columns:repeat(2,1fr)}#a4u-bc .stats b{font-size:1.1rem}}
 /* Elementor कधी कधी widget ला overflow:auto देतो → sticky tabs चालत नाहीत. फक्त Bond Centre च्या widget साठी काढतो. */
 .elementor-element:has(> #a4u-bc),.elementor-widget-container:has(> #a4u-bc){overflow:visible!important}
+/* ---- v6.3 decision tools ---- */
+#a4u-bc .nm{all:unset;cursor:pointer;color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:rgba(33,45,69,.25);text-underline-offset:3px}
+#a4u-bc .nm:hover,#a4u-bc .nm:focus-visible{color:var(--navy);text-decoration-color:var(--gold);outline:none}
+#a4u-bc .card h4 .nm span{color:var(--gold);font-weight:800}
+#a4u-bc .ic{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:1rem;color:var(--muted);background:#fff;flex:none}
+#a4u-bc .ic:hover,#a4u-bc .ic:focus-visible{border-color:var(--gold)}
+#a4u-bc .ic.fav.on{color:#e0a100;border-color:#f3d58a;background:var(--gold-s)}
+#a4u-bc .ic.bell{filter:grayscale(1);opacity:.65}#a4u-bc .ic.bell.on{filter:none;opacity:1;border-color:#f3d58a;background:var(--gold-s)}
+#a4u-bc .card .top .topr{display:inline-flex;gap:.35rem;align-items:center}
+#a4u-bc .spr{display:block;font-size:.72rem;color:var(--muted);font-weight:500;margin-top:.15rem;white-space:nowrap}
+#a4u-bc .card .yl .spr{display:inline;margin-left:.5rem}
+#a4u-bc .qwrap{position:relative;display:flex;align-items:stretch}
+#a4u-bc .qwrap input{flex:1;padding-right:5.4rem!important}
+#a4u-bc .qwrap .qx,#a4u-bc .qwrap .qp{all:unset;position:absolute;top:50%;transform:translateY(-50%);cursor:pointer;font-weight:600;color:var(--muted);border-radius:6px}
+#a4u-bc .qwrap .qx{right:3.9rem;width:26px;height:26px;text-align:center;line-height:26px;font-size:1.2rem}
+#a4u-bc .qwrap .qp{right:.4rem;padding:.25rem .6rem;font-size:.78rem;border:1px solid var(--line);background:var(--soft)}
+#a4u-bc .qwrap .qx:hover,#a4u-bc .qwrap .qp:hover{color:var(--ink);border-color:var(--gold)}
+#a4u-bc .alnote{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;background:var(--gold-s);border:1px solid #f3d58a;border-radius:10px;padding:.6rem .9rem;margin:0 0 .8rem;font-size:.88rem;color:var(--ink)}
+#a4u-bc .myal{border:1px solid var(--line);border-radius:10px;margin:.2rem 0 .7rem;background:#fff}
+#a4u-bc .myal>summary{cursor:pointer;padding:.6rem .9rem;font-weight:600;color:var(--ink);font-size:.9rem}
+#a4u-bc .myal>div{padding:0 .9rem .9rem}
+#a4u-bc .altbl{font-size:.85rem}#a4u-bc .altbl td{white-space:normal}
+#a4u-bc .qtake{border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:10px;padding:.7rem .9rem;margin:.8rem 0;background:#fbfcfd}
+#a4u-bc .qtake h4{margin:0 0 .35rem!important}
+#a4u-bc .qtake ul{margin:0;padding-left:1.1rem}#a4u-bc .qtake li{margin:.25rem 0;font-size:.9rem}
+#a4u-bc .qtake li.w{color:var(--warn)}#a4u-bc .qtake li.w::marker{content:"⚠ "}
+#a4u-bc .qtake p{font-size:.75rem;margin:.35rem 0 0}
+#a4u-bc .alform{display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end}
+#a4u-bc .alform label{display:flex;flex-direction:column;font-size:.8rem;font-weight:600;color:var(--muted);gap:.2rem}
+#a4u-bc .alform input{width:120px}
+#a4u-bc .allist{list-style:none;padding:0;margin:.6rem 0 0}#a4u-bc .allist li{display:flex;gap:.4rem;align-items:center;padding:.25rem 0;font-size:.88rem}
+#a4u-bc .cmp-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem}
+#a4u-bc .cmp-sum>div{border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem;display:flex;flex-direction:column;gap:.2rem;background:#fff}
+#a4u-bc .cmp-sum>div.top{border-color:#e9c46a;background:var(--gold-s)}
+#a4u-bc .cmp-sum b{color:var(--ink);font-size:.92rem}#a4u-bc .cmp-sum .muted{font-size:.8rem}
+#a4u-bc .st{font-size:1rem;letter-spacing:.05em}
+#a4u-bc .cmp .hd .st{display:block;margin-top:.2rem}
+#a4u-bc .cmp>div.win{background:#e7f6ee;font-weight:600;color:#0b5d3b}
+#a4u-bc .cmp .wst{font-size:.8rem}
+#a4u-bc td.iss .isin{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+#a4u-bc .mini{display:inline-flex;gap:.25rem}#a4u-bc .mini .ic{width:26px;height:26px;font-size:.85rem;border-radius:6px}
