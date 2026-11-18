@@ -1,6 +1,6 @@
 {
- "version": 3,
- "checked_at": "2026-11-18 10:36",
+ "version": 4,
+ "checked_at": "2026-11-18 10:41",
  "source": "LIC sales brochures (licindia.in), effective 22 Sept 2025 versions",
  "plans": {
   "714": {
@@ -437,10 +437,10 @@
    "fab_min_term": 21,
    "srb": 49,
    "mode_adj": {
-    "yearly": -2,
-    "half": -1,
-    "quarter": 0,
-    "month": 0
+    "yearly": -2.0,
+    "half": -1.0,
+    "quarter": 0.0,
+    "month": 0.0
    },
    "min_age_by_term": [],
    "min_maturity": 0,
@@ -491,67 +491,80 @@
     [
      20,
      16,
-     17718
+     17718.0
     ],
     [
      20,
      21,
-     11623
+     11623.0
     ],
     [
      20,
      25,
-     9908
+     9908.0
     ],
     [
      30,
      16,
-     17767
+     17767.0
     ],
     [
      30,
      21,
-     11701
+     11701.0
     ],
     [
      30,
      25,
-     10025
+     10025.0
     ],
     [
      40,
      16,
-     18012
+     18012.0
     ],
     [
      40,
      21,
-     12054
+     12054.0
     ],
     [
      40,
      25,
-     10476
+     10476.0
     ],
     [
      50,
      16,
-     18855
+     18855.0
     ],
     [
      50,
      21,
-     13083
+     13083.0
     ],
     [
      50,
      25,
-     11682
+     11682.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Jeevan+labh_Sales+Brochure_Eng.pdf/cafcd0b7-8f9d-6b65-f5e9-b2aad0788c98",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Jeevan+labh_Sales+Brochure_Eng.pdf/cafcd0b7-8f9d-6b65-f5e9-b2aad0788c98?t=1762495060800",
    "uin": "512N304V03",
-   "brochure_sha256": ""
+   "brochure_sha256": "48ec80c9b1efbcaa4734a5276c7c27a726923d08dd1f0625d0e0ec55c68e404b",
+   "terms": [
+    16,
+    21,
+    25
+   ],
+   "ppt_options": [
+    10,
+    15,
+    16
+   ],
+   "brochure_file": "data/lic/brochures/736/48ec80c9b1ef.pdf",
+   "extracted_at": "2026-11-18 10:41",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "745": {
    "closed": 0,
@@ -559,10 +572,10 @@
    "fab_min_term": 25,
    "srb": 42,
    "mode_adj": {
-    "yearly": -2,
-    "half": -1,
-    "quarter": 0,
-    "month": 0
+    "yearly": -2.0,
+    "half": -1.0,
+    "quarter": 0.0,
+    "month": 0.0
    },
    "min_age_by_term": [],
    "min_maturity": 0,
@@ -579,7 +592,7 @@
    ],
    "ppt_max_age_sum": 70,
    "maturity_age": 100,
-   "survival_pct": 8,
+   "survival_pct": 8.0,
    "min_sa": 200000,
    "sa_slabs": [
     [
@@ -621,77 +634,80 @@
     [
      20,
      15,
-     16542
+     16542.0
     ],
     [
      20,
      20,
-     11407
+     11407.0
     ],
     [
      20,
      25,
-     8536
+     8536.0
     ],
     [
      20,
      30,
-     6840
+     6840.0
     ],
     [
      30,
      15,
-     16542
+     16542.0
     ],
     [
      30,
      20,
-     11407
+     11407.0
     ],
     [
      30,
      25,
-     8595
+     8595.0
     ],
     [
      30,
      30,
-     7027
+     7027.0
     ],
     [
      40,
      15,
-     16542
+     16542.0
     ],
     [
      40,
      20,
-     11476
+     11476.0
     ],
     [
      40,
      25,
-     9036
+     9036.0
     ],
     [
      40,
      30,
-     7664
+     7664.0
     ],
     [
      50,
      15,
-     16562
+     16562.0
     ],
     [
      50,
      20,
-     12368
+     12368.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15",
+   "brochure": "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
    "uin": "512N312V03",
-   "brochure_sha256": ""
+   "brochure_sha256": "6a384c31aae1140a7260fbd5c10abbe367ec75ee82919a110cf51f39dbaabef7",
+   "brochure_file": "data/lic/brochures/745/6a384c31aae1.pdf",
+   "extracted_at": "2026-11-18 10:41",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "717": {
    "closed": 0,
@@ -1438,7 +1454,7 @@
   }
  },
  "registry": {
-  "fetched_at": "2026-11-18 10:36",
+  "fetched_at": "2026-11-18 10:41",
   "plans": {
    "717": "512N283V03",
    "714": "512N277V03",
