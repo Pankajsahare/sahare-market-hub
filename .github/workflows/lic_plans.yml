@@ -41,6 +41,8 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main  # रांगेत थांबलेला run सुद्धा सगळ्यात नवीन data पासून सुरू व्हावा
 
       - uses: actions/setup-python@v5
         with:
@@ -76,6 +78,11 @@ jobs:
             echo "No change"
           else
             git commit -m "Update LIC plans data"
-            git pull --rebase
-            git push
+            # दुसरा run/bot मधेच commit करून गेला तरी आपला नवा data जिंकू दे, 3 वेळा प्रयत्न
+            for i in 1 2 3; do
+              git pull --rebase -X theirs && git push && exit 0
+              git rebase --abort 2>/dev/null || true
+              sleep $((i * 10))
+            done
+            exit 1
           fi
