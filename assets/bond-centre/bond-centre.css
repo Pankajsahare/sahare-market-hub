@@ -304,3 +304,24 @@
 #a4u-bc .na{font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:1px dotted var(--muted);cursor:help}
 #a4u-bc .cmpgoal{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin:0 0 .9rem}
 #a4u-bc .cmpgoal .lbl{font-size:.82rem;font-weight:600;color:var(--muted);margin-right:.3rem}
+/* ---- v6.5 layout ---- */
+#a4u-bc .sec-h{margin:2rem 0 .8rem!important;font-size:1.1rem!important;color:var(--ink)!important;padding-top:1.2rem;border-top:1px solid var(--line)}
+#a4u-bc .kmode{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+#a4u-bc .ic.rst{font-size:1.15rem;font-weight:700;color:var(--ink)}
+#a4u-bc .klock{margin:.5rem 0 0;font-size:.8rem;color:var(--muted);background:var(--soft);border-radius:8px;padding:.4rem .6rem}
+#a4u-bc label.lk input,#a4u-bc label.lk select{background:#f1f3f6;color:#6b7280;cursor:not-allowed;border-style:dashed}
+#a4u-bc label.lk{color:#8a919c}
+#a4u-bc .cp{all:unset;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-left:.25rem;border-radius:5px;color:var(--muted);cursor:pointer;vertical-align:middle}
+#a4u-bc .cp:hover,#a4u-bc .cp:focus-visible{color:var(--ink);background:var(--soft)}
+#a4u-bc .cp.ok{color:var(--ok)}#a4u-bc .cp.ok svg{display:none}#a4u-bc .cp.ok::after{content:"✓";font-weight:800}
+#a4u-bc .cp.bad{color:var(--bad)}
+#a4u-bc .md-hd .isin .cp{color:inherit;opacity:.8}
+#a4u-bc .qwrap .qp{display:inline-flex;align-items:center;padding:.3rem .45rem}
+#a4u-bc .qwrap .qx{right:2.6rem}
+#a4u-bc .qwrap input{padding-right:4.2rem!important}
+/* कॉर्पोरेट table ची पहिली ओळ (heading) scroll करताना tabs खाली चिकटून राहते */
+@media(min-width:1100px){
+  #a4u-bc #c-list .tw{overflow:visible}
+  #a4u-bc #c-list thead th{position:sticky;top:calc(var(--bc-top,0px) + var(--bc-tabs-h,48px));z-index:5}
+  #a4u-bc #c-list thead th:first-child{border-top-left-radius:9px}#a4u-bc #c-list thead th:last-child{border-top-right-radius:9px}
+}
