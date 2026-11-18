@@ -50,7 +50,8 @@ CATEGORY_PAGES = [  # LIC च्या plan category pages (plan no + UIN या
     "https://licindia.in/web/guest/micro-insurance-plans", "https://licindia.in/web/guest/riders",
 ]
 FORCE = os.environ.get("LIC_FORCE", "") == "1"  # brochure बदललं नसलं तरी पुन्हा extract
-MAX_EXTRACT = int(os.environ.get("LIC_MAX_EXTRACT", "3"))  # Gemini free tier — एका run मध्ये इतकेच brochures; बाकी पुढच्या दिवशी
+MAX_EXTRACT = int(os.environ.get("LIC_MAX_EXTRACT", "2"))  # Gemini free tier — एका run मध्ये इतकेच brochures; बाकी पुढच्या दिवशी
+CALL_GAP = int(os.environ.get("LIC_GEMINI_GAP", "60"))     # दोन calls मध्ये सेकंद — free tier ची दर-मिनिट token मर्यादा (250K) सांभाळायला
 
 STATUS: dict = {"run_at": "", "registry": {}, "plans": {}, "bonus": {}, "models": [], "errors": []}
 
@@ -149,7 +150,9 @@ Return ONLY a JSON object with these keys (use null when the brochure does not s
 
 _MODELS: list[str] | None = None
 PAGE_CACHE: dict[str, str] = {}
-QUOTA_HIT = False
+QUOTA_HIT = False          # सगळ्या models ची मर्यादा संपली
+EXHAUSTED: set[str] = set()  # ज्या models ची आजची मर्यादा संपली (quota model-निहाय असतो)
+_LAST_CALL = 0.0
 
 BONUS_PROMPT = """This PDF is an LIC of India bonus / 'Results of Valuation' circular. For EACH plan number present, return the
 Simple Reversionary Bonus and Final Additional Bonus rates per Rs.1000 Sum Assured, by policy-term band.
@@ -236,16 +239,17 @@ def gemini_models() -> list[str]:
                 n = m.get("name", "").split("/")[-1]
                 if "generateContent" not in m.get("supportedGenerationMethods", []):
                     continue
-                if not n.startswith("gemini") or any(w in n for w in ("image", "tts", "live", "audio", "embedding", "thinking", "exp", "preview", "lite")):
+                if not n.startswith("gemini") or any(w in n for w in ("image", "tts", "live", "audio", "embedding", "thinking", "exp", "preview")):
                     continue
                 names.append(n)
     except Exception as exc:
         STATUS["errors"].append("ListModels failed: " + str(exc)[:120])
 
     def score(n: str):
+        # Flash Lite आधी: free tier मध्ये त्याची मर्यादा मोठी (15 RPM) आणि इतर bots कमी वापरतात
         ver = re.findall(r"(\d+(?:\.\d+)?)", n)
-        return (1 if "flash" in n else 0, float(ver[0]) if ver else 0, -len(n))
-    _MODELS = sorted(set(names), key=score, reverse=True)[:4]
+        return (1 if "flash" in n else 0, 1 if "lite" in n else 0, float(ver[0]) if ver else 0, -len(n))
+    _MODELS = sorted(set(names), key=score, reverse=True)[:5]
     STATUS["models"] = _MODELS
     return _MODELS
 
@@ -259,24 +263,29 @@ def gemini_call(pdf: bytes, prompt: str, model: str) -> dict:
         "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
     }).encode()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
-    global QUOTA_HIT
-    if QUOTA_HIT:
-        raise RuntimeError("Gemini quota exhausted — will retry next run")
+    global QUOTA_HIT, _LAST_CALL
+    if QUOTA_HIT or model in EXHAUSTED:
+        raise RuntimeError("Gemini quota exhausted for " + model + " — will retry next run")
     res = None
-    for wait in (0, 20, 60):  # 429/503 आलं तर थांबून पुन्हा (free tier मर्यादा)
+    for wait in (0, 30, 90):  # 429/503 आलं तर थांबून पुन्हा (free tier मर्यादा)
+        gap = CALL_GAP - (time.time() - _LAST_CALL)
+        if gap > 0:
+            time.sleep(gap)  # दर-मिनिट मर्यादा: मागच्या call नंतर किमान CALL_GAP सेकंद
         if wait:
             time.sleep(wait)
+        _LAST_CALL = time.time()
         req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
         try:
             with urllib.request.urlopen(req, timeout=150) as r:
                 res = json.loads(r.read().decode())
             break
         except urllib.error.HTTPError as exc:
-            if exc.code == 429 and wait == 60:
-                QUOTA_HIT = True  # दिवसाची मर्यादा संपली — बाकी calls न करता run लवकर संपव
-            if exc.code not in (429, 500, 503) or wait == 60:
+            if exc.code == 429 and wait == 90:
+                EXHAUSTED.add(model)  # या model ची आजची मर्यादा संपली — पुढच्या model वर जा
+                if all(m in EXHAUSTED for m in (_MODELS or [model])):
+                    QUOTA_HIT = True  # सगळ्याच संपल्या — run लवकर संपव
+            if exc.code not in (429, 500, 503) or wait == 90:
                 raise
-    time.sleep(6)  # पुढच्या call आधी थोडा श्वास
     txt = res["candidates"][0]["content"]["parts"][0]["text"]
     txt = re.sub(r"^```(?:json)?|```$", "", txt.strip()).strip()
     return json.loads(txt)
