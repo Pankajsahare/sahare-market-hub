@@ -1,6 +1,6 @@
 {
- "version": 4,
- "checked_at": "2026-11-18 10:41",
+ "version": 5,
+ "checked_at": "2026-11-18 10:45",
  "source": "LIC sales brochures (licindia.in), effective 22 Sept 2025 versions",
  "plans": {
   "714": {
@@ -785,92 +785,95 @@
     [
      10,
      10,
-     77910
+     77910.0
     ],
     [
      10,
      15,
-     66650
+     66650.0
     ],
     [
      10,
      25,
-     50005
+     50005.0
     ],
     [
      20,
      10,
-     77985
+     77985.0
     ],
     [
      20,
      15,
-     66775
+     66775.0
     ],
     [
      20,
      25,
-     50255
+     50255.0
     ],
     [
      30,
      10,
-     78010
+     78010.0
     ],
     [
      30,
      15,
-     66865
+     66865.0
     ],
     [
      30,
      25,
-     50695
+     50695.0
     ],
     [
      40,
      10,
-     78180
+     78180.0
     ],
     [
      40,
      15,
-     67335
+     67335.0
     ],
     [
      40,
      25,
-     52340
+     52340.0
     ],
     [
      50,
      10,
-     78800
+     78800.0
     ],
     [
      50,
      15,
-     68800
+     68800.0
     ],
     [
      50,
      25,
-     56160
+     56160.0
     ],
     [
      60,
      10,
-     79965
+     79965.0
     ],
     [
      60,
      15,
-     71405
+     71405.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/717+LIC_Single+Premium+Endowment+plan_Eng_141025.pdf/7215c5ff-2071-669a-1a4e-71182e2a102e",
+   "brochure": "https://licindia.in/documents/20121/1319704/717+LIC_Single+Premium+Endowment+plan_Eng_141025.pdf/7215c5ff-2071-669a-1a4e-71182e2a102e?t=1760458103959",
    "uin": "512N283V03",
-   "brochure_sha256": ""
+   "brochure_sha256": "be098c986fe9f954b3fa1f1bbd407717e2d2a8a923519022383c47982a44ab98",
+   "brochure_file": "data/lic/brochures/717/be098c986fe9.pdf",
+   "extracted_at": "2026-11-18 10:45",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "771": {
    "closed": 0,
@@ -878,7 +881,7 @@
    "fab_min_term": 99,
    "srb": 0,
    "mode_adj": {
-    "yearly": 0,
+    "yearly": 0.0,
     "half": 1.75,
     "quarter": 2.5,
     "month": 3.25
@@ -919,8 +922,8 @@
    ],
    "ppt_max_age_sum": 75,
    "maturity_age": 100,
-   "survival_pct": 10,
-   "ga_per_1000": 40,
+   "survival_pct": 10.0,
+   "ga_per_1000": 40.0,
    "min_sa": 500000,
    "sa_slabs": [
     [
@@ -933,7 +936,7 @@
     ]
    ],
    "rebate_slabs": [],
-   "death_pct": 100,
+   "death_pct": 100.0,
    "riders": [
     "adb",
     "addb",
@@ -945,67 +948,70 @@
     [
      10,
      5,
-     109575
-    ],
-    [
-     10,
-     8,
-     72600
-    ],
-    [
-     10,
-     12,
-     44250
-    ],
-    [
-     10,
-     16,
-     29900
+     109575.0
     ],
     [
      30,
      5,
-     110150
-    ],
-    [
-     30,
-     8,
-     72600
-    ],
-    [
-     30,
-     12,
-     44275
-    ],
-    [
-     30,
-     16,
-     30025
+     110150.0
     ],
     [
      50,
      5,
-     118625
+     118625.0
+    ],
+    [
+     10,
+     8,
+     72600.0
+    ],
+    [
+     30,
+     8,
+     72600.0
     ],
     [
      50,
      8,
-     72600
+     72600.0
+    ],
+    [
+     10,
+     12,
+     44250.0
+    ],
+    [
+     30,
+     12,
+     44275.0
     ],
     [
      50,
      12,
-     45225
+     45225.0
+    ],
+    [
+     10,
+     16,
+     29900.0
+    ],
+    [
+     30,
+     16,
+     30025.0
     ],
     [
      50,
      16,
-     33475
+     33475.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/Jeevan+Utsav+Sales+Brochure_141025.pdf/da84d78a-ef72-c80f-b8df-83bb7565f087",
+   "brochure": "https://licindia.in/documents/20121/1319704/Jeevan+Utsav+Sales+Brochure_141025.pdf/da84d78a-ef72-c80f-b8df-83bb7565f087?t=1760429620376",
    "uin": "512N363V02",
-   "brochure_sha256": ""
+   "brochure_sha256": "e82dadb82de132fbcdefb95e714713dc388d2843333c7b54a3a62109d2c6290d",
+   "brochure_file": "data/lic/brochures/771/e82dadb82de1.pdf",
+   "extracted_at": "2026-11-18 10:45",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "883": {
    "closed": 0,
@@ -1454,7 +1460,7 @@
   }
  },
  "registry": {
-  "fetched_at": "2026-11-18 10:41",
+  "fetched_at": "2026-11-18 10:45",
   "plans": {
    "717": "512N283V03",
    "714": "512N277V03",

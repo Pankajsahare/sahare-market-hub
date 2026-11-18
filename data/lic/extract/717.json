@@ -1,0 +1,150 @@
+{
+ "plan_no": null,
+ "uin": "512N283V03",
+ "plan_name": "LIC's Single Premium Endowment Plan",
+ "min_entry_age": 0,
+ "max_entry_age": 65,
+ "min_maturity_age": 18,
+ "max_maturity_age": 75,
+ "policy_terms": [
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25
+ ],
+ "ppt_options": [],
+ "term_to_ppt": null,
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": null,
+ "min_bsa": 100000,
+ "bsa_multiples": [
+  [
+   100000,
+   10000
+  ],
+  [
+   250001,
+   25000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   200000,
+   20.0
+  ],
+  [
+   300000,
+   30.0
+  ],
+  [
+   500000,
+   40.0
+  ]
+ ],
+ "hsa_rebate_by_age": null,
+ "mode_adjust_pct": null,
+ "survival_benefit_pct_of_bsa": null,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": null,
+ "sample_bsa": 100000,
+ "sample_premiums": [
+  [
+   10,
+   10,
+   77910
+  ],
+  [
+   10,
+   15,
+   66650
+  ],
+  [
+   10,
+   25,
+   50005
+  ],
+  [
+   20,
+   10,
+   77985
+  ],
+  [
+   20,
+   15,
+   66775
+  ],
+  [
+   20,
+   25,
+   50255
+  ],
+  [
+   30,
+   10,
+   78010
+  ],
+  [
+   30,
+   15,
+   66865
+  ],
+  [
+   30,
+   25,
+   50695
+  ],
+  [
+   40,
+   10,
+   78180
+  ],
+  [
+   40,
+   15,
+   67335
+  ],
+  [
+   40,
+   25,
+   52340
+  ],
+  [
+   50,
+   10,
+   78800
+  ],
+  [
+   50,
+   15,
+   68800
+  ],
+  [
+   50,
+   25,
+   56160
+  ],
+  [
+   60,
+   10,
+   79965
+  ],
+  [
+   60,
+   15,
+   71405
+  ]
+ ],
+ "brochure_date_or_version": null
+}
