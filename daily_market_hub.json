@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-11-17T11:00:01.259940Z",
-  "as_of_date": "2026-11-17",
+  "updated_at_utc": "2026-11-18T10:33:59.167605Z",
+  "as_of_date": "2026-11-18",
   "advisor": {
     "firm": "Sahare Financial Services",
     "arn": "ARN-151469",
@@ -13,42 +13,42 @@
     "color": "#10b981",
     "pe": 19.43
   },
-  "ai_verdict": "Markets are driven by earnings and asset allocation. Stay disciplined with your SIPs and review portfolio weights periodically.",
+  "ai_verdict": "Maintain disciplined SIP contributions and review your equity-to-debt ratio based on your goal horizon.",
   "indices_and_benchmarks": [
     {
       "name": "Nifty 50",
-      "value": 25387.4,
-      "change_pct": 0.97,
+      "value": 25227.95,
+      "change_pct": -0.25,
       "pe": 19.43
     },
     {
       "name": "BSE Sensex",
-      "value": 82532.19,
-      "change_pct": 1.15,
+      "value": 82031.81,
+      "change_pct": -0.09,
       "pe": null
     },
     {
       "name": "Nifty Midcap 150",
-      "value": 17821.3,
-      "change_pct": -0.31,
+      "value": 17583.65,
+      "change_pct": -1.07,
       "pe": 26.65
     },
     {
       "name": "Nifty Smallcap 250",
-      "value": 19398.7,
-      "change_pct": -0.22,
+      "value": 19331.6,
+      "change_pct": -0.35,
       "pe": null
     },
     {
       "name": "India VIX",
       "value": 15.52,
-      "change_pct": 0.13,
+      "change_pct": -1.02,
       "pe": null
     },
     {
       "name": "USD/INR",
-      "value": 93.46,
-      "change_pct": -0.48,
+      "value": 93.44,
+      "change_pct": -0.03,
       "pe": null
     }
   ],
