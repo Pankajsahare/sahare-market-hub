@@ -1,0 +1,137 @@
+{
+ "plan_no": "745",
+ "uin": "512N312V03",
+ "plan_name": "LIC's Jeevan Umang",
+ "min_entry_age": 0,
+ "max_entry_age": 55,
+ "min_maturity_age": null,
+ "max_maturity_age": 100,
+ "policy_terms": null,
+ "ppt_options": [
+  15,
+  20,
+  25,
+  30
+ ],
+ "term_to_ppt": null,
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": {
+  "15": 55,
+  "20": 50,
+  "25": 45,
+  "30": 40
+ },
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   25000
+  ],
+  [
+   450001,
+   50000
+  ],
+  [
+   900001,
+   100000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   500000,
+   2.5
+  ],
+  [
+   1000000,
+   3.5
+  ],
+  [
+   2500000,
+   4.0
+  ]
+ ],
+ "hsa_rebate_by_age": [],
+ "mode_adjust_pct": {
+  "yearly": -2,
+  "half": -1,
+  "quarter": 0,
+  "month": 0
+ },
+ "survival_benefit_pct_of_bsa": 8,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": null,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   20,
+   15,
+   16542
+  ],
+  [
+   20,
+   20,
+   11407
+  ],
+  [
+   20,
+   25,
+   8536
+  ],
+  [
+   20,
+   30,
+   6840
+  ],
+  [
+   30,
+   15,
+   16542
+  ],
+  [
+   30,
+   20,
+   11407
+  ],
+  [
+   30,
+   25,
+   8595
+  ],
+  [
+   30,
+   30,
+   7027
+  ],
+  [
+   40,
+   15,
+   16542
+  ],
+  [
+   40,
+   20,
+   11476
+  ],
+  [
+   40,
+   25,
+   9036
+  ],
+  [
+   40,
+   30,
+   7664
+  ],
+  [
+   50,
+   15,
+   16562
+  ],
+  [
+   50,
+   20,
+   12368
+  ]
+ ],
+ "brochure_date_or_version": "LIC/P1/2024-25/20/Eng/SB"
+}

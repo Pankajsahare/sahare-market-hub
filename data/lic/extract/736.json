@@ -1,0 +1,129 @@
+{
+ "plan_no": "736",
+ "uin": "512N304V03",
+ "plan_name": "LIC's Jeevan Labh",
+ "min_entry_age": 8,
+ "max_entry_age": 59,
+ "min_maturity_age": null,
+ "max_maturity_age": 75,
+ "policy_terms": [
+  16,
+  21,
+  25
+ ],
+ "ppt_options": [
+  10,
+  15,
+  16
+ ],
+ "term_to_ppt": {
+  "16": 10,
+  "21": 15,
+  "25": 16
+ },
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": {
+  "16": 59,
+  "21": 54,
+  "25": 50
+ },
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   10000
+  ],
+  [
+   450001,
+   25000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   500000,
+   2.0
+  ],
+  [
+   1000000,
+   3.0
+  ],
+  [
+   1500000,
+   3.5
+  ]
+ ],
+ "hsa_rebate_by_age": [],
+ "mode_adjust_pct": {
+  "yearly": -2,
+  "half": -1,
+  "quarter": 0,
+  "month": 0
+ },
+ "survival_benefit_pct_of_bsa": null,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": null,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   20,
+   16,
+   17718
+  ],
+  [
+   20,
+   21,
+   11623
+  ],
+  [
+   20,
+   25,
+   9908
+  ],
+  [
+   30,
+   16,
+   17767
+  ],
+  [
+   30,
+   21,
+   11701
+  ],
+  [
+   30,
+   25,
+   10025
+  ],
+  [
+   40,
+   16,
+   18012
+  ],
+  [
+   40,
+   21,
+   12054
+  ],
+  [
+   40,
+   25,
+   10476
+  ],
+  [
+   50,
+   16,
+   18855
+  ],
+  [
+   50,
+   21,
+   13083
+  ],
+  [
+   50,
+   25,
+   11682
+  ]
+ ],
+ "brochure_date_or_version": "LIC/P1/2024-25/18/Eng/SB"
+}
