@@ -1,6 +1,6 @@
 {
- "version": 5,
- "checked_at": "2026-11-18 10:45",
+ "version": 6,
+ "checked_at": "2026-11-18 18:32",
  "source": "LIC sales brochures (licindia.in), effective 22 Sept 2025 versions",
  "plans": {
   "714": {
@@ -1052,8 +1052,8 @@
     17
    ],
    "maturity_age": 100,
-   "survival_pct": 10,
-   "ga_per_1000": 40,
+   "survival_pct": 10.0,
+   "ga_per_1000": 40.0,
    "min_sa": 500000,
    "sa_slabs": [
     [
@@ -1069,6 +1069,10 @@
     [
      20,
      [
+      [
+       500000,
+       0
+      ],
       [
        1000000,
        11
@@ -1087,6 +1091,10 @@
      40,
      [
       [
+       500000,
+       0
+      ],
+      [
        1000000,
        9
       ],
@@ -1104,6 +1112,10 @@
      55,
      [
       [
+       500000,
+       0
+      ],
+      [
        1000000,
        6.5
       ],
@@ -1120,6 +1132,10 @@
     [
      65,
      [
+      [
+       500000,
+       0
+      ],
       [
        1000000,
        5
@@ -1141,63 +1157,66 @@
      1.25
     ]
    ],
-   "death_pct": 100,
+   "death_pct": 125.0,
    "riders": [],
    "sample_sa": 500000,
    "samples": [
     [
      10,
      8,
-     464150
-    ],
-    [
-     10,
-     12,
-     361875
-    ],
-    [
-     10,
-     16,
-     285725
+     464150.0
     ],
     [
      30,
      8,
-     464150
-    ],
-    [
-     30,
-     12,
-     361875
-    ],
-    [
-     30,
-     16,
-     286725
+     464150.0
     ],
     [
      50,
      8,
-     464150
+     464150.0
+    ],
+    [
+     10,
+     12,
+     361875.0
+    ],
+    [
+     30,
+     12,
+     361875.0
     ],
     [
      50,
      12,
-     361875
+     361875.0
+    ],
+    [
+     10,
+     16,
+     285725.0
+    ],
+    [
+     30,
+     16,
+     286725.0
     ],
     [
      50,
      16,
-     300800
+     300800.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399",
-   "uin": "",
-   "brochure_sha256": ""
+   "brochure": "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399?t=1768116819230",
+   "uin": "512N392V01",
+   "brochure_sha256": "e2f2d79addce15b8d3efadf5da2ead03364053586264455eb1ea17538a3f8ec3",
+   "brochure_file": "data/lic/brochures/883/e2f2d79addce.pdf",
+   "extracted_at": "2026-11-18 18:32",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "720": {
    "closed": 0,
-   "death_pct": 125,
+   "death_pct": 125.0,
    "fab": 0,
    "fab_min_term": 99,
    "max_age": 50,
@@ -1207,10 +1226,10 @@
    "min_maturity": 0,
    "min_sa": 200000,
    "mode_adj": {
-    "yearly": -2,
-    "half": -1,
-    "quarter": 0,
-    "month": 0
+    "yearly": -2.0,
+    "half": -1.0,
+    "quarter": 0.0,
+    "month": 0.0
    },
    "name": "New Money Back 20 Years (720)",
    "rebate_slabs": [
@@ -1235,22 +1254,22 @@
     [
      20,
      20,
-     15896
+     15896.0
     ],
     [
      30,
      20,
-     16082
+     16082.0
     ],
     [
      40,
      20,
-     16846
+     16846.0
     ],
     [
      50,
      20,
-     18679
+     18679.0
     ]
    ],
    "srb": 41,
@@ -1259,7 +1278,7 @@
    ],
    "type": "moneyback",
    "uin": "512N280V03",
-   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+20+yrs+Sales+Brochure+Eng_06112025.pdf/f5e34f06-86b6-c2d3-6531-3351d36a5e77",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+20+yrs+Sales+Brochure+Eng_06112025.pdf/f5e34f06-86b6-c2d3-6531-3351d36a5e77?t=1762495378862",
    "sb_years": [
     [
      5,
@@ -1276,7 +1295,13 @@
    ],
    "mat_pct": 40,
    "mb_ppt": 15,
-   "brochure_sha256": ""
+   "brochure_sha256": "b63b54c84b39ffbe7073e0ca693f1fa47ffc3934476d38a9a897e02200a651bd",
+   "ppt_options": [
+    15
+   ],
+   "brochure_file": "data/lic/brochures/720/b63b54c84b39.pdf",
+   "extracted_at": "2026-11-18 18:32",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "721": {
    "closed": 0,
@@ -1460,7 +1485,7 @@
   }
  },
  "registry": {
-  "fetched_at": "2026-11-18 10:45",
+  "fetched_at": "2026-11-18 18:32",
   "plans": {
    "717": "512N283V03",
    "714": "512N277V03",
