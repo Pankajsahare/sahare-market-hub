@@ -1,9 +1,9 @@
 {
  "name": "A4U LIC Calculator",
- "version": "3.0.0",
- "download_url": "https://raw.githubusercontent.com/Pankajsahare/sahare-market-hub/main/wp/a4u-lic-calculator/a4u-lic-calculator-3.0.0.zip",
+ "version": "3.1.0",
+ "download_url": "https://raw.githubusercontent.com/Pankajsahare/sahare-market-hub/main/wp/a4u-lic-calculator/a4u-lic-calculator-3.1.0.zip",
  "requires": "5.8",
  "tested": "6.8",
- "last_updated": "2026-11-17",
- "changelog": "<h4>3.0.0</h4><ul><li>Client details (title, name, gender, date of commencement, maturity date)</li><li>Calculate by Sum Assured / Premium / Maturity or Income</li><li>Advisor bonus assumptions</li><li>Actual-quotation rate points</li><li>Tax notes and today's-money value</li><li>Error log, backup/restore, beta update channel</li><li>Lazy-loaded presentation</li></ul>"
+ "last_updated": "2026-11-18",
+ "changelog": "<h4>3.1.0</h4><ul><li>Ready Reckoner (premium by age × term) — also in the PDF</li><li>Product Mix: combine up to 3 plans with total premium, benefits and combined IRR — also in the PDF</li><li>Help-me-choose wizard (goal, age, budget, years → 2–3 plan options and quick compare)</li><li>Saved proposals for advisors (stored only on the advisor's device)</li><li>PDF: 6 cover images + your own image, Hindi language, Illustration ID in footer (admin log under Stats)</li><li>Offline calculator: one HTML file that works without internet (advisor only)</li><li>Fix: preview was skipping every second page</li></ul>"
 }
