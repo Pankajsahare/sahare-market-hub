@@ -1,12 +1,12 @@
 {
- "run_at": "2026-11-18 10:41",
+ "run_at": "2026-11-18 10:45",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
    "whole-life-plans": 200,
    "money-back-plans": 200,
    "term-assurance-plans": 200,
-   "pension-plans": 503,
+   "pension-plans": 404,
    "unit-linked-plans": 200,
    "micro-insurance-plans": 200,
    "riders": 200,
@@ -104,8 +104,7 @@
    "pdf_http": 200,
    "pdf_bytes": 886534,
    "sha256": "48ec80c9b1efbcaa4734a5276c7c27a726923d08dd1f0625d0e0ec55c68e404b",
-   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
-   "result": "updated"
+   "result": "unchanged"
   },
   "745": {
    "page_http": 200,
@@ -125,8 +124,7 @@
    "pdf_http": 200,
    "pdf_bytes": 1440213,
    "sha256": "6a384c31aae1140a7260fbd5c10abbe367ec75ee82919a110cf51f39dbaabef7",
-   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
-   "result": "updated"
+   "result": "unchanged"
   },
   "717": {
    "page_http": 200,
@@ -146,7 +144,8 @@
    "pdf_http": 200,
    "pdf_bytes": 271528,
    "sha256": "be098c986fe9f954b3fa1f1bbd407717e2d2a8a923519022383c47982a44ab98",
-   "result": "queued for next run"
+   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
+   "result": "updated"
   },
   "771": {
    "page_http": 200,
@@ -166,7 +165,8 @@
    "pdf_http": 200,
    "pdf_bytes": 1303195,
    "sha256": "e82dadb82de132fbcdefb95e714713dc388d2843333c7b54a3a62109d2c6290d",
-   "result": "queued for next run"
+   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
+   "result": "updated"
   },
   "883": {
    "page_http": 200,
@@ -184,7 +184,7 @@
    "result": "queued for next run"
   },
   "720": {
-   "page_http": 503,
+   "page_http": 404,
    "candidates": [
     [
      1762495378862,
@@ -199,7 +199,7 @@
    "result": "queued for next run"
   },
   "721": {
-   "page_http": 503,
+   "page_http": 404,
    "candidates": [
     [
      1762495379517,
@@ -214,7 +214,7 @@
    "result": "queued for next run"
   },
   "732": {
-   "page_http": 503,
+   "page_http": 404,
    "candidates": [
     [
      1736489668006,
