@@ -1,6 +1,6 @@
 {
- "version": 2,
- "checked_at": "2026-11-18 10:12",
+ "version": 3,
+ "checked_at": "2026-11-18 10:36",
  "source": "LIC sales brochures (licindia.in), effective 22 Sept 2025 versions",
  "plans": {
   "714": {
@@ -144,10 +144,10 @@
    "fab_min_term": 20,
    "srb": 45,
    "mode_adj": {
-    "yearly": -2,
-    "half": -1,
-    "quarter": 0,
-    "month": 0
+    "yearly": -2.0,
+    "half": -1.0,
+    "quarter": 0.0,
+    "month": 0.0
    },
    "min_age_by_term": [],
    "min_maturity": 0,
@@ -205,7 +205,7 @@
      4
     ]
    ],
-   "death_pct": 125,
+   "death_pct": 125.0,
    "riders": [
     "adb",
     "addb",
@@ -216,62 +216,66 @@
     [
      20,
      15,
-     16229
+     16229.0
     ],
     [
      20,
      25,
-     9339
+     9339.0
     ],
     [
      20,
      35,
-     6517
+     6517.0
     ],
     [
      30,
      15,
-     16885
+     16885.0
     ],
     [
      30,
      25,
-     9810
+     9810.0
     ],
     [
      30,
      35,
-     6968
+     6968.0
     ],
     [
      40,
      15,
-     18012
+     18012.0
     ],
     [
      40,
      25,
-     10711
+     10711.0
     ],
     [
      40,
      35,
-     7918
+     7918.0
     ],
     [
      50,
      15,
-     19914
+     19914.0
     ],
     [
      50,
      25,
-     12397
+     12397.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+New+Jeevan+Anand+Sales+Brochure+Eng_141025.pdf/43b60cd9-f6f1-c889-734c-47c565a47ada",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+New+Jeevan+Anand+Sales+Brochure+Eng_141025.pdf/43b60cd9-f6f1-c889-734c-47c565a47ada?t=1760418918360",
    "uin": "512N279V03",
-   "brochure_sha256": ""
+   "brochure_sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
+   "survival_pct": 100.0,
+   "brochure_file": "data/lic/brochures/715/20155401077f.pdf",
+   "extracted_at": "2026-11-18 10:36",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "733": {
    "closed": 0,
@@ -279,10 +283,10 @@
    "fab_min_term": 20,
    "srb": 45,
    "mode_adj": {
-    "yearly": -2,
-    "half": -1,
-    "quarter": 0,
-    "month": 0
+    "yearly": -2.0,
+    "half": -1.0,
+    "quarter": 0.0,
+    "month": 0.0
    },
    "min_age_by_term": [],
    "min_maturity": 31,
@@ -327,7 +331,7 @@
      5
     ]
    ],
-   "death_pct": 110,
+   "death_pct": 110.0,
    "riders": [
     "adb",
     "addb",
@@ -338,77 +342,95 @@
     [
      20,
      13,
-     20217
+     20217.0
     ],
     [
      20,
      15,
-     16670
+     16670.0
     ],
     [
      20,
      20,
-     11711
+     11711.0
     ],
     [
      20,
      25,
-     9006
+     9006.0
     ],
     [
      30,
      13,
-     20286
+     20286.0
     ],
     [
      30,
      15,
-     16758
+     16758.0
     ],
     [
      30,
      20,
-     11858
+     11858.0
     ],
     [
      30,
      25,
-     9222
+     9222.0
     ],
     [
      40,
      13,
-     20678
+     20678.0
     ],
     [
      40,
      15,
-     17209
+     17209.0
     ],
     [
      40,
      20,
-     12495
+     12495.0
     ],
     [
      40,
      25,
-     10074
+     10074.0
     ],
     [
      50,
      13,
-     22030
+     22030.0
     ],
     [
      50,
      15,
-     18698
+     18698.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_06112025.pdf/fcc745f6-e73e-c825-d3a6-9831221c5cc9",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_06112025.pdf/fcc745f6-e73e-c825-d3a6-9831221c5cc9?t=1762449288188",
    "uin": "512N297V03",
-   "brochure_sha256": ""
+   "brochure_sha256": "e83a73ed5bd065efa2f46f459b7fbbe49dd1f69c36a84cf96429143a6e09a324",
+   "ppt_map": {
+    "13": 10,
+    "14": 11,
+    "15": 12,
+    "16": 13,
+    "17": 14,
+    "18": 15,
+    "19": 16,
+    "20": 17,
+    "21": 18,
+    "22": 19,
+    "23": 20,
+    "24": 21,
+    "25": 22
+   },
+   "brochure_file": "data/lic/brochures/733/e83a73ed5bd0.pdf",
+   "extracted_at": "2026-11-18 10:36",
+   "extract_model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite"
   },
   "736": {
    "closed": 0,
@@ -1417,7 +1439,7 @@
   }
  },
  "registry": {
-  "fetched_at": "2026-11-18 10:12",
+  "fetched_at": "2026-11-18 10:36",
   "plans": {
    "717": "512N283V03",
    "714": "512N277V03",
