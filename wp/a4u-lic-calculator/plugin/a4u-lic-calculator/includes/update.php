@@ -20,7 +20,7 @@ function a4u_lic_remote_info( $force = false ) {
 				if ( is_array( $j ) && ! empty( $j['version'] ) && ! empty( $j['download_url'] ) ) { $info = $j; }
 			}
 		}
-		set_transient( 'a4u_lic_update_info', $info, 6 * HOUR_IN_SECONDS );
+		set_transient( 'a4u_lic_update_info', $info, 3 * HOUR_IN_SECONDS );
 	}
 	return $info;
 }
@@ -59,3 +59,25 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 		'sections'      => array( 'changelog' => wp_kses_post( $info['changelog'] ?? '' ) ),
 	);
 }, 10, 3 );
+
+/* =====================================================================
+ * v3.1.2: पूर्ण automation — नवीन version WordPress स्वतः install करेल (कोणतीही मंजुरी नको)
+ * ===================================================================== */
+add_filter( 'auto_update_plugin', function ( $update, $item ) {
+	$file = plugin_basename( A4U_LIC_FILE );
+	if ( is_object( $item ) && ( ( $item->plugin ?? '' ) === $file || ( $item->slug ?? '' ) === 'a4u-lic-calculator' ) ) {
+		return true; // हा plugin नेहमी आपोआप update
+	}
+	return $update;
+}, 20, 2 );
+
+// update झाल्यावर: cache साफ, म्हणजे visitors ना लगेच नवीन calculator दिसेल
+add_action( 'upgrader_process_complete', function ( $upgrader, $opts ) {
+	if ( ( $opts['type'] ?? '' ) !== 'plugin' ) { return; }
+	$list = (array) ( $opts['plugins'] ?? array() );
+	if ( isset( $opts['plugin'] ) ) { $list[] = $opts['plugin']; }
+	if ( in_array( plugin_basename( A4U_LIC_FILE ), $list, true ) ) {
+		delete_transient( 'a4u_lic_update_info' );
+		do_action( 'litespeed_purge_all' );
+	}
+}, 10, 2 );

@@ -1,9 +1,9 @@
 {
  "name": "A4U LIC Calculator",
- "version": "3.1.0",
- "download_url": "https://raw.githubusercontent.com/Pankajsahare/sahare-market-hub/main/wp/a4u-lic-calculator/a4u-lic-calculator-3.1.0.zip",
+ "version": "3.1.2",
+ "download_url": "https://raw.githubusercontent.com/Pankajsahare/sahare-market-hub/main/wp/a4u-lic-calculator/a4u-lic-calculator-3.1.2.zip",
  "requires": "5.8",
  "tested": "6.8",
  "last_updated": "2026-11-18",
- "changelog": "<h4>3.1.0</h4><ul><li>Ready Reckoner (premium by age × term) — also in the PDF</li><li>Product Mix: combine up to 3 plans with total premium, benefits and combined IRR — also in the PDF</li><li>Help-me-choose wizard (goal, age, budget, years → 2–3 plan options and quick compare)</li><li>Saved proposals for advisors (stored only on the advisor's device)</li><li>PDF: 6 cover images + your own image, Hindi language, Illustration ID in footer (admin log under Stats)</li><li>Offline calculator: one HTML file that works without internet (advisor only)</li><li>Fix: preview was skipping every second page</li></ul>"
+ "changelog": "<h4>3.1.2</h4><ul><li>Fully automatic updates: WordPress installs new versions of this plugin by itself</li><li>Cache is cleared automatically after each update</li></ul><h4>3.1.2</h4><ul><li>Fully automatic updates: WordPress installs new versions of this plugin by itself</li><li>Cache is cleared automatically after each update</li></ul><h4>3.1.1</h4><ul><li>New plans: New Money Back 20 Years (720), New Money Back 25 Years (721), New Children's Money Back (732)</li><li>Money-back schedule shown year by year in the result and the PDF (English, Marathi, Hindi)</li><li>All 12 sample premiums from the LIC brochures reproduce exactly</li><li>Help-me-choose wizard now suggests 732 for child goals and 720 for savings</li></ul><h4>3.1.0</h4><ul><li>Ready Reckoner (premium by age × term) — also in the PDF</li><li>Product Mix: combine up to 3 plans with total premium, benefits and combined IRR — also in the PDF</li><li>Help-me-choose wizard (goal, age, budget, years → 2–3 plan options and quick compare)</li><li>Saved proposals for advisors (stored only on the advisor's device)</li><li>PDF: 6 cover images + your own image, Hindi language, Illustration ID in footer (admin log under Stats)</li><li>Offline calculator: one HTML file that works without internet (advisor only)</li><li>Fix: preview was skipping every second page</li></ul>"
 }
