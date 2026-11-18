@@ -141,6 +141,8 @@ Return ONLY a JSON object with these keys (use null when the brochure does not s
  "death_sa_pct_of_bsa": number|null (the % of BSA in the 'Sum Assured on Death' definition, e.g. 100, 110, 125),
  "sample_bsa": number, "sample_premiums": [[age, term_or_ppt_or_ga_period, premium], ...]
      (every cell of the 'Sample Illustrative Premium' table, premium exactly as printed, exclusive of taxes),
+     (if the table has no term column: use the plan's only policy term; if the term depends on age, e.g. a child plan
+      maturing at age 25, use maturity age minus entry age),
  "brochure_date_or_version": "any date/version printed, else null"
 }"""
 
@@ -473,6 +475,8 @@ def main() -> int:
             st_plan["error"] = "gemini failed: " + model
             alerts.append(f"⚠️ {pid}: नवीन brochure मिळालं पण Gemini ने वाचलं नाही ({model[:80]}).")
             continue
+        if watch["plans"].get(pid, {}).get("sample_bsa_override"):  # brochure मधली छपाईची चूक (उदा. 721)
+            extracted["sample_bsa"] = watch["plans"][pid]["sample_bsa_override"]
         mapped, errs = validate_and_map(extracted, old)
         (LIC_DIR / "extract").mkdir(parents=True, exist_ok=True)
         write_json(LIC_DIR / "extract" / f"{pid}.json", extracted, indent=1)

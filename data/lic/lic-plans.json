@@ -1144,6 +1144,269 @@
    "brochure": "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399",
    "uin": "",
    "brochure_sha256": ""
+  },
+  "720": {
+   "closed": 0,
+   "death_pct": 125,
+   "fab": 0,
+   "fab_min_term": 99,
+   "max_age": 50,
+   "max_maturity": 70,
+   "min_age": 13,
+   "min_age_by_term": {},
+   "min_maturity": 0,
+   "min_sa": 200000,
+   "mode_adj": {
+    "yearly": -2,
+    "half": -1,
+    "quarter": 0,
+    "month": 0
+   },
+   "name": "New Money Back 20 Years (720)",
+   "rebate_slabs": [
+    [
+     500000,
+     3
+    ]
+   ],
+   "riders": [
+    "adb",
+    "addb",
+    "term"
+   ],
+   "sa_slabs": [
+    [
+     200000,
+     25000
+    ]
+   ],
+   "sample_sa": 200000,
+   "samples": [
+    [
+     20,
+     20,
+     15896
+    ],
+    [
+     30,
+     20,
+     16082
+    ],
+    [
+     40,
+     20,
+     16846
+    ],
+    [
+     50,
+     20,
+     18679
+    ]
+   ],
+   "srb": 41,
+   "terms": [
+    20
+   ],
+   "type": "moneyback",
+   "uin": "512N280V03",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+20+yrs+Sales+Brochure+Eng_06112025.pdf/f5e34f06-86b6-c2d3-6531-3351d36a5e77",
+   "sb_years": [
+    [
+     5,
+     20
+    ],
+    [
+     10,
+     20
+    ],
+    [
+     15,
+     20
+    ]
+   ],
+   "mat_pct": 40,
+   "mb_ppt": 15,
+   "brochure_sha256": ""
+  },
+  "721": {
+   "closed": 0,
+   "death_pct": 125,
+   "fab": 0,
+   "fab_min_term": 99,
+   "max_age": 45,
+   "max_maturity": 70,
+   "min_age": 13,
+   "min_age_by_term": {},
+   "min_maturity": 0,
+   "min_sa": 200000,
+   "mode_adj": {
+    "yearly": -2,
+    "half": -1,
+    "quarter": 0,
+    "month": 0
+   },
+   "name": "New Money Back 25 Years (721)",
+   "rebate_slabs": [
+    [
+     500000,
+     3
+    ]
+   ],
+   "riders": [
+    "adb",
+    "addb",
+    "term"
+   ],
+   "sa_slabs": [
+    [
+     200000,
+     25000
+    ]
+   ],
+   "sample_sa": 200000,
+   "samples": [
+    [
+     20,
+     25,
+     12299
+    ],
+    [
+     30,
+     25,
+     12573
+    ],
+    [
+     40,
+     25,
+     13465
+    ],
+    [
+     45,
+     25,
+     14298
+    ]
+   ],
+   "srb": 43,
+   "terms": [
+    25
+   ],
+   "type": "moneyback",
+   "uin": "512N278V03",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+25+yrs+Sales+Brochure+Eng_06112025.pdf/7e7718e0-e37d-9fa8-c17e-f632e69c965f",
+   "sb_years": [
+    [
+     5,
+     15
+    ],
+    [
+     10,
+     15
+    ],
+    [
+     15,
+     15
+    ],
+    [
+     20,
+     15
+    ]
+   ],
+   "mat_pct": 40,
+   "mb_ppt": 20,
+   "brochure_sha256": ""
+  },
+  "732": {
+   "closed": 0,
+   "death_pct": 100,
+   "fab": 0,
+   "fab_min_term": 99,
+   "max_age": 12,
+   "max_maturity": 25,
+   "min_age": 0,
+   "min_age_by_term": {},
+   "min_maturity": 0,
+   "min_sa": 200000,
+   "mode_adj": {
+    "yearly": -2,
+    "half": -1,
+    "quarter": 0,
+    "month": 0
+   },
+   "name": "New Children's Money Back (732)",
+   "rebate_slabs": [
+    [
+     500000,
+     2.5
+    ],
+    [
+     1000000,
+     4
+    ]
+   ],
+   "riders": [
+    "pwb"
+   ],
+   "sa_slabs": [
+    [
+     200000,
+     5000
+    ],
+    [
+     450001,
+     50000
+    ],
+    [
+     900001,
+     100000
+    ]
+   ],
+   "sample_sa": 200000,
+   "samples": [
+    [
+     0,
+     25,
+     9006
+    ],
+    [
+     5,
+     20,
+     11682
+    ],
+    [
+     10,
+     15,
+     16395
+    ],
+    [
+     12,
+     13,
+     19002
+    ]
+   ],
+   "srb": 43,
+   "terms": [
+    25
+   ],
+   "type": "moneyback",
+   "uin": "512N296V03",
+   "brochure": "https://licindia.in/documents/20121/1319704/Final+Sales+Brochure_New+ChildrensMoney+BackPlan.pdf/5c497b62-1ab2-45cd-08e3-d3247f6ee43c",
+   "sb_ages": [
+    [
+     18,
+     20
+    ],
+    [
+     20,
+     20
+    ],
+    [
+     22,
+     20
+    ]
+   ],
+   "mat_pct": 40,
+   "mb_end_age": 25,
+   "brochure_sha256": ""
   }
  },
  "registry": {
