@@ -1,5 +1,5 @@
 {
- "run_at": "2026-11-18 10:12",
+ "run_at": "2026-11-18 10:36",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
@@ -39,8 +39,7 @@
    "pdf_http": 200,
    "pdf_bytes": 682301,
    "sha256": "85ec97771848cb97416517f1070080ad388b962257f1e8e76538baf1a33ca51e",
-   "model": "gemini-3.6-flash+gemini-3.5-flash",
-   "result": "updated"
+   "result": "unchanged"
   },
   "715": {
    "page_http": 200,
@@ -65,8 +64,8 @@
    "pdf_http": 200,
    "pdf_bytes": 674195,
    "sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
+   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
+   "result": "updated"
   },
   "733": {
    "page_http": 200,
@@ -86,8 +85,8 @@
    "pdf_http": 200,
    "pdf_bytes": 380818,
    "sha256": "e83a73ed5bd065efa2f46f459b7fbbe49dd1f69c36a84cf96429143a6e09a324",
-   "model": "gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
-   "error": "gemini failed: gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
+   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
+   "result": "updated"
   },
   "736": {
    "page_http": 200,
@@ -234,13 +233,11 @@
   "circular": null
  },
  "models": [
-  "gemini-3.8-flash",
-  "gemini-3.7-flash",
-  "gemini-3.6-flash",
-  "gemini-3.5-flash"
+  "gemini-3.5-flash-lite",
+  "gemini-3.1-flash-lite",
+  "gemini-2.5-flash-lite",
+  "gemini-flash-lite-latest",
+  "gemini-3.8-flash"
  ],
- "errors": [
-  "Gemini quota exhausted (429) — retry next run",
-  "Gemini quota exhausted (429) — retry next run"
- ]
+ "errors": []
 }

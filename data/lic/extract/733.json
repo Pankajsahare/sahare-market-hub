@@ -1,0 +1,147 @@
+{
+ "plan_no": null,
+ "uin": "512N297V03",
+ "plan_name": "LIC's Jeevan Lakshya",
+ "min_entry_age": 18,
+ "max_entry_age": 50,
+ "min_maturity_age": 31,
+ "max_maturity_age": 65,
+ "policy_terms": [
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25
+ ],
+ "ppt_options": null,
+ "term_to_ppt": {
+  "13": 10,
+  "14": 11,
+  "15": 12,
+  "16": 13,
+  "17": 14,
+  "18": 15,
+  "19": 16,
+  "20": 17,
+  "21": 18,
+  "22": 19,
+  "23": 20,
+  "24": 21,
+  "25": 22
+ },
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": null,
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   10000
+  ],
+  [
+   400001,
+   50000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   500000,
+   4.0
+  ],
+  [
+   1000000,
+   5.0
+  ]
+ ],
+ "hsa_rebate_by_age": [],
+ "mode_adjust_pct": {
+  "yearly": -2.0,
+  "half": -1.0,
+  "quarter": 0.0,
+  "month": 0.0
+ },
+ "survival_benefit_pct_of_bsa": null,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": 110,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   20,
+   13,
+   20217
+  ],
+  [
+   20,
+   15,
+   16670
+  ],
+  [
+   20,
+   20,
+   11711
+  ],
+  [
+   20,
+   25,
+   9006
+  ],
+  [
+   30,
+   13,
+   20286
+  ],
+  [
+   30,
+   15,
+   16758
+  ],
+  [
+   30,
+   20,
+   11858
+  ],
+  [
+   30,
+   25,
+   9222
+  ],
+  [
+   40,
+   13,
+   20678
+  ],
+  [
+   40,
+   15,
+   17209
+  ],
+  [
+   40,
+   20,
+   12495
+  ],
+  [
+   40,
+   25,
+   10074
+  ],
+  [
+   50,
+   13,
+   22030
+  ],
+  [
+   50,
+   15,
+   18698
+  ]
+ ],
+ "brochure_date_or_version": null
+}

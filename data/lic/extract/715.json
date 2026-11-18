@@ -1,0 +1,130 @@
+{
+ "plan_no": null,
+ "uin": "512N279V03",
+ "plan_name": "LIC's New Jeevan Anand",
+ "min_entry_age": 18,
+ "max_entry_age": 50,
+ "min_maturity_age": null,
+ "max_maturity_age": 75,
+ "policy_terms": [
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35
+ ],
+ "ppt_options": null,
+ "term_to_ppt": null,
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": null,
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   5000
+  ],
+  [
+   450001,
+   50000
+  ],
+  [
+   900001,
+   100000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   500000,
+   2.5
+  ],
+  [
+   1000000,
+   4.0
+  ]
+ ],
+ "hsa_rebate_by_age": null,
+ "mode_adjust_pct": {
+  "yearly": -2.0,
+  "half": -1.0,
+  "quarter": 0.0,
+  "month": 0.0
+ },
+ "survival_benefit_pct_of_bsa": 100,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": 125,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   20,
+   15,
+   16229
+  ],
+  [
+   20,
+   25,
+   9339
+  ],
+  [
+   20,
+   35,
+   6517
+  ],
+  [
+   30,
+   15,
+   16885
+  ],
+  [
+   30,
+   25,
+   9810
+  ],
+  [
+   30,
+   35,
+   6968
+  ],
+  [
+   40,
+   15,
+   18012
+  ],
+  [
+   40,
+   25,
+   10711
+  ],
+  [
+   40,
+   35,
+   7918
+  ],
+  [
+   50,
+   15,
+   19914
+  ],
+  [
+   50,
+   25,
+   12397
+  ]
+ ],
+ "brochure_date_or_version": null
+}
