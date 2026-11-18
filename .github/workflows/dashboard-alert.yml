@@ -1,0 +1,155 @@
+name: India Dashboard RSS Alert (Optimized v3)
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # Daily at 09:30 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: india-dashboard-rss
+  cancel-in-progress: false
+
+jobs:
+  check-rss:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch RSS and detect new item
+        id: check
+        shell: bash
+        env:
+          RSS_URL: https://www.data.gov.in/rss
+        run: |
+          set -euo pipefail
+
+          if ! curl --fail --silent --show-error --location \
+            --connect-timeout 10 --max-time 30 \
+            --retry 2 --retry-delay 2 --retry-all-errors \
+            "$RSS_URL" --output current_rss.xml; then
+            echo "RSS fetch failed after three attempts."
+            echo "has_error=true" >> "$GITHUB_OUTPUT"
+            echo "has_new=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          output = Path(os.environ["GITHUB_OUTPUT"])
+
+          def set_output(name, value):
+              with output.open("a", encoding="utf-8") as handle:
+                  handle.write(f"{name}={value}\n")
+
+          try:
+              root = ET.parse("current_rss.xml").getroot()
+
+              def local_name(tag):
+                  return tag.rsplit("}", 1)[-1].lower()
+
+              item = next(
+                  (node for node in root.iter()
+                   if local_name(node.tag) in {"item", "entry"}),
+                  None,
+              )
+              if item is None:
+                  raise ValueError("The feed contains no RSS item or Atom entry.")
+
+              fields = {
+                  local_name(child.tag): (child.text or "").strip()
+                  for child in item
+              }
+              current_id = (
+                  fields.get("guid")
+                  or fields.get("id")
+                  or fields.get("link")
+                  or fields.get("title")
+              )
+              if not current_id:
+                  link = next(
+                      (child for child in item.iter()
+                       if local_name(child.tag) == "link"),
+                      None,
+                  )
+                  current_id = (link.attrib.get("href", "") if link is not None else "")
+
+              if not current_id:
+                  raise ValueError("The newest feed item has no GUID, ID, link, or title.")
+
+              last_id_path = Path("last_guid.txt")
+              previous_id = last_id_path.read_text(encoding="utf-8").strip() if last_id_path.exists() else ""
+
+              set_output("has_error", "false")
+              if current_id == previous_id:
+                  set_output("has_new", "false")
+                  print("No new RSS item found.")
+              else:
+                  last_id_path.write_text(current_id + "\n", encoding="utf-8")
+                  set_output("has_new", "true")
+                  print("A new RSS item was found.")
+          except Exception as error:
+              print(f"RSS parsing failed: {error}")
+              set_output("has_error", "true")
+              set_output("has_new", "false")
+          PY
+          then
+            echo "RSS parsing could not complete."
+            echo "has_error=true" >> "$GITHUB_OUTPUT"
+            echo "has_new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Send Telegram update or error alert
+        id: notify
+        if: steps.check.outputs.has_new == 'true' || steps.check.outputs.has_error == 'true'
+        shell: bash
+        env:
+          HAS_NEW: ${{ steps.check.outputs.has_new }}
+          HAS_ERROR: ${{ steps.check.outputs.has_error }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$TELEGRAM_BOT_TOKEN" || -z "$TELEGRAM_CHAT_ID" ]]; then
+            echo "::warning::Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to enable Telegram alerts."
+            echo "sent=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$HAS_ERROR" == "true" ]]; then
+            message='India Dashboard alert: the data.gov.in RSS fetch or parse failed after retries. The dashboard may be showing cached data. https://www.advisor4u.in/india-dashboard/'
+          else
+            message='India Dashboard update: a new item is available on data.gov.in. https://www.advisor4u.in/india-dashboard/'
+          fi
+
+          response="$(curl --fail --silent --show-error --location \
+            --connect-timeout 10 --max-time 20 \
+            --request POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$TELEGRAM_CHAT_ID" \
+            --data-urlencode "text=$message")"
+
+          python3 -c 'import json,sys; data=json.load(sys.stdin); sys.exit(0 if data.get("ok") else 1)' <<< "$response"
+          echo "sent=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit the last notified RSS item
+        if: steps.check.outputs.has_new == 'true' && steps.notify.outputs.sent == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- last_guid.txt
+          if git diff --cached --quiet; then
+            echo "No new GUID to commit."
+            exit 0
+          fi
+          git commit -m "chore: record India Dashboard RSS item"
+          git push
