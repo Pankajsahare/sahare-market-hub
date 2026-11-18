@@ -13,9 +13,9 @@
 	var DEMO_FACTOR = { endowment: 0.98, anand: 1.02, labh: 0.84, lakshya: 0.9, umang: 1.25, utsav: 1.6 };
 	var SINGLE = { single: 1, utsav_sp: 1 };       // एकदाच premium भरायचे plans
 	var GOALS = {
-		child: { label: 'Child education / marriage', plans: ['736', '714', '733'] },
+		child: { label: 'Child education / marriage', plans: ['732', '736', '733'] },
 		retire: { label: 'Retirement income', plans: ['745', '771'] },
-		save: { label: 'Savings with life cover', plans: ['715', '714', '736'] },
+		save: { label: 'Savings with life cover', plans: ['715', '714', '736', '720'] },
 		income: { label: 'Lifelong yearly income', plans: ['771', '745', '883'] },
 		lump: { label: 'One-time investment', plans: ['717', '883'] }
 	};
@@ -241,6 +241,7 @@
 	// sample "key" (term/PPT) वरून interpolation साठी x: regular plans मध्ये premium ≈ 1/PPT
 	function sampleX(p, key) {
 		if (SINGLE[p.type]) { return key; }
+		if (p.mb_end_age) { return 1 / key; } // 732: key = मुदत = PPT
 		var tp = resolveTerms(p, 30, key);
 		return 1 / tp.P;
 	}
@@ -279,6 +280,24 @@
 		return (lo + hi) / 2;
 	}
 
+	function guaranteedOf(x) {
+		var t = x.plan.type;
+		if (t === 'moneyback') { return (x.plan.mat_pct || 0) * x.sa / 100 + x.totalSurv; }
+		return (t === 'utsav' ? 0 : (t === 'utsav_sp' ? x.maturity : x.sa)) + x.totalSurv;
+	}
+	// money-back: कोणत्या policy वर्षाअखेरीस किती % SA (732 मध्ये मुलाच्या वयानुसार)
+	function mbSchedule(p, age) {
+		var m = {};
+		(p.sb_years || []).forEach(function (x) { m[x[0]] = x[1]; });
+		(p.sb_ages || []).forEach(function (x) { var y = x[0] - age; if (y >= 1) { m[y] = (m[y] || 0) + x[1]; } });
+		return m;
+	}
+	function mbTotalPct(p) {
+		var t = Number(p.mat_pct) || 0;
+		(p.sb_years || []).concat(p.sb_ages || []).forEach(function (x) { t += Number(x[1]); });
+		return t;
+	}
+
 	// policy term (T) आणि premium paying term (P)
 	function resolveTerms(p, age, sel) {
 		switch (p.type) {
@@ -288,6 +307,9 @@
 			case 'utsav': return { T: (p.maturity_age || 100) - age, P: sel };
 			case 'single': return { T: sel, P: 1 };
 			case 'utsav_sp': return { T: (p.maturity_age || 100) - age, P: 1, G: sel };
+			case 'moneyback': // 732: मुदत = 25 − वय; 720/721: ठरलेली मुदत, कमी PPT
+				if (p.mb_end_age) { return { T: p.mb_end_age - age, P: p.mb_end_age - age }; }
+				return { T: sel, P: p.mb_ppt || sel };
 			default: return { T: sel, P: sel };
 		}
 	}
@@ -406,7 +428,7 @@
 		if (inp.by === 'maturity') { // B: लक्ष्य रकमेवरून SA (वर round — लक्ष्य पूर्ण व्हावं म्हणून)
 			if (!(inp.target > 0)) { return { errors: ['Please enter the amount you want.'] }; }
 			if (INCOME[p.type]) { sa = inp.target / (p.survival_pct / 100); }
-			else { sa = inp.target / (1 + (bn.srb * bonusYears + (T >= p.fab_min_term || inp.fabO !== null ? bn.fab : 0)) / 1000); }
+			else { sa = inp.target / ((p.type === 'moneyback' ? mbTotalPct(p) / 100 : 1) + (bn.srb * bonusYears + (T >= p.fab_min_term || inp.fabO !== null ? bn.fab : 0)) / 1000); }
 			sa = Math.max(p.min_sa, ceilToSlab(p, sa));
 		}
 		if (inp.by === 'budget') {
@@ -433,13 +455,16 @@
 		// maturity: 771 मध्ये नाही; 883 मध्ये higher of BSA / 1.25 × tabular SP + GA
 		var maturity = 0;
 		if (p.type === 'utsav_sp') { maturity = Math.max(sa, 1.25 * pr.tabular) + ga; }
+		else if (p.type === 'moneyback') { maturity = (p.mat_pct || 0) * sa / 100 + bonus + fab; }
 		else if (p.type !== 'utsav') { maturity = sa + bonus + fab; }
+		var sbMap = p.type === 'moneyback' ? mbSchedule(p, age) : {};
 
 		var rows = [], cf = [], cum = 0, totalPrem = 0, totalSurv = 0, flexiBal = 0, y;
 		for (y = 0; y <= T; y++) { cf.push(0); }
 		for (y = 1; y <= T; y++) {
 			var prem = y <= P ? pr.yearPay : 0, ben = 0, inc = 0;
 			if (survival && y >= incomeStart && (p.type === 'utsav' ? y <= T : y < T)) { inc = survival; totalSurv += survival; }
+			if (sbMap[y]) { inc = sbMap[y] * sa / 100; totalSurv += inc; } // money-back हप्ता
 			if (flexi) {
 				flexiBal = flexiBal * 1.055 + inc; // S5: Flexi — 5.5% ने जमा
 				if (y === T) { ben += flexiBal; }
@@ -484,6 +509,7 @@
 			docText: niceDate(docD), matText: niceDate(matD),
 			plan: p, age: age, sa: sa, T: T, P: P, G: G, mode: SINGLE[p.type] ? 'single' : inp.mode, by: inp.by, gst: inp.gst, r: inp.r, income: flexi ? 'flexi' : 'regular',
 			basis: basis, demo: demo, rate: rate, pr: pr, inst: pr.inst, totalPrem: totalPrem, bonus: bonus, fab: fab, ga: ga, srb: bn.srb,
+			sbList: Object.keys(sbMap).map(function (k) { return [Number(k), sbMap[k]]; }),
 			survival: survival, incomeStart: incomeStart, totalSurv: totalSurv, flexiBal: flexiBal, deathSA: deathSA, deathNote: deathNote,
 			maturity: maturity, totalBenefit: totalBenefit, irr: irr(cf), rows: rows
 		};
@@ -582,8 +608,12 @@
 		rows += tr('GST', r.gst + '%');
 		if (r.deathSA) { rows += tr('Sum Assured on death (approx.)' + (r.deathNote ? '<br><small>' + r.deathNote + '</small>' : ''), inr(r.deathSA)); }
 		if (p.type === 'utsav_sp') { rows += tr('<b>Guaranteed:</b> Maturity at age ' + (r.age + r.T) + ' (incl. Guaranteed Additions)', inr(r.maturity)); }
+		else if (p.type === 'moneyback') {
+			r.sbList.forEach(function (x) { rows += tr('<b>Guaranteed:</b> Money back ' + x[1] + '% of SA at end of year ' + x[0] + ' (age ' + (r.age + x[0]) + ')', inr(x[1] * r.sa / 100)); });
+			rows += tr('<b>Guaranteed:</b> ' + p.mat_pct + '% of SA on maturity (age ' + (r.age + r.T) + ')', inr(p.mat_pct * r.sa / 100));
+		}
 		else if (p.type !== 'utsav') { rows += tr('<b>Guaranteed:</b> Basic Sum Assured on maturity', inr(r.sa)); }
-		if (r.totalSurv) {
+		if (r.totalSurv && p.type !== 'moneyback') {
 			var incName = p.type === 'umang' ? 'Survival benefit' : (r.income === 'flexi' ? 'Flexi income' : 'Regular income');
 			rows += tr('<b>Guaranteed:</b> ' + incName + ' ' + p.survival_pct + '% of SA yearly from year ' + r.incomeStart, inr(r.survival) + ' / yr');
 			rows += r.income === 'flexi' ? tr('Flexi income accumulated @ 5.5% till age ' + (r.age + r.T) + ' (if never withdrawn)', inr(r.flexiBal)) : tr('Total income till age ' + (r.age + r.T), inr(r.totalSurv));
@@ -686,7 +716,7 @@
 				['Term / Pay', function (x) { return x.T + ' / ' + (SINGLE[x.plan.type] ? 'once' : x.P + ' yrs'); }],
 				['Premium', function (x) { return inr(x.inst) + ' <small>(' + modeName(x) + ')</small>'; }],
 				['Total premium paid', function (x) { return inr(x.totalPrem); }],
-				['Guaranteed benefits', function (x) { return inr((x.plan.type === 'utsav' ? 0 : (x.plan.type === 'utsav_sp' ? x.maturity : x.sa)) + x.totalSurv); }],
+				['Guaranteed benefits', function (x) { return inr(guaranteedOf(x)); }],
 				['Non-guaranteed bonus (est.)', function (x) { return inr(x.bonus + x.fab); }],
 				['Estimated total benefits', function (x) { return inr(x.totalBenefit); }],
 				['Return (IRR, approx.)', function (x) { return x.irr === null ? '—' : (x.irr * 100).toFixed(2) + '%'; }],

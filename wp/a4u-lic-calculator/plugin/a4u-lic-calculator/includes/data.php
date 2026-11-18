@@ -20,7 +20,7 @@ function a4u_lic_std_mode() {
 function a4u_lic_brochure_keys() {
 	return array( 'name', 'type', 'min_age', 'max_age', 'min_sa', 'max_maturity', 'min_maturity', 'terms', 'ppt_map', 'ppt_options', 'ppt_max_age_sum',
 		'maturity_age', 'survival_pct', 'ga_per_1000', 'tail_age', 'min_age_by_term', 'sa_slabs', 'rebate_slabs', 'rebate_bands', 'mode_adj',
-		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin' );
+		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age' );
 }
 
 function a4u_lic_default_plans() {
@@ -84,6 +84,38 @@ function a4u_lic_default_plans() {
 			'sample_sa' => 100000, 'samples' => array( array( 10, 10, 77910 ), array( 10, 15, 66650 ), array( 10, 25, 50005 ), array( 20, 10, 77985 ), array( 20, 15, 66775 ), array( 20, 25, 50255 ), array( 30, 10, 78010 ), array( 30, 15, 66865 ), array( 30, 25, 50695 ), array( 40, 10, 78180 ), array( 40, 15, 67335 ), array( 40, 25, 52340 ), array( 50, 10, 78800 ), array( 50, 15, 68800 ), array( 50, 25, 56160 ), array( 60, 10, 79965 ), array( 60, 15, 71405 ) ),
 			'brochure' => $b . "1319704/717+LIC_Single+Premium+Endowment+plan_Eng_141025.pdf/7215c5ff-2071-669a-1a4e-71182e2a102e",
 		) ),
+		// v3.1: Money-back plans (LIC sales brochures; 732 ची माहिती 2025 brochure मधून)
+		'720' => array_merge( $base, array(
+			'name' => 'New Money Back 20 Years (720)', 'type' => 'moneyback',
+			'min_age' => 13, 'max_age' => 50, 'max_maturity' => 70, 'terms' => array( 20 ), 'mb_ppt' => 15,
+			'sb_years' => array( array( 5, 20 ), array( 10, 20 ), array( 15, 20 ) ), 'mat_pct' => 40,
+			'min_sa' => 200000, 'sa_slabs' => array( array( 200000, 25000 ) ),
+			'rebate_slabs' => array( array( 500000, 3 ) ),
+			'srb' => 41, 'death_pct' => 125, 'riders' => array( 'adb', 'addb', 'term' ),
+			'sample_sa' => 200000, 'samples' => array( array( 20, 20, 15896 ), array( 30, 20, 16082 ), array( 40, 20, 16846 ), array( 50, 20, 18679 ) ),
+			'brochure' => $b . "1319704/LIC_Money+Back+20+yrs+Sales+Brochure+Eng_06112025.pdf/f5e34f06-86b6-c2d3-6531-3351d36a5e77",
+		) ),
+		'721' => array_merge( $base, array(
+			'name' => 'New Money Back 25 Years (721)', 'type' => 'moneyback',
+			'min_age' => 13, 'max_age' => 45, 'max_maturity' => 70, 'terms' => array( 25 ), 'mb_ppt' => 20,
+			'sb_years' => array( array( 5, 15 ), array( 10, 15 ), array( 15, 15 ), array( 20, 15 ) ), 'mat_pct' => 40,
+			'min_sa' => 200000, 'sa_slabs' => array( array( 200000, 25000 ) ),
+			'rebate_slabs' => array( array( 500000, 3 ) ),
+			'srb' => 43, 'death_pct' => 125, 'riders' => array( 'adb', 'addb', 'term' ),
+			// brochure table वर "BSA 1 lakh" छापलं आहे, पण min BSA 2 lakh आहे आणि benefit illustration (age 30 = 12,573) 2 lakh ला जुळतं
+			'sample_sa' => 200000, 'samples' => array( array( 20, 25, 12299 ), array( 30, 25, 12573 ), array( 40, 25, 13465 ), array( 45, 25, 14298 ) ),
+			'brochure' => $b . "1319704/LIC_Money+Back+25+yrs+Sales+Brochure+Eng_06112025.pdf/7e7718e0-e37d-9fa8-c17e-f632e69c965f",
+		) ),
+		'732' => array_merge( $base, array(
+			'name' => "New Children's Money Back (732)", 'type' => 'moneyback',
+			'min_age' => 0, 'max_age' => 12, 'max_maturity' => 25, 'terms' => array( 25 ), 'mb_end_age' => 25,
+			'sb_ages' => array( array( 18, 20 ), array( 20, 20 ), array( 22, 20 ) ), 'mat_pct' => 40,
+			'min_sa' => 200000, 'sa_slabs' => array( array( 200000, 5000 ), array( 450001, 50000 ), array( 900001, 100000 ) ),
+			'rebate_slabs' => array( array( 500000, 2.5 ), array( 1000000, 4 ) ),
+			'srb' => 43, 'death_pct' => 100, 'riders' => array( 'pwb' ),
+			'sample_sa' => 200000, 'samples' => array( array( 0, 25, 9006 ), array( 5, 20, 11682 ), array( 10, 15, 16395 ), array( 12, 13, 19002 ) ),
+			'brochure' => $b . "1319704/Final+Sales+Brochure_New+ChildrensMoney+BackPlan.pdf/5c497b62-1ab2-45cd-08e3-d3247f6ee43c",
+		) ),
 		'771' => array_merge( $base, array(
 			'name' => 'Jeevan Utsav (771)', 'type' => 'utsav',
 			'min_age' => 0, 'max_age' => 65, 'max_maturity' => 100, 'ppt_options' => range( 5, 16 ), 'ppt_max_age_sum' => 75, 'maturity_age' => 100, 'survival_pct' => 10, 'ga_per_1000' => 40,
@@ -118,7 +150,7 @@ function a4u_lic_default_plans() {
 		'936' => array( 'Jeevan Labh (936)', 'labh', 8, 59, 100000, 75, array( 'ppt_map' => array( 16 => 10, 21 => 15, 25 => 16 ), 'srb' => 49, 'fab' => 200, 'fab_min_term' => 21, 'death_pct' => 100 ) ),
 		'945' => array( 'Jeevan Umang (945)', 'umang', 1, 55, 200000, 100, array( 'ppt_options' => array( 15, 20, 25, 30 ), 'ppt_max_age_sum' => 70, 'maturity_age' => 100, 'survival_pct' => 8, 'srb' => 42, 'fab' => 300, 'fab_min_term' => 25, 'death_pct' => 100 ) ),
 	);
-	$uins = array( '714' => '512N277V03', '715' => '512N279V03', '733' => '512N297V03', '736' => '512N304V03', '745' => '512N312V03', '717' => '512N283V03', '771' => '512N363V02', '883' => '' );
+	$uins = array( '714' => '512N277V03', '715' => '512N279V03', '733' => '512N297V03', '736' => '512N304V03', '745' => '512N312V03', '717' => '512N283V03', '771' => '512N363V02', '883' => '512N392V01', '720' => '512N280V03', '721' => '512N278V03', '732' => '512N296V03' );
 	foreach ( $uins as $id => $u ) { $plans[ $id ]['uin'] = $u; }
 	foreach ( $closed as $id => $c ) {
 		$plans[ $id ] = array_merge( $base, array(

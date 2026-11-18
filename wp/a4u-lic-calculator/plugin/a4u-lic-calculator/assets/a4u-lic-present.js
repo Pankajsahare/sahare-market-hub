@@ -30,7 +30,7 @@
 			pv: 'Total benefits in today\'s money', pvnote: 'at {i}% yearly inflation', tax: 'Tax points to note',
 			solicit: 'Insurance is the subject matter of solicitation.',
 			rr: 'Ready Reckoner', rrsub: 'Premium for Sum Assured {sa} by entry age and term', rryr: 'yearly premium', rrsp: 'single premium', rrnote: '— means not allowed for that age and term.',
-			mix: 'Suggested product mix', mixtot: 'Combined', first: 'First-year premium', mixirr: 'Combined return (IRR, approx.)', illid: 'Illustration ID'
+			mix: 'Suggested product mix', mixtot: 'Combined', first: 'First-year premium', mixirr: 'Combined return (IRR, approx.)', illid: 'Illustration ID', mb: 'Money back'
 		},
 		mr: {
 			ill: 'लाभांचे उदाहरण (Benefit Illustration)', pfor: 'यांच्यासाठी', pon: 'दिनांक', pby: 'सादरकर्ते', details: 'तुमच्या योजनेचा तपशील',
@@ -51,7 +51,7 @@
 			pv: 'एकूण लाभ आजच्या पैशात', pvnote: 'वार्षिक {i}% महागाई धरून', tax: 'करासंबंधी लक्षात ठेवा',
 			solicit: 'Insurance is the subject matter of solicitation. (विमा हा विनंतीचा विषय आहे.)',
 			rr: 'हप्त्यांचा तक्ता (Ready Reckoner)', rrsub: 'विमा रक्कम {sa} साठी वय व मुदतीनुसार हप्ता', rryr: 'वार्षिक हप्ता', rrsp: 'एकरकमी हप्ता', rrnote: '— म्हणजे त्या वयाला ती मुदत घेता येत नाही.',
-			mix: 'सुचवलेला योजनांचा संच', mixtot: 'एकूण', first: 'पहिल्या वर्षाचा हप्ता', mixirr: 'एकत्रित परतावा (IRR, अंदाजे)', illid: 'Illustration क्रमांक'
+			mix: 'सुचवलेला योजनांचा संच', mixtot: 'एकूण', first: 'पहिल्या वर्षाचा हप्ता', mixirr: 'एकत्रित परतावा (IRR, अंदाजे)', illid: 'Illustration क्रमांक', mb: 'मनी बॅक हप्ता'
 		},
 		hi: {
 			ill: 'लाभ का उदाहरण (Benefit Illustration)', pfor: 'के लिए', pon: 'दिनांक', pby: 'प्रस्तुतकर्ता', details: 'आपकी योजना का विवरण',
@@ -72,7 +72,7 @@
 			pv: 'कुल लाभ आज के मूल्य में', pvnote: '{i}% वार्षिक महंगाई मानकर', tax: 'कर संबंधी ध्यान देने योग्य बातें',
 			solicit: 'Insurance is the subject matter of solicitation. (बीमा आग्रह की विषय वस्तु है।)',
 			rr: 'प्रीमियम तालिका (Ready Reckoner)', rrsub: 'बीमा राशि {sa} के लिए आयु व अवधि अनुसार प्रीमियम', rryr: 'वार्षिक प्रीमियम', rrsp: 'एकमुश्त प्रीमियम', rrnote: '— यानी उस आयु पर वह अवधि उपलब्ध नहीं।',
-			mix: 'सुझाया गया योजना संयोजन', mixtot: 'कुल', first: 'पहले वर्ष का प्रीमियम', mixirr: 'संयुक्त रिटर्न (IRR, अनुमानित)', illid: 'Illustration क्रमांक'
+			mix: 'सुझाया गया योजना संयोजन', mixtot: 'कुल', first: 'पहले वर्ष का प्रीमियम', mixirr: 'संयुक्त रिटर्न (IRR, अनुमानित)', illid: 'Illustration क्रमांक', mb: 'मनी बैक किस्त'
 		}
 	};
 
@@ -216,8 +216,12 @@
 			(pr.rebate ? kv(tt('hsa'), '− ' + inr(pr.rebate)) : '') + (rid ? kv(tt('rider'), inr(rid)) : '') + kv(tt('gst'), r.gst + '%') + '</tbody></table>';
 		g += '<h3>' + tt('ben') + '</h3><table class="a4p-t a4p-kv2"><tbody>';
 		if (p.type === 'utsav_sp') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('matage') + ' ' + (r.age + r.T), inr(r.maturity)); }
+		else if (p.type === 'moneyback') {
+			r.sbList.forEach(function (x) { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('mb') + ' ' + x[1] + '% · ' + tt('yr') + ' ' + x[0] + ' (' + tt('age') + ' ' + (r.age + x[0]) + ')', inr(x[1] * r.sa / 100)); });
+			g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('bsa') + ' (' + p.mat_pct + '%)', inr(p.mat_pct * r.sa / 100));
+		}
 		else if (p.type !== 'utsav') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('bsa'), inr(r.sa)); }
-		if (r.totalSurv) { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('surv') + ' (' + p.survival_pct + '% × SA)', inr(r.survival) + ' / yr'); }
+		if (r.totalSurv && p.type !== 'moneyback') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('surv') + ' (' + p.survival_pct + '% × SA)', inr(r.survival) + ' / yr'); }
 		if (r.ga && p.type !== 'utsav_sp') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('ga'), inr(r.ga)); }
 		if (r.bonus || r.fab) { g += kv(tt('bonusas'), 'SRB ₹' + r.srb + (r.fabRate ? ' · FAB ₹' + r.fabRate : '')); }
 		if (r.bonus) { g += kv('<i class="tn">' + tt('ng') + '</i> ' + tt('srb'), inr(r.bonus)); }
