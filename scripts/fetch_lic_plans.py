@@ -412,7 +412,13 @@ def validate_and_map(x: dict, old: dict) -> tuple[dict | None, list[str]]:
         m["ppt_map"] = {str(int(k)): int(v) for k, v in x["term_to_ppt"].items()}
     if x.get("min_entry_age_by_term"):
         m["min_age_by_term"] = {str(int(k)): int(v) for k, v in x["min_entry_age_by_term"].items()}
+    ptype = old.get("type", "")
     for src, dst in (("survival_benefit_pct_of_bsa", "survival_pct"), ("guaranteed_addition_per_1000", "ga_per_1000"), ("death_sa_pct_of_bsa", "death_pct")):
+        # वार्षिक उत्पन्न / GA फक्त त्या प्रकारच्या plans मध्ये — नाहीतर Gemini चा चुकीचा अर्थ (उदा. 715 मध्ये "100%") data मध्ये जाऊ नये
+        if dst == "survival_pct" and ptype not in ("umang", "utsav", "utsav_sp"):
+            continue
+        if dst == "ga_per_1000" and ptype not in ("utsav", "utsav_sp"):
+            continue
         if x.get(src) is not None:
             m[dst] = float(x[src])
     return m, []
