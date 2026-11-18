@@ -339,3 +339,4 @@
 #a4u-bc .tw::-webkit-scrollbar,#a4u-bc .cmp::-webkit-scrollbar{width:10px;height:10px}
 #a4u-bc .tw::-webkit-scrollbar-thumb,#a4u-bc .cmp::-webkit-scrollbar-thumb{background:#c9d0db;border-radius:8px;border:2px solid #fff}
 #a4u-bc .bc-msg.full{grid-column:1/-1;margin-top:-.3rem}
+#a4u-bc .bc-msg:empty{display:none}

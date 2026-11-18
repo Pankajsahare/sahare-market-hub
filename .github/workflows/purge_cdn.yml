@@ -11,10 +11,16 @@ on:
 jobs:
   purge:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - name: Purge
+      - uses: actions/checkout@v4
+      - name: Purge (twice — jsDelivr ला "main" चा नवीन commit दिसायला 1-2 मिनिटं लागतात)
         run: |
-          for f in bond-centre.js bond-centre.css logo.png; do
-            curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/assets/bond-centre/$f" | head -c 300; echo
-          done
+          purge() { for f in bond-centre.js bond-centre.css logo.png; do
+            curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/assets/bond-centre/$f" | head -c 200; echo
+          done; }
+          sleep 60; purge
+          sleep 120; purge
+          # खात्री: CDN वरची file आता या commit शी जुळते का
+          want=$(sha1sum assets/bond-centre/bond-centre.js 2>/dev/null | cut -c1-40 || true)
+          echo "commit file sha1: ${want:-n/a}"

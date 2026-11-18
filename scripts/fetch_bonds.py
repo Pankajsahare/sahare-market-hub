@@ -135,7 +135,9 @@ def base_record(row: dict) -> dict | None:
     prev = to_float(row.get("PrvsClsgPric"))
     change = round((close - prev) / prev * 100, 2) if prev and prev > 0 else 0.0
     turnover = to_float(row.get("TtlTrfVal")) or 0.0
-    return {"price": round(close, 2), "change": change, "turnover": turnover}
+    isin = (row.get("ISIN") or "").strip().upper()
+    return {"price": round(close, 2), "change": change, "turnover": turnover,
+            "isin": isin if len(isin) == 12 and isin.isalnum() else None}
 
 
 # ---------- SGB / G-Sec ओळखणे ----------
@@ -230,6 +232,7 @@ def to_output(rec: dict) -> dict:
     return {
         "id": rec["id"],
         "symbol": rec["symbol"],
+        "isin": rec.get("isin"),   # broker कडे order देताना लागतो
         "name": rec["name"],
         "type": rec["type"],
         "risk": rec["risk"],
