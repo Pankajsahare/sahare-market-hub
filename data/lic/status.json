@@ -1,12 +1,12 @@
 {
- "run_at": "2026-11-18 00:52",
+ "run_at": "2026-11-18 10:12",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
    "whole-life-plans": 200,
    "money-back-plans": 200,
    "term-assurance-plans": 200,
-   "pension-plans": 404,
+   "pension-plans": 503,
    "unit-linked-plans": 200,
    "micro-insurance-plans": 200,
    "riders": 200,
@@ -39,8 +39,8 @@
    "pdf_http": 200,
    "pdf_bytes": 682301,
    "sha256": "85ec97771848cb97416517f1070080ad388b962257f1e8e76538baf1a33ca51e",
-   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
-   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
+   "model": "gemini-3.6-flash+gemini-3.5-flash",
+   "result": "updated"
   },
   "715": {
    "page_http": 200,
@@ -65,8 +65,8 @@
    "pdf_http": 200,
    "pdf_bytes": 674195,
    "sha256": "20155401077fd0644abed86dd06659c41e27a64777d2bede0ab362fc62f441fb",
-   "model": "gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
-   "error": "gemini failed: gemini-3.8-flash: Gemini quota exhausted — will retry next run; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
+   "model": "gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run",
+   "error": "gemini failed: gemini-3.8-flash: HTTP Error 429: Too Many Requests; gemini-3.7-flash: Gemini quota exhausted — will retry next run; gemini-3.6-flash: Gemini quota exhausted — will retry next run; gemini-3.5-flash: Gemini quota exhausted — will retry next run"
   },
   "733": {
    "page_http": 200,
@@ -183,6 +183,51 @@
    "pdf_bytes": 1041462,
    "sha256": "e2f2d79addce15b8d3efadf5da2ead03364053586264455eb1ea17538a3f8ec3",
    "result": "queued for next run"
+  },
+  "720": {
+   "page_http": 503,
+   "candidates": [
+    [
+     1762495378862,
+     "https://licindia.in/documents/20121/1319704/LIC_Money+Back+20+yrs+Sales+Brochure+Eng_06112025.pdf/f5e34f06-86b6-c2d3-6531-3351d36a5e77?t=1762495378862",
+     "(known link)"
+    ]
+   ],
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+20+yrs+Sales+Brochure+Eng_06112025.pdf/f5e34f06-86b6-c2d3-6531-3351d36a5e77?t=1762495378862",
+   "pdf_http": 200,
+   "pdf_bytes": 337201,
+   "sha256": "b63b54c84b39ffbe7073e0ca693f1fa47ffc3934476d38a9a897e02200a651bd",
+   "result": "queued for next run"
+  },
+  "721": {
+   "page_http": 503,
+   "candidates": [
+    [
+     1762495379517,
+     "https://licindia.in/documents/20121/1319704/LIC_Money+Back+25+yrs+Sales+Brochure+Eng_06112025.pdf/7e7718e0-e37d-9fa8-c17e-f632e69c965f?t=1762495379517",
+     "(known link)"
+    ]
+   ],
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+25+yrs+Sales+Brochure+Eng_06112025.pdf/7e7718e0-e37d-9fa8-c17e-f632e69c965f?t=1762495379517",
+   "pdf_http": 200,
+   "pdf_bytes": 349221,
+   "sha256": "fe74ac81580af22014008e6be072b82c3ea04414485181565dca09fbba619156",
+   "result": "queued for next run"
+  },
+  "732": {
+   "page_http": 503,
+   "candidates": [
+    [
+     1736489668006,
+     "https://licindia.in/documents/20121/1319704/Final+Sales+Brochure_New+ChildrensMoney+BackPlan.pdf/5c497b62-1ab2-45cd-08e3-d3247f6ee43c?t=1736489668006",
+     "(known link)"
+    ]
+   ],
+   "brochure": "https://licindia.in/documents/20121/1319704/Final+Sales+Brochure_New+ChildrensMoney+BackPlan.pdf/5c497b62-1ab2-45cd-08e3-d3247f6ee43c?t=1736489668006",
+   "pdf_http": 200,
+   "pdf_bytes": 1492057,
+   "sha256": "43a05bf921024a98a16f2039fc3d973bcc11a54f37c41ae88a4ffc0c01d112fe",
+   "result": "queued for next run"
   }
  },
  "bonus": {
@@ -195,7 +240,6 @@
   "gemini-3.5-flash"
  ],
  "errors": [
-  "Gemini quota exhausted (429) — retry next run",
   "Gemini quota exhausted (429) — retry next run",
   "Gemini quota exhausted (429) — retry next run"
  ]

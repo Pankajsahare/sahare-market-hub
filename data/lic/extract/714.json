@@ -1,0 +1,127 @@
+{
+ "plan_no": null,
+ "uin": "512N277V03",
+ "plan_name": "LIC's New Endowment Plan",
+ "min_entry_age": 8,
+ "max_entry_age": 50,
+ "min_maturity_age": 20,
+ "max_maturity_age": 75,
+ "policy_terms": [
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35
+ ],
+ "ppt_options": null,
+ "term_to_ppt": null,
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": null,
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   5000
+  ],
+  [
+   450000,
+   50000
+  ],
+  [
+   900000,
+   100000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   200000,
+   0
+  ],
+  [
+   500000,
+   2.5
+  ],
+  [
+   1000000,
+   4.0
+  ]
+ ],
+ "hsa_rebate_by_age": null,
+ "mode_adjust_pct": {
+  "yearly": -2,
+  "half": -1,
+  "quarter": 0,
+  "month": 0
+ },
+ "survival_benefit_pct_of_bsa": null,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": 100,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   20,
+   15,
+   14543
+  ],
+  [
+   20,
+   25,
+   8369
+  ],
+  [
+   20,
+   35,
+   5949
+  ],
+  [
+   30,
+   15,
+   14592
+  ],
+  [
+   30,
+   25,
+   8497
+  ],
+  [
+   30,
+   35,
+   6213
+  ],
+  [
+   40,
+   15,
+   14847
+  ],
+  [
+   40,
+   25,
+   8987
+  ],
+  [
+   40,
+   35,
+   6958
+  ]
+ ],
+ "brochure_date_or_version": null
+}

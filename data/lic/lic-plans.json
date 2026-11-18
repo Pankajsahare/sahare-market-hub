@@ -1,6 +1,6 @@
 {
- "version": 1,
- "checked_at": "2026-11-18 00:52",
+ "version": 2,
+ "checked_at": "2026-11-18 10:12",
  "source": "LIC sales brochures (licindia.in), effective 22 Sept 2025 versions",
  "plans": {
   "714": {
@@ -9,13 +9,13 @@
    "fab_min_term": 99,
    "srb": 45,
    "mode_adj": {
-    "yearly": -2,
-    "half": -1,
-    "quarter": 0,
-    "month": 0
+    "yearly": -2.0,
+    "half": -1.0,
+    "quarter": 0.0,
+    "month": 0.0
    },
    "min_age_by_term": [],
-   "min_maturity": 0,
+   "min_maturity": 20,
    "name": "New Endowment (714)",
    "type": "endowment",
    "min_age": 8,
@@ -54,15 +54,19 @@
      5000
     ],
     [
-     450001,
+     450000,
      50000
     ],
     [
-     900001,
+     900000,
      100000
     ]
    ],
    "rebate_slabs": [
+    [
+     200000,
+     0
+    ],
     [
      500000,
      2.5
@@ -72,7 +76,7 @@
      4
     ]
    ],
-   "death_pct": 100,
+   "death_pct": 100.0,
    "riders": [
     "adb",
     "addb",
@@ -84,52 +88,55 @@
     [
      20,
      15,
-     14543
+     14543.0
     ],
     [
      20,
      25,
-     8369
+     8369.0
     ],
     [
      20,
      35,
-     5949
+     5949.0
     ],
     [
      30,
      15,
-     14592
+     14592.0
     ],
     [
      30,
      25,
-     8497
+     8497.0
     ],
     [
      30,
      35,
-     6213
+     6213.0
     ],
     [
      40,
      15,
-     14847
+     14847.0
     ],
     [
      40,
      25,
-     8987
+     8987.0
     ],
     [
      40,
      35,
-     6958
+     6958.0
     ]
    ],
-   "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+NEW+ENDOWMENT+PLAN+714.pdf/77f3167c-ae64-a1ea-d348-1c66f4455aed",
+   "brochure": "https://licindia.in/documents/20121/1319704/LIC%27s+NEW+ENDOWMENT+PLAN+714.pdf/77f3167c-ae64-a1ea-d348-1c66f4455aed?t=1760357386313",
    "uin": "512N277V03",
-   "brochure_sha256": ""
+   "brochure_sha256": "85ec97771848cb97416517f1070080ad388b962257f1e8e76538baf1a33ca51e",
+   "brochure_file": "data/lic/brochures/714/85ec97771848.pdf",
+   "extracted_at": "2026-11-18 10:12",
+   "extract_model": "gemini-3.6-flash+gemini-3.5-flash"
   },
   "715": {
    "closed": 0,
@@ -1410,7 +1417,7 @@
   }
  },
  "registry": {
-  "fetched_at": "2026-11-18 00:52",
+  "fetched_at": "2026-11-18 10:12",
   "plans": {
    "717": "512N283V03",
    "714": "512N277V03",
