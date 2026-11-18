@@ -133,7 +133,7 @@ Return ONLY a JSON object with these keys (use null when the brochure does not s
  "term_to_ppt": {"term": ppt} (only when PPT is fixed per policy term, e.g. Jeevan Labh 16->10),
  "min_entry_age_by_term": {"term_or_ppt": min_age} (only if the brochure has such a table),
  "max_entry_age_by_term": {"term_or_ppt": max_age} (only if the brochure has such a table),
- "min_bsa": number, "bsa_multiples": [[from_bsa, multiple], ...],
+ "min_bsa": number, "bsa_multiples": [[from_bsa, multiple], ...] (for a row printed as "above X" use X+1 as from_bsa),
  "hsa_rebate_per_1000": [[from_bsa, rebate_rupees_per_1000_bsa], ...] (convert "%o"/per mille to rupees per 1000; [] if nil),
  "hsa_rebate_by_age": [[max_age, [[from_bsa, rebate_per_1000], ...]], ...] (only if rebate differs by age),
  "mode_adjust_pct": {"yearly": number, "half": number, "quarter": number, "month": number}
