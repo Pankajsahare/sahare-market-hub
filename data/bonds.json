@@ -5,6 +5,7 @@
     {
       "id": "sgb-sgbjun27",
       "symbol": "SGBJUN27",
+      "isin": "IN0020190073",
       "name": "SGB Jun 2027 (SGBJUN27)",
       "type": "SGB",
       "risk": "low",
@@ -21,6 +22,7 @@
     {
       "id": "sgb-sgbaug28v",
       "symbol": "SGBAUG28V",
+      "isin": "IN0020200161",
       "name": "SGB Aug 2028 (SGBAUG28V)",
       "type": "SGB",
       "risk": "low",
@@ -37,6 +39,7 @@
     {
       "id": "sgb-sgbmay29i",
       "symbol": "SGBMAY29I",
+      "isin": "IN0020210053",
       "name": "SGB May 2029 (SGBMAY29I)",
       "type": "SGB",
       "risk": "low",
@@ -53,6 +56,7 @@
     {
       "id": "sgb-sgbaug30",
       "symbol": "SGBAUG30",
+      "isin": "IN0020220078",
       "name": "SGB Aug 2030 (SGBAUG30)",
       "type": "SGB",
       "risk": "low",
@@ -69,6 +73,7 @@
     {
       "id": "sgb-sgbde31iii",
       "symbol": "SGBDE31III",
+      "isin": "IN0020230168",
       "name": "SGB 2031 (SGBDE31III)",
       "type": "SGB",
       "risk": "low",
@@ -85,6 +90,7 @@
     {
       "id": "sgb-sgbfeb32iv",
       "symbol": "SGBFEB32IV",
+      "isin": "IN0020230184",
       "name": "SGB Feb 2032 (SGBFEB32IV)",
       "type": "SGB",
       "risk": "low",
@@ -101,6 +107,7 @@
     {
       "id": "gs-754gs2036",
       "symbol": "754GS2036",
+      "isin": "IN0020220029",
       "name": "7.54% GS 2036",
       "type": "G-Sec",
       "risk": "low",
@@ -117,6 +124,7 @@
     {
       "id": "gs-724gs2055",
       "symbol": "724GS2055",
+      "isin": "IN0020250075",
       "name": "7.24% GS 2055",
       "type": "G-Sec",
       "risk": "low",
@@ -133,6 +141,7 @@
     {
       "id": "gs-676gs2061",
       "symbol": "676GS2061",
+      "isin": "IN0020200401",
       "name": "6.76% GS 2061",
       "type": "G-Sec",
       "risk": "low",
@@ -149,6 +158,7 @@
     {
       "id": "gs-725gs2063",
       "symbol": "725GS2063",
+      "isin": "IN0020230044",
       "name": "7.25% GS 2063",
       "type": "G-Sec",
       "risk": "low",
@@ -165,6 +175,7 @@
     {
       "id": "gs-734gs2064",
       "symbol": "734GS2064",
+      "isin": "IN0020240035",
       "name": "7.34% GS 2064",
       "type": "G-Sec",
       "risk": "low",
@@ -181,6 +192,7 @@
     {
       "id": "gs-771gs2066",
       "symbol": "771GS2066",
+      "isin": "IN0020260033",
       "name": "7.71% GS 2066",
       "type": "G-Sec",
       "risk": "low",
