@@ -340,3 +340,16 @@
 #a4u-bc .tw::-webkit-scrollbar-thumb,#a4u-bc .cmp::-webkit-scrollbar-thumb{background:#c9d0db;border-radius:8px;border:2px solid #fff}
 #a4u-bc .bc-msg.full{grid-column:1/-1;margin-top:-.3rem}
 #a4u-bc .bc-msg:empty{display:none}
+/* v6.9 — favourites as a text button, editable portfolio, add-a-bond form */
+#a4u-bc .favt{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;min-height:32px;padding:0 .6rem;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--ink);background:#fff;white-space:nowrap;flex:none}
+#a4u-bc .favt.on{color:#1a7f4b;border-color:#bfe3cf;background:#effaf3}
+#a4u-bc .favt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#a4u-bc input.pe{width:110px;min-height:32px;padding:.2rem .4rem;text-align:right;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:.85rem}
+#a4u-bc #p-add{margin:.6rem 0}
+#a4u-bc #p-add summary{cursor:pointer;list-style:none;padding:.2rem 0}
+#a4u-bc .pa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin-top:.7rem}
+#a4u-bc .pa-grid .full{grid-column:1/-1}
+#a4u-bc #p-saved{margin:.3rem 0 .6rem;font-size:.82rem}
+#a4u-bc .mini .favt{min-height:26px;font-size:.72rem;padding:0 .45rem;border-radius:6px}
+@media(max-width:820px){#a4u-bc .mini .favt{min-height:36px}}
+@media(max-width:600px){#a4u-bc .md-hd .share{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}#a4u-bc .md-hd .share .btn{justify-content:center;text-align:center}}
