@@ -1,0 +1,73 @@
+{
+ "plan_no": null,
+ "uin": "512N296V03",
+ "plan_name": "LIC's New Children's Money Back Plan",
+ "min_entry_age": 0,
+ "max_entry_age": 12,
+ "min_maturity_age": 25,
+ "max_maturity_age": 25,
+ "policy_terms": null,
+ "ppt_options": null,
+ "term_to_ppt": null,
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": null,
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   5000
+  ],
+  [
+   450001,
+   50000
+  ],
+  [
+   900001,
+   100000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   500000,
+   2.5
+  ],
+  [
+   1000000,
+   4.0
+  ]
+ ],
+ "hsa_rebate_by_age": [],
+ "mode_adjust_pct": {
+  "yearly": -2.0,
+  "half": -1.0,
+  "quarter": 0,
+  "month": 0
+ },
+ "survival_benefit_pct_of_bsa": 20,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": null,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   0,
+   25,
+   9006
+  ],
+  [
+   5,
+   20,
+   11682
+  ],
+  [
+   10,
+   15,
+   16395
+  ],
+  [
+   12,
+   13,
+   19002
+  ]
+ ],
+ "brochure_date_or_version": null
+}
