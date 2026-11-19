@@ -1,5 +1,5 @@
 {
- "run_at": "2026-11-18 18:32",
+ "run_at": "2026-11-19 18:34",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
@@ -107,12 +107,17 @@
    "result": "unchanged"
   },
   "745": {
-   "page_http": 0,
+   "page_http": 200,
    "candidates": [
+    [
+     1729776530358,
+     "https://licindia.in/documents/20121/1248951/LIC_Jeevan+Umang_Sales+Brochure_4+inch+x+9+inch_Eng+%281%29.pdf/1dcbc0ba-c05e-8cd7-b34c-7bcae1347271?t=1729776530358",
+     "Sales Brochures (01/10/2024 to 21/09/2025)"
+    ],
     [
      1760458103167,
      "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
-     "(known link)"
+     "Sales Brochures (From 22/09/2025 onwards)"
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
@@ -162,20 +167,19 @@
    "result": "unchanged"
   },
   "883": {
-   "page_http": 0,
+   "page_http": 200,
    "candidates": [
     [
      1768116819230,
      "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399?t=1768116819230",
-     "(known link)"
+     "Sales Brochure"
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399?t=1768116819230",
    "pdf_http": 200,
    "pdf_bytes": 1041462,
    "sha256": "e2f2d79addce15b8d3efadf5da2ead03364053586264455eb1ea17538a3f8ec3",
-   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
-   "result": "updated"
+   "result": "unchanged"
   },
   "720": {
    "page_http": 404,
@@ -190,8 +194,7 @@
    "pdf_http": 200,
    "pdf_bytes": 337201,
    "sha256": "b63b54c84b39ffbe7073e0ca693f1fa47ffc3934476d38a9a897e02200a651bd",
-   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
-   "result": "updated"
+   "result": "unchanged"
   },
   "721": {
    "page_http": 404,
@@ -206,10 +209,11 @@
    "pdf_http": 200,
    "pdf_bytes": 349221,
    "sha256": "fe74ac81580af22014008e6be072b82c3ea04414485181565dca09fbba619156",
-   "result": "queued for next run"
+   "model": "two reads disagree (gemini-3.5-flash-lite, gemini-3.1-flash-lite) — needs manual check",
+   "error": "gemini failed: two reads disagree (gemini-3.5-flash-lite, gemini-3.1-flash-lite) — needs manual check"
   },
   "732": {
-   "page_http": 0,
+   "page_http": 404,
    "candidates": [
     [
      1736489668006,
@@ -221,7 +225,8 @@
    "pdf_http": 200,
    "pdf_bytes": 1492057,
    "sha256": "43a05bf921024a98a16f2039fc3d973bcc11a54f37c41ae88a4ffc0c01d112fe",
-   "result": "queued for next run"
+   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
+   "result": "updated"
   }
  },
  "bonus": {
