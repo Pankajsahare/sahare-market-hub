@@ -353,3 +353,18 @@
 #a4u-bc .mini .favt{min-height:26px;font-size:.72rem;padding:0 .45rem;border-radius:6px}
 @media(max-width:820px){#a4u-bc .mini .favt{min-height:36px}}
 @media(max-width:600px){#a4u-bc .md-hd .share{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}#a4u-bc .md-hd .share .btn{justify-content:center;text-align:center}}
+/* v7.0 — market glance on top, favourites tab, portfolio lock, calculator timeline */
+#a4u-bc #r-mkt:empty{display:none}
+#a4u-bc #bc-corp > #r-mkt{margin-bottom:.9rem}
+#a4u-bc #m-act,#a4u-bc #r-fd{margin-top:1rem}
+#a4u-bc .pf-bar{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;margin:.2rem 0 .6rem}
+#a4u-bc .pf-bar #p-saved{margin:0}
+#a4u-bc #pa-more summary{cursor:pointer;font-size:.82rem;padding:.3rem 0}
+#a4u-bc #pa-more[open] summary{margin-bottom:.4rem}
+#a4u-bc.pf-locked #p-drop{display:none}
+#a4u-bc.pf-locked input.pe{border-color:transparent;background:transparent;pointer-events:none}
+#a4u-bc .flows{display:block;height:auto;margin-top:1rem}
+#a4u-bc .flows svg{width:100%;height:auto;display:block}
+#a4u-bc .tl-k{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.74rem;color:#c3cbdb;margin-top:.2rem}
+#a4u-bc .tl-k i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.3rem;vertical-align:-1px}
+#a4u-bc .tl-k .ki{background:#8fa3cc}#a4u-bc .tl-k .kp{background:#f8b526}
