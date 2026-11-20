@@ -1,9 +1,9 @@
 {
- "run_at": "2026-11-19 18:34",
+ "run_at": "2026-11-20 18:23",
  "registry": {
   "pages_http": {
-   "endowment-plans": 200,
-   "whole-life-plans": 200,
+   "endowment-plans": 0,
+   "whole-life-plans": 0,
    "money-back-plans": 200,
    "term-assurance-plans": 200,
    "pension-plans": 404,
@@ -11,9 +11,9 @@
    "micro-insurance-plans": 200,
    "riders": 200,
    "insurance-plan": 200,
-   "licindia.in": 200
+   "licindia.in": 0
   },
-  "plans_found": 36
+  "plans_found": 21
  },
  "plans": {
   "714": {
@@ -107,17 +107,12 @@
    "result": "unchanged"
   },
   "745": {
-   "page_http": 200,
+   "page_http": 0,
    "candidates": [
-    [
-     1729776530358,
-     "https://licindia.in/documents/20121/1248951/LIC_Jeevan+Umang_Sales+Brochure_4+inch+x+9+inch_Eng+%281%29.pdf/1dcbc0ba-c05e-8cd7-b34c-7bcae1347271?t=1729776530358",
-     "Sales Brochures (01/10/2024 to 21/09/2025)"
-    ],
     [
      1760458103167,
      "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
-     "Sales Brochures (From 22/09/2025 onwards)"
+     "(known link)"
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15?t=1760458103167",
@@ -225,8 +220,7 @@
    "pdf_http": 200,
    "pdf_bytes": 1492057,
    "sha256": "43a05bf921024a98a16f2039fc3d973bcc11a54f37c41ae88a4ffc0c01d112fe",
-   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
-   "result": "updated"
+   "result": "unchanged"
   }
  },
  "bonus": {
