@@ -1,135 +1,116 @@
 {
- "updated": "2026-11-20T03:22+05:30",
- "pricesAsOf": "2026-11-19",
+ "updated": "2026-11-21T03:04+05:30",
+ "pricesAsOf": "2026-11-20",
  "curve": [
-  {
-   "t": 1,
-   "label": "1Y",
-   "ytm": 6.99,
-   "n": 1,
-   "bonds": [
-    "8.28% GS 2027"
-   ]
-  },
   {
    "t": 2,
    "label": "2Y",
-   "ytm": 6.18,
+   "ytm": 6.2,
    "n": 2,
    "bonds": [
-    "7.37% GS 2028",
-    "7.06% GS 2028"
+    "7.06% GS 2028",
+    "7.37% GS 2028"
    ]
   },
   {
    "t": 3,
    "label": "3Y",
-   "ytm": 6.36,
-   "n": 4,
+   "ytm": 6.42,
+   "n": 3,
    "bonds": [
-    "6.20% GS 2029",
-    "6.03% GS 2029",
-    "7.10% GS 2029"
+    "7.10% GS 2029",
+    "7.04% GS 2029",
+    "6.03% GS 2029"
    ]
   },
   {
    "t": 5,
    "label": "5Y",
-   "ytm": 6.3,
+   "ytm": 6.82,
    "n": 6,
    "bonds": [
-    "6.53% GS 2031",
     "7.26% GS 2032",
-    "7.02% GS 2031"
+    "6.36% GS 2031",
+    "6.79% GS 2031"
    ]
   },
   {
    "t": 7,
    "label": "7Y",
-   "ytm": 7.01,
-   "n": 6,
+   "ytm": 6.86,
+   "n": 4,
    "bonds": [
-    "6.68% GS 2033",
-    "7.26% GS 2033",
-    "6.79% GS 2034"
+    "7.18% GS 2033",
+    "6.79% GS 2034",
+    "6.68% GS 2033"
    ]
   },
   {
    "t": 10,
    "label": "10Y",
-   "ytm": 6.79,
-   "n": 4,
+   "ytm": 7.19,
+   "n": 5,
    "bonds": [
     "7.54% GS 2036",
-    "7.18% GS 2037",
-    "6.94% GS 2036"
+    "6.94% GS 2036",
+    "7.18% GS 2037"
    ]
   },
   {
    "t": 15,
    "label": "15Y",
-   "ytm": 7.22,
-   "n": 3,
+   "ytm": 7.28,
+   "n": 4,
    "bonds": [
-    "7.06% GS 2041",
     "6.68% GS 2040",
-    "7.23% GS 2039"
+    "7.06% GS 2041",
+    "6.92% GS 2039"
    ]
   },
   {
    "t": 20,
    "label": "20Y",
-   "ytm": 7.07,
-   "n": 1,
+   "ytm": 7.06,
+   "n": 2,
    "bonds": [
+    "7.06% GS 2046",
     "7.72% GS 2049"
    ]
   },
   {
    "t": 30,
    "label": "30Y",
-   "ytm": 7.48,
+   "ytm": 7.51,
    "n": 8,
    "bonds": [
-    "7.09% GS 2054",
     "7.63% GS 2056",
-    "7.24% GS 2055"
+    "7.24% GS 2055",
+    "7.50% GS 2056"
    ]
   },
   {
    "t": 40,
    "label": "40Y",
-   "ytm": 7.69,
-   "n": 8,
+   "ytm": 7.6,
+   "n": 7,
    "bonds": [
+    "7.25% GS 2063",
     "7.71% GS 2066",
-    "7.34% GS 2064",
-    "6.90% GS 2065"
+    "7.34% GS 2064"
    ]
   }
  ],
  "gsecs": [
   {
-   "name": "8.26% GS 2027",
-   "coupon": 8.26,
-   "maturity": "2027-08-02",
-   "price": 101.03,
-   "ytm": 6.701,
-   "turnover": 241000.0,
+   "name": "8.24% GS 2027",
+   "coupon": 8.24,
+   "maturity": "2027-02-15",
+   "price": 100.32,
+   "ytm": 6.773,
+   "turnover": 157000.0,
    "src": "BSE",
-   "day": "2026-11-19",
-   "years": 0.6981519507186859
-  },
-  {
-   "name": "8.28% GS 2027",
-   "coupon": 8.28,
-   "maturity": "2027-09-21",
-   "price": 101.01,
-   "ytm": 6.994,
-   "turnover": 2000.0,
-   "src": "BSE",
-   "day": "2026-11-19",
-   "years": 0.8350444900752909
+   "day": "2026-11-20",
+   "years": 0.23545516769336072
   },
   {
    "name": "7.06% GS 2028",
@@ -137,12 +118,12 @@
    "coupon": 7.06,
    "maturity": "2028-06-30",
    "exactMaturity": false,
-   "price": 100.81,
-   "ytm": 6.515,
-   "turnover": 353930.0,
+   "price": 101.3,
+   "ytm": 6.192,
+   "turnover": 1833558.05,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 1.6098562628336757
+   "day": "2026-11-20",
+   "years": 1.6071184120465434
   },
   {
    "name": "7.37% GS 2028",
@@ -150,25 +131,12 @@
    "coupon": 7.37,
    "maturity": "2028-06-30",
    "exactMaturity": false,
-   "price": 102.0,
-   "ytm": 6.041,
-   "turnover": 889086.0,
+   "price": 101.5,
+   "ytm": 6.367,
+   "turnover": 78256.5,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 1.6098562628336757
-  },
-  {
-   "name": "6.20% GS 2029",
-   "symbol": "620GS2029",
-   "coupon": 6.2,
-   "maturity": "2029-06-30",
-   "exactMaturity": false,
-   "price": 99.5,
-   "ytm": 6.408,
-   "turnover": 4756100.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 2.6091718001368926
+   "day": "2026-11-20",
+   "years": 1.6071184120465434
   },
   {
    "name": "6.03% GS 2029",
@@ -176,12 +144,12 @@
    "coupon": 6.03,
    "maturity": "2029-06-30",
    "exactMaturity": false,
-   "price": 100.05,
-   "ytm": 6.006,
-   "turnover": 1295550.0,
+   "price": 99.0,
+   "ytm": 6.45,
+   "turnover": 129800.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 2.6091718001368926
+   "day": "2026-11-20",
+   "years": 2.6064339493497606
   },
   {
    "name": "7.04% GS 2029",
@@ -189,12 +157,12 @@
    "coupon": 7.04,
    "maturity": "2029-06-30",
    "exactMaturity": false,
-   "price": 103.01,
-   "ytm": 5.777,
-   "turnover": 41203.0,
+   "price": 103.21,
+   "ytm": 5.694,
+   "turnover": 1030206.36,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 2.6091718001368926
+   "day": "2026-11-20",
+   "years": 2.6064339493497606
   },
   {
    "name": "7.10% GS 2029",
@@ -202,12 +170,12 @@
    "coupon": 7.1,
    "maturity": "2029-06-30",
    "exactMaturity": false,
-   "price": 100.92,
-   "ytm": 6.706,
-   "turnover": 724468.0,
+   "price": 100.98,
+   "ytm": 6.68,
+   "turnover": 2802852.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 2.6091718001368926
+   "day": "2026-11-20",
+   "years": 2.6064339493497606
   },
   {
    "name": "7.17% GS 2030",
@@ -215,38 +183,49 @@
    "coupon": 7.17,
    "maturity": "2030-06-30",
    "exactMaturity": false,
-   "price": 100.84,
-   "ytm": 6.9,
-   "turnover": 596448.6,
+   "price": 100.86,
+   "ytm": 6.893,
+   "turnover": 1349863.2,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 3.6084873374401094
+   "day": "2026-11-20",
+   "years": 3.6057494866529773
   },
   {
-   "name": "7.32% GS 2030",
-   "symbol": "732GS2030",
-   "coupon": 7.32,
-   "maturity": "2030-06-30",
-   "exactMaturity": false,
-   "price": 102.67,
-   "ytm": 6.475,
-   "turnover": 390012.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 3.6084873374401094
+   "name": "8.97% GS 2030",
+   "coupon": 8.97,
+   "maturity": "2030-12-05",
+   "price": 106.38,
+   "ytm": 7.123,
+   "turnover": 2659585000.0,
+   "src": "BSE",
+   "day": "2026-11-20",
+   "years": 4.03832991101985
   },
   {
    "name": "8.97% GS 2030",
    "symbol": "897GS2030",
    "coupon": 8.97,
-   "maturity": "2030-06-30",
-   "exactMaturity": false,
-   "price": 113.0,
-   "ytm": 4.986,
-   "turnover": 5876.0,
+   "maturity": "2030-12-05",
+   "exactMaturity": true,
+   "price": 113.98,
+   "ytm": 5.095,
+   "turnover": 75203.95,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 3.6084873374401094
+   "day": "2026-11-20",
+   "years": 4.03832991101985
+  },
+  {
+   "name": "6.79% GS 2031",
+   "symbol": "679GS2031",
+   "coupon": 6.79,
+   "maturity": "2031-06-30",
+   "exactMaturity": false,
+   "price": 100.0,
+   "ytm": 6.788,
+   "turnover": 100150.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 4.605065023956194
   },
   {
    "name": "6.10% GS 2031",
@@ -254,12 +233,12 @@
    "coupon": 6.1,
    "maturity": "2031-06-30",
    "exactMaturity": false,
-   "price": 101.08,
-   "ytm": 5.828,
-   "turnover": 101.08,
+   "price": 106.0,
+   "ytm": 4.637,
+   "turnover": 106.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 4.607802874743326
+   "day": "2026-11-20",
+   "years": 4.605065023956194
   },
   {
    "name": "6.36% GS 2031",
@@ -267,38 +246,12 @@
    "coupon": 6.36,
    "maturity": "2031-06-30",
    "exactMaturity": false,
-   "price": 98.3,
-   "ytm": 6.794,
-   "turnover": 9830.0,
+   "price": 98.33,
+   "ytm": 6.786,
+   "turnover": 161162.87,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 4.607802874743326
-  },
-  {
-   "name": "6.53% GS 2031",
-   "symbol": "653GS2031",
-   "coupon": 6.53,
-   "maturity": "2031-06-30",
-   "exactMaturity": false,
-   "price": 101.0,
-   "ytm": 6.275,
-   "turnover": 920162.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 4.607802874743326
-  },
-  {
-   "name": "7.02% GS 2031",
-   "symbol": "702GS2031",
-   "coupon": 7.02,
-   "maturity": "2031-06-30",
-   "exactMaturity": false,
-   "price": 102.0,
-   "ytm": 6.508,
-   "turnover": 10200.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 4.607802874743326
+   "day": "2026-11-20",
+   "years": 4.605065023956194
   },
   {
    "name": "6.54% GS 2032",
@@ -306,12 +259,12 @@
    "coupon": 6.54,
    "maturity": "2032-06-30",
    "exactMaturity": false,
-   "price": 99.99,
-   "ytm": 6.54,
-   "turnover": 7999.2,
+   "price": 99.89,
+   "ytm": 6.562,
+   "turnover": 399.66,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 5.6098562628336754
+   "day": "2026-11-20",
+   "years": 5.607118412046543
   },
   {
    "name": "7.26% GS 2032",
@@ -319,12 +272,51 @@
    "coupon": 7.26,
    "maturity": "2032-06-30",
    "exactMaturity": false,
-   "price": 103.88,
-   "ytm": 6.423,
-   "turnover": 112738.0,
+   "price": 102.0,
+   "ytm": 6.823,
+   "turnover": 41303861.92,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 5.6098562628336754
+   "day": "2026-11-20",
+   "years": 5.607118412046543
+  },
+  {
+   "name": "7.95% GS 2032",
+   "symbol": "795GS2032",
+   "coupon": 7.95,
+   "maturity": "2032-06-30",
+   "exactMaturity": false,
+   "price": 103.8,
+   "ytm": 7.114,
+   "turnover": 24912.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 5.607118412046543
+  },
+  {
+   "name": "8.28% GS 2032",
+   "symbol": "828GS2032",
+   "coupon": 8.28,
+   "maturity": "2032-06-30",
+   "exactMaturity": false,
+   "price": 108.41,
+   "ytm": 6.466,
+   "turnover": 54205.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 5.607118412046543
+  },
+  {
+   "name": "6.57% GS 2033",
+   "symbol": "657GS2033A",
+   "coupon": 6.57,
+   "maturity": "2033-06-30",
+   "exactMaturity": false,
+   "price": 97.05,
+   "ytm": 7.136,
+   "turnover": 9705.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 6.606433949349761
   },
   {
    "name": "6.68% GS 2033",
@@ -332,12 +324,12 @@
    "coupon": 6.68,
    "maturity": "2033-06-30",
    "exactMaturity": false,
-   "price": 98.31,
-   "ytm": 7.002,
-   "turnover": 4915500.0,
+   "price": 98.4,
+   "ytm": 6.985,
+   "turnover": 9996.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 6.609171800136893
+   "day": "2026-11-20",
+   "years": 6.606433949349761
   },
   {
    "name": "7.18% GS 2033",
@@ -347,60 +339,36 @@
    "exactMaturity": false,
    "price": 102.0,
    "ytm": 6.797,
-   "turnover": 204.59,
+   "turnover": 100804.98,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 6.609171800136893
-  },
-  {
-   "name": "7.26% GS 2033",
-   "symbol": "726GS2033",
-   "coupon": 7.26,
-   "maturity": "2033-06-30",
-   "exactMaturity": false,
-   "price": 101.21,
-   "ytm": 7.026,
-   "turnover": 3016120.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 6.609171800136893
-  },
-  {
-   "name": "6.57% GS 2033",
-   "coupon": 6.57,
-   "maturity": "2033-08-17",
-   "price": 96.67,
-   "ytm": 7.199,
-   "turnover": 10000.0,
-   "src": "BSE",
-   "day": "2026-11-19",
-   "years": 6.740588637919234
+   "day": "2026-11-20",
+   "years": 6.606433949349761
   },
   {
    "name": "6.79% GS 2034",
-   "symbol": "679GS2034",
+   "symbol": "679GS2034A",
    "coupon": 6.79,
    "maturity": "2034-06-30",
    "exactMaturity": false,
-   "price": 99.91,
-   "ytm": 6.804,
-   "turnover": 204910.5,
+   "price": 98.59,
+   "ytm": 7.031,
+   "turnover": 14788.5,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 7.60848733744011
+   "day": "2026-11-20",
+   "years": 7.605749486652978
   },
   {
-   "name": "6.19% GS 2034",
-   "symbol": "619GS2034",
-   "coupon": 6.19,
-   "maturity": "2034-06-30",
+   "name": "6.48% GS 2035",
+   "symbol": "648GS2035",
+   "coupon": 6.48,
+   "maturity": "2035-06-30",
    "exactMaturity": false,
-   "price": 93.17,
-   "ytm": 7.377,
-   "turnover": 93.17,
+   "price": 95.01,
+   "ytm": 7.269,
+   "turnover": 66507.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 7.60848733744011
+   "day": "2026-11-20",
+   "years": 8.605065023956195
   },
   {
    "name": "6.94% GS 2036",
@@ -408,12 +376,12 @@
    "coupon": 6.94,
    "maturity": "2036-06-30",
    "exactMaturity": false,
-   "price": 97.95,
-   "ytm": 7.238,
-   "turnover": 1828192.92,
+   "price": 98.38,
+   "ytm": 7.175,
+   "turnover": 703898.65,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 9.609856262833675
+   "day": "2026-11-20",
+   "years": 9.607118412046544
   },
   {
    "name": "7.41% GS 2036",
@@ -421,12 +389,12 @@
    "coupon": 7.41,
    "maturity": "2036-06-30",
    "exactMaturity": false,
-   "price": 104.68,
-   "ytm": 6.739,
-   "turnover": 337995.59,
+   "price": 103.41,
+   "ytm": 6.917,
+   "turnover": 108523.56,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 9.609856262833675
+   "day": "2026-11-20",
+   "years": 9.607118412046544
   },
   {
    "name": "7.54% GS 2036",
@@ -434,12 +402,12 @@
    "coupon": 7.54,
    "maturity": "2036-06-30",
    "exactMaturity": false,
-   "price": 105.54,
-   "ytm": 6.746,
-   "turnover": 42124527.5,
+   "price": 102.36,
+   "ytm": 7.194,
+   "turnover": 65560478.17,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 9.609856262833675
+   "day": "2026-11-20",
+   "years": 9.607118412046544
   },
   {
    "name": "7.18% GS 2037",
@@ -447,12 +415,25 @@
    "coupon": 7.18,
    "maturity": "2037-06-30",
    "exactMaturity": false,
-   "price": 101.99,
-   "ytm": 6.911,
-   "turnover": 8378731.04,
+   "price": 101.3,
+   "ytm": 7.003,
+   "turnover": 213762.46,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 10.609171800136892
+   "day": "2026-11-20",
+   "years": 10.60643394934976
+  },
+  {
+   "name": "6.92% GS 2039",
+   "symbol": "692GS2039",
+   "coupon": 6.92,
+   "maturity": "2039-06-30",
+   "exactMaturity": false,
+   "price": 94.74,
+   "ytm": 7.574,
+   "turnover": 109150.48,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 12.605065023956195
   },
   {
    "name": "7.23% GS 2039",
@@ -460,12 +441,12 @@
    "coupon": 7.23,
    "maturity": "2039-06-30",
    "exactMaturity": false,
-   "price": 98.0,
-   "ytm": 7.476,
-   "turnover": 118000.0,
+   "price": 98.35,
+   "ytm": 7.433,
+   "turnover": 88515.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 12.607802874743326
+   "day": "2026-11-20",
+   "years": 12.605065023956195
   },
   {
    "name": "6.68% GS 2040",
@@ -473,12 +454,12 @@
    "coupon": 6.68,
    "maturity": "2040-06-30",
    "exactMaturity": false,
-   "price": 95.75,
-   "ytm": 7.173,
-   "turnover": 340682.3,
+   "price": 96.41,
+   "ytm": 7.095,
+   "turnover": 207509.7,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 13.609856262833675
+   "day": "2026-11-20",
+   "years": 13.607118412046544
   },
   {
    "name": "7.06% GS 2041",
@@ -486,12 +467,25 @@
    "coupon": 7.06,
    "maturity": "2041-06-30",
    "exactMaturity": false,
-   "price": 98.6,
-   "ytm": 7.215,
-   "turnover": 3515147.0,
+   "price": 98.51,
+   "ytm": 7.226,
+   "turnover": 125596.5,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 14.609171800136892
+   "day": "2026-11-20",
+   "years": 14.60643394934976
+  },
+  {
+   "name": "7.06% GS 2046",
+   "symbol": "706GS2046",
+   "coupon": 7.06,
+   "maturity": "2046-06-30",
+   "exactMaturity": false,
+   "price": 100.0,
+   "ytm": 7.059,
+   "turnover": 300100.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 19.60574948665298
   },
   {
    "name": "7.72% GS 2049",
@@ -503,8 +497,8 @@
    "ytm": 7.065,
    "turnover": 10733.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 22.60917180013689
+   "day": "2026-11-20",
+   "years": 22.60643394934976
   },
   {
    "name": "6.67% GS 2050",
@@ -512,12 +506,38 @@
    "coupon": 6.67,
    "maturity": "2050-06-30",
    "exactMaturity": false,
-   "price": 91.9,
-   "ytm": 7.4,
-   "turnover": 14728.75,
+   "price": 91.5,
+   "ytm": 7.439,
+   "turnover": 382103.55,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 23.60848733744011
+   "day": "2026-11-20",
+   "years": 23.60574948665298
+  },
+  {
+   "name": "7.16% GS 2050",
+   "symbol": "716GS2050",
+   "coupon": 7.16,
+   "maturity": "2050-06-30",
+   "exactMaturity": false,
+   "price": 97.0,
+   "ytm": 7.43,
+   "turnover": 28303.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 23.60574948665298
+  },
+  {
+   "name": "6.99% GS 2051",
+   "symbol": "699GS2051",
+   "coupon": 6.99,
+   "maturity": "2051-06-30",
+   "exactMaturity": false,
+   "price": 95.0,
+   "ytm": 7.435,
+   "turnover": 380.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 24.605065023956193
   },
   {
    "name": "7.36% GS 2052",
@@ -525,12 +545,12 @@
    "coupon": 7.36,
    "maturity": "2052-06-30",
    "exactMaturity": false,
-   "price": 98.69,
-   "ytm": 7.475,
-   "turnover": 89035.97,
+   "price": 97.5,
+   "ytm": 7.582,
+   "turnover": 254610.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 25.609856262833677
+   "day": "2026-11-20",
+   "years": 25.607118412046542
   },
   {
    "name": "7.09% GS 2054",
@@ -538,12 +558,12 @@
    "coupon": 7.09,
    "maturity": "2054-06-30",
    "exactMaturity": false,
-   "price": 95.99,
-   "ytm": 7.433,
-   "turnover": 1928248.51,
+   "price": 94.7,
+   "ytm": 7.549,
+   "turnover": 524841.17,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 27.60848733744011
+   "day": "2026-11-20",
+   "years": 27.60574948665298
   },
   {
    "name": "7.24% GS 2055",
@@ -551,25 +571,12 @@
    "coupon": 7.24,
    "maturity": "2055-06-30",
    "exactMaturity": false,
-   "price": 96.52,
-   "ytm": 7.537,
-   "turnover": 193101.14,
+   "price": 96.85,
+   "ytm": 7.508,
+   "turnover": 1253346.63,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 28.607802874743328
-  },
-  {
-   "name": "7.72% GS 2055",
-   "symbol": "772GS2055",
-   "coupon": 7.72,
-   "maturity": "2055-06-30",
-   "exactMaturity": false,
-   "price": 104.0,
-   "ytm": 7.381,
-   "turnover": 2082.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 28.607802874743328
+   "day": "2026-11-20",
+   "years": 28.605065023956193
   },
   {
    "name": "7.50% GS 2056",
@@ -579,10 +586,10 @@
    "exactMaturity": false,
    "price": 103.5,
    "ytm": 7.211,
-   "turnover": 12388.05,
+   "turnover": 882499.5,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 29.609856262833677
+   "day": "2026-11-20",
+   "years": 29.607118412046542
   },
   {
    "name": "7.63% GS 2056",
@@ -590,12 +597,25 @@
    "coupon": 7.63,
    "maturity": "2056-06-30",
    "exactMaturity": false,
-   "price": 100.49,
-   "ytm": 7.587,
-   "turnover": 868855.0,
+   "price": 100.47,
+   "ytm": 7.589,
+   "turnover": 2561583.06,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 29.609856262833677
+   "day": "2026-11-20",
+   "years": 29.607118412046542
+  },
+  {
+   "name": "7.19% GS 2060",
+   "symbol": "719GS2060",
+   "coupon": 7.19,
+   "maturity": "2060-06-30",
+   "exactMaturity": false,
+   "price": 93.75,
+   "ytm": 7.712,
+   "turnover": 28125.0,
+   "src": "NSE",
+   "day": "2026-11-20",
+   "years": 33.607118412046546
   },
   {
    "name": "6.76% GS 2061",
@@ -603,25 +623,12 @@
    "coupon": 6.76,
    "maturity": "2061-06-30",
    "exactMaturity": false,
-   "price": 89.49,
-   "ytm": 7.626,
-   "turnover": 32490.38,
+   "price": 89.5,
+   "ytm": 7.625,
+   "turnover": 13447.28,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 34.60917180013689
-  },
-  {
-   "name": "6.95% GS 2061",
-   "symbol": "695GS2061",
-   "coupon": 6.95,
-   "maturity": "2061-06-30",
-   "exactMaturity": false,
-   "price": 93.72,
-   "ytm": 7.458,
-   "turnover": 103289.0,
-   "src": "NSE",
-   "day": "2026-11-19",
-   "years": 34.60917180013689
+   "day": "2026-11-20",
+   "years": 34.60643394934976
   },
   {
    "name": "7.25% GS 2063",
@@ -629,12 +636,12 @@
    "coupon": 7.25,
    "maturity": "2063-06-30",
    "exactMaturity": false,
-   "price": 97.25,
-   "ytm": 7.47,
-   "turnover": 7436496.17,
+   "price": 96.93,
+   "ytm": 7.496,
+   "turnover": 11358602.13,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 36.60780287474333
+   "day": "2026-11-20",
+   "years": 36.60506502395619
   },
   {
    "name": "7.34% GS 2064",
@@ -642,12 +649,12 @@
    "coupon": 7.34,
    "maturity": "2064-06-30",
    "exactMaturity": false,
-   "price": 95.87,
-   "ytm": 7.676,
-   "turnover": 53158512.63,
+   "price": 95.67,
+   "ytm": 7.693,
+   "turnover": 3939871.96,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 37.609856262833674
+   "day": "2026-11-20",
+   "years": 37.607118412046546
   },
   {
    "name": "6.90% GS 2065",
@@ -657,34 +664,23 @@
    "exactMaturity": false,
    "price": 89.9,
    "ytm": 7.723,
-   "turnover": 11874849.96,
+   "turnover": 1239124.01,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 38.60917180013689
-  },
-  {
-   "name": "7.71% GS 2066",
-   "coupon": 7.71,
-   "maturity": "2066-05-18",
-   "price": 100.12,
-   "ytm": 7.7,
-   "turnover": 10003000.0,
-   "src": "BSE",
-   "day": "2026-11-19",
-   "years": 39.49075975359343
+   "day": "2026-11-20",
+   "years": 38.60643394934976
   },
   {
    "name": "7.71% GS 2066",
    "symbol": "771GS2066",
    "coupon": 7.71,
-   "maturity": "2066-05-18",
-   "exactMaturity": true,
-   "price": 100.0,
-   "ytm": 7.71,
-   "turnover": 66831769.01,
+   "maturity": "2066-06-30",
+   "exactMaturity": false,
+   "price": 100.1,
+   "ytm": 7.701,
+   "turnover": 6209264.11,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 39.49075975359343
+   "day": "2026-11-20",
+   "years": 39.605749486652975
   },
   {
    "name": "7.46% GS 2073",
@@ -692,12 +688,12 @@
    "coupon": 7.46,
    "maturity": "2073-06-30",
    "exactMaturity": false,
-   "price": 98.0,
-   "ytm": 7.616,
-   "turnover": 55807.5,
+   "price": 99.55,
+   "ytm": 7.494,
+   "turnover": 3980.0,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 46.60917180013689
+   "day": "2026-11-20",
+   "years": 46.60643394934976
   },
   {
    "name": "7.09% GS 2074",
@@ -705,12 +701,12 @@
    "coupon": 7.09,
    "maturity": "2074-06-30",
    "exactMaturity": false,
-   "price": 96.66,
-   "ytm": 7.343,
-   "turnover": 1790390.17,
+   "price": 96.6,
+   "ytm": 7.347,
+   "turnover": 2021516.5,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 47.60848733744011
+   "day": "2026-11-20",
+   "years": 47.605749486652975
   },
   {
    "name": "7.43% GS 2076",
@@ -718,12 +714,12 @@
    "coupon": 7.43,
    "maturity": "2076-06-30",
    "exactMaturity": false,
-   "price": 98.75,
-   "ytm": 7.526,
-   "turnover": 1973962.7,
+   "price": 98.1,
+   "ytm": 7.577,
+   "turnover": 2373611.91,
    "src": "NSE",
-   "day": "2026-11-19",
-   "years": 49.609856262833674
+   "day": "2026-11-20",
+   "years": 49.607118412046546
   }
  ],
  "gsecMaturity": {
@@ -741,7 +737,8 @@
   "8.60-2028": "2028-06-02",
   "8.83-2041": "2041-12-12",
   "8.13-2045": "2045-06-22",
-  "6.01-2030": "2030-07-21"
+  "6.01-2030": "2030-07-21",
+  "8.97-2030": "2030-12-05"
  },
  "policy": {
   "repo": 5.5,
@@ -769,189 +766,56 @@
   "redemptionsInQuarter": 1643.0,
   "newIssues": [
    {
-    "isin": "INE363T07029",
-    "issuer": "Agriwise Finserv Limited",
-    "sizeCr": 25.0,
-    "allotted": "2026-11-19",
-    "maturity": "2028-05-19"
-   },
-   {
-    "isin": "INE197P07508",
-    "issuer": "A. K. Capital Finance Limited",
-    "sizeCr": 150.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-11-19"
-   },
-   {
-    "isin": "INE0LWH07153",
-    "issuer": "Csa Investments Private Limited",
+    "isin": "INE00ZD07991",
+    "issuer": "Abans Finance Private Limited",
     "sizeCr": 6.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-01-18"
+    "allotted": "2026-11-20",
+    "maturity": "2028-12-05"
    },
    {
-    "isin": "INE0LWH07161",
-    "issuer": "Csa Investments Private Limited",
-    "sizeCr": 8.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-11-18"
+    "isin": "INE115A07RL6",
+    "issuer": "Lic Housing Finance Ltd",
+    "sizeCr": 2180.0,
+    "allotted": "2026-11-20",
+    "maturity": "2029-02-20"
    },
    {
-    "isin": "INE01ZK07KS1",
-    "issuer": "Hedge Finance Ltd",
-    "sizeCr": 10.0,
-    "allotted": "2026-11-19",
-    "maturity": "2028-11-19"
-   },
-   {
-    "isin": "INE321N08010",
-    "issuer": "Incred Financial Services Limited",
-    "sizeCr": 100.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-11-16"
-   },
-   {
-    "isin": "INE321N08010",
-    "issuer": "Incred Financial Services Limited",
-    "sizeCr": 100.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-11-16"
-   },
-   {
-    "isin": "INE138I07069",
-    "issuer": "Marwadi Shares And Finance Limited",
-    "sizeCr": 100.0,
-    "allotted": "2026-11-19",
+    "isin": "INE814O07675",
+    "issuer": "Neogrowth Credit Private Limited",
+    "sizeCr": 75.0,
+    "allotted": "2026-11-20",
     "maturity": "2028-11-20"
    },
    {
-    "isin": "INE138I07051",
-    "issuer": "Marwadi Shares And Finance Limited",
-    "sizeCr": 150.0,
-    "allotted": "2026-11-19",
-    "maturity": "2028-12-19"
+    "isin": "INE918K07RH0",
+    "issuer": "Nuvama Wealth Finance Limited",
+    "sizeCr": 300.0,
+    "allotted": "2026-11-20",
+    "maturity": "2029-01-22"
    },
    {
-    "isin": "INE0CYK07053",
-    "issuer": "Purple Finance Limited",
+    "isin": "INE918K07RG2",
+    "issuer": "Nuvama Wealth Finance Limited",
+    "sizeCr": 300.0,
+    "allotted": "2026-11-20",
+    "maturity": "2028-12-20"
+   },
+   {
+    "isin": "INE163N08339",
+    "issuer": "Ongc Petro Additions Limited",
+    "sizeCr": 671.0,
+    "allotted": "2026-11-20",
+    "maturity": "2031-11-20"
+   },
+   {
+    "isin": "INE514Q07411",
+    "issuer": "Pahal Financial Services Private Limited",
     "sizeCr": 25.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-05-19"
-   },
-   {
-    "isin": "INE020B08GP8",
-    "issuer": "Rec Limited",
-    "sizeCr": 800.0,
-    "allotted": "2026-11-19",
-    "maturity": "2036-11-19"
-   },
-   {
-    "isin": "INE020B08GO1",
-    "issuer": "Rec Limited",
-    "sizeCr": 3346.0,
-    "allotted": "2026-11-19",
-    "maturity": "2031-12-01"
-   },
-   {
-    "isin": "INE03K307231",
-    "issuer": "Satin Finserv Limited",
-    "sizeCr": 150.0,
-    "allotted": "2026-11-19",
-    "maturity": "2029-05-19"
-   },
-   {
-    "isin": "INE01EQ07145",
-    "issuer": "Tyger Capital Private Limited",
-    "sizeCr": 100.0,
-    "allotted": "2026-11-19",
-    "maturity": "2028-11-19"
-   },
-   {
-    "isin": "INE583D07695",
-    "issuer": "Ugro Capital Limited",
-    "sizeCr": 150.0,
-    "allotted": "2026-11-19",
-    "maturity": "2027-12-19"
+    "allotted": "2026-11-20",
+    "maturity": "2027-12-20"
    }
   ],
   "maturingSoon": [
-   {
-    "isin": "INE860H08DW7",
-    "issuer": "Aditya Birla Capital Limited",
-    "sizeCr": 200.0,
-    "allotted": "2016-11-21",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE860H08DW7",
-    "issuer": "Aditya Birla Capital Limited",
-    "sizeCr": 200.0,
-    "allotted": "2016-11-21",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE12VA07512",
-    "issuer": "Branch International Financial Services Private Limited",
-    "sizeCr": 25.0,
-    "allotted": "2025-11-18",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE1TGX08012",
-    "issuer": "Brilliant Sare Reality Private Limited",
-    "sizeCr": 60.952526,
-    "allotted": "2006-11-20",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE296G07218",
-    "issuer": "Muthoot Capital Services Limited",
-    "sizeCr": 50.0,
-    "allotted": "2024-11-21",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "IN8296G07019",
-    "issuer": "Muthoot Capital Services Limited",
-    "sizeCr": 0.0,
-    "allotted": "2024-11-21",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE246R07525",
-    "issuer": "Niif Infrastructure Finance Limited",
-    "sizeCr": 625.0,
-    "allotted": "2021-09-22",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE918K07JZ9",
-    "issuer": "Nuvama Wealth Finance Limited",
-    "sizeCr": 10.0,
-    "allotted": "2023-05-22",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE725H08162",
-    "issuer": "Tata Projects Limited",
-    "sizeCr": 250.0,
-    "allotted": "2023-12-19",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE0J9Z07030",
-    "issuer": "Torus Financial Markets Private Limited",
-    "sizeCr": 5.0,
-    "allotted": "2021-09-20",
-    "maturity": "2026-11-20"
-   },
-   {
-    "isin": "INE0J9Z07196",
-    "issuer": "Torus Financial Markets Private Limited",
-    "sizeCr": 4.0,
-    "allotted": "2022-11-16",
-    "maturity": "2026-11-20"
-   },
    {
     "isin": "INE093J074Z3",
     "issuer": "Anand Rathi Global Finance Limited",
@@ -1049,6 +913,83 @@
     "sizeCr": 40.0,
     "allotted": "2025-11-17",
     "maturity": "2026-11-22"
+   },
+   {
+    "isin": "INE093J079Z2",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.6375,
+    "allotted": "2019-10-11",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE093JA75H7",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.35,
+    "allotted": "2021-10-05",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE093JA73H2",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.35,
+    "allotted": "2021-10-05",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE093JA76H5",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.35,
+    "allotted": "2021-10-05",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE093JA74H0",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.35,
+    "allotted": "2021-10-05",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE093JA7021",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.6375,
+    "allotted": "2019-10-11",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE238A08419",
+    "issuer": "Axis Bank Limited",
+    "sizeCr": 1800.0,
+    "allotted": "2016-11-23",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE02JZ08026",
+    "issuer": "Heritage Finlease Limited",
+    "sizeCr": 2.5,
+    "allotted": "2021-12-06",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE2BRT08021",
+    "issuer": "Manastu Space Technologies Private Limited",
+    "sizeCr": 2.1,
+    "allotted": "2024-11-23",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE918K07KD4",
+    "issuer": "Nuvama Wealth Finance Limited",
+    "sizeCr": 50.0,
+    "allotted": "2023-05-25",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE02PG07561",
+    "issuer": "A B T Limited",
+    "sizeCr": 2.93,
+    "allotted": "2023-11-24",
+    "maturity": "2026-11-24"
    }
   ]
  }
