@@ -423,3 +423,21 @@
 #a4u-bc .tl-k .kt{background:none;border-top:2px dashed #fff;height:0;width:14px;border-radius:0;vertical-align:3px}
 #a4u-bc h3.pl-h{margin:1.2rem 0 .5rem!important}
 @media(max-width:700px){#a4u-bc .plgrid{grid-template-columns:1fr 1fr}#a4u-bc .hb.hb4{grid-template-columns:minmax(70px,96px) minmax(0,1fr) 34px 70px;font-size:.8rem}}
+/* v7.4 — portfolio header, calculator layout */
+#a4u-bc .pf-head{display:flex;flex-wrap:wrap;gap:.7rem 1rem;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.2rem 0 .8rem}
+#a4u-bc .pf-st{display:flex;flex-direction:column;gap:.35rem;min-width:0}
+#a4u-bc .pf-st #p-saved{margin:0;font-size:.82rem;color:#4b5363}#a4u-bc .pf-st #p-saved:empty{display:none}
+#a4u-bc .pf-asof{flex-direction:row!important;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600}
+#a4u-bc .pf-asof input{width:auto;min-height:34px;padding:.2rem .5rem}
+#a4u-bc .pf-acts{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+#a4u-bc .pf-rep{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+#a4u-bc .pf-rep input{border:0;min-height:38px;padding:.3rem .6rem;font:inherit;font-size:.85rem;width:170px;outline:0}
+#a4u-bc .pf-rep .btn{border:0;border-left:1px solid var(--line);border-radius:0}
+#a4u-bc .pa-row{display:grid;grid-template-columns:minmax(200px,2fr) minmax(110px,.8fr) minmax(120px,.9fr) auto;gap:.6rem;align-items:end;margin-top:.5rem}
+#a4u-bc .pa-row .btn{min-height:42px;padding:0 1.4rem}
+#a4u-bc .pa-csv{margin:.6rem 0 0;font-size:.8rem}
+#a4u-bc #p-add h3{margin:0!important}
+#a4u-bc .ksep{font-weight:700;font-size:.85rem;color:var(--navy);border-top:1px dashed var(--line);padding-top:.7rem;margin-top:.2rem}
+@media(max-width:700px){#a4u-bc .pa-row{grid-template-columns:1fr 1fr}#a4u-bc .pa-row .pa-f{grid-column:1/-1}#a4u-bc .pa-row .btn{grid-column:1/-1}#a4u-bc .pf-rep input{width:130px}}
+#a4u-bc .albadge{display:inline-block;background:#e8f7ee;color:#1a7f4b;border:1px solid #bfe3cf;border-radius:99px;font-size:.72rem;padding:0 .4rem;margin-left:.15rem}
+#a4u-bc .pa-csv label,#a4u-bc .pa-csv .linkbtn{display:inline!important;width:auto}
