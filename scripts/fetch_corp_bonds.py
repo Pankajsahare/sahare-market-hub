@@ -50,7 +50,7 @@ DETAIL_FILE = ROOT / "data" / "corp_details.json"  # जड तपशील (bon
 DETAIL_KEYS = ("ratings", "docs", "address", "trustee", "registrar", "issueMode", "category")
 
 KEEP_DAYS = 30            # इतक्या दिवसांत व्यवहार झालेले bonds यादीत ठेवायचे
-RATING_REFRESH_DAYS = 7   # ratings किती दिवसांनी पुन्हा तपासायचे
+RATING_REFRESH_DAYS = 10  # ratings किती दिवसांनी पुन्हा तपासायचे (10: रोजचा run लहान, Actions मिनिटं वाचतात)
 DEFAULT_REFRESH_DAYS = 28 # AAA/AA (कुठलाही इशारा नसलेले) bonds ची "default" नोंद इतक्या दिवसांनी; बाकीच्यांची दर आठवड्याला
 MAX_NSDL_CALLS = int(os.environ.get("MAX_NSDL_CALLS", "2400"))
 MAX_NSDL_SECONDS = int(os.environ.get("MAX_NSDL_SECONDS", "1800"))  # एका run मध्ये NSDL ला जास्तीत जास्त 30 मिनिटं

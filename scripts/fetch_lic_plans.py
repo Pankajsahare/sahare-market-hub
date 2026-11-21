@@ -60,8 +60,20 @@ def now_ist() -> str:
     return dt.datetime.now(IST).strftime("%Y-%m-%d %H:%M")
 
 
+NET_FAILS = 0   # LIC साईट सलग बंद/हळू असेल तर उरलेले requests वगळतो (Actions मिनिटं वाचवण्यासाठी)
+
+
+def lic_get(url: str, accept: str, timeout: int, retries: int) -> tuple[int, bytes]:
+    global NET_FAILS
+    if NET_FAILS >= 4:
+        return 0, b""
+    code, raw = http_get(url, LIC_HOME, accept=accept, timeout=timeout, retries=retries)
+    NET_FAILS = NET_FAILS + 1 if code == 0 else 0
+    return code, raw
+
+
 def get(url: str, accept: str = "*/*") -> tuple[int, bytes]:
-    return http_get(url, LIC_HOME, accept=accept, timeout=60, retries=2)
+    return lic_get(url, accept, timeout=25, retries=1)
 
 
 def page_text(raw: bytes) -> str:
@@ -184,7 +196,7 @@ def apply_bonus(data: dict) -> list[str]:
     STATUS["bonus"] = {"circular": url}
     if not url:
         return []
-    code, pdf = http_get(url, LIC_HOME, accept="application/pdf", timeout=90, retries=3)
+    code, pdf = lic_get(url, "application/pdf", timeout=60, retries=1)
     if code != 200 or not pdf.startswith(b"%PDF"):
         STATUS["bonus"]["error"] = f"download {code}"
         return []
@@ -460,7 +472,7 @@ def main() -> int:
             st_plan["error"] = "brochure link not found"
             continue
         st_plan["brochure"] = url
-        code, pdf = http_get(url, LIC_HOME, accept="application/pdf", timeout=90, retries=4)
+        code, pdf = lic_get(url, "application/pdf", timeout=60, retries=1)
         st_plan["pdf_http"], st_plan["pdf_bytes"] = code, len(pdf)
         if code != 200 or not pdf.startswith(b"%PDF"):
             st_plan["error"] = "pdf download failed"
