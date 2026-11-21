@@ -368,3 +368,12 @@
 #a4u-bc .tl-k{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.74rem;color:#c3cbdb;margin-top:.2rem}
 #a4u-bc .tl-k i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.3rem;vertical-align:-1px}
 #a4u-bc .tl-k .ki{background:#8fa3cc}#a4u-bc .tl-k .kp{background:#f8b526}
+/* v7.1 — portfolio monthly income chart, favourites in corporate tab */
+#a4u-bc .incw{overflow-x:auto;margin:.6rem 0 .2rem;-webkit-overflow-scrolling:touch}
+#a4u-bc .incw svg{display:block}
+#a4u-bc .tl-k.dk{color:#5f6573}
+#a4u-bc #p-inc-tb tr.prin td{background:#fff8e6}
+#a4u-bc #p-inc-tb tfoot td{border-top:2px solid var(--line);background:#f6f8fa}
+#a4u-bc .tiles.sm .tile .v{font-size:1.15rem}
+#a4u-bc #c-my-b .tw{max-height:min(420px,60vh)}
+#a4u-bc .tl-k.dk .ki{background:#212d45}
