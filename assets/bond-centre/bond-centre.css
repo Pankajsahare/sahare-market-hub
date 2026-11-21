@@ -404,3 +404,22 @@
 @media(max-width:520px){#a4u-bc .res .rinv{text-align:left;width:100%}#a4u-bc .kpy{grid-template-columns:1fr}#a4u-bc .kpy-x{display:none}}
 #a4u-bc .inc-hd{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;justify-content:space-between}
 #a4u-bc .pf-bar input#p-for{min-height:38px;padding:.3rem .6rem;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.85rem}
+/* v7.3 — portfolio “where money sits”, income planner result box */
+#a4u-bc h3.hrow{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+#a4u-bc .pf-ins{margin:.5rem 0 .8rem;padding:.7rem .9rem .7rem 1.9rem;background:#f6f8fb;border-radius:10px;font-size:.88rem}
+#a4u-bc .pf-ins li{margin:.2rem 0}#a4u-bc .pf-ins .warn{color:#a0610a;font-weight:600}
+#a4u-bc .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.8rem}
+#a4u-bc .dcard{border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem;background:#fff}
+#a4u-bc .dcard h4{margin:0 0 .45rem!important;font-size:.92rem!important;color:var(--navy)!important}
+#a4u-bc .hb.hb4{grid-template-columns:minmax(80px,120px) minmax(0,1fr) 38px 78px}
+#a4u-bc .hb.hb4>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#a4u-bc .hb .r{text-align:right}
+#a4u-bc .plres{margin-top:.4rem}
+#a4u-bc .plgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem}
+#a4u-bc .plgrid>div{background:rgba(255,255,255,.06);border-radius:9px;padding:.6rem .75rem;display:flex;flex-direction:column;gap:.1rem}
+#a4u-bc .plgrid span{font-size:.76rem;color:#c3cbdb}#a4u-bc .plgrid b{font-size:1.2rem;color:#fff}#a4u-bc .plgrid small{font-size:.7rem;color:#9aa6bf}
+#a4u-bc .plgrid .lead{background:rgba(248,181,38,.16);border:1px solid rgba(248,181,38,.45)}#a4u-bc .plgrid .lead b{color:var(--gold)}
+#a4u-bc .plchart{margin-top:1rem}#a4u-bc .plchart svg{width:100%;height:auto;display:block}
+#a4u-bc .tl-k .kt{background:none;border-top:2px dashed #fff;height:0;width:14px;border-radius:0;vertical-align:3px}
+#a4u-bc h3.pl-h{margin:1.2rem 0 .5rem!important}
+@media(max-width:700px){#a4u-bc .plgrid{grid-template-columns:1fr 1fr}#a4u-bc .hb.hb4{grid-template-columns:minmax(70px,96px) minmax(0,1fr) 34px 70px;font-size:.8rem}}
