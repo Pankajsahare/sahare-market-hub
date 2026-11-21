@@ -602,6 +602,12 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
                 ytm = ytm_pct(price, coupon, years, freq or 1)
             elif coupon and perp:
                 ytm = round(coupon / price * 100, 2)
+        ytm_x = False
+        if n.get("amortising") and face and n.get("flows") and not perp:
+            ff = full_flows(n, face)                       # part-repaid: खऱ्या cash-flows वरून XIRR (NDX प्रमाणे)
+            xr = xirr_price(ff, today, price / 100 * face + accrued_on(ff, today, coupon, face))
+            if xr is not None and -20 < xr < 60:
+                ytm, est, ytm_x = xr, True, True
         nxt = next((f for f in n.get("flows", []) if f["d"] >= today.isoformat()), None)
         ratings = [dict(r, w=clean_watch(r.get("w"))) for r in n.get("ratings", [])]
         flags = rating_flags(ratings)
@@ -615,7 +621,7 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
             "isin": isin,
             "issuer": n.get("issuer") or b.get("srcName") or isin,
             "coupon": coupon, "price": round(price, 2),
-            "ytm": ytm, "ytmEst": est,
+            "ytm": ytm, "ytmEst": est, "ytmX": ytm_x,
             "maturity": maturity, "perp": perp,
             "tradeDate": b.get("tradeDate"), "exch": b.get("exch"),
             "turnover": round(b.get("turnover") or 0),
@@ -641,6 +647,64 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
     return out
 
 
+def full_flows(n: dict, face: float | None = None) -> list[dict]:
+    """NSDL च्या काही bonds मध्ये मुद्दल परतफेडीच्या (Partial/Full Redemption) दिवशीचं व्याज schedule मध्ये नसतं.
+    तो हप्ता नियमित कूपन-चक्रावर असेल तर: व्याज = तोपर्यंत थकित मुद्दल × कूपन × दिवस / 365 (leap year 366) — NSDL चीच पद्धत.
+    असं केल्याने part-repaid bonds चा XIRR / किंमत NDX सारख्या calculators शी जुळतो."""
+    flows = [dict(f) for f in n.get("flows", []) if f.get("a") is not None]
+    coupon, freq = n.get("coupon"), n.get("freq")
+    face = face or n.get("face")
+    if not flows or not coupon or not freq or freq <= 0 or n.get("cumulative") or not face:
+        return flows
+    period = 365.0 / freq
+    is_int = lambda f: (f.get("e") or "").lower().startswith("interest")
+    int_days = {f["d"] for f in flows if is_int(f)}
+    out, outstanding, last_int = [], float(face), None
+    for f in sorted(flows, key=lambda x: (x["d"], 0 if is_int(x) else 1)):
+        d = dt.date.fromisoformat(f["d"])
+        if is_int(f):
+            last_int = d
+        elif event_code(f.get("e")) == "R":
+            if f["d"] not in int_days and last_int and 0.7 * period <= (d - last_int).days <= 1.3 * period:
+                basis = 366 if (d.year % 4 == 0 and (d.year % 100 != 0 or d.year % 400 == 0)) else 365
+                out.append({"d": f["d"], "a": round(outstanding * coupon / 100 * (d - last_int).days / basis, 2), "e": "Interest", "filled": True})
+                last_int = d
+            outstanding -= f["a"]
+        out.append(f)
+    return out
+
+
+def xirr_price(flows: list[dict], settle: dt.date, dirty: float) -> float | None:
+    """Dirty = Σ CF / (1+r)^((d − settle)/365) → r (% मध्ये). प्रति bond रकमा."""
+    fut = [(dt.date.fromisoformat(f["d"]), f["a"]) for f in flows if f["d"] > settle.isoformat()]
+    if not fut or dirty <= 0:
+        return None
+    pv = lambda r: sum(a / (1 + r) ** ((d - settle).days / 365) for d, a in fut)
+    lo, hi = -0.9, 5.0
+    if pv(lo) < dirty or pv(hi) > dirty:
+        return None
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        if pv(mid) > dirty:
+            lo = mid
+        else:
+            hi = mid
+    return round((lo + hi) / 2 * 100, 2)
+
+
+def accrued_on(flows: list[dict], settle: dt.date, coupon: float | None, face: float | None) -> float:
+    """मागच्या व्याज-तारखेपासून settlement पर्यंतचं व्याज (थकित मुद्दलावर, actual/365)."""
+    if not coupon or not face:
+        return 0.0
+    s = settle.isoformat()
+    prev = [f for f in flows if f["d"] <= s and (f.get("e") or "").lower().startswith("interest")]
+    if not prev:
+        return 0.0
+    repaid = sum(f["a"] for f in flows if f["d"] <= s and event_code(f.get("e")) == "R")
+    days = (settle - dt.date.fromisoformat(prev[-1]["d"])).days
+    return max(0.0, (face - repaid) * coupon / 100 * days / 365)
+
+
 def event_code(e: str | None) -> str:
     """I = व्याज, R = मुद्दल परतफेड (partial/full redemption), O = इतर."""
     e = (e or "").lower()
@@ -656,7 +720,8 @@ def write_schedules(bonds: list[dict], cache: dict, today: dt.date) -> None:
     t = today.isoformat()
     out = {}
     for b in bonds:
-        flows = [[f["d"], f["a"], event_code(f.get("e"))] for f in cache.get(b["isin"], {}).get("flows", [])
+        n = cache.get(b["isin"], {})
+        flows = [[f["d"], f["a"], event_code(f.get("e"))] for f in full_flows(n, b.get("face"))
                  if f["d"] >= t and f.get("a") is not None]
         if flows:
             out[b["isin"]] = flows
