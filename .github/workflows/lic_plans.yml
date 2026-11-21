@@ -1,4 +1,4 @@
-# LIC plans data — रोज सकाळी 9:43 IST ला LIC च्या साईटवरून brochures तपासतो
+# LIC plans data — आठवड्यातून दोनदा (सोम, गुरु) सकाळी 9:43 IST ला LIC च्या साईटवरून brochures तपासतो
 #   (काही बदललं नसेल तर Gemini वापरला जात नाही आणि run 1 मिनिटात संपतो)
 #   scripts/fetch_lic_plans.py → data/lic/lic-plans.json (A4U LIC Calculator plugin हाच वाचतो)
 #                              → data/lic/status.json (प्रत्येक URL चा निकाल)
@@ -8,7 +8,7 @@ name: Update LIC plans data
 
 on:
   schedule:
-    - cron: "13 4 * * *"   # 04:13 UTC = 9:43 AM IST, रोज
+    - cron: "13 4 * * 1,4"   # 04:13 UTC = 9:43 AM IST, सोम + गुरु (brochures क्वचितच बदलतात; Actions मिनिटं वाचतात)
   workflow_dispatch:
     inputs:
       force:
@@ -33,7 +33,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 25
     env:
       LIC_FORCE: ${{ github.event.inputs.force || '0' }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
