@@ -641,7 +641,7 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
             "schedule": any(f["d"] >= today.isoformat() for f in n.get("flows", [])),
             "flags": sorted(set(flags)),
             "liq": liquidity((hist or {}).get(isin, {}), file_days or [], today),
-            "nsdl": "dynamicAt" in n,
+            "vf": "dynamicAt" in n,   # issue details मिळाले आहेत का (public JSON मध्ये स्रोताचं नाव नको)
         })
     out.sort(key=lambda x: x["issuer"])
     return out
@@ -751,7 +751,7 @@ def summary(payload: dict, prev_isins: set[str], stats: dict, trades: bool, secs
     new = [b for b in bonds if b["isin"] not in prev_isins]
     rated = sum(1 for b in bonds if b.get("rating"))
     lines = [("✅" if trades and stats["errors"] <= 50 else "⚠️") + f" Bond Centre data — prices {payload.get('pricesAsOf')}",
-             f"Corporate bonds: {len(bonds)} ({len(new)} new) · rated {rated} · NSDL details {payload['nsdlCoverage']}",
+             f"Corporate bonds: {len(bonds)} ({len(new)} new) · rated {rated} · details {payload['coverage']}",
              f"NSDL: {stats['calls']} calls, {stats['errors']} errors" + (" · unfinished, continues tomorrow" if stats.get("partial") else ""),
              f"Run time: {secs / 60:.0f} min"]
     if not trades:
@@ -794,9 +794,9 @@ def main() -> int:
         "updated": dt.datetime.now(IST).isoformat(timespec="minutes"),
         "pricesAsOf": latest or prev_out.get("pricesAsOf"),
         "ratingsAsOf": rated_dates[-1] if rated_dates else None,
-        "sources": "Prices: BSE & NSE bhavcopy. Details & ratings: NSDL India Bond Info.",
+        "sources": "Prices: BSE & NSE. Ratings: credit rating agencies. Issue details: issuer disclosures.",
         "count": len(bonds),
-        "nsdlCoverage": sum(1 for b in bonds if b["nsdl"]),
+        "coverage": sum(1 for b in bonds if b["vf"]),
         "bonds": bonds,
     }
     write_json(OUT_FILE, payload)
@@ -809,7 +809,7 @@ def main() -> int:
         if isin not in book and cache[isin].get("dynamicAt", cache[isin].get("staticAt", "")) < keep_cut:
             del cache[isin]
     write_json(CACHE_FILE, cache)
-    print(f"Wrote {len(bonds)} bonds; NSDL coverage {payload['nsdlCoverage']}/{len(bonds)}")
+    print(f"Wrote {len(bonds)} bonds; details coverage {payload['coverage']}/{len(bonds)}")
     notify(summary(payload, set(previous), stats, bool(trades), time.time() - t_start))
     return 0
 
