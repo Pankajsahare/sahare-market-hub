@@ -200,7 +200,7 @@ def main() -> int:
         "gsecMaturity": {**prev.get("gsecMaturity", {}), **maturities},
         "policy": cfg.get("policy"),
         "inflation": cfg.get("inflation"),
-        "nsdl": {
+        "mkt": {
             "quarter": info.get("currentQuarter"),
             "outstandingBonds": fnum(info.get("noOfTotalOutstandingBonds")),
             "outstandingCr": fnum(info.get("totalOutstandingAmount")),
@@ -209,7 +209,7 @@ def main() -> int:
             "redemptionsInQuarter": fnum(info.get("noOfRedemptions")),
             "newIssues": tidy_list(nm.get("newbondissues")),
             "maturingSoon": tidy_list(nm.get("dueforredemption")),
-        } if nm else prev.get("nsdl"),
+        } if nm else (prev.get("mkt") or prev.get("nsdl")),
     }
     write_json(OUT_FILE, payload, indent=1)
     for p in pts:
