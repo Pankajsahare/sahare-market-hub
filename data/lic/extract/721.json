@@ -1,0 +1,65 @@
+{
+ "plan_no": null,
+ "uin": "512N278V03",
+ "plan_name": "LIC's New Money Back Plan 25 Years",
+ "min_entry_age": 13,
+ "max_entry_age": 45,
+ "min_maturity_age": null,
+ "max_maturity_age": 70,
+ "policy_terms": [
+  25
+ ],
+ "ppt_options": [
+  20
+ ],
+ "term_to_ppt": null,
+ "min_entry_age_by_term": null,
+ "max_entry_age_by_term": null,
+ "min_bsa": 200000,
+ "bsa_multiples": [
+  [
+   200000,
+   25000
+  ]
+ ],
+ "hsa_rebate_per_1000": [
+  [
+   500000,
+   3.0
+  ]
+ ],
+ "hsa_rebate_by_age": [],
+ "mode_adjust_pct": {
+  "yearly": -2.0,
+  "half": -1.0,
+  "quarter": 0.0,
+  "month": 0.0
+ },
+ "survival_benefit_pct_of_bsa": 15,
+ "guaranteed_addition_per_1000": null,
+ "death_sa_pct_of_bsa": 125,
+ "sample_bsa": 200000,
+ "sample_premiums": [
+  [
+   20,
+   25,
+   12299
+  ],
+  [
+   30,
+   25,
+   12573
+  ],
+  [
+   40,
+   25,
+   13465
+  ],
+  [
+   45,
+   25,
+   14298
+  ]
+ ],
+ "brochure_date_or_version": null
+}
