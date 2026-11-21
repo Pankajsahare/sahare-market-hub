@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-21T20:06+05:30",
+ "updated": "2026-11-21T20:55+05:30",
  "pricesAsOf": "2026-11-20",
  "curve": [
   {
@@ -757,7 +757,7 @@
   "nextRelease": "2026-11-12",
   "source": "MoSPI, released 12 Oct 2026 (provisional)"
  },
- "nsdl": {
+ "mkt": {
   "quarter": "Jan-Mar 2026",
   "outstandingBonds": 25920.0,
   "outstandingCr": 5704789.0,
@@ -852,16 +852,16 @@
     "maturity": "2026-11-21"
    },
    {
-    "isin": "INE134E07174",
+    "isin": "INE134E07182",
     "issuer": "Power Finance Corporation Limited",
-    "sizeCr": 2.863,
+    "sizeCr": 7.772,
     "allotted": "2011-11-21",
     "maturity": "2026-11-21"
    },
    {
-    "isin": "INE134E07182",
+    "isin": "INE134E07174",
     "issuer": "Power Finance Corporation Limited",
-    "sizeCr": 7.772,
+    "sizeCr": 2.863,
     "allotted": "2011-11-21",
     "maturity": "2026-11-21"
    },
@@ -915,6 +915,20 @@
     "maturity": "2026-11-22"
    },
    {
+    "isin": "INE093JA76H5",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.35,
+    "allotted": "2021-10-05",
+    "maturity": "2026-11-23"
+   },
+   {
+    "isin": "INE093JA75H7",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 10.35,
+    "allotted": "2021-10-05",
+    "maturity": "2026-11-23"
+   },
+   {
     "isin": "INE093J079Z2",
     "issuer": "Anand Rathi Global Finance Limited",
     "sizeCr": 10.6375,
@@ -922,7 +936,7 @@
     "maturity": "2026-11-23"
    },
    {
-    "isin": "INE093JA74H0",
+    "isin": "INE093JA73H2",
     "issuer": "Anand Rathi Global Finance Limited",
     "sizeCr": 10.35,
     "allotted": "2021-10-05",
@@ -936,21 +950,7 @@
     "maturity": "2026-11-23"
    },
    {
-    "isin": "INE093JA75H7",
-    "issuer": "Anand Rathi Global Finance Limited",
-    "sizeCr": 10.35,
-    "allotted": "2021-10-05",
-    "maturity": "2026-11-23"
-   },
-   {
-    "isin": "INE093JA76H5",
-    "issuer": "Anand Rathi Global Finance Limited",
-    "sizeCr": 10.35,
-    "allotted": "2021-10-05",
-    "maturity": "2026-11-23"
-   },
-   {
-    "isin": "INE093JA73H2",
+    "isin": "INE093JA74H0",
     "issuer": "Anand Rathi Global Finance Limited",
     "sizeCr": 10.35,
     "allotted": "2021-10-05",
