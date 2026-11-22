@@ -1,0 +1,36 @@
+# assets/ मधली file बदलली की jsDelivr cache साफ करतो — म्हणजे site वर @main ची नवी file लगेच दिसते.
+# Repo public असल्यामुळे Actions minutes मोफत आहेत.
+name: Purge jsDelivr cache
+
+on:
+  push:
+    branches: [main]
+    paths: ["assets/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: purge-jsdelivr
+  cancel-in-progress: true
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Purge changed asset files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || ! git rev-parse -q --verify HEAD~1 >/dev/null; then
+            files=$(git ls-files assets)
+          else
+            files=$(git diff --name-only HEAD~1 HEAD -- assets)
+          fi
+          for f in $files; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/$f")
+            echo "$code  $f"
+          done
