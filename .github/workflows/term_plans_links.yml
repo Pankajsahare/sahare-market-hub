@@ -1,0 +1,58 @@
+# Term plan brochures — आठवड्यातून एकदा (बुधवारी सकाळी 10:17 IST) सगळ्या PDF / plan page links तपासतो
+#   scripts/check_term_plans.py → data/term_plans_status.json
+#   एखादी link सलग 2 आठवडे तुटलेली दिसली तर Telegram वर alert (403 सारखं "bot अडवलं" = alert नाही)
+# हाताने चालवायचं असेल: Actions टॅब → "Check term plan brochure links" → "Run workflow"
+name: Check term plan brochure links
+
+on:
+  schedule:
+    - cron: "47 4 * * 3"   # 04:47 UTC = 10:17 AM IST, बुधवार
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - assets/term-plans/term-plans.json
+      - scripts/check_term_plans.py
+
+permissions:
+  contents: write
+
+concurrency:
+  group: term-plans-links
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Check links
+        run: python scripts/check_term_plans.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/term_plans_status.json
+          if git diff --cached --quiet; then
+            echo "No change"
+          else
+            git commit -m "Update term plan link status"
+            for i in 1 2 3; do
+              git pull --rebase -X theirs && git push && exit 0
+              git rebase --abort 2>/dev/null || true
+              sleep $((i * 10))
+            done
+            exit 1
+          fi

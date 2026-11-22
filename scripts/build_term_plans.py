@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+"""
+Term plan brochures — data file बनवतो
+--------------------------------------
+हाताने तपासलेली links इथे एकाच ठिकाणी आहेत. यावरून assets/term-plans/term-plans.json तयार होते,
+जी advisor4u.in वरचा [a4u_term_brochures] shortcode jsDelivr मधून वाचतो.
+
+नवीन plan / link बदल: खालची COMPANIES यादी बदला → script चालवा (किंवा थेट JSON बदला).
+फक्त Python standard library.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "assets" / "term-plans" / "term-plans.json"
+VERIFIED = "2026-11-23"
+
+# प्रत्येक plan: name, uin (खात्री असेल तरच), pdf (insurer च्या स्वतःच्या साईटवरचा), page, doc (PDF चा प्रकार)
+COMPANIES = [
+    {"company": "LIC of India", "type": "Public", "site": "https://licindia.in", "plans": [
+        {"name": "LIC's Digi Term (Plan 876)", "uin": "512N356V02", "tag": "Online",
+         "page": "https://licindia.in/lics-digi-term-uin-512n356v01"},
+        {"name": "LIC's Yuva Term (Plan 875)", "tag": "Offline",
+         "page": "https://licindia.in/lics-yuva-term-uin-512n355v01"},
+    ]},
+    {"company": "HDFC Life", "type": "Private", "site": "https://www.hdfclife.com", "plans": [
+        {"name": "HDFC Life Click 2 Protect Supreme Plus", "uin": "101N189V04",
+         "pdf": "https://www.hdfclife.com/content/dam/hdfclifeinsurancecompany/products-page/brochure-pdf/HDFC-Life-click-2-protect-supreme-plus.pdf"},
+        {"name": "HDFC Life Click 2 Protect Supreme",
+         "pdf": "https://www.hdfclife.com/content/dam/hdfclifeinsurancecompany/products-page/brochure-pdf/HDFC-Life-click-2-protect-supreme.pdf"},
+    ]},
+    {"company": "SBI Life", "type": "Private", "site": "https://www.sbilife.co.in", "plans": [
+        {"name": "SBI Life eShield Next", "uin": "111N132V02", "tag": "Online"},
+    ]},
+    {"company": "ICICI Prudential Life", "type": "Private", "site": "https://www.iciciprulife.com", "plans": [
+        {"name": "ICICI Pru iProtect Smart Plus", "uin": "105N205V06", "doc": "Presentation",
+         "pdf": "https://www.iciciprulife.com/content/dam/icicipru/download-centre/product-presentations/individual/ICICI_Pru_iProtect_Smart_Plus_Presentation.pdf",
+         "page": "https://www.iciciprulife.com/term-insurance-plans/iprotect-smart-plus-term-plan.html"},
+    ]},
+    {"company": "Axis Max Life", "type": "Private", "site": "https://www.axismaxlife.com", "plans": [
+        {"name": "Axis Max Life Smart Term Plan Plus", "uin": "104N127V05", "doc": "Leaflet",
+         "pdf": "https://www.axismaxlife.com/static-page/assets/homepage/STPP-Leaflet-V05.pdf",
+         "page": "https://www.axismaxlife.com/term-insurance-plans/smart-term-plan-plus.html"},
+        {"name": "Axis Max Life Smart Total Elite Protection Term Plan", "uin": "104N125V07", "doc": "Prospectus",
+         "pdf": "https://www.axismaxlife.com/static-page/assets/homepage/STEP-Prospectus.pdf"},
+    ]},
+    {"company": "Kotak Life", "type": "Private", "site": "https://www.kotaklife.com", "plans": [
+        {"name": "Kotak e-Term", "uin": "107N129V03",
+         "pdf": "https://www.kotaklife.com/assets/images/uploads/insurance-plans/Kotak_e-Term_Plan_Brochure_-_Offline_Final1.pdf"},
+        {"name": "Kotak Term Plan", "uin": "107N005V07",
+         "pdf": "https://www.kotaklife.com/assets/images/uploads/insurance-plans/Kotak_Term_Plan_UIN_107N005V07_Brochure.pdf"},
+    ]},
+    {"company": "Aditya Birla Sun Life", "type": "Private", "site": "https://lifeinsurance.adityabirlacapital.com", "plans": [
+        {"name": "ABSLI Super Term Plan", "uin": "109N153V02",
+         "pdf": "https://lifeinsurance.adityabirlacapital.com/uploads/ABSLI_Super_Term_Plan_V01_Brochure_8b9b57ef0d.pdf",
+         "page": "https://lifeinsurance.adityabirlacapital.com/term-insurance/absli-super-term-plan/"},
+        {"name": "ABSLI Super Term Plan Plus", "doc": "Leaflet",
+         "pdf": "https://lifeinsurance.adityabirlacapital.com/uploads/ABSLI_Super_Term_Plan_Plus_Leaflet_8402d835c7.pdf",
+         "page": "https://lifeinsurance.adityabirlacapital.com/term-insurance/absli-super-term-plan-plus/"},
+    ]},
+    {"company": "Tata AIA Life", "type": "Private", "site": "https://www.tataaia.com", "plans": [
+        {"name": "Tata AIA Sampoorna Raksha Promise", "uin": "110N176V12",
+         "page": "https://www.tataaia.com/life-insurance-plans/term-insurance/sampoorna-raksha-promise.html"},
+    ]},
+    {"company": "Bajaj Life", "aka": "formerly Bajaj Allianz Life", "type": "Private",
+     "site": "https://www.bajajlifeinsurance.com", "plans": [
+        {"name": "Bajaj Life eTouch II", "doc": "Sales literature",
+         "pdf": "https://www.bajajlifeinsurance.com/content/dam/balic-web/pdf/etouch-plans-sl.pdf",
+         "page": "https://www.bajajlifeinsurance.com/term-insurance/term-plans.jsp"},
+    ]},
+    {"company": "PNB MetLife", "type": "Private", "site": "https://www.pnbmetlife.com", "plans": [
+        {"name": "PNB MetLife Mera Term Plan Plus", "uin": "117N126V04", "doc": "Leaflet",
+         "pdf": "https://www.pnbmetlife.com/content/dam/pnb-metlife/docs/product/leaflet/MMTP%20Plus%20-%20Leaflet_tcm47-78812.pdf",
+         "page": "https://www.pnbmetlife.com/insurance-plans/family-protection/pnb-metlife-mera-term-plan-plus.html"},
+    ]},
+    {"company": "IndusInd Nippon Life", "type": "Private", "site": "https://www.indusindnipponlife.com", "plans": [
+        {"name": "IndusInd Nippon Life Super Suraksha Plus", "uin": "121N149V02"},
+        {"name": "IndusInd Nippon Life Super Suraksha Elite"},
+    ]},
+    {"company": "Shriram Life", "type": "Private", "site": "https://www.shriramlife.com", "plans": [
+        {"name": "Shriram Life Online Term Plan", "uin": "128N072V01", "tag": "Online",
+         "page": "https://www.shriramlife.com/life-insurance/online-term-plan"},
+        {"name": "Shriram Life Flexi Shield Plan",
+         "page": "https://www.shriramlife.com/life-insurance/flexi-shield-plan"},
+    ]},
+    {"company": "Canara HSBC Life", "type": "Private", "site": "https://www.canarahsbclife.com", "plans": [
+        {"name": "Canara HSBC Life iSelect Smart360 Term Plan", "uin": "136N080V02",
+         "page": "https://www.canarahsbclife.com/term-insurance/iselect-smart360-term-plan.html"},
+        {"name": "Canara HSBC Life Promise2Secure", "uin": "136N099V01",
+         "pdf": "https://www.canarahsbclife.com/content/dam/chli/pdf/promise2secure/product-brochure.pdf"},
+        {"name": "Canara HSBC Life Young Term Plan",
+         "pdf": "https://www.canarahsbclife.com/content/dam/chli/pdf/young-term-plan/product-brochure.pdf"},
+    ]},
+    {"company": "IndiaFirst Life", "type": "Private", "site": "https://www.indiafirstlife.com", "plans": [
+        {"name": "IndiaFirst Life Elite Term Plan", "uin": "143N070V01",
+         "pdf": "https://www.indiafirstlife.com/content/dam/ifliwebsite/in/en/content-fragment/product-pages/indiafirst-life-elite-term-plan/indiafirst-life-elite-term-plan-brochure.pdf",
+         "page": "https://www.indiafirstlife.com/term-insurance-plans/indiafirst-life-elite-term-plan"},
+        {"name": "IndiaFirst Life Super Protection Plan", "uin": "143N075V01",
+         "pdf": "https://cmgt.indiafirstlife.com/cmgt/indiafirst-life-super-protection-plan-brochure.pdf"},
+    ]},
+    {"company": "Sahara India Life", "type": "Private", "site": "",
+     "note": "Not accepting new business. IRDAI barred new policies in 2017 and in 2023 ordered the transfer of its policies to SBI Life.",
+     "plans": []},
+    {"company": "Ageas Federal Life", "type": "Private", "site": "https://www.ageasfederal.com", "plans": [
+        {"name": "Ageas Federal Life Insurance iSecure Plan", "uin": "135N088V02", "tag": "Online",
+         "page": "https://ageasfederal.com/term-insurance-plans/isecure-plan"},
+    ]},
+    {"company": "Bandhan Life", "type": "Private", "site": "https://www.bandhanlife.com", "plans": [
+        {"name": "Bandhan Life iTerm Prime", "uin": "138N084V03",
+         "pdf": "https://www.bandhanlife.com/sites/default/files/asset/2026-04/Bandhan%20Life%20iTerm%20Prime%20Brochure.pdf"},
+        {"name": "Bandhan Life iTerm Elite", "uin": "138N095V01",
+         "pdf": "https://www.bandhanlife.com/sites/default/files/asset/2026-03/Bandhan%20Life%20iTerm%20Elite%20Brochure.pdf"},
+    ]},
+    {"company": "Bharti AXA Life", "type": "Private", "site": "https://www.bhartiaxa.com", "plans": [
+        {"name": "Bharti AXA Life Flexi Term Pro", "uin": "130N103V03", "doc": "Sales literature",
+         "pdf": "https://bhartiaxa.com/sites/default/files/2024-09/bharti-axa-life-flexi-term-pro-sales-literature.pdf",
+         "page": "https://www.bhartiaxa.com/term-insurance/flexi-term-pro"},
+    ]},
+    {"company": "Pramerica Life", "type": "Private", "site": "https://pramericalife.in", "plans": [
+        {"name": "Pramerica Life RockSolid Term Insurance", "uin": "140N079V01",
+         "pdf": "https://pramericalife.in/admin/assets/fileUpload/1773813288-PRAMERICA_ROCKSOLID%20TERM%20INSURANCE_2026_MAR_BROCHURE_V4.pdf"},
+        {"name": "Pramerica Life Saral Jeevan Bima", "uin": "140N073V01",
+         "pdf": "https://pramericalife.in/admin/assets/fileUpload/1773812314-PRAMERICA_LIFE_SARAL%20JEEVAN_BIMA_2026_MAR_BROCHURE_V6.pdf",
+         "page": "https://pramericalife.in/term-plans/pramerica-life-saral-jeevan-bima"},
+    ]},
+    {"company": "Star Union Dai-ichi Life", "type": "Private", "site": "https://www.sudlife.in", "plans": [
+        {"name": "SUD Life Smart Term Plan", "uin": "142N096V01"},
+    ]},
+    {"company": "Edelweiss Life", "type": "Private", "site": "https://www.edelweisslife.in", "plans": [
+        {"name": "Edelweiss Life Zindagi Protect Plus", "uin": "147N080V01"},
+    ]},
+    {"company": "CreditAccess Life", "type": "Private", "site": "https://www.creditaccesslife.com",
+     "note": "Offers group / credit-linked micro-insurance through lenders. No individual retail term plan.",
+     "plans": []},
+    {"company": "Aviva India", "type": "Private", "site": "https://www.avivaindia.com", "plans": [
+        {"name": "Aviva Signature 3D Term Plan", "uin": "122N148V02",
+         "pdf": "https://avivaindia.com/sites/default/files/Aviva_Signature_3D_Term_Plan_122N148V01_Brochure.pdf",
+         "page": "https://avivaindia.com/aviva-signature-3d-term-plan/"},
+    ]},
+    {"company": "Generali Central Life", "aka": "formerly Future Generali India Life", "type": "Private",
+     "site": "https://www.generalicentrallife.com", "plans": [
+        {"name": "Generali Central Care Plus"},
+    ]},
+]
+
+
+def main() -> None:
+    for c in COMPANIES:
+        for p in c["plans"]:
+            p.setdefault("doc", "Brochure" if p.get("pdf") else "")
+    data = {"verified_on": VERIFIED, "count": len(COMPANIES), "companies": COMPANIES}
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    n_plans = sum(len(c["plans"]) for c in COMPANIES)
+    n_pdf = sum(1 for c in COMPANIES for p in c["plans"] if p.get("pdf"))
+    print(f"{OUT.relative_to(ROOT)}: {len(COMPANIES)} companies, {n_plans} plans, {n_pdf} direct PDFs")
+
+
+if __name__ == "__main__":
+    main()

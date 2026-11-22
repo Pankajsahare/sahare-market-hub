@@ -1,0 +1,39 @@
+# S5: नवीन "Term Plan Brochures" पेजची घोषणा Telegram channel वर — फक्त हाताने, एकदाच चालवायचा
+#   Actions टॅब → "Announce term brochures page" → "Run workflow" → page URL तपासा → Run
+#   Channel साठी secret TELEGRAM_CHANNEL_ID (उदा. @saharewealth) लागतो; तो नसेल तर नेहमीच्या TELEGRAM_CHAT_ID वर (तुम्हालाच) जातो
+#   Bot त्या channel मध्ये admin असायला हवा.
+name: Announce term brochures page
+
+on:
+  workflow_dispatch:
+    inputs:
+      page_url:
+        description: "Live page URL"
+        required: true
+        default: "https://www.advisor4u.in/term-insurance-brochures/"
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      CHAT: ${{ secrets.TELEGRAM_CHANNEL_ID || secrets.TELEGRAM_CHAT_ID }}
+      PAGE_URL: ${{ github.event.inputs.page_url }}
+    steps:
+      - name: Post to Telegram
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$CHAT" ]; then echo "Telegram secrets missing"; exit 1; fi
+          MSG=$(printf '%s\n\n%s\n%s\n\n%s\n%s' \
+            "📄 Term Insurance Plan Brochures — all insurers, one page" \
+            "Official brochure PDFs and plan pages of 24 life insurers in India." \
+            "Search by insurer, plan name or UIN, and share the link in one tap." \
+            "👉 $PAGE_URL" \
+            "Need help understanding a plan? Message us: https://wa.me/919405908605")
+          code=$(curl -s -o /tmp/tg.json -w '%{http_code}' "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT}" --data-urlencode "text=${MSG}")
+          cat /tmp/tg.json; echo
+          [ "$code" = "200" ]
