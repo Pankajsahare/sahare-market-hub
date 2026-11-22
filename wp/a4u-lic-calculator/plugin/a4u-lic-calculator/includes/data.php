@@ -20,7 +20,7 @@ function a4u_lic_std_mode() {
 function a4u_lic_brochure_keys() {
 	return array( 'name', 'type', 'min_age', 'max_age', 'min_sa', 'max_maturity', 'min_maturity', 'terms', 'ppt_map', 'ppt_options', 'ppt_max_age_sum',
 		'maturity_age', 'survival_pct', 'ga_per_1000', 'tail_age', 'min_age_by_term', 'sa_slabs', 'rebate_slabs', 'rebate_bands', 'mode_adj',
-		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age' );
+		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands' );
 }
 
 function a4u_lic_default_plans() {
@@ -124,6 +124,8 @@ function a4u_lic_default_plans() {
 			'rebate_slabs' => array(), // brochure मध्ये टक्के दिलेले नाहीत — admin मध्ये भरा
 			'mode_adj' => array( 'yearly' => 0, 'half' => 1.75, 'quarter' => 2.5, 'month' => 3.25 ), // Utsav मध्ये rebate नाही, loading आहे
 			'death_pct' => 100, 'riders' => array( 'adb', 'addb', 'term', 'pwb' ),
+			// v3.2: Guaranteed Surrender Value factors + loan नियम (brochure para 12–13)
+			'gsv_prem' => array( array( 1, 0 ), array( 2, 30 ), array( 3, 35 ), array( 4, 50 ), array( 8, 51.48 ), array( 9, 52.96 ), array( 10, 54.44 ), array( 11, 55.93 ), array( 12, 57.41 ), array( 13, 58.89 ), array( 14, 60.37 ), array( 15, 61.85 ), array( 16, 63.33 ), array( 17, 64.81 ), array( 18, 66.30 ), array( 19, 67.78 ), array( 20, 69.26 ), array( 21, 70.74 ), array( 22, 72.22 ), array( 23, 73.70 ), array( 24, 75.19 ), array( 25, 76.67 ), array( 26, 78.15 ), array( 27, 79.63 ), array( 28, 81.11 ), array( 29, 82.59 ), array( 30, 84.07 ), array( 31, 85.56 ), array( 32, 87.04 ), array( 33, 88.52 ), array( 34, 90 ) ), 'gsv_add' => array( array( 1, 0 ), array( 3, 2 ), array( 4, 3.03 ), array( 5, 4.06 ), array( 6, 5.09 ), array( 7, 6.13 ), array( 8, 7.16 ), array( 9, 8.19 ), array( 10, 9.22 ), array( 11, 10.25 ), array( 12, 11.28 ), array( 13, 12.31 ), array( 14, 13.34 ), array( 15, 14.38 ), array( 16, 15.41 ), array( 17, 16.44 ), array( 18, 17.47 ), array( 19, 18.50 ), array( 20, 19.53 ), array( 21, 20.56 ), array( 22, 21.59 ), array( 23, 22.63 ), array( 24, 23.66 ), array( 25, 24.69 ), array( 26, 25.72 ), array( 27, 26.75 ), array( 28, 27.78 ), array( 29, 28.81 ), array( 30, 29.84 ), array( 31, 30.88 ), array( 32, 31.91 ), array( 33, 32.94 ), array( 34, 33.97 ), array( 35, 35 ) ), 'gsv_less_income' => 1, 'loan_from' => 2,
 			'sample_sa' => 500000, 'samples' => array( array( 10, 5, 109575 ), array( 10, 8, 72600 ), array( 10, 12, 44250 ), array( 10, 16, 29900 ), array( 30, 5, 110150 ), array( 30, 8, 72600 ), array( 30, 12, 44275 ), array( 30, 16, 30025 ), array( 50, 5, 118625 ), array( 50, 8, 72600 ), array( 50, 12, 45225 ), array( 50, 16, 33475 ) ),
 			'brochure' => $b . "1319704/Jeevan+Utsav+Sales+Brochure_141025.pdf/da84d78a-ef72-c80f-b8df-83bb7565f087",
 		) ),
@@ -139,6 +141,11 @@ function a4u_lic_default_plans() {
 				array( 65, array( array( 1000000, 5 ), array( 2500000, 9 ), array( 5000000, 10 ) ) ),
 			),
 			'death_sp' => array( array( 200, 1.25 ) ), 'death_pct' => 100, 'riders' => array(), 'mode_adj' => array(),
+			// v3.2: GSV (brochure para 7) — पहिली 3 वर्षे 75%, नंतर 90% single premium; GA वर factor; loan GA काळात GA-period नुसार
+			'gsv_prem' => array( array( 1, 75 ), array( 4, 90 ) ), 'gsv_add' => array( array( 1, 0 ), array( 3, 2 ), array( 4, 3.03 ), array( 5, 4.06 ), array( 6, 5.09 ), array( 7, 6.13 ), array( 8, 7.16 ), array( 9, 8.19 ), array( 10, 9.22 ), array( 11, 10.25 ), array( 12, 11.28 ), array( 13, 12.31 ), array( 14, 13.34 ), array( 15, 14.38 ), array( 16, 15.41 ), array( 17, 16.44 ), array( 18, 17.47 ), array( 19, 18.50 ), array( 20, 19.53 ), array( 21, 20.56 ), array( 22, 21.59 ), array( 23, 22.63 ), array( 24, 23.66 ), array( 25, 24.69 ), array( 26, 25.72 ), array( 27, 26.75 ), array( 28, 27.78 ), array( 29, 28.81 ), array( 30, 29.84 ), array( 31, 30.88 ), array( 32, 31.91 ), array( 33, 32.94 ), array( 34, 33.97 ), array( 35, 35 ) ), 'gsv_less_income' => 1, 'loan_from' => 2,
+			'loan_ga_bands' => array( array( 7, 60 ), array( 11, 50 ), array( 15, 40 ) ),
+			// खरी LIC quotation (Sep 2026): वय 3, GA period 14, SA 5 लाख, single premium ₹3,20,500 (riders नाहीत)
+			'points' => array( '3|14' => 641.0 ), 'quotes' => array( array( 3, 14, 320500, 500000, '2026-09-12', 641.0 ) ),
 			'sample_sa' => 500000, 'samples' => array( array( 10, 8, 464150 ), array( 10, 12, 361875 ), array( 10, 16, 285725 ), array( 30, 8, 464150 ), array( 30, 12, 361875 ), array( 30, 16, 286725 ), array( 50, 8, 464150 ), array( 50, 12, 361875 ), array( 50, 16, 300800 ) ),
 			'brochure' => $b . "1639835/LIC_Jeevan+Utsav++Single+Premium_Sales+Brochure_English.pdf/4f48bd54-fab2-1b97-cc38-fb19dc663399",
 		) ),
@@ -188,6 +195,12 @@ function a4u_lic_defaults() {
 			'brand_phone'    => '9405908605',
 			'brand_email'    => 'info@advisor4u.in',
 			'brand_web'      => 'www.advisor4u.in',
+			// v3.2: PDF advisor card (LIC report सारखा)
+			'agent_title'    => 'Financial Advisor',
+			'agent_address'  => '46, Bhande Plot, Umred Road, Nagpur - 440024',
+			'agent_email'    => 'advisor4u.insurance@gmail.com',
+			'photo_url'      => '', // रिकामं = plugin मधला फोटो
+			'loan_rate'      => 9.5, // LIC policy loan व्याज % (brochure 2025-26) — loan मर्यादेसाठी
 			'logo_url'       => '', // रिकामं = plugin मधला logo
 			'color_gold'     => '#B8924A',
 			'color_green'    => '#3F5A22',

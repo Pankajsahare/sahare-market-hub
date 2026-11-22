@@ -220,3 +220,63 @@
 .a4p table.a4p-rr tr.sel td, .a4p table.a4p-rr tr.sel th { background: #eef3e6; font-weight: 700; }
 .a4p table.a4p-t tr.tot th, .a4p table.a4p-t tr.tot td { font-weight: 700; border-top: 2px solid var(--green, #3F5A22); }
 .a4u-pv-bar select { max-width: 160px; }
+
+/* v3.2: LIC report सारखा भाग (screen) */
+.a4u-rep { margin: 14px 0; }
+.a4u-rep h4 { margin: 16px 0 6px; color: var(--a4u-blue); }
+.a4u-paybox { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.a4u-paybox > div { background: var(--a4u-bg); border: 1px solid var(--a4u-line); border-radius: 11px; padding: 12px; text-align: center; }
+.a4u-paybox > div.get { background: #eef8f1; border-color: #bfe3cb; }
+.a4u-paybox span { display: block; font-size: .85em; color: #5b6b80; }
+.a4u-paybox b { display: block; font-size: 1.35em; color: var(--a4u-blue); }
+.a4u-paybox .get b { color: #1f8f4e; }
+.a4u-paybox small { display: block; font-size: .78em; color: #3b4a5e; margin-top: 2px; }
+.a4u-tl svg { width: 100%; height: auto; display: block; }
+.a4u-tl-leg { font-size: .8em; color: #5b6b80; margin: 2px 0 0; }
+.a4u-tl-leg .k { display: inline-block; width: 12px; height: 8px; border-radius: 2px; vertical-align: middle; margin: 0 4px 0 8px; }
+.a4u-tl-leg .k.pay { background: #0b4ea2; } .a4u-tl-leg .k.cov { background: #1f8f4e; opacity: .35; } .a4u-tl-leg .k.get { background: #1f8f4e; }
+.a4u-bct { font-size: .82em; white-space: nowrap; }
+.a4u-bct tr.tot td { font-weight: 700; border-top: 2px solid var(--a4u-blue); }
+@media (max-width: 480px) { .a4u-paybox { grid-template-columns: 1fr; } }
+
+/* v3.2: PDF report pages */
+.a4p-plan { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
+.a4p-plan h1 { font-size: 26px; margin: 0; color: var(--green, #3F5A22); line-height: 1.2; }
+.a4p-plan .no { font-size: 13px; color: #6b6f62; font-weight: 600; }
+.a4p-cust { margin: 10px 0 6px; font-size: 14px; } .a4p-cust b { color: var(--green, #3F5A22); }
+.a4p-desc { margin: 4px 0 10px; color: #3b4433; }
+.a4p-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.a4p-2col .a4p-card { margin: 6px 0; }
+.a4p-feat { list-style: none; padding: 0; margin: 0; }
+.a4p-feat li { padding: 5px 0 5px 22px; border-bottom: 1px dashed #e3dccb; position: relative; font-size: 12.5px; }
+.a4p-feat li::before { content: "✓"; position: absolute; left: 2px; top: 4px; color: var(--gold, #B8924A); font-weight: 700; }
+.a4p-feat li b { color: var(--green, #3F5A22); }
+.a4p-tl img { width: 100%; height: auto; display: block; }
+.a4p-tlleg { font-size: 11.5px; color: #5b5f52; margin: 2px 0 12px; }
+.a4p-tlleg i { display: inline-block; width: 14px; height: 9px; border-radius: 2px; vertical-align: middle; margin: 0 5px 0 12px; }
+.a4p-modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+.a4p-modes div { border: 1px solid #e3dccb; border-radius: 9px; padding: 9px; text-align: center; background: #fff; position: relative; }
+.a4p-modes div.sel { border: 2px solid var(--green, #3F5A22); background: #f3f6ee; }
+.a4p-modes div.sel::after { content: "✓"; position: absolute; top: 4px; right: 8px; color: var(--green, #3F5A22); font-weight: 700; }
+.a4p-modes span { display: block; font-size: 11px; color: #5b5f52; } .a4p-modes b { font-size: 16px; color: var(--green, #3F5A22); }
+.a4p-perday { text-align: center; font-size: 15px; margin: 6px 0 12px; } .a4p-perday b { color: var(--gold, #B8924A); font-size: 19px; }
+.a4p-pg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.a4p-pg div { border-radius: 10px; padding: 12px; text-align: center; background: #f4f1e6; }
+.a4p-pg div.get { background: #eef3e6; }
+.a4p-pg span { display: block; font-size: 12px; color: #5b5f52; } .a4p-pg b { font-size: 21px; color: var(--green, #3F5A22); }
+.a4p-every { text-align: center; margin: 10px 0; font-size: 14px; font-weight: 600; color: var(--green, #3F5A22); }
+.a4p-how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.a4p-how div { border: 1px solid #e3dccb; border-top: 4px solid var(--gold, #B8924A); border-radius: 9px; padding: 10px; background: #fbf9f3; min-height: 104px; }
+.a4p-how b { display: block; color: var(--green, #3F5A22); margin-bottom: 4px; } .a4p-how p { margin: 0; font-size: 12px; }
+.a4p-why { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.a4p-why div { display: flex; gap: 10px; align-items: center; border-radius: 9px; padding: 10px 12px; background: #f3f6ee; font-size: 12.5px; }
+.a4p-why svg { flex: 0 0 34px; }
+.a4p table.a4p-bct { font-size: 9.6px; }
+.a4p table.a4p-bct th, .a4p table.a4p-bct td { padding: 3.2px 4px; white-space: nowrap; }
+.a4p table.a4p-bct thead th { white-space: normal; font-size: 9.2px; line-height: 1.15; vertical-align: bottom; }
+.a4p table.a4p-bct td:first-child, .a4p table.a4p-bct th:first-child { text-align: center; }
+.a4p-me { display: flex; gap: 16px; align-items: center; }
+.a4p-me img.ph { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold, #B8924A); }
+.a4p-me p { margin: 0; line-height: 1.55; font-size: 12.5px; }
+.a4p-banner + .a4p-plan { margin-top: 44px; }
+.a4p-plan { flex-wrap: wrap; } .a4p-plan h1 { flex: 1 1 100%; } .a4p-plan .no { white-space: nowrap; }

@@ -47,6 +47,18 @@ function a4u_lic_install() {
 				if ( ! empty( $dp['closed'] ) ) { $d['plans'][ $id ]['active'] = 0; }
 			}
 		}
+		// v3.2 (db 9): GSV/loan नियम नव्याने भर; 883 ची खरी quotation (आधी नसल्यास)
+		if ( $old_ver < 9 ) {
+			foreach ( array( 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands' ) as $k ) {
+				foreach ( $def['plans'] as $id => $dp ) {
+					if ( isset( $d['plans'][ $id ] ) && array_key_exists( $k, $dp ) ) { $d['plans'][ $id ][ $k ] = $dp[ $k ]; }
+				}
+			}
+			if ( isset( $d['plans']['883'] ) && empty( $d['plans']['883']['points']['3|14'] ) ) {
+				$d['plans']['883']['points']           = (array) ( $d['plans']['883']['points'] ?? array() ) + $def['plans']['883']['points'];
+				$d['plans']['883']['quotes']           = array_merge( (array) ( $d['plans']['883']['quotes'] ?? array() ), $def['plans']['883']['quotes'] );
+			}
+		}
 		foreach ( $d['plans'] as $id => $p ) {
 			$d['plans'][ $id ]['rates'] = a4u_lic_rates_to_map( $p['rates'] ?? array() );
 			foreach ( (array) ( $p['history'] ?? array() ) as $i => $h ) {

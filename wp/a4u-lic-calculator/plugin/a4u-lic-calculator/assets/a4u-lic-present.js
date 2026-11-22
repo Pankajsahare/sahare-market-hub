@@ -1,4 +1,4 @@
-/* A4U LIC Calculator v3.1 — branded presentation + PDF (lazy-loaded) */
+/* A4U LIC Calculator v3.2 — branded presentation + PDF (lazy-loaded) */
 (function () {
 	'use strict';
 	var A = window.A4U_LIC_API;
@@ -52,6 +52,34 @@
 			solicit: 'Insurance is the subject matter of solicitation. (विमा हा विनंतीचा विषय आहे.)',
 			rr: 'हप्त्यांचा तक्ता (Ready Reckoner)', rrsub: 'विमा रक्कम {sa} साठी वय व मुदतीनुसार हप्ता', rryr: 'वार्षिक हप्ता', rrsp: 'एकरकमी हप्ता', rrnote: '— म्हणजे त्या वयाला ती मुदत घेता येत नाही.',
 			mix: 'सुचवलेला योजनांचा संच', mixtot: 'एकूण', first: 'पहिल्या वर्षाचा हप्ता', mixirr: 'एकत्रित परतावा (IRR, अंदाजे)', illid: 'Illustration क्रमांक', mb: 'मनी बॅक हप्ता'
+,
+			md: 'मुदतपूर्ती तपशील', youpay: 'तुम्ही भरता', youget: 'तुम्हाला मिळते', lcover: 'जीवन विमा संरक्षण', lumpsum: 'एकरकमी रक्कम', income: 'वार्षिक उत्पन्न', mback: 'मनी बॅक',
+			perday: 'म्हणजे दिवसाला फक्त {d}', every1: 'तुम्ही भरलेल्या प्रत्येक ₹1 मागे ₹{x} परत', pchart: 'प्रीमियम तक्ता', paytot: 'तुम्ही एकूण भरता', gettot: 'तुम्हाला एकूण मिळते', gain: 'फायदा',
+			how: 'योजना कशी काम करते', why: 'LIC च का?', bct: 'लाभ आणि संरक्षण तक्ता', opt2: 'फ्लेक्सी उत्पन्न — रक्कम न काढल्यास',
+			c_age: 'वय', c_yr: 'वर्ष', c_prem: 'प्रीमियम', c_cum: 'एकूण प्रीमियम', c_add: 'GA / बोनस (वर्ष)', c_cumadd: 'GA / बोनस (एकूण)', c_cover: 'सामान्य मृत्यू संरक्षण',
+			c_acc: 'अपघाती मृत्यू संरक्षण', c_loan: 'कर्ज*', c_cv: 'रोख मूल्य*', c_ret: 'परतावा', c_inc: 'जमा झालेले उत्पन्न', c_bal: '5.5% ने जमा रक्कम',
+			cvnote: '* कर्ज आणि रोख मूल्य LIC brochure मधील किमान हमी समर्पण मूल्यावर (GSV) आधारित आहेत. प्रत्यक्ष विशेष समर्पण मूल्य (SSV) साधारणपणे जास्त असते.',
+			risknote: '8 वर्षांखालील मुलासाठी जोखीम संरक्षण उशिरा सुरू होते; तोपर्यंत मृत्यू लाभ म्हणजे भरलेला प्रीमियम परत.',
+			totpaid: 'एकूण भरलेला प्रीमियम', totret: 'एकूण परतावा',
+			m_sa: 'मूळ विमा रक्कम', m_ga: 'हमी वाढ (Guaranteed Additions)', m_srb: 'बोनस (अंदाजे)', m_fab: 'अंतिम अतिरिक्त बोनस (अंदाजे)', m_inc: 'दरवर्षी उत्पन्न', m_incage: 'उत्पन्न सुरू होण्याचे वय',
+			m_tsurv: 'एकूण हयाती लाभ', m_mat: 'मुदतपूर्ती रक्कम', m_matage: 'मुदतपूर्तीचे वय', m_mb: 'मनी बॅक — वय', m_coverto: 'विमा संरक्षण या वयापर्यंत',
+			h_prem: 'प्रीमियम', h_cov: 'संरक्षण', h_mat: 'मुदतपूर्ती', h_acc: 'वाढ', h_tax: 'कर', h_feat: 'वैशिष्ट्ये',
+			t_prem: '{p} वर्षे {m} {i} भरा.', t_prem1: 'एकदाच {i} भरा.', t_cov: 'पॉलिसी काळात {a} ते {b} जीवन विमा संरक्षण.', t_mat: 'वय {g} ला {m} मिळतील.', t_mat0: 'वय {g} पासून दरवर्षी {s} मिळतील.',
+			t_acc_ga: 'दर ₹1000 विमा रकमेमागे दरवर्षी {r} हमी वाढ.', t_acc_b: 'LIC दरवर्षी बोनस जाहीर करते (गृहीत {r} प्रति ₹1000).', t_acc_n: 'योजनेनुसार हमी असलेली रक्कम.',
+			t_tax: 'प्रीमियमवर कलम 80C आणि मुदतपूर्तीवर कलम 10(10D) — अटींनुसार.', t_feat: 'कर्ज व समर्पण सुविधा, पर्यायी रायडर आणि नामनिर्देशन.',
+			w1: 'भारत सरकारच्या मालकीची कंपनी', w2: 'पॉलिसीच्या रकमेची केंद्र सरकारची हमी (कलम 37, LIC कायदा 1956)', w3: '1956 पासून कुटुंबांच्या सेवेत', w4: 'देशभर शाखा आणि एजंट',
+			feat: 'योजनेची वैशिष्ट्ये', f_death: 'मृत्यू लाभ', f_mat: 'मुदतपूर्ती लाभ', f_add: 'वाढ', f_tax: 'आयकर', f_surr: 'समर्पण (Surrender)', f_loan: 'कर्ज',
+			fv_death: 'किमान {d} (भरलेल्या प्रीमियमच्या 105% पेक्षा कमी नाही)', fv_tax: 'कलम 80C व 10(10D), अटींनुसार', fv_surr: '{y} वर्षांनंतर उपलब्ध', fv_loan: '{y} वर्षांनंतर, समर्पण मूल्यावर उपलब्ध',
+			plandet: 'योजनेचा तपशील', riders: 'निवडलेले रायडर', none: 'नाही', custom: 'यांच्यासाठी खास तयार केलेले सादरीकरण',
+			d_endowment: 'बचत आणि संरक्षण देणारी योजना. तुम्हाला काही झाले तर कुटुंबाला आर्थिक आधार, आणि मुदतपूर्तीला बोनससह एकरकमी रक्कम.',
+			d_lakshya: 'मुलांच्या ध्येयांसाठी योजना. तुम्हाला काही झाले तर कुटुंबाला वार्षिक उत्पन्न, आणि मुदतपूर्तीची पूर्ण रक्कम वेळेवर मिळते.',
+			d_labh: 'कमी वर्षे प्रीमियम भरण्याची बचत योजना. पूर्ण मुदतभर संरक्षण आणि मुदतपूर्तीला बोनससह एकरकमी रक्कम.',
+			d_anand: 'मुदतपूर्तीनंतरही विमा संरक्षण चालू राहणारी एंडोमेंट योजना.',
+			d_umang: 'प्रीमियम भरून झाल्यावर दरवर्षी हमी उत्पन्न आणि शेवटी एकरकमी रक्कम देणारी आजीवन योजना.',
+			d_utsav: 'प्रीमियम भरून झाल्यावर आयुष्यभर दरवर्षी हमी उत्पन्न आणि वय 100 पर्यंत विमा संरक्षण.',
+			d_utsav_sp: 'एकदाच प्रीमियम भरण्याची योजना — हमी वाढ आणि आयुष्यभर हमी उत्पन्नाचे पर्याय.',
+			d_single: 'एकदाच भरा, पूर्ण मुदतभर संरक्षण आणि मुदतपूर्तीला बोनससह एकरकमी रक्कम.',
+			d_moneyback: 'मनी बॅक योजना: ठराविक अंतराने विमा रकमेचा काही भाग, आणि उरलेली रक्कम बोनससह मुदतपूर्तीला.'
 		},
 		hi: {
 			ill: 'लाभ का उदाहरण (Benefit Illustration)', pfor: 'के लिए', pon: 'दिनांक', pby: 'प्रस्तुतकर्ता', details: 'आपकी योजना का विवरण',
@@ -72,7 +100,34 @@
 			pv: 'कुल लाभ आज के मूल्य में', pvnote: '{i}% वार्षिक महंगाई मानकर', tax: 'कर संबंधी ध्यान देने योग्य बातें',
 			solicit: 'Insurance is the subject matter of solicitation. (बीमा आग्रह की विषय वस्तु है।)',
 			rr: 'प्रीमियम तालिका (Ready Reckoner)', rrsub: 'बीमा राशि {sa} के लिए आयु व अवधि अनुसार प्रीमियम', rryr: 'वार्षिक प्रीमियम', rrsp: 'एकमुश्त प्रीमियम', rrnote: '— यानी उस आयु पर वह अवधि उपलब्ध नहीं।',
-			mix: 'सुझाया गया योजना संयोजन', mixtot: 'कुल', first: 'पहले वर्ष का प्रीमियम', mixirr: 'संयुक्त रिटर्न (IRR, अनुमानित)', illid: 'Illustration क्रमांक', mb: 'मनी बैक किस्त'
+			mix: 'सुझाया गया योजना संयोजन', mixtot: 'कुल', first: 'पहले वर्ष का प्रीमियम', mixirr: 'संयुक्त रिटर्न (IRR, अनुमानित)', illid: 'Illustration क्रमांक', mb: 'मनी बैक किस्त',
+			md: 'परिपक्वता विवरण', youpay: 'आप भरते हैं', youget: 'आपको मिलता है', lcover: 'जीवन बीमा सुरक्षा', lumpsum: 'एकमुश्त राशि', income: 'वार्षिक आय', mback: 'मनी बैक',
+			perday: 'यानी रोज़ सिर्फ़ {d}', every1: 'आपके हर ₹1 पर ₹{x} वापस', pchart: 'प्रीमियम चार्ट', paytot: 'आप कुल भरते हैं', gettot: 'आपको कुल मिलता है', gain: 'लाभ',
+			how: 'योजना कैसे काम करती है', why: 'LIC ही क्यों?', bct: 'लाभ और सुरक्षा तालिका', opt2: 'फ्लेक्सी आय — राशि न निकालने पर',
+			c_age: 'आयु', c_yr: 'वर्ष', c_prem: 'प्रीमियम', c_cum: 'कुल प्रीमियम', c_add: 'GA / बोनस (वर्ष)', c_cumadd: 'GA / बोनस (कुल)', c_cover: 'सामान्य मृत्यु सुरक्षा',
+			c_acc: 'दुर्घटना मृत्यु सुरक्षा', c_loan: 'ऋण*', c_cv: 'नकद मूल्य*', c_ret: 'रिटर्न', c_inc: 'जमा आय', c_bal: '5.5% पर जमा राशि',
+			cvnote: '* ऋण और नकद मूल्य LIC ब्रोशर के न्यूनतम गारंटीड सरेंडर मूल्य (GSV) पर आधारित हैं। वास्तविक स्पेशल सरेंडर मूल्य (SSV) आमतौर पर अधिक होता है।',
+			risknote: '8 वर्ष से कम आयु के बच्चे के लिए जोखिम सुरक्षा बाद में शुरू होती है; तब तक मृत्यु लाभ भरे गए प्रीमियम की वापसी है।',
+			totpaid: 'कुल भरा गया प्रीमियम', totret: 'कुल रिटर्न',
+			m_sa: 'मूल बीमा राशि', m_ga: 'गारंटीड एडिशन', m_srb: 'बोनस (अनुमानित)', m_fab: 'अंतिम अतिरिक्त बोनस (अनुमानित)', m_inc: 'हर साल आय', m_incage: 'आय शुरू होने की आयु',
+			m_tsurv: 'कुल उत्तरजीविता लाभ', m_mat: 'परिपक्वता राशि', m_matage: 'परिपक्वता आयु', m_mb: 'मनी बैक — आयु', m_coverto: 'बीमा सुरक्षा इस आयु तक',
+			h_prem: 'प्रीमियम', h_cov: 'सुरक्षा', h_mat: 'परिपक्वता', h_acc: 'वृद्धि', h_tax: 'कर', h_feat: 'विशेषताएँ',
+			t_prem: '{p} वर्ष {m} {i} भरें।', t_prem1: 'एक बार {i} भरें।', t_cov: 'पॉलिसी अवधि में {a} से {b} तक जीवन सुरक्षा।', t_mat: 'आयु {g} पर {m} पाएँ।', t_mat0: 'आयु {g} से हर साल {s} पाएँ।',
+			t_acc_ga: 'हर ₹1000 बीमा राशि पर हर साल {r} गारंटीड एडिशन।', t_acc_b: 'LIC हर साल बोनस घोषित करती है (मान लिया {r} प्रति ₹1000)।', t_acc_n: 'योजना के अनुसार गारंटीड भुगतान।',
+			t_tax: 'प्रीमियम पर धारा 80C और परिपक्वता पर धारा 10(10D) — शर्तों के अधीन।', t_feat: 'ऋण और सरेंडर सुविधा, वैकल्पिक राइडर और नामांकन।',
+			w1: 'भारत सरकार के स्वामित्व वाली कंपनी', w2: 'पॉलिसी राशि पर केंद्र सरकार की गारंटी (धारा 37, LIC अधिनियम 1956)', w3: '1956 से परिवारों की सेवा में', w4: 'पूरे देश में शाखाएँ और एजेंट',
+			feat: 'योजना की विशेषताएँ', f_death: 'मृत्यु लाभ', f_mat: 'परिपक्वता लाभ', f_add: 'वृद्धि', f_tax: 'आयकर', f_surr: 'सरेंडर', f_loan: 'ऋण',
+			fv_death: 'कम से कम {d} (भरे गए प्रीमियम के 105% से कम नहीं)', fv_tax: 'धारा 80C और 10(10D), शर्तों के अधीन', fv_surr: '{y} वर्ष बाद उपलब्ध', fv_loan: '{y} वर्ष बाद, सरेंडर मूल्य पर उपलब्ध',
+			plandet: 'योजना का विवरण', riders: 'चुने गए राइडर', none: 'कोई नहीं', custom: 'इनके लिए विशेष रूप से तैयार प्रस्तुति',
+			d_endowment: 'बचत और सुरक्षा देने वाली योजना। आपको कुछ होने पर परिवार को आर्थिक सहारा, और परिपक्वता पर बोनस सहित एकमुश्त राशि।',
+			d_lakshya: 'बच्चों के लक्ष्यों के लिए योजना। आपको कुछ होने पर परिवार को वार्षिक आय, और परिपक्वता की पूरी राशि समय पर मिलती है।',
+			d_labh: 'कम वर्षों तक प्रीमियम भरने वाली बचत योजना। पूरी अवधि सुरक्षा और परिपक्वता पर बोनस सहित एकमुश्त राशि।',
+			d_anand: 'परिपक्वता के बाद भी बीमा सुरक्षा जारी रखने वाली एंडोमेंट योजना।',
+			d_umang: 'प्रीमियम पूरा होने के बाद हर साल गारंटीड आय और अंत में एकमुश्त राशि देने वाली आजीवन योजना।',
+			d_utsav: 'प्रीमियम पूरा होने के बाद जीवनभर हर साल गारंटीड आय और 100 वर्ष की आयु तक बीमा सुरक्षा।',
+			d_utsav_sp: 'एकल प्रीमियम योजना — गारंटीड एडिशन और जीवनभर गारंटीड आय के विकल्प।',
+			d_single: 'एक बार भरें, पूरी अवधि सुरक्षा और परिपक्वता पर बोनस सहित एकमुश्त राशि।',
+			d_moneyback: 'मनी बैक योजना: तय अंतराल पर बीमा राशि का हिस्सा, और बाकी राशि बोनस सहित परिपक्वता पर।'
 		}
 	};
 
@@ -146,7 +201,7 @@
 			.then(function (j) { illId = j && j.id ? String(j.id) : local(); return illId; })
 			.catch(local);
 	}
-	function tt(k) { return (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k; }
+	function tt(k) { return (I18N[lang] && I18N[lang][k]) || I18N.en[k] || (A.RL && A.RL[k]) || k; }
 	function fmtT(k, map) { return tt(k).replace(/\{(\w+)\}/g, function (m, n) { return map[n] !== undefined ? map[n] : m; }); }
 
 	function qrImg(text) {
@@ -183,74 +238,90 @@
 		var today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 		var qr = qrImg(waLink(r));
 
-		// 1. Cover
-		pages.push((coverImg ? '<div class="a4p-banner"><img class="a4p-coverimg" src="' + esc(coverImg) + '" alt=""><span><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"></span></div>' : '') +
-			'<div class="a4p-cover' + (coverImg ? ' a4p-cover-img' : '') + '">' + (coverImg ? '' : '<img class="a4p-logo" src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous">') +
-			'<div class="a4p-brand">' + esc(BR.name || '') + '</div>' +
-			'<div class="a4p-rule"></div>' +
-			'<h1>LIC ' + esc(p.name) + '</h1><h2>' + tt('ill') + '</h2>' +
-			(clientName ? '<p class="a4p-for">' + tt('pfor') + ': <b>' + esc(clientName) + '</b></p>' : '') +
-			'<p class="a4p-date">' + tt('pon') + ': ' + today + '</p></div>' +
-			'<div class="a4p-card"><h3>' + tt('details') + '</h3><table class="a4p-kv">' +
-			kv(tt('age'), r.age + ' ' + tt('yrs')) + (r.gender ? kv(tt('gender'), r.gender === 'F' ? 'Female' : 'Male') : '') +
-			kv(tt('doc'), r.docText) + kv(tt('matdate'), r.matText) + kv(tt('sa'), inr(r.sa)) + kv(termLbl, termVal) +
-			(single ? '' : kv(tt('ppt'), r.P + ' ' + tt('yrs'))) + kv(tt('mode'), mName) +
-			kv(single ? tt('once') : tt('inst'), '<b>' + inr(r.inst) + '</b>') + '</table></div>' +
-			'<div class="a4p-card a4p-advisor"><div><h3>' + tt('pby') + '</h3><p><b>' + esc(BR.agent || '') + '</b><br>' + esc(BR.type || '') +
-			(BR.code ? '<br>Agency Code: ' + esc(BR.code) : '') + '<br>' + esc(BR.phone || '') + ' · ' + esc(BR.email || '') + '<br>' + esc(BR.web || '') + '</p></div>' +
-			(qr ? '<div class="a4p-qr"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span></div>' : '') + '</div>');
+		var RI = A.reportInfo(r), sp1 = single, img = function (svg) { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); };
+		var yrs = ' ' + tt('yrs');
+		var RN = { adb: 'Accident Benefit', addb: 'Accidental Death & Disability', term: 'Term Assurance', pwb: 'Premium Waiver Benefit' };
+		var ridList = Object.keys(pr.riders).map(function (k) { return (RN[k] || k) + (k === 'adb' && r.r && r.r.adbSA ? ' (' + inr(r.r.adbSA) + ')' : '') + ' — ' + inr(pr.riders[k]) + ' / yr'; });
 
-		// 2. Plan at a glance
-		var g = '<h2 class="a4p-h">' + tt('glance') + '</h2><div class="a4p-cards">' +
-			'<div><span>' + (single ? tt('once') : tt('inst') + ' (' + mName + ')') + '</span><b>' + inr(r.inst) + '</b></div>' +
-			'<div><span>' + tt('tprem') + '</span><b>' + inr(r.totalPrem) + '</b></div>' +
-			'<div><span>' + tt('tben') + '</span><b>' + inr(r.totalBenefit) + '</b></div>' +
-			'<div><span>' + tt('irr') + '</span><b>' + pct(r.irr) + '</b></div></div>';
+		// 1. Cover — योजनेचं नाव, कोणासाठी, वर्णन, तपशील, वैशिष्ट्ये
+		var c1 = (coverImg ? '<div class="a4p-banner"><img class="a4p-coverimg" src="' + esc(coverImg) + '" alt=""><span><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"></span></div>' : '') +
+			'<div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
+			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b> · ' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
+			'<p class="a4p-desc">' + tt('d_' + p.type) + '</p>' +
+			'<div class="a4p-2col"><div class="a4p-card"><h3>' + tt('plandet') + '</h3><table class="a4p-kv">' +
+			kv(tt('sa'), inr(r.sa)) + kv(termLbl, termVal) + (single ? '' : kv(tt('ppt'), r.P + yrs)) + kv(tt('mode'), mName) +
+			kv(single ? tt('once') : tt('inst'), '<b>' + inr(r.inst) + '</b>') + kv(tt('doc'), r.docText) + kv(tt('matdate'), r.matText) + '</table>' +
+			'<h3 style="margin-top:10px">' + tt('riders') + '</h3><p style="font-size:12px">' + (ridList.length ? ridList.map(esc).join('<br>') : tt('none')) + '</p></div>' +
+			'<div class="a4p-card"><h3>' + tt('feat') + '</h3><ul class="a4p-feat">' +
+			'<li><b>' + tt('f_death') + ':</b> ' + fmtT('fv_death', { d: inr(Math.max(r.deathSA || 0, r.sa)) }) + '</li>' +
+			(r.maturity > 0 ? '<li><b>' + tt('f_mat') + ':</b> ' + inr(r.maturity) + ' (' + tt('age') + ' ' + RI.matAge + ')</li>' : '') +
+			(r.survival ? '<li><b>' + tt('income') + ':</b> ' + inr(r.survival) + ' / yr (' + tt('age') + ' ' + RI.incAge + '+)</li>' : '') +
+			(r.ga ? '<li><b>' + tt('f_add') + ':</b> ' + tt('m_ga') + ' ' + inr(r.ga) + '</li>' : (r.bonus ? '<li><b>' + tt('f_add') + ':</b> ' + tt('m_srb') + ' ' + inr(r.bonus + r.fab) + '</li>' : '')) +
+			'<li><b>' + tt('f_tax') + ':</b> ' + tt('fv_tax') + '</li>' +
+			'<li><b>' + tt('f_surr') + ':</b> ' + fmtT('fv_surr', { y: single ? 1 : (p.loan_from || 2) }).replace(/\b1 years\b/, '1 year') + '</li>' +
+			'<li><b>' + tt('f_loan') + ':</b> ' + fmtT('fv_loan', { y: single ? 1 : (p.loan_from || 2) }).replace(/\b1 years\b/, '1 year') + '</li></ul></div></div>';
+		pages.push(c1);
+
+		// 2. Benefit Illustration — timeline + Maturity Details
+		var c2 = '<h2 class="a4p-h">' + tt('ill') + '</h2>' +
+			'<div class="a4p-tl"><img src="' + img(A.timelineSvg(r, GREEN, GOLD)) + '" alt=""></div>' +
+			'<p class="a4p-tlleg"><i style="background:' + GREEN + '"></i>' + tt('youpay') + ' <i style="background:' + GOLD + ';opacity:.4"></i>' + tt('lcover') +
+			' <i style="background:' + GOLD + '"></i>' + tt('youget') + ' <small>(' + tt('age') + ')</small></p>' +
+			'<h3>' + tt('md') + '</h3><table class="a4p-t a4p-kv2"><tbody>' + A.maturityRows(r, tt).map(function (q) { return kv(q[0], q[1]); }).join('') + '</tbody></table>' +
+			(r.bonus || r.fab ? '<p class="a4p-note">' + tt('bonusas') + ': SRB ₹' + r.srb + (r.fabRate ? ' · FAB ₹' + r.fabRate : '') + ' — ' + tt('d2') + '</p>' : '') +
+			(r.basis !== 'verified' && r.basis !== 'quote' ? '<p class="a4p-note">' + tt('est') + '</p>' : '');
+		pages.push(c2);
+
+		// 3. Premium chart — modes, दिवसाला किती, भरता vs मिळते, IRR
+		var c3 = '<h2 class="a4p-h">' + tt('pchart') + '</h2>';
 		if (pr.modes) {
-			g += '<h3>' + tt('bymode') + '</h3><table class="a4p-t"><thead><tr><th>' + tt('mode') + '</th><th>' + tt('inst') + '</th><th>' + tt('ytot') + '</th></tr></thead><tbody>' +
-				pr.modes.map(function (x) { return '<tr' + (x[0] === r.mode ? ' class="sel"' : '') + '><td>' + MODES[x[0]][0] + '</td><td>' + inr(x[1]) + '</td><td>' + inr(x[2]) + '</td></tr>'; }).join('') + '</tbody></table>';
+			c3 += '<div class="a4p-modes">' + pr.modes.map(function (x) { return '<div' + (x[0] === r.mode ? ' class="sel"' : '') + '><span>' + MODES[x[0]][0] + '</span><b>' + inr(x[1]) + '</b></div>'; }).join('') + '</div>';
+			c3 += '<p class="a4p-perday">' + fmtT('perday', { d: '<b>' + inr(RI.perDay) + '</b>' }) + '</p>';
+		} else {
+			c3 += '<div class="a4p-modes"><div class="sel"><span>' + tt('once') + '</span><b>' + inr(r.inst) + '</b></div></div>';
 		}
-		var rid = 0;
-		Object.keys(pr.riders).forEach(function (k) { rid += pr.riders[k]; });
-		g += '<h3>' + tt('pdet') + '</h3><table class="a4p-t a4p-kv2"><tbody>' + kv(tt('tab'), inr(pr.tabular)) +
-			(pr.rebate ? kv(tt('hsa'), '− ' + inr(pr.rebate)) : '') + (rid ? kv(tt('rider'), inr(rid)) : '') + kv(tt('gst'), r.gst + '%') + '</tbody></table>';
-		g += '<h3>' + tt('ben') + '</h3><table class="a4p-t a4p-kv2"><tbody>';
-		if (p.type === 'utsav_sp') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('matage') + ' ' + (r.age + r.T), inr(r.maturity)); }
-		else if (p.type === 'moneyback') {
-			r.sbList.forEach(function (x) { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('mb') + ' ' + x[1] + '% · ' + tt('yr') + ' ' + x[0] + ' (' + tt('age') + ' ' + (r.age + x[0]) + ')', inr(x[1] * r.sa / 100)); });
-			g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('bsa') + ' (' + p.mat_pct + '%)', inr(p.mat_pct * r.sa / 100));
-		}
-		else if (p.type !== 'utsav') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('bsa'), inr(r.sa)); }
-		if (r.totalSurv && p.type !== 'moneyback') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('surv') + ' (' + p.survival_pct + '% × SA)', inr(r.survival) + ' / yr'); }
-		if (r.ga && p.type !== 'utsav_sp') { g += kv('<i class="tg">' + tt('g') + '</i> ' + tt('ga'), inr(r.ga)); }
-		if (r.bonus || r.fab) { g += kv(tt('bonusas'), 'SRB ₹' + r.srb + (r.fabRate ? ' · FAB ₹' + r.fabRate : '')); }
-		if (r.bonus) { g += kv('<i class="tn">' + tt('ng') + '</i> ' + tt('srb'), inr(r.bonus)); }
-		if (r.fab) { g += kv('<i class="tn">' + tt('ng') + '</i> ' + tt('fab'), inr(r.fab)); }
-		if (r.deathSA) { g += kv(tt('death'), inr(r.deathSA)); }
-		g += kv(p.type === 'utsav' ? tt('cover') : tt('matage'), String(r.age + r.T)) + '</tbody></table>';
-		if (r.basis !== 'verified') { g += '<p class="a4p-note">' + tt('est') + '</p>'; }
-		pages.push(g);
-
-		// 3. Scenarios + chart
-		var c = '<h2 class="a4p-h">' + tt('scen') + '</h2><table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
-			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + pct(r.irr) + '</td></tr>' +
-			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + pct(r.irrLow) + '</td></tr>' : '') + '</tbody></table>';
-		c += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(chartSvg(r, GREEN, GOLD)) + '" alt="">' +
+		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inr(r.totalPrem) + '</b></div><div class="get"><span>' + tt('gettot') + '</span><b>' + inr(r.totalBenefit) + '</b></div></div>' +
+			(RI.ratio ? '<p class="a4p-every">' + fmtT('every1', { x: RI.ratio.toFixed(2) }) + '</p>' : '');
+		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
+			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
+			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + inr(r.totalBenefitLow - r.totalPrem) + '</td><td>' + pct(r.irrLow) + '</td></tr>' : '') + '</tbody></table>';
+		c3 += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="' + img(chartSvg(r, GREEN, GOLD)) + '" alt="">' +
 			'<p class="a4p-legend"><span style="background:' + GREEN + '"></span>' + tt('paid') + ' <span style="background:' + GOLD + '"></span>' + tt('got') + '</p>';
-		c += '<table class="a4p-t a4p-kv2" style="margin-top:10px"><tbody>' + kv(tt('pv') + ' <small>(' + fmtT('pvnote', { i: C.inflation }) + ')</small>', inr(r.pvBenefit)) + '</tbody></table>';
-		if (r.taxNotes && r.taxNotes.length) { c += '<h3>' + tt('tax') + '</h3><ul class="a4p-notes">' + r.taxNotes.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
-		if (r.totalPrem > 0) {
-			c += '<div class="a4p-insight">' + fmtT('insight', { p: inr(r.totalPrem), b: inr(r.totalBenefit), x: (r.totalBenefit / r.totalPrem).toFixed(2) }) + '</div>';
-		}
-		pages.push(c);
+		c3 += '<table class="a4p-t a4p-kv2" style="margin-top:8px"><tbody>' + kv(tt('pv') + ' <small>(' + fmtT('pvnote', { i: C.inflation }) + ')</small>', inr(r.pvBenefit)) + '</tbody></table>';
+		if (r.taxNotes && r.taxNotes.length) { c3 += '<h3>' + tt('tax') + '</h3><ul class="a4p-notes">' + r.taxNotes.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
+		pages.push(c3);
 
-		// 4+. Year-wise (एका पानावर 34 ओळी)
-		var per = 32;
-		for (var i = 0; i < r.rows.length; i += per) {
-			pages.push('<h2 class="a4p-h">' + tt('yw') + (r.rows.length > per ? ' (' + (i / per + 1) + ')' : '') + '</h2><table class="a4p-t a4p-yw"><thead><tr><th>' + tt('yr') + '</th><th>' + tt('age') + '</th><th>' + tt('prem') + '</th><th>' + tt('bene') + '</th><th>' + tt('net') + '</th></tr></thead><tbody>' +
-				r.rows.slice(i, i + per).map(function (x) {
-					return '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td>' + (x[2] ? inr(x[2]) : '—') + '</td><td>' + (x[3] ? inr(x[3]) : '—') + '</td><td class="' + (x[4] < 0 ? 'neg' : 'pos') + '">' + inr(x[4]) + '</td></tr>';
-				}).join('') + '</tbody></table>');
+		// 4. How the plan works + Why LIC
+		var acc = r.ga ? fmtT('t_acc_ga', { r: '₹' + p.ga_per_1000 }) : (r.bonus ? fmtT('t_acc_b', { r: '₹' + r.srb }) : tt('t_acc_n'));
+		var matTxt = r.maturity > 0 ? fmtT('t_mat', { m: inr(r.maturity), g: RI.matAge }) : fmtT('t_mat0', { s: inr(r.survival), g: RI.incAge });
+		var how = [['h_prem', single ? fmtT('t_prem1', { i: inr(r.inst) }) : fmtT('t_prem', { i: inr(r.inst), m: mName, p: r.P })],
+			['h_cov', fmtT('t_cov', { a: inr(RI.coverMin), b: inr(RI.coverMax) })], ['h_mat', matTxt], ['h_acc', acc], ['h_tax', tt('t_tax')], ['h_feat', tt('t_feat')]];
+		var ic = function (path) { return '<img width="34" height="34" alt="" src="' + img('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" width="34" height="34"><circle cx="17" cy="17" r="17" fill="' + GREEN + '"/>' + path + '</svg>') + '">'; };
+		var icons = [
+			'<path d="M9 25h16M11 25V15m4 10V15m4 10V15m4 10V15M8 13l9-6 9 6z" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/>',
+			'<path d="M17 7l8 3v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10v-6z" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 17l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/>',
+			'<circle cx="17" cy="17" r="8" fill="none" stroke="#fff" stroke-width="2"/><path d="M17 12v5l3 3" stroke="#fff" stroke-width="2" fill="none"/>',
+			'<circle cx="17" cy="17" r="8" fill="none" stroke="#fff" stroke-width="2"/><path d="M9 17h16M17 9c3 3 3 13 0 16M17 9c-3 3-3 13 0 16" stroke="#fff" stroke-width="1.5" fill="none"/>'
+		];
+		pages.push('<h2 class="a4p-h">' + tt('how') + '</h2><div class="a4p-how">' + how.map(function (q) { return '<div><b>' + tt(q[0]) + '</b><p>' + q[1] + '</p></div>'; }).join('') + '</div>' +
+			'<h2 class="a4p-h" style="margin-top:24px">' + tt('why') + '</h2><div class="a4p-why">' + ['w1', 'w2', 'w3', 'w4'].map(function (k, i) { return '<div>' + ic(icons[i]) + '<span>' + tt(k) + '</span></div>'; }).join('') + '</div>' +
+			(p.type === 'anand' && p.tail_age ? '<p class="a4p-note" style="margin-top:14px">' + tt('m_coverto') + ' ' + p.tail_age + '</p>' : ''));
+
+		// 5+. Benefit & Coverage Table (Option 1)
+		var per = 34, tbl = r.table || [];
+		for (var i = 0; i < tbl.length; i += per) {
+			var lastPg = i + per >= tbl.length;
+			pages.push('<h2 class="a4p-h">' + tt('bct') + (tbl.length > per ? ' (' + (i / per + 1) + ')' : '') + '</h2>' +
+				A.benefitTableHtml(r, tt, 'a4p-t a4p-bct', i, i + per, lastPg) +
+				(lastPg && r.hasCV ? '<p class="a4p-note">' + tt('cvnote') + '</p>' : '') + (lastPg && r.age < 8 ? '<p class="a4p-note">' + tt('risknote') + '</p>' : ''));
+		}
+		// Option 2 — Flexi income
+		if (r.income === 'flexi') {
+			var fx = A.flexiRows(r);
+			for (var j = 0; j < fx.length; j += 36) {
+				pages.push('<h2 class="a4p-h">' + tt('opt2') + '</h2><table class="a4p-t a4p-yw"><thead><tr><th>' + tt('c_yr') + '</th><th>' + tt('c_age') + '</th><th>' + tt('c_inc') + '</th><th>' + tt('c_bal') + '</th></tr></thead><tbody>' +
+					fx.slice(j, j + 36).map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1] + '</td><td>' + inr(q[2]) + '</td><td>' + inr(q[3]) + '</td></tr>'; }).join('') + '</tbody></table>');
+			}
 		}
 
 		// v3.1: Ready Reckoner पान
@@ -286,8 +357,10 @@
 				rowsC.map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1](r) + '</td><td>' + q[1](b) + '</td></tr>'; }).join('') + '</tbody></table>';
 		}
 		l += '<h2 class="a4p-h">' + tt('notes') + '</h2><ol class="a4p-notes"><li>' + tt('d1') + '</li><li>' + tt('d2') + '</li><li>' + fmtT('d3', { no: p.id, uin: p.uin || '—' }) + '</li><li>' + tt('d4') + '</li></ol>';
-		l += '<div class="a4p-card a4p-advisor"><div><h3>' + tt('contact') + '</h3><p><b>' + esc(BR.agent || '') + '</b> · ' + esc(BR.name || '') + '<br>' + esc(BR.type || '') +
-			(BR.code ? '<br>Agency Code: ' + esc(BR.code) + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') : '') + '<br>' + esc(BR.phone || '') + ' · ' + esc(BR.email || '') + '<br>' + esc(BR.web || '') + '</p></div>' +
+		l += '<div class="a4p-card a4p-advisor"><div class="a4p-me">' + (BR.photo ? '<img class="ph" src="' + esc(BR.photo) + '" alt="" crossorigin="anonymous">' : '') +
+			'<div><h3>' + tt('contact') + '</h3><p><b>' + esc(BR.agent || '') + '</b><br>' + esc(BR.title || BR.type || '') + (BR.type && BR.title ? ' · ' + esc(BR.type) : '') +
+			(BR.code ? '<br>Agency Code: ' + esc(BR.code) + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') : '') +
+			(BR.address ? '<br>' + esc(BR.address) : '') + '<br>' + esc(BR.phone || '') + (BR.email2 || BR.email ? ' · ' + esc(BR.email2 || BR.email) : '') + '<br>' + esc(BR.web || '') + '</p></div></div>' +
 			(qr ? '<div class="a4p-qr"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span></div>' : '') + '</div>';
 		pages.push(l);
 

@@ -1,5 +1,5 @@
 <?php
-// A4U LIC Calculator — GitHub वरून LIC data sync (Approve नंतरच लागू)
+// A4U LIC Calculator — GitHub वरून LIC data sync (v3.2: आपोआप लागू, Undo सोय)
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /* =====================================================================
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 function a4u_lic_sync_keys() {
 	return array( 'uin', 'min_age', 'max_age', 'min_sa', 'max_maturity', 'min_maturity', 'terms', 'ppt_map', 'ppt_options', 'ppt_max_age_sum',
 		'maturity_age', 'survival_pct', 'ga_per_1000', 'min_age_by_term', 'sa_slabs', 'rebate_slabs', 'rebate_bands', 'mode_adj', 'death_pct',
-		'samples', 'sample_sa', 'brochure' );
+		'samples', 'sample_sa', 'brochure', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands' );
 }
 
 function a4u_lic_sync_check( $manual = false ) {
@@ -36,8 +36,14 @@ function a4u_lic_sync_check( $manual = false ) {
 	$log['remote_checked'] = (string) ( $json['checked_at'] ?? '' );
 	$diff = a4u_lic_sync_diff( $d, $json );
 	if ( $log['remote'] > $applied && $diff ) {
+		// v3.2: मंजुरीची वाट न पाहता थेट लागू (pipeline चे golden tests पास झालेलाच data येतो)
 		update_option( 'a4u_lic_pending', array( 'version' => $log['remote'], 'json' => $json, 'diff' => $diff, 'fetched' => current_time( 'mysql' ) ), false );
-		$log['msg'] = count( $diff ) . ' change(s) waiting for approval';
+		update_option( 'a4u_lic_data_presync', array( 'version' => $applied, 'data' => $d, 'at' => current_time( 'mysql' ) ), false ); // Undo साठी
+		$n = a4u_lic_sync_apply();
+		$hist = (array) get_option( 'a4u_lic_sync_history', array() );
+		array_unshift( $hist, array( 'version' => $log['remote'], 'at' => current_time( 'mysql' ), 'plans' => $n, 'diff' => array_slice( $diff, 0, 60 ) ) );
+		update_option( 'a4u_lic_sync_history', array_slice( $hist, 0, 20 ), false );
+		$log['msg'] = count( $diff ) . ' change(s) applied automatically';
 	} else {
 		if ( $log['remote'] > $applied ) { update_option( 'a4u_lic_sync_applied', $log['remote'], false ); }
 		delete_option( 'a4u_lic_pending' );
@@ -89,7 +95,7 @@ function a4u_lic_sync_apply() {
 	$pending = get_option( 'a4u_lic_pending' );
 	if ( ! is_array( $pending ) || empty( $pending['json']['plans'] ) ) { return 0; }
 	$d     = a4u_lic_data();
-	$types = array( 'endowment', 'anand', 'lakshya', 'labh', 'umang', 'single', 'utsav', 'utsav_sp' );
+	$types = array( 'endowment', 'anand', 'lakshya', 'labh', 'umang', 'single', 'utsav', 'utsav_sp', 'moneyback' );
 	$n     = 0;
 	foreach ( $pending['json']['plans'] as $id => $np ) {
 		$id = sanitize_key( (string) $id );
@@ -117,13 +123,18 @@ add_action( 'admin_post_a4u_lic_sync', function () {
 	if ( ! current_user_can( 'manage_options' ) ) { wp_die( 'Not allowed' ); }
 	check_admin_referer( 'a4u_lic_sync' );
 	$do = sanitize_key( $_GET['do'] ?? 'check' ); // phpcs:ignore
-	if ( 'approve' === $do ) {
-		a4u_lic_flash( 'LIC data applied to ' . a4u_lic_sync_apply() . ' plan(s)' );
-	} elseif ( 'dismiss' === $do ) {
-		$pending = get_option( 'a4u_lic_pending' );
-		if ( is_array( $pending ) ) { update_option( 'a4u_lic_sync_applied', (int) $pending['version'], false ); }
-		delete_option( 'a4u_lic_pending' );
-		a4u_lic_flash( 'pending update dismissed' );
+	if ( 'undo' === $do ) {
+		// शेवटचा आपोआप झालेला बदल परत फिरवा (त्याच version ला पुन्हा लागू होणार नाही)
+		$prev = get_option( 'a4u_lic_data_presync' );
+		if ( is_array( $prev ) && ! empty( $prev['data']['plans'] ) ) {
+			a4u_lic_save( $prev['data'] );
+			delete_option( 'a4u_lic_data_presync' );
+			$hist = (array) get_option( 'a4u_lic_sync_history', array() );
+			if ( $hist ) { $hist[0]['undone'] = current_time( 'mysql' ); update_option( 'a4u_lic_sync_history', $hist, false ); }
+			a4u_lic_flash( 'last automatic LIC data update undone' );
+		} else {
+			a4u_lic_flash( 'nothing to undo' );
+		}
 	} else {
 		$log = a4u_lic_sync_check( true );
 		a4u_lic_flash( 'sync check: ' . $log['msg'] );

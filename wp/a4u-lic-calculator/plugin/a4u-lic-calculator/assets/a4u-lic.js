@@ -476,7 +476,6 @@
 			cum += ben - prem;
 			rows.push([y, age + y, prem, ben, cum]);
 		}
-		// मृत्यू लाभ (brochure नुसार)
 		var deathSA = 0, deathNote = '';
 		if (p.type === 'single' || p.type === 'utsav_sp') {
 			var mult = 1.25;
@@ -490,6 +489,7 @@
 			deathSA = Math.max(p.death_pct / 100 * sa, 7 * pr.base);
 		}
 		var totalBenefit = maturity + (flexi ? flexiBal : totalSurv);
+		var table = buildTable(p, inp, { age: age, sa: sa, T: T, P: P, G: G, pr: pr, bn: bn, bonusYears: bonusYears, survival: survival, incomeStart: incomeStart, sbMap: sbMap, maturity: maturity, fab: fab, deathSA: deathSA, flexi: flexi });
 		// G: आजच्या पैशात किंमत (महागाई वजा करून)
 		var infl = (Number(C.inflation) || 0) / 100, pvBenefit = 0;
 		rows.forEach(function (x) { pvBenefit += x[3] / Math.pow(1 + infl, x[0]); });
@@ -511,8 +511,54 @@
 			basis: basis, demo: demo, rate: rate, pr: pr, inst: pr.inst, totalPrem: totalPrem, bonus: bonus, fab: fab, ga: ga, srb: bn.srb,
 			sbList: Object.keys(sbMap).map(function (k) { return [Number(k), sbMap[k]]; }),
 			survival: survival, incomeStart: incomeStart, totalSurv: totalSurv, flexiBal: flexiBal, deathSA: deathSA, deathNote: deathNote,
-			maturity: maturity, totalBenefit: totalBenefit, irr: irr(cf), rows: rows
+			maturity: maturity, totalBenefit: totalBenefit, irr: irr(cf), rows: rows, table: table, hasCV: !!(p.gsv_prem && p.gsv_prem.length)
 		};
+	}
+
+	/* ---------- v3.2: वर्षवार Benefit & Coverage तक्ता (LIC report सारखा) ---------- */
+	function stepPct(list, y) { // [[वर्ष, %]...] — त्या वर्षापर्यंतचा शेवटचा
+		var v = 0;
+		(list || []).forEach(function (x) { if (y >= x[0]) { v = Number(x[1]); } });
+		return v / 100;
+	}
+	function buildTable(p, inp, o) {
+		var out = [], cumPrem = 0, cumBase = 0, cumAdd = 0, paidOut = 0;
+		var isGA = p.ga_per_1000 > 0, single = !!SINGLE[p.type];
+		var gaYears = p.type === 'utsav_sp' ? o.G : o.P;
+		// लहान मुलांसाठी जोखीम (risk) उशिरा सुरू: 8 वर्षांखाली — 2 वर्षे किंवा 8 वय, जे आधी
+		var riskStart = o.age < 8 ? Math.min(2, 8 - o.age) : 0;
+		var adb = inp.r && inp.r.adb ? Number(inp.r.adbSA) || 0 : 0;
+		var loanRate = (Number(C.loanRate) || 9.5) / 100;
+		for (var y = 1; y <= o.T; y++) {
+			var prem = y <= o.P ? o.pr.yearPay : 0, basePrem = y <= o.P ? (single ? o.pr.tabular || o.pr.base : o.pr.base) : 0;
+			cumPrem += prem; cumBase += basePrem; // दाखवायला भरलेला हप्ता; GSV साठी मूळ (tax/rider शिवाय)
+			var add = 0;
+			if (isGA && y <= gaYears) { add = p.ga_per_1000 * o.sa / 1000; }
+			else if (!isGA && y <= o.bonusYears) { add = o.bn.srb * o.sa / 1000; }
+			cumAdd += add;
+			var inc = 0;
+			if (o.survival && y >= o.incomeStart && (p.type === 'utsav' ? y <= o.T : y < o.T)) { inc = o.survival; }
+			if (o.sbMap[y]) { inc = o.sbMap[y] * o.sa / 100; }
+			var ret = inc + (y === o.T ? o.maturity : 0);
+			var cover = y <= riskStart ? cumPrem : Math.max(o.deathSA || 0, o.sa) + cumAdd;
+			// Guaranteed Surrender Value (brochure factors असतील तरच)
+			var cv = null, loan = null;
+			if (p.gsv_prem && p.gsv_prem.length && y < o.T) {
+				cv = stepPct(p.gsv_prem, y) * (single ? (o.pr.tabular || o.pr.base) : cumBase) + stepPct(p.gsv_add, y) * cumAdd;
+				if (p.gsv_less_income) { cv -= paidOut; }
+				cv = Math.max(0, cv);
+				if (y >= (p.loan_from || 2)) {
+					var incomeStarted = o.survival && y >= o.incomeStart;
+					var lp = 0.75;
+					if (p.loan_ga_bands && y <= gaYears) { lp = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp = b[1] / 100; } }); }
+					loan = lp * cv;
+					if (incomeStarted) { loan = Math.min(loan, Math.floor(0.5 * o.survival / loanRate / 10000) * 10000); }
+				}
+			} else if (p.gsv_prem && p.gsv_prem.length && y === o.T && o.maturity) { cv = o.maturity; }
+			paidOut += inc;
+			out.push({ y: y, age: o.age + y - 1, prem: prem, cumPrem: cumPrem, add: add, cumAdd: cumAdd, cover: cover, acc: cover + (y > riskStart ? adb : 0), cv: cv, loan: loan, ret: ret });
+		}
+		return out;
 	}
 
 	/* ---------- Result ---------- */
@@ -595,6 +641,15 @@
 			card('Return (IRR, approx.)', r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '% p.a.') +
 			'</div>';
 
+		// v3.2: LIC report सारखा भाग — You pay / You get, timeline, Maturity Details
+		var RI = reportInfo(r), sp1 = !!SINGLE[p.type];
+		h += '<div class="a4u-rep"><div class="a4u-paybox">' +
+			'<div><span>' + RL.paytot + '</span><b>' + inr(r.totalPrem) + '</b>' + (sp1 ? '' : '<small>' + rfmt(rlEN, 'perday', { d: inr(RI.perDay) }) + '</small>') + '</div>' +
+			'<div class="get"><span>' + RL.gettot + '</span><b>' + inr(r.totalBenefit) + '</b>' + (RI.ratio ? '<small>' + rfmt(rlEN, 'every1', { x: RI.ratio.toFixed(2) }) + '</small>' : '') + '</div></div>' +
+			'<h4>Benefit illustration</h4><div class="a4u-tl">' + timelineSvg(r, '#0b4ea2', '#1f8f4e') + '</div>' +
+			'<p class="a4u-tl-leg"><span class="k pay"></span>' + RL.youpay + ' <span class="k cov"></span>' + RL.lcover + ' <span class="k get"></span>' + RL.youget + ' <em>(age)</em></p>' +
+			'<h4>' + RL.md + '</h4><table class="a4u-sum"><tbody>' + maturityRows(r, rlEN).map(function (q) { return tr(q[0], q[1]); }).join('') + '</tbody></table></div>';
+
 		// S5: सगळ्या modes चे हप्ते एकाच ठिकाणी
 		if (pr.modes) {
 			h += '<div class="a4u-scroll a4u-modes"><table><thead><tr><th>Mode</th><th>Installment</th><th>Yearly total</th></tr></thead><tbody>' +
@@ -639,12 +694,16 @@
 		if (p.closed) { h += '<p class="a4u-note">This plan is closed for new business — figures are for existing policyholders\' reference only.</p>'; }
 
 		h += chart(r);
-		h += '<details class="a4u-years"' + (r.rows.length <= 25 ? ' open' : '') + '><summary>Year-wise cash flow</summary><div class="a4u-scroll"><table>' +
-			'<thead><tr><th>Year</th><th>Age</th><th>Premium</th><th>Benefit</th><th>Net (cumulative)</th></tr></thead><tbody>' +
-			r.rows.map(function (x) {
-				return '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td>' + (x[2] ? inr(x[2]) : '—') + '</td><td>' + (x[3] ? inr(x[3]) : '—') + '</td><td class="' + (x[4] < 0 ? 'neg' : 'pos') + '">' + inr(x[4]) + '</td></tr>';
-			}).join('') +
-			'</tbody></table></div></details>';
+		h += '<details class="a4u-years"' + (r.table.length <= 25 ? ' open' : '') + '><summary>' + RL.bct + '</summary><div class="a4u-scroll">' +
+			benefitTableHtml(r, rlEN, 'a4u-bct', 0, undefined, true) + '</div>' +
+			(r.hasCV ? '<p class="a4u-note">' + RL.cvnote + '</p>' : '') + (r.age < 8 ? '<p class="a4u-note">' + RL.risknote + '</p>' : '') + '</details>';
+		if (r.income === 'flexi') {
+			var fx = flexiRows(r);
+			if (fx.length) {
+				h += '<details class="a4u-years"><summary>' + RL.opt2 + '</summary><div class="a4u-scroll"><table><thead><tr><th>' + RL.c_yr + '</th><th>' + RL.c_age + '</th><th>' + RL.c_inc + '</th><th>' + RL.c_bal + '</th></tr></thead><tbody>' +
+					fx.map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1] + '</td><td>' + inr(q[2]) + '</td><td>' + inr(q[3]) + '</td></tr>'; }).join('') + '</tbody></table></div></details>';
+			}
+		}
 
 		h += '<div class="a4u-actions no-print">' +
 			'<button type="button" data-act="present" class="a4u-btn a4u-gold">Create Presentation / PDF</button>' +
@@ -755,12 +814,139 @@
 			window.alert('Could not load the presentation. Please check your internet connection and try again.');
 		});
 	}
+	/* ---------- v3.2: LIC report सारखी मांडणी (screen + PDF दोन्हीसाठी एकच code) ---------- */
+	// English labels — PDF मराठी/हिन्दी साठी present.js स्वतःचे शब्द देते
+	var RL = {
+		md: 'Maturity Details', youpay: 'You pay', youget: 'You get', lcover: 'Life cover', lumpsum: 'Lump sum', income: 'Yearly income', mback: 'Money back',
+		perday: 'That\'s just {d} per day', every1: 'For every ₹1 you pay, you get ₹{x} back', pchart: 'Premium Chart', paytot: 'Total you pay', gettot: 'Total you get', gain: 'Gain',
+		how: 'How the plan works', why: 'Why LIC', bct: 'Benefit & Coverage Table', opt2: 'Flexi Income — if you do not withdraw',
+		c_age: 'Age', c_yr: 'Year', c_prem: 'Premium', c_cum: 'Total premium', c_add: 'GA / Bonus (year)', c_cumadd: 'GA / Bonus (total)', c_cover: 'Normal death cover',
+		c_acc: 'Accident death cover', c_loan: 'Loan*', c_cv: 'Cash value*', c_ret: 'Returns', c_inc: 'Income credited', c_bal: 'Accumulated @ 5.5%',
+		cvnote: '* Loan and cash value use the Guaranteed Surrender Value (minimum) from the LIC brochure. The actual Special Surrender Value is usually higher.',
+		risknote: 'For a child below 8 years, risk cover starts later; till then the death benefit is a refund of premiums paid.',
+		totpaid: 'Total premium paid', totret: 'Total returns',
+		m_sa: 'Basic Sum Assured', m_ga: 'Guaranteed Additions', m_srb: 'Bonus (estimated)', m_fab: 'Final Additional Bonus (est.)', m_inc: 'Income every year', m_incage: 'Income starts at age',
+		m_tsurv: 'Total survival benefit', m_mat: 'Maturity amount', m_matage: 'Maturity at age', m_mb: 'Money back at age', m_coverto: 'Life cover till age',
+		h_prem: 'Premium', h_cov: 'Coverage', h_mat: 'Maturity', h_acc: 'Accruals', h_tax: 'Tax', h_feat: 'Features',
+		t_prem: 'Pay {i} {m} for {p} years.', t_prem1: 'Pay {i} once.', t_cov: 'Life cover from {a} to {b} during the policy.', t_mat: 'Receive {m} at age {g}.', t_mat0: 'Receive {s} every year from age {g}.',
+		t_acc_ga: 'Guaranteed Additions of {r} per ₹1000 Sum Assured every year.', t_acc_b: 'Bonus declared by LIC every year (assumed {r} per ₹1000).', t_acc_n: 'Guaranteed payouts as per the plan.',
+		t_tax: 'Premium may qualify under Section 80C; maturity under Section 10(10D), subject to conditions.', t_feat: 'Loan and surrender facility, optional riders and nomination.',
+		w1: 'Owned by the Government of India', w2: 'Policy money guaranteed by the Central Government (Section 37, LIC Act 1956)', w3: 'Serving families since 1956', w4: 'Branches and agents across India',
+		feat: 'Plan Features', f_death: 'Death benefit', f_mat: 'Maturity benefit', f_add: 'Additions', f_tax: 'Income tax', f_surr: 'Surrender', f_loan: 'Loan',
+		fv_death: 'At least {d} (never less than 105% of premiums paid)', fv_tax: 'Section 80C and 10(10D), subject to conditions', fv_surr: 'Available after {y} years', fv_loan: 'Available after {y} years, against the surrender value',
+		plandet: 'Plan Details', riders: 'Selected riders', none: 'None', custom: 'Plan presentation customised for',
+		d_endowment: 'A savings and protection plan. Your family gets financial support if something happens to you, and you get a lump sum with bonus at maturity.',
+		d_lakshya: 'A plan for your child\'s goals. If something happens to you, the family gets yearly income and the full maturity amount is still paid on time.',
+		d_labh: 'A limited-pay savings plan. Pay for fewer years, stay covered for the full term and get a lump sum with bonus at maturity.',
+		d_anand: 'An endowment plan with extended life cover — after maturity, the cover continues till old age.',
+		d_umang: 'A whole-life plan that pays a guaranteed yearly income after the premium paying term, plus a lump sum at the end.',
+		d_utsav: 'A whole-life plan with guaranteed yearly income for life after the premium paying term, plus life cover till age 100.',
+		d_utsav_sp: 'A single-premium plan with Guaranteed Additions and guaranteed income options for life.',
+		d_single: 'Pay once and stay covered for the full term, with a lump sum and bonus at maturity.',
+		d_moneyback: 'A money-back plan: you get part of the Sum Assured at regular intervals and the balance with bonus at maturity.'
+	};
+	function rfmt(t, k, map) { return String(t(k)).replace(/\{(\w+)\}/g, function (m, n) { return map[n] !== undefined ? map[n] : m; }); }
+	function rlEN(k) { return RL[k] !== undefined ? RL[k] : k; }
+
+	// रिपोर्टसाठी लागणारे आकडे एकदाच काढून ठेवायचे
+	function reportInfo(r) {
+		var p = r.plan, tb = r.table || [], yp = SINGLE[p.type] ? r.inst : r.pr.yearPay;
+		var covers = tb.map(function (x) { return x.cover; }).filter(function (v) { return v > 0; });
+		var gaYears = r.ga && p.ga_per_1000 ? Math.round(r.ga / (p.ga_per_1000 * r.sa / 1000)) : 0;
+		var bonusYears = r.bonus && r.srb ? Math.round(r.bonus / (r.srb * r.sa / 1000)) : 0;
+		var pays = [];
+		tb.forEach(function (x) { if (x.ret > 0) { pays.push([x.age + 1, x.ret]); } });
+		return {
+			perDay: yp / 365, ratio: r.totalPrem > 0 ? r.totalBenefit / r.totalPrem : 0,
+			coverMin: covers.length ? Math.min.apply(null, covers) : r.sa, coverMax: covers.length ? Math.max.apply(null, covers) : r.sa,
+			gaYears: gaYears, bonusYears: bonusYears, pays: pays, matAge: r.age + r.T, incAge: r.survival ? r.age + r.incomeStart : 0,
+			coverTo: p.type === 'anand' && p.tail_age ? p.tail_age : r.age + r.T
+		};
+	}
+
+	// Timeline: वय (x-axis) वर हप्ता, जोखीम-कव्हर आणि मिळणारे पैसे — SVG मध्ये फक्त आकडे (font चा त्रास नको)
+	function timelineSvg(r, c1, c2) {
+		var I = reportInfo(r), W = 740, H = 176, L = 20, R = 20;
+		var a0 = r.age, a1 = Math.max(I.coverTo, I.matAge);
+		function x(a) { return L + (W - L - R) * (a - a0) / Math.max(1, a1 - a0); }
+		var sv = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" font-family="Arial,sans-serif">';
+		var tx = function (xx, y, s, anc, col, sz, w) { return '<text x="' + xx.toFixed(1) + '" y="' + y + '" text-anchor="' + (anc || 'middle') + '" fill="' + (col || '#3b4433') + '" font-size="' + (sz || 11) + '"' + (w ? ' font-weight="700"' : '') + '>' + s + '</text>'; };
+		var short = function (v) { return v >= 1e7 ? (v / 1e7).toFixed(2) + ' Cr' : v >= 1e5 ? (v / 1e5).toFixed(2) + ' L' : nf.format(Math.round(v)); };
+		// 1) हप्ता
+		var pEnd = SINGLE[r.plan.type] ? a0 + 0.6 : a0 + r.P;
+		sv += '<rect x="' + x(a0) + '" y="14" width="' + Math.max(8, x(pEnd) - x(a0)) + '" height="22" rx="6" fill="' + c1 + '"/>';
+		sv += tx(Math.min(x(pEnd) + 6, W - 150), 30, '₹' + short(SINGLE[r.plan.type] ? r.inst : r.pr.yearPay) + (SINGLE[r.plan.type] ? '' : ' / yr × ' + r.P), 'start', '#3b4433', 11, 1);
+		// 2) कव्हर
+		sv += '<rect x="' + x(a0) + '" y="56" width="' + (x(I.coverTo) - x(a0)) + '" height="22" rx="6" fill="' + c2 + '" opacity=".35"/>';
+		sv += tx((x(a0) + x(I.coverTo)) / 2, 71, '₹' + short(I.coverMin) + (I.coverMax > I.coverMin ? ' – ₹' + short(I.coverMax) : ''), 'middle', '#3b4433', 11, 1);
+		// 3) मिळणारे पैसे
+		var big = I.pays.length ? Math.max.apply(null, I.pays.map(function (q) { return q[1]; })) : 1;
+		I.pays.forEach(function (q) {
+			var h = 8 + 34 * Math.sqrt(q[1] / big);
+			sv += '<rect x="' + (x(q[0]) - 2.5).toFixed(1) + '" y="' + (138 - h).toFixed(1) + '" width="5" height="' + h.toFixed(1) + '" rx="2" fill="' + c2 + '"/>';
+		});
+		if (r.maturity > 0) { sv += tx(Math.min(x(I.matAge), W - 60), 92, '₹' + short(r.maturity), x(I.matAge) > W - 80 ? 'end' : 'middle', c1, 12, 1); }
+		if (r.survival && r.plan.type !== 'moneyback') { sv += tx(Math.max(x(I.incAge), 40), 92, '₹' + short(r.survival) + ' / yr', 'start', c1, 11, 1); }
+		// वयाची पट्टी
+		sv += '<line x1="' + L + '" x2="' + (W - R) + '" y1="142" y2="142" stroke="#9aa38f"/>';
+		var ticks = [a0, pEnd > a0 + 1 ? a0 + r.P : null, I.incAge || null, I.matAge, I.coverTo !== I.matAge ? I.coverTo : null].filter(function (v, i, arr) { return v !== null && arr.indexOf(v) === i; });
+		ticks.forEach(function (a) { sv += '<line x1="' + x(a) + '" x2="' + x(a) + '" y1="138" y2="146" stroke="#6b7362"/>' + tx(Math.min(Math.max(x(a), 14), W - 14), 162, String(a), 'middle', '#5b5f52', 11); });
+		return sv + '</svg>';
+	}
+
+	// Maturity Details — [label, value] यादी
+	function maturityRows(r, t) {
+		var p = r.plan, I = reportInfo(r), out = [];
+		if (p.type !== 'utsav' && p.type !== 'utsav_sp') { out.push([t('m_sa') + (p.type === 'moneyback' ? ' <small>(' + p.mat_pct + '% × ' + inr(r.sa) + ')</small>' : ''), inr(p.type === 'moneyback' ? p.mat_pct * r.sa / 100 : r.sa)]); }
+		if (r.ga) { out.push([t('m_ga') + (I.gaYears ? ' <small>(' + inr(p.ga_per_1000 * r.sa / 1000) + ' × ' + I.gaYears + ')</small>' : ''), inr(r.ga)]); }
+		if (r.bonus) { out.push([t('m_srb') + (I.bonusYears ? ' <small>(' + inr(r.srb * r.sa / 1000) + ' × ' + I.bonusYears + ')</small>' : ''), inr(r.bonus)]); }
+		if (r.fab) { out.push([t('m_fab'), inr(r.fab)]); }
+		if (p.type === 'moneyback') { r.sbList.forEach(function (q) { out.push([t('m_mb') + ' ' + (r.age + q[0]), inr(q[1] * r.sa / 100)]); }); }
+		else if (r.survival) {
+			out.push([t('m_inc'), inr(r.survival)]);
+			out.push([t('m_incage'), String(I.incAge)]);
+			out.push([t('m_tsurv'), inr(r.totalSurv)]);
+		}
+		if (r.maturity > 0) { out.push(['<b>' + t('m_mat') + '</b>', '<b>' + inr(r.maturity) + '</b>']); out.push([t('m_matage'), String(I.matAge)]); }
+		else { out.push([t('m_coverto'), String(I.coverTo)]); }
+		out.push([t('totpaid'), inr(r.totalPrem)]);
+		out.push(['<b>' + t('totret') + '</b>', '<b>' + inr(r.totalBenefit) + '</b>']);
+		return out;
+	}
+
+	// Benefit & Coverage Table — from..to ओळी (PDF मध्ये पानं पाडायला)
+	function benefitTableHtml(r, t, cls, from, to, withTotal) {
+		var tb = r.table || [], cv = r.hasCV, adb = tb.some(function (x) { return x.acc !== x.cover; });
+		var head = ['c_age', 'c_yr', 'c_prem', 'c_cum', 'c_add', 'c_cumadd', 'c_cover'].concat(adb ? ['c_acc'] : []).concat(cv ? ['c_loan', 'c_cv'] : []).concat(['c_ret']);
+		var d = function (v) { return v ? inr(v) : '—'; };
+		var body = tb.slice(from || 0, to === undefined ? tb.length : to).map(function (x) {
+			return '<tr><td>' + x.age + '</td><td>' + x.y + '</td><td>' + d(x.prem) + '</td><td>' + d(x.cumPrem) + '</td><td>' + d(x.add) + '</td><td>' + d(x.cumAdd) + '</td><td>' + d(x.cover) + '</td>' +
+				(adb ? '<td>' + d(x.acc) + '</td>' : '') + (cv ? '<td>' + (x.loan ? inr(x.loan) : '—') + '</td><td>' + (x.cv ? inr(x.cv) : '—') + '</td>' : '') + '<td>' + (x.ret ? '<b>' + inr(x.ret) + '</b>' : '—') + '</td></tr>';
+		}).join('');
+		if (withTotal) {
+			body += '<tr class="tot"><td colspan="2">' + t('totpaid') + '</td><td colspan="' + (head.length - 4) + '">' + inr(r.totalPrem) + '</td><td>' + t('totret') + '</td><td>' + inr(r.totalBenefit) + '</td></tr>';
+		}
+		return '<table class="' + cls + '"><thead><tr>' + head.map(function (k) { return '<th>' + t(k) + '</th>'; }).join('') + '</tr></thead><tbody>' + body + '</tbody></table>';
+	}
+
+	// Option 2 — Flexi income न काढल्यास 5.5% ने जमा
+	function flexiRows(r) {
+		var out = [], bal = 0;
+		(r.table || []).forEach(function (x) {
+			var inc = r.survival && x.y >= r.incomeStart && x.y < r.T + (r.plan.type === 'utsav' ? 1 : 0) ? r.survival : 0;
+			bal = bal * 1.055 + inc;
+			if (inc) { out.push([x.y, x.age, inc, bal]); }
+		});
+		return out;
+	}
+
 	window.A4U_LIC_API = {
 		C: C, inr: inr, esc: esc, pct: pct, MODES: MODES, SINGLE: SINGLE, chartSvg: chartSvg, track: track, vendor: vendor,
 		last: function () { return last; }, cmp: function () { return lastCmp; }, client: function () { return clientInfo(); },
 		rr: function () { return lastRR && last && lastRR.r === last ? lastRR : null; }, mix: function () { return mixList.slice(); }, mixIrr: function () { return mixList.length ? mixTotals().irr : null; }, api: api, post: post,
 		// golden tests (GitHub Actions) साठी engine थेट वापरता यावा
-		compute: compute, planById: planById, resolveTerms: resolveTerms
+		compute: compute, planById: planById, resolveTerms: resolveTerms,
+		RL: RL, rfmt: rfmt, reportInfo: reportInfo, timelineSvg: timelineSvg, maturityRows: maturityRows, benefitTableHtml: benefitTableHtml, flexiRows: flexiRows
 	};
 
 	/* ---------- v3.1: Ready Reckoner ---------- */

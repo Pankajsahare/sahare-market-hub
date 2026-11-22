@@ -31,9 +31,6 @@ add_action( 'admin_notices', function () {
 		$stale = ( time() - strtotime( $p['rates_updated'] ?? $p['updated'] ) ) > 90 * DAY_IN_SECONDS;
 		if ( empty( $p['verified'] ) || empty( $p['rates'] ) || $stale ) { $warn[] = $p['name']; }
 	}
-	if ( get_option( 'a4u_lic_pending' ) ) {
-		echo '<div class="notice notice-info"><p><strong>A4U LIC:</strong> New LIC brochure data is waiting for your approval. <a href="' . esc_url( admin_url( 'admin.php?page=a4u-lic&tab=sync' ) ) . '">Review changes</a></p></div>';
-	}
 	if ( $warn ) {
 		echo '<div class="notice notice-warning"><p><strong>A4U LIC:</strong> Showing brochure-based estimates (no verified CSV) for: ' . esc_html( implode( ', ', $warn ) ) . '. <a href="' . esc_url( admin_url( 'admin.php?page=a4u-lic' ) ) . '">Open Rates panel</a></p></div>';
 	}
@@ -79,7 +76,7 @@ function a4u_lic_admin_page() {
 			<a class="nav-tab <?php echo 'plans' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $base . '&tab=plans' ); ?>">Plans &amp; Rates</a>
 			<a class="nav-tab <?php echo 'leads' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $base . '&tab=leads' ); ?>">Leads (<?php echo (int) $lead_count; ?>)</a>
 			<a class="nav-tab <?php echo 'stats' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $base . '&tab=stats' ); ?>">Stats</a>
-			<a class="nav-tab <?php echo 'sync' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $base . '&tab=sync' ); ?>">Data sync<?php echo get_option( 'a4u_lic_pending' ) ? ' <span class="update-plugins count-1"><span class="plugin-count">1</span></span>' : ''; ?></a>
+			<a class="nav-tab <?php echo 'sync' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $base . '&tab=sync' ); ?>">Data sync</a>
 			<a class="nav-tab <?php echo 'settings' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $base . '&tab=settings' ); ?>">Settings</a>
 		</h2>
 
@@ -199,24 +196,25 @@ function a4u_lic_admin_page() {
 			<?php else : ?><p><em>No presentations made yet.</em></p><?php endif; ?>
 
 		<?php elseif ( 'sync' === $tab ) :
-			$log = (array) get_option( 'a4u_lic_sync_log', array() ); $pending = get_option( 'a4u_lic_pending' );
+			$log = (array) get_option( 'a4u_lic_sync_log', array() ); $hist = (array) get_option( 'a4u_lic_sync_history', array() ); $prev = get_option( 'a4u_lic_data_presync' );
 			$su  = wp_nonce_url( admin_url( 'admin-post.php?action=a4u_lic_sync' ), 'a4u_lic_sync' );
 			?>
-			<p style="max-width:860px;">Every week a GitHub Action reads the official LIC sales brochures (with Gemini), archives each PDF and publishes <code>lic-plans.json</code>. This site checks it daily. Nothing changes on the live calculator until you click <strong>Approve</strong>.</p>
+			<p style="max-width:860px;">A GitHub Action reads the official LIC sales brochures every day (with Gemini), checks every sample premium again (golden tests) and publishes <code>lic-plans.json</code>. This site checks it daily and <strong>applies new data automatically</strong>. If something looks wrong, use <strong>Undo last update</strong>.</p>
 			<table class="widefat striped" style="max-width:700px;"><tbody>
 				<tr><td>Last check</td><td><?php echo esc_html( $log['checked_at'] ?? 'never' ); ?> &mdash; <?php echo esc_html( $log['msg'] ?? '' ); ?></td></tr>
 				<tr><td>LIC data version (applied / latest)</td><td><?php echo (int) get_option( 'a4u_lic_sync_applied', 0 ); ?> / <?php echo (int) ( $log['remote'] ?? 0 ); ?> <span style="color:#666;">(pipeline checked LIC on <?php echo esc_html( $log['remote_checked'] ?? '?' ); ?>)</span></td></tr>
 				<tr><td>Source</td><td><code><?php echo esc_html( $d['settings']['sync_url'] ); ?></code></td></tr>
 			</tbody></table>
-			<p><a class="button" href="<?php echo esc_url( add_query_arg( 'do', 'check', $su ) ); ?>">Check now</a></p>
-			<?php if ( is_array( $pending ) ) : ?>
-				<h2>Pending update v<?php echo (int) $pending['version']; ?> <small style="font-weight:400;color:#666;">fetched <?php echo esc_html( $pending['fetched'] ); ?></small></h2>
-				<table class="widefat striped" style="max-width:1000px;"><thead><tr><th>Plan</th><th>Field</th><th>Current</th><th>New (from LIC brochure)</th></tr></thead><tbody>
-				<?php foreach ( $pending['diff'] as $r ) : ?><tr><td><?php echo esc_html( $r[0] ); ?></td><td><code><?php echo esc_html( $r[1] ); ?></code></td><td style="color:#b32d2e;word-break:break-all;"><?php echo esc_html( $r[2] ); ?></td><td style="color:#00701a;word-break:break-all;"><?php echo esc_html( $r[3] ); ?></td></tr><?php endforeach; ?>
+			<p><a class="button" href="<?php echo esc_url( add_query_arg( 'do', 'check', $su ) ); ?>">Check now</a>
+			<?php if ( is_array( $prev ) ) : ?> <a class="button" href="<?php echo esc_url( add_query_arg( 'do', 'undo', $su ) ); ?>">Undo last update</a><?php endif; ?></p>
+			<h2>Recent automatic updates</h2>
+			<?php if ( $hist ) : foreach ( array_slice( $hist, 0, 5 ) as $h ) : ?>
+				<h3 style="margin:14px 0 6px;">v<?php echo (int) $h['version']; ?> &mdash; <?php echo esc_html( $h['at'] ); ?> <small style="font-weight:400;color:#666;"><?php echo (int) $h['plans']; ?> plan(s)<?php echo ! empty( $h['undone'] ) ? ' &middot; <b style="color:#b32d2e;">undone ' . esc_html( $h['undone'] ) . '</b>' : ''; ?></small></h3>
+				<table class="widefat striped" style="max-width:1000px;"><thead><tr><th>Plan</th><th>Field</th><th>Before</th><th>After (LIC brochure)</th></tr></thead><tbody>
+				<?php foreach ( (array) $h['diff'] as $r ) : ?><tr><td><?php echo esc_html( $r[0] ); ?></td><td><code><?php echo esc_html( $r[1] ); ?></code></td><td style="color:#b32d2e;word-break:break-all;"><?php echo esc_html( $r[2] ); ?></td><td style="color:#00701a;word-break:break-all;"><?php echo esc_html( $r[3] ); ?></td></tr><?php endforeach; ?>
 				</tbody></table>
-				<p><a class="button button-primary" href="<?php echo esc_url( add_query_arg( 'do', 'approve', $su ) ); ?>" onclick="return confirm('Apply these LIC brochure changes to the live calculator?');">Approve &amp; apply</a> <a class="button" href="<?php echo esc_url( add_query_arg( 'do', 'dismiss', $su ) ); ?>">Dismiss</a></p>
-				<p style="color:#666;">CSV rates, quotation points, Verified flag and Active status are never changed by sync. Bonus rates change only when the pipeline read them from LIC's bonus circular. New plans arrive switched off.</p>
-			<?php else : ?><p><em>No pending changes.</em></p><?php endif; ?>
+			<?php endforeach; else : ?><p><em>No automatic updates yet.</em></p><?php endif; ?>
+			<p style="color:#666;">CSV rates, quotation points, Verified flag and Active status are never changed by sync. Bonus rates change only when the pipeline read them from LIC's bonus circular. New plans arrive switched off.</p>
 
 		<?php elseif ( 'settings' === $tab ) : $s = $d['settings']; ?>
 			<?php if ( ! empty( $flash['err']['settings'] ) ) : ?><div class="notice notice-error inline"><p><?php echo esc_html( $flash['err']['settings'] ); ?></p></div><?php endif; ?>
@@ -229,7 +227,7 @@ function a4u_lic_admin_page() {
 					<tr><th>Rider flat rates (fallback)</th><td>Accident Benefit <input type="number" min="0" max="50" step="0.01" name="rider" value="<?php echo esc_attr( $s['rider_per_1000'] ); ?>" style="width:70px"> / 1000 rider SA &nbsp; AD&amp;DB <input type="number" min="0" max="50" step="0.01" name="rider_addb" value="<?php echo esc_attr( $s['rider_addb'] ); ?>" style="width:70px"> / 1000 BSA<br>Term rider <input type="number" min="0" max="50" step="0.01" name="rider_term" value="<?php echo esc_attr( $s['rider_term'] ); ?>" style="width:70px"> / 1000 rider SA &nbsp; PWB <input type="number" min="0" max="50" step="0.01" name="rider_pwb_pct" value="<?php echo esc_attr( $s['rider_pwb_pct'] ); ?>" style="width:70px"> % of base premium</td></tr>
 					<tr><th>Rider rates CSV (exact)</th><td><textarea name="rider_csv" rows="5" style="width:100%;font-family:monospace;" placeholder="adb,30,20,0.50&#10;term,30,20,1.42&#10;pwb,35,15,2.10"><?php echo esc_textarea( $s['rider_csv'] ); ?></textarea><p style="color:#666;margin:2px 0 0;"><code>rider,age,term,rate</code> &mdash; rider = adb / addb / term / pwb. Rate is per 1000 (pwb: % of base premium, age = proposer age). Missing rows use the flat rate above.</p></td></tr>
 					<tr><th colspan="2"><h3 style="margin:10px 0 0;">PDF branding &amp; IRDAI details</h3></th></tr>
-					<?php foreach ( array( 'brand_name' => 'Business name', 'agent_name' => 'Agent name (as per licence)', 'agent_type' => 'Agent type', 'agency_code' => 'Agency code', 'agency_branch' => 'Branch', 'brand_phone' => 'Phone', 'brand_email' => 'Email', 'brand_web' => 'Website', 'logo_url' => 'Logo URL (blank = built-in)', 'color_gold' => 'Accent colour', 'color_green' => 'Main colour' ) as $bk => $bl ) : ?>
+					<?php foreach ( array( 'brand_name' => 'Business name', 'agent_name' => 'Agent name (as per licence)', 'agent_type' => 'Agent type', 'agency_code' => 'Agency code', 'agency_branch' => 'Branch', 'brand_phone' => 'Phone', 'brand_email' => 'Email', 'brand_web' => 'Website', 'agent_title' => 'Title on PDF', 'agent_address' => 'Address on PDF', 'agent_email' => 'Email on PDF', 'photo_url' => 'Photo URL (blank = built-in)', 'loan_rate' => 'Policy loan interest % (for loan limit)', 'logo_url' => 'Logo URL (blank = built-in)', 'color_gold' => 'Accent colour', 'color_green' => 'Main colour' ) as $bk => $bl ) : ?>
 					<tr><th><?php echo esc_html( $bl ); ?></th><td><input type="text" name="<?php echo esc_attr( $bk ); ?>" value="<?php echo esc_attr( $s[ $bk ] ?? '' ); ?>" style="width:100%"></td></tr>
 					<?php endforeach; ?>
 					<tr><th colspan="2"><h3 style="margin:10px 0 0;">Data sync &amp; updates</h3></th></tr>
@@ -425,7 +423,10 @@ add_action( 'admin_post_a4u_lic_settings', function () {
 	if ( '' !== $new_slug && $new_slug !== $s['base_slug'] ) { update_option( 'a4u_lic_flush', 1, false ); }
 	$s['base_slug'] = '' !== $new_slug ? $new_slug : 'lic-calculator';
 	$s['whatsapp']  = preg_replace( '/\D/', '', (string) ( $post['whatsapp'] ?? '' ) );
-	foreach ( array( 'brand_name', 'agent_name', 'agent_type', 'agency_code', 'agency_branch', 'brand_phone', 'brand_web' ) as $bk ) { $s[ $bk ] = sanitize_text_field( $post[ $bk ] ?? '' ); }
+	foreach ( array( 'brand_name', 'agent_name', 'agent_type', 'agency_code', 'agency_branch', 'brand_phone', 'brand_web', 'agent_title', 'agent_address' ) as $bk ) { $s[ $bk ] = sanitize_text_field( $post[ $bk ] ?? '' ); }
+	$s['agent_email'] = sanitize_email( $post['agent_email'] ?? '' );
+	$s['photo_url']   = esc_url_raw( $post['photo_url'] ?? '' );
+	$s['loan_rate']   = max( 0.5, min( 20, (float) ( $post['loan_rate'] ?? 9.5 ) ) );
 	$s['brand_email'] = sanitize_email( $post['brand_email'] ?? '' );
 	$s['logo_url']    = esc_url_raw( $post['logo_url'] ?? '' );
 	foreach ( array( 'color_gold' => '#B8924A', 'color_green' => '#3F5A22' ) as $ck => $cd ) { $s[ $ck ] = sanitize_hex_color( $post[ $ck ] ?? '' ) ?: $cd; }
