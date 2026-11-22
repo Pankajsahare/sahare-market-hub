@@ -1,0 +1,371 @@
+{
+ "checked_on": "2026-11-23 00:10 IST",
+ "links": {
+  "https://licindia.in": {
+   "label": "LIC of India — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://licindia.in/lics-digi-term-uin-512n356v01": {
+   "label": "LIC's Digi Term (Plan 876) — PAGE",
+   "status": 0,
+   "fails": 1,
+   "alerted": false
+  },
+  "https://licindia.in/lics-yuva-term-uin-512n355v01": {
+   "label": "LIC's Yuva Term (Plan 875) — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.hdfclife.com": {
+   "label": "HDFC Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.hdfclife.com/content/dam/hdfclifeinsurancecompany/products-page/brochure-pdf/HDFC-Life-click-2-protect-supreme-plus.pdf": {
+   "label": "HDFC Life Click 2 Protect Supreme Plus — PDF",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.hdfclife.com/content/dam/hdfclifeinsurancecompany/products-page/brochure-pdf/HDFC-Life-click-2-protect-supreme.pdf": {
+   "label": "HDFC Life Click 2 Protect Supreme — PDF",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.sbilife.co.in": {
+   "label": "SBI Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.iciciprulife.com": {
+   "label": "ICICI Prudential Life — website",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.iciciprulife.com/content/dam/icicipru/download-centre/product-presentations/individual/ICICI_Pru_iProtect_Smart_Plus_Presentation.pdf": {
+   "label": "ICICI Pru iProtect Smart Plus — PDF",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.iciciprulife.com/term-insurance-plans/iprotect-smart-plus-term-plan.html": {
+   "label": "ICICI Pru iProtect Smart Plus — PAGE",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.axismaxlife.com": {
+   "label": "Axis Max Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.axismaxlife.com/static-page/assets/homepage/STPP-Leaflet-V05.pdf": {
+   "label": "Axis Max Life Smart Term Plan Plus — PDF",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.axismaxlife.com/term-insurance-plans/smart-term-plan-plus.html": {
+   "label": "Axis Max Life Smart Term Plan Plus — PAGE",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.axismaxlife.com/static-page/assets/homepage/STEP-Prospectus.pdf": {
+   "label": "Axis Max Life Smart Total Elite Protection Term Plan — PDF",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.kotaklife.com": {
+   "label": "Kotak Life — website",
+   "status": 202,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.kotaklife.com/assets/images/uploads/insurance-plans/Kotak_e-Term_Plan_Brochure_-_Offline_Final1.pdf": {
+   "label": "Kotak e-Term — PDF",
+   "status": 202,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.kotaklife.com/assets/images/uploads/insurance-plans/Kotak_Term_Plan_UIN_107N005V07_Brochure.pdf": {
+   "label": "Kotak Term Plan — PDF",
+   "status": 202,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://lifeinsurance.adityabirlacapital.com": {
+   "label": "Aditya Birla Sun Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://lifeinsurance.adityabirlacapital.com/uploads/ABSLI_Super_Term_Plan_V01_Brochure_8b9b57ef0d.pdf": {
+   "label": "ABSLI Super Term Plan — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://lifeinsurance.adityabirlacapital.com/term-insurance/absli-super-term-plan/": {
+   "label": "ABSLI Super Term Plan — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://lifeinsurance.adityabirlacapital.com/uploads/ABSLI_Super_Term_Plan_Plus_Leaflet_8402d835c7.pdf": {
+   "label": "ABSLI Super Term Plan Plus — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://lifeinsurance.adityabirlacapital.com/term-insurance/absli-super-term-plan-plus/": {
+   "label": "ABSLI Super Term Plan Plus — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.tataaia.com": {
+   "label": "Tata AIA Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.tataaia.com/life-insurance-plans/term-insurance/sampoorna-raksha-promise.html": {
+   "label": "Tata AIA Sampoorna Raksha Promise — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bajajlifeinsurance.com": {
+   "label": "Bajaj Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bajajlifeinsurance.com/content/dam/balic-web/pdf/etouch-plans-sl.pdf": {
+   "label": "Bajaj Life eTouch II — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bajajlifeinsurance.com/term-insurance/term-plans.jsp": {
+   "label": "Bajaj Life eTouch II — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.pnbmetlife.com": {
+   "label": "PNB MetLife — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.pnbmetlife.com/content/dam/pnb-metlife/docs/product/leaflet/MMTP%20Plus%20-%20Leaflet_tcm47-78812.pdf": {
+   "label": "PNB MetLife Mera Term Plan Plus — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.pnbmetlife.com/insurance-plans/family-protection/pnb-metlife-mera-term-plan-plus.html": {
+   "label": "PNB MetLife Mera Term Plan Plus — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.indusindnipponlife.com": {
+   "label": "IndusInd Nippon Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.shriramlife.com": {
+   "label": "Shriram Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.shriramlife.com/life-insurance/online-term-plan": {
+   "label": "Shriram Life Online Term Plan — PAGE",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.shriramlife.com/life-insurance/flexi-shield-plan": {
+   "label": "Shriram Life Flexi Shield Plan — PAGE",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.canarahsbclife.com": {
+   "label": "Canara HSBC Life — website",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.canarahsbclife.com/term-insurance/iselect-smart360-term-plan.html": {
+   "label": "Canara HSBC Life iSelect Smart360 Term Plan — PAGE",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.canarahsbclife.com/content/dam/chli/pdf/promise2secure/product-brochure.pdf": {
+   "label": "Canara HSBC Life Promise2Secure — PDF",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.canarahsbclife.com/content/dam/chli/pdf/young-term-plan/product-brochure.pdf": {
+   "label": "Canara HSBC Life Young Term Plan — PDF",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.indiafirstlife.com": {
+   "label": "IndiaFirst Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.indiafirstlife.com/content/dam/ifliwebsite/in/en/content-fragment/product-pages/indiafirst-life-elite-term-plan/indiafirst-life-elite-term-plan-brochure.pdf": {
+   "label": "IndiaFirst Life Elite Term Plan — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.indiafirstlife.com/term-insurance-plans/indiafirst-life-elite-term-plan": {
+   "label": "IndiaFirst Life Elite Term Plan — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://cmgt.indiafirstlife.com/cmgt/indiafirst-life-super-protection-plan-brochure.pdf": {
+   "label": "IndiaFirst Life Super Protection Plan — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.ageasfederal.com": {
+   "label": "Ageas Federal Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://ageasfederal.com/term-insurance-plans/isecure-plan": {
+   "label": "Ageas Federal Life Insurance iSecure Plan — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bandhanlife.com": {
+   "label": "Bandhan Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bandhanlife.com/sites/default/files/asset/2026-04/Bandhan%20Life%20iTerm%20Prime%20Brochure.pdf": {
+   "label": "Bandhan Life iTerm Prime — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bandhanlife.com/sites/default/files/asset/2026-03/Bandhan%20Life%20iTerm%20Elite%20Brochure.pdf": {
+   "label": "Bandhan Life iTerm Elite — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bhartiaxa.com": {
+   "label": "Bharti AXA Life — website",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://bhartiaxa.com/sites/default/files/2024-09/bharti-axa-life-flexi-term-pro-sales-literature.pdf": {
+   "label": "Bharti AXA Life Flexi Term Pro — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.bhartiaxa.com/term-insurance/flexi-term-pro": {
+   "label": "Bharti AXA Life Flexi Term Pro — PAGE",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://pramericalife.in": {
+   "label": "Pramerica Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://pramericalife.in/admin/assets/fileUpload/1773813288-PRAMERICA_ROCKSOLID%20TERM%20INSURANCE_2026_MAR_BROCHURE_V4.pdf": {
+   "label": "Pramerica Life RockSolid Term Insurance — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://pramericalife.in/admin/assets/fileUpload/1773812314-PRAMERICA_LIFE_SARAL%20JEEVAN_BIMA_2026_MAR_BROCHURE_V6.pdf": {
+   "label": "Pramerica Life Saral Jeevan Bima — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://pramericalife.in/term-plans/pramerica-life-saral-jeevan-bima": {
+   "label": "Pramerica Life Saral Jeevan Bima — PAGE",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.sudlife.in": {
+   "label": "Star Union Dai-ichi Life — website",
+   "status": 403,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.edelweisslife.in": {
+   "label": "Edelweiss Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.creditaccesslife.com": {
+   "label": "CreditAccess Life — website",
+   "status": 0,
+   "fails": 1,
+   "alerted": false
+  },
+  "https://www.avivaindia.com": {
+   "label": "Aviva India — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://avivaindia.com/sites/default/files/Aviva_Signature_3D_Term_Plan_122N148V01_Brochure.pdf": {
+   "label": "Aviva Signature 3D Term Plan — PDF",
+   "status": 206,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://avivaindia.com/aviva-signature-3d-term-plan/": {
+   "label": "Aviva Signature 3D Term Plan — PAGE",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  },
+  "https://www.generalicentrallife.com": {
+   "label": "Generali Central Life — website",
+   "status": 200,
+   "fails": 0,
+   "alerted": false
+  }
+ }
+}
