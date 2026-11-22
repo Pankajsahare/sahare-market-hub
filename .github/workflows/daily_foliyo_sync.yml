@@ -12,12 +12,13 @@ permissions:
 jobs:
   harvest-market-data:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -34,4 +35,8 @@ jobs:
           git config user.email "info@advisor4u.in"
           git add daily_market_hub.json
           git diff --staged --quiet || git commit -m "chore: update EOD market intelligence snapshot"
-          git push
+          for attempt in 1 2 3; do
+            if git pull -q --rebase origin main && git push -q origin HEAD:main; then break; fi
+            [ "$attempt" = 3 ] && { echo "::error::push failed"; exit 1; }
+            sleep $((attempt * 5))
+          done
