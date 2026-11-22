@@ -1,5 +1,5 @@
 {
- "checked_on": "2026-11-23 00:10 IST",
+ "checked_on": "2026-11-23 00:12 IST",
  "links": {
   "https://licindia.in": {
    "label": "LIC of India — website",
@@ -7,16 +7,10 @@
    "fails": 0,
    "alerted": false
   },
-  "https://licindia.in/lics-digi-term-uin-512n356v01": {
-   "label": "LIC's Digi Term (Plan 876) — PAGE",
-   "status": 0,
-   "fails": 1,
-   "alerted": false
-  },
   "https://licindia.in/lics-yuva-term-uin-512n355v01": {
    "label": "LIC's Yuva Term (Plan 875) — PAGE",
-   "status": 206,
-   "fails": 0,
+   "status": 0,
+   "fails": 1,
    "alerted": false
   },
   "https://www.hdfclife.com": {
@@ -135,13 +129,13 @@
   },
   "https://www.tataaia.com": {
    "label": "Tata AIA Life — website",
-   "status": 206,
+   "status": 200,
    "fails": 0,
    "alerted": false
   },
   "https://www.tataaia.com/life-insurance-plans/term-insurance/sampoorna-raksha-promise.html": {
    "label": "Tata AIA Sampoorna Raksha Promise — PAGE",
-   "status": 206,
+   "status": 200,
    "fails": 0,
    "alerted": false
   },
@@ -337,15 +331,9 @@
    "fails": 0,
    "alerted": false
   },
-  "https://www.creditaccesslife.com": {
-   "label": "CreditAccess Life — website",
-   "status": 0,
-   "fails": 1,
-   "alerted": false
-  },
   "https://www.avivaindia.com": {
    "label": "Aviva India — website",
-   "status": 200,
+   "status": 206,
    "fails": 0,
    "alerted": false
   },
