@@ -20,8 +20,7 @@ VERIFIED = "2026-11-23"
 # प्रत्येक plan: name, uin (खात्री असेल तरच), pdf (insurer च्या स्वतःच्या साईटवरचा), page, doc (PDF चा प्रकार)
 COMPANIES = [
     {"company": "LIC of India", "type": "Public", "site": "https://licindia.in", "plans": [
-        {"name": "LIC's Digi Term (Plan 876)", "uin": "512N356V02", "tag": "Online",
-         "page": "https://licindia.in/lics-digi-term-uin-512n356v01"},
+        {"name": "LIC's Digi Term (Plan 876)", "uin": "512N356V02", "tag": "Online"},
         {"name": "LIC's Yuva Term (Plan 875)", "tag": "Offline",
          "page": "https://licindia.in/lics-yuva-term-uin-512n355v01"},
     ]},
@@ -131,7 +130,7 @@ COMPANIES = [
     {"company": "Edelweiss Life", "type": "Private", "site": "https://www.edelweisslife.in", "plans": [
         {"name": "Edelweiss Life Zindagi Protect Plus", "uin": "147N080V01"},
     ]},
-    {"company": "CreditAccess Life", "type": "Private", "site": "https://www.creditaccesslife.com",
+    {"company": "CreditAccess Life", "type": "Private", "site": "",
      "note": "Offers group / credit-linked micro-insurance through lenders. No individual retail term plan.",
      "plans": []},
     {"company": "Aviva India", "type": "Private", "site": "https://www.avivaindia.com", "plans": [
