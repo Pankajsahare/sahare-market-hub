@@ -1,5 +1,5 @@
 {
- "run_at": "2026-11-22 22:44",
+ "run_at": "2026-11-23 20:09",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
@@ -197,7 +197,7 @@
    "result": "unchanged"
   },
   "721": {
-   "page_http": 0,
+   "page_http": 404,
    "candidates": [
     [
      1762495379517,
