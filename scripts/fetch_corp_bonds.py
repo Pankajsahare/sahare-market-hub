@@ -5,7 +5,7 @@ A4U Corporate Bond Fetcher v2.0
 काय करतो (रोज):
   1. BSE debt bhavcopy (fgroup + ICDM) आणि NSE CM bhavcopy मधले NCD/bonds चे भाव आणतो.
   2. मागच्या 30 दिवसांत व्यवहार झालेले सगळे bonds ठेवतो ("last traded" तारखेसह).
-  3. NSDL India Bond Info मधून प्रत्येक bond ची माहिती जोडतो:
+  3. depository च्या public bond-info मधून प्रत्येक bond ची माहिती जोडतो:
        ratings, outlook, PSU/private, sector, tax-free, secured, perpetual, guarantee,
        interest किती वेळा, पुढचं पेमेंट, call/put, default, offer documents, trustee.
   4. लिहितो:
@@ -13,10 +13,10 @@ A4U Corporate Bond Fetcher v2.0
        data/corp_details.json — documents, सगळ्या ratings, पत्ता, trustee (bond उघडल्यावरच)
        data/corp_bonds.json   — पूर्ण (जुन्या पानासाठी + पुढच्या run ची आठवण)
 
-NSDL ला त्रास नको म्हणून:
-  - bond ची कायमची माहिती (instrument, coupon, documents...) फक्त एकदाच आणतो → data/nsdl_cache.json
+स्रोतावर ताण नको म्हणून:
+  - bond ची कायमची माहिती (instrument, coupon, documents...) फक्त एकदाच आणतो → data/cache.json
   - ratings + default स्थिती दर 7 दिवसांनी पुन्हा तपासतो
-  - प्रत्येक request मध्ये ~0.6 सेकंदांचं अंतर, एका run मध्ये जास्तीत जास्त MAX_NSDL_CALLS
+  - प्रत्येक request मध्ये ~0.6 सेकंदांचं अंतर, एका run मध्ये जास्तीत जास्त MAX_DETAIL_CALLS
     (उरलेलं काम पुढच्या दिवशीच्या run मध्ये आपोआप पूर्ण होतं)
 
 फक्त Python standard library वापरली आहे.
@@ -41,7 +41,7 @@ from common import (BSE_REF, IST, NSE_REF, ROOT, bse_debt_url, fetch_file, fnum,
                     notify, nse_cm_url, write_json)
 
 OUT_FILE = ROOT / "data" / "corp_bonds.json"
-CACHE_FILE = ROOT / "data" / "nsdl_cache.json"
+CACHE_FILE = ROOT / "data" / "cache.json"
 SCHED_FILE = ROOT / "data" / "corp_schedules.json"
 PRICE_FILE = ROOT / "data" / "corp_prices.json"   # 90 दिवसांचा भाव-इतिहास (chart साठी)
 HIST_FILE = ROOT / "data" / "corp_history.json"     # प्रत्येक bond चे रोजचे व्यवहार (liquidity साठी)   # प्रत्येक bond चं पुढचं payout schedule (पान गरजेनुसार वाचतं)
@@ -52,13 +52,13 @@ DETAIL_KEYS = ("ratings", "docs", "address", "trustee", "registrar", "issueMode"
 KEEP_DAYS = 30            # इतक्या दिवसांत व्यवहार झालेले bonds यादीत ठेवायचे
 RATING_REFRESH_DAYS = 10  # ratings किती दिवसांनी पुन्हा तपासायचे (10: रोजचा run लहान, Actions मिनिटं वाचतात)
 DEFAULT_REFRESH_DAYS = 28 # AAA/AA (कुठलाही इशारा नसलेले) bonds ची "default" नोंद इतक्या दिवसांनी; बाकीच्यांची दर आठवड्याला
-MAX_NSDL_CALLS = int(os.environ.get("MAX_NSDL_CALLS", "2400"))
-MAX_NSDL_SECONDS = int(os.environ.get("MAX_NSDL_SECONDS", "1800"))  # एका run मध्ये NSDL ला जास्तीत जास्त 30 मिनिटं
-NSDL_DELAY = 0.6
-NSDL_WORKERS = 3          # एकाच वेळी जास्तीत जास्त 3 requests (NSDL वर ताण नको)
+MAX_DETAIL_CALLS = int(os.environ.get("MAX_DETAIL_CALLS", "2400"))
+MAX_DETAIL_SECONDS = int(os.environ.get("MAX_DETAIL_SECONDS", "1800"))  # एका run मध्ये details साठी जास्तीत जास्त 30 मिनिटं
+DETAIL_DELAY = 0.6
+DETAIL_WORKERS = 3          # एकाच वेळी जास्तीत जास्त 3 requests (स्रोतावर ताण नको)
 HIGH_YIELD = 14.0
 
-NSDL_BASE = "https://www.indiabondinfo.nsdl.com/bds-service/v1/public/"
+DETAIL_BASE = "https://www.indiabondinfo.nsdl.com/bds-service/v1/public/"
 DEBT_TYPES = ("07", "08", "09")  # ISIN मधले 8-9 वे अक्षर: debentures / bonds
 RANK = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-",
         "BB+", "BB", "BB-", "B+", "B", "B-", "C", "D"]
@@ -210,8 +210,8 @@ def collect_trades(today: dt.date) -> tuple[list[dict], str | None]:
     return trades, latest
 
 
-# ---------------- 2. NSDL ----------------
-class Nsdl:
+# ---------------- 2. Issue details ----------------
+class DetailApi:
     def __init__(self, budget: int):
         self.budget = budget
         self.calls = 0
@@ -222,11 +222,11 @@ class Nsdl:
     def get(self, path: str, isin: str | None = None):
         """JSON परत देतो; 400 = "No Record" → {}; network चूक → None."""
         with self.lock:
-            if self.calls >= self.budget or time.monotonic() - self.started > MAX_NSDL_SECONDS:
+            if self.calls >= self.budget or time.monotonic() - self.started > MAX_DETAIL_SECONDS:
                 raise BudgetOver
             self.calls += 1
-        url = NSDL_BASE + path + (("?isin=" + urllib.parse.quote(isin)) if isin else "")
-        time.sleep(NSDL_DELAY)
+        url = DETAIL_BASE + path + (("?isin=" + urllib.parse.quote(isin)) if isin else "")
+        time.sleep(DETAIL_DELAY)
         st, raw = http_get(url, "https://www.indiabondinfo.nsdl.com/", "application/json, text/plain, */*", timeout=20)
         if st == 400:
             return {}
@@ -265,7 +265,7 @@ def clean(v):
     return None if s in ("", "-", "null", "None", "NA", "N.A.") else s
 
 
-# NSDL चं "owner" field बहुतेक वेळा रिकामं असतं — म्हणून सरकारी कंपन्यांची नावं ओळखतो.
+# "owner" field बहुतेक वेळा रिकामं असतं — म्हणून सरकारी कंपन्यांची नावं ओळखतो.
 PSU_RE = re.compile(
     r"FOOD CORPORATION OF INDIA|HOUSING AND URBAN DEVELOPMENT|INDIA INFRASTRUCTURE FINANCE|INDIAN RAILWAY|"
     r"INDIAN RENEWABLE ENERGY|NATIONAL BANK FOR|NATIONAL HIGHWAYS AUTHORITY|NHPC|NTPC|POWER FINANCE CORP|"
@@ -358,7 +358,7 @@ def rating_key(r: str) -> int:
 
 
 def clean_watch(w):
-    """NSDL "No Watch" / "Not under watch" = watch नाही."""
+    """"No Watch" / "Not under watch" = watch नाही."""
     w = (w or "").strip()
     return None if not w or w.lower().startswith(("no", "not")) else w
 
@@ -410,11 +410,11 @@ def save_cache(cache: dict) -> None:
 def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
     """सगळ्यात जास्त व्यवहार झालेल्या bonds पासून सुरुवात; आधी ratings, मग बाकीची माहिती.
     3 workers एकत्र चालतात; वेळ/requests ची मर्यादा संपली की उरलेलं पुढच्या run मध्ये."""
-    api = Nsdl(MAX_NSDL_CALLS)
+    api = DetailApi(MAX_DETAIL_CALLS)
     stale_cut = (today - dt.timedelta(days=RATING_REFRESH_DAYS)).isoformat()
     default_cut = (today - dt.timedelta(days=DEFAULT_REFRESH_DAYS)).isoformat()
     jobs = [i for i in isins if "staticAt" not in cache.get(i, {}) or cache.get(i, {}).get("dynamicAt", "") < stale_cut]
-    print(f"NSDL: {len(jobs)} bonds need work, budget {api.budget} calls / {MAX_NSDL_SECONDS}s, {NSDL_WORKERS} workers")
+    print(f"Details: {len(jobs)} bonds need work, budget {api.budget} calls / {MAX_DETAIL_SECONDS}s, {DETAIL_WORKERS} workers")
     lock = threading.Lock()
     stop = threading.Event()
 
@@ -449,14 +449,14 @@ def enrich(isins: list[str], cache: dict, today: dt.date) -> dict:
         except BudgetOver:
             stop.set()
 
-    with ThreadPoolExecutor(max_workers=NSDL_WORKERS) as pool:
+    with ThreadPoolExecutor(max_workers=DETAIL_WORKERS) as pool:
         for n, _ in enumerate(pool.map(work, jobs), 1):
             if n % 60 == 0:
                 with lock:
                     save_cache(cache)
     if stop.is_set():
-        print("NSDL call/time budget reached; remaining bonds continue in next run")
-    print(f"NSDL calls: {api.calls}, errors: {api.errors}")
+        print("Detail call/time budget reached; remaining bonds continue in next run")
+    print(f"Detail calls: {api.calls}, errors: {api.errors}")
     return {"calls": api.calls, "errors": api.errors, "jobs": len(jobs), "partial": stop.is_set()}
 
 
@@ -648,8 +648,8 @@ def build_output(book: dict, cache: dict, today: dt.date, hist: dict | None = No
 
 
 def full_flows(n: dict, face: float | None = None) -> list[dict]:
-    """NSDL च्या काही bonds मध्ये मुद्दल परतफेडीच्या (Partial/Full Redemption) दिवशीचं व्याज schedule मध्ये नसतं.
-    तो हप्ता नियमित कूपन-चक्रावर असेल तर: व्याज = तोपर्यंत थकित मुद्दल × कूपन × दिवस / 365 (leap year 366) — NSDL चीच पद्धत.
+    """काही bonds मध्ये मुद्दल परतफेडीच्या (Partial/Full Redemption) दिवशीचं व्याज schedule मध्ये नसतं.
+    तो हप्ता नियमित कूपन-चक्रावर असेल तर: व्याज = तोपर्यंत थकित मुद्दल × कूपन × दिवस / 365 (leap year 366) — schedule चीच पद्धत.
     असं केल्याने part-repaid bonds चा XIRR / किंमत NDX सारख्या calculators शी जुळतो."""
     flows = [dict(f) for f in n.get("flows", []) if f.get("a") is not None]
     coupon, freq = n.get("coupon"), n.get("freq")
@@ -659,6 +659,7 @@ def full_flows(n: dict, face: float | None = None) -> list[dict]:
     period = 365.0 / freq
     is_int = lambda f: (f.get("e") or "").lower().startswith("interest")
     int_days = {f["d"] for f in flows if is_int(f)}
+    fix_redemption_amounts(flows, coupon, face, is_int)
     out, outstanding, last_int = [], float(face), None
     for f in sorted(flows, key=lambda x: (x["d"], 0 if is_int(x) else 1)):
         d = dt.date.fromisoformat(f["d"])
@@ -674,11 +675,53 @@ def full_flows(n: dict, face: float | None = None) -> list[dict]:
     return out
 
 
+def _basis(d: dt.date) -> int:
+    return 366 if (d.year % 4 == 0 and (d.year % 100 != 0 or d.year % 400 == 0)) else 365
+
+
+def fix_redemption_amounts(flows: list[dict], coupon: float, face: float, is_int) -> None:
+    """काही bonds मध्ये redemption ची रक्कम चुकून त्याच दिवशीच्या व्याजाइतकीच येते (उदा. INE01YL07391: ₹908.77 ऐवजी ₹20,000).
+    तसं असेल तर: थकित मुद्दल = व्याज × 365 ÷ (कूपन × दिवस) — पुढच्या व्याज-हप्त्यावरून काढतो, आणि
+    परतफेड = आधीचं थकित − नंतरचं थकित (शेवटच्या हप्त्याला उरलेलं सगळं)."""
+    ints = sorted([f for f in flows if is_int(f)], key=lambda x: x["d"])
+    reds = sorted([f for f in flows if event_code(f.get("e")) == "R"], key=lambda x: x["d"])
+    amt_on = {f["d"]: f["a"] for f in ints}
+    if not reds or not any(r["d"] in amt_on and abs(r["a"] - amt_on[r["d"]]) < 0.01 and r["a"] < face * 0.5 for r in reds):
+        return
+    def implied_after(day: str) -> float | None:          # day नंतरच्या पहिल्या व्याजावरून थकित मुद्दल
+        for k, f in enumerate(ints):
+            if f["d"] > day:
+                prev = dt.date.fromisoformat(ints[k - 1]["d"]) if k else None
+                d = dt.date.fromisoformat(f["d"])
+                if not prev or (d - prev).days <= 0:
+                    return None
+                return f["a"] * _basis(d) / (coupon / 100 * (d - prev).days)
+        return 0.0
+    outstanding = float(face)
+    for i, r in enumerate(reds):
+        after = 0.0 if i == len(reds) - 1 else implied_after(r["d"])
+        if after is None:
+            return
+        after = round(after / 100) * 100 if after > 0 else 0.0
+        r["a"], r["fixed"] = round(max(0.0, outstanding - after), 2), True
+        outstanding = after
+
+
+def record_ex(next_int: dt.date, settle: dt.date, days: int = 15) -> bool:
+    """Record date = व्याज-तारखेच्या 15 दिवस आधी. Settlement त्यानंतर असेल तर पुढचं व्याज विक्रेत्याला (ex-interest)."""
+    return (next_int - settle).days < days
+
+
 def xirr_price(flows: list[dict], settle: dt.date, dirty: float) -> float | None:
     """Dirty = Σ CF / (1+r)^((d − settle)/365) → r (% मध्ये). प्रति bond रकमा."""
     fut = [(dt.date.fromisoformat(f["d"]), f["a"]) for f in flows if f["d"] > settle.isoformat()]
     if not fut or dirty <= 0:
         return None
+    nxt = next((dt.date.fromisoformat(f["d"]) for f in flows if f["d"] > settle.isoformat() and (f.get("e") or "").lower().startswith("interest")), None)
+    if nxt and record_ex(nxt, settle):                    # record date गेली → पुढचं व्याज खरेदीदाराला नाही
+        drop = nxt.isoformat()
+        fut = [(dt.date.fromisoformat(f["d"]), f["a"]) for f in flows if f["d"] > settle.isoformat()
+               and not (f["d"] == drop and (f.get("e") or "").lower().startswith("interest"))]
     pv = lambda r: sum(a / (1 + r) ** ((d - settle).days / 365) for d, a in fut)
     lo, hi = -0.9, 5.0
     if pv(lo) < dirty or pv(hi) > dirty:
@@ -701,8 +744,12 @@ def accrued_on(flows: list[dict], settle: dt.date, coupon: float | None, face: f
     if not prev:
         return 0.0
     repaid = sum(f["a"] for f in flows if f["d"] <= s and event_code(f.get("e")) == "R")
+    out = face - repaid
+    nxt = next((dt.date.fromisoformat(f["d"]) for f in flows if f["d"] > s and (f.get("e") or "").lower().startswith("interest")), None)
+    if nxt and record_ex(nxt, settle):                    # ex-interest: accrued उणे (पुढच्या व्याज-तारखेपर्यंतचे दिवस)
+        return -out * coupon / 100 * (nxt - settle).days / 365
     days = (settle - dt.date.fromisoformat(prev[-1]["d"])).days
-    return max(0.0, (face - repaid) * coupon / 100 * days / 365)
+    return max(0.0, out * coupon / 100 * days / 365)
 
 
 def event_code(e: str | None) -> str:
@@ -752,7 +799,7 @@ def summary(payload: dict, prev_isins: set[str], stats: dict, trades: bool, secs
     rated = sum(1 for b in bonds if b.get("rating"))
     lines = [("✅" if trades and stats["errors"] <= 50 else "⚠️") + f" Bond Centre data — prices {payload.get('pricesAsOf')}",
              f"Corporate bonds: {len(bonds)} ({len(new)} new) · rated {rated} · details {payload['coverage']}",
-             f"NSDL: {stats['calls']} calls, {stats['errors']} errors" + (" · unfinished, continues tomorrow" if stats.get("partial") else ""),
+             f"Details: {stats['calls']} calls, {stats['errors']} errors" + (" · unfinished, continues tomorrow" if stats.get("partial") else ""),
              f"Run time: {secs / 60:.0f} min"]
     if not trades:
         lines.append("No new BSE/NSE debt file; showing last available prices.")

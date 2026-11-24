@@ -5,7 +5,7 @@ A4U Bond Market Snapshot v1.0
 काय करतो (रोज):
   1. BSE WDM (G-Sec व्यवहार, नेमक्या maturity तारखांसह) + NSE CM bhavcopy (GS series) मधून
      G-Secs चे भाव घेतो → प्रत्येकाचा YTM → yield curve (1Y ते 40Y).
-  2. NSDL India Bond Info मधून बाजाराचे आकडे: नवीन issues, लवकर maturity होणारे bonds,
+  2. depository च्या public bond-info मधून बाजाराचे आकडे: नवीन issues, लवकर maturity होणारे bonds,
      एकूण outstanding bonds (फक्त 5 requests).
   3. data/market_config.json मधले RBI policy rates + CPI (हे क्वचित बदलतात → तिथे हाताने 1 ओळ).
   4. data/bond_market.json लिहितो. G-Sec च्या नेमक्या maturity तारखा पण इथे ठेवतो,
@@ -152,7 +152,7 @@ def curve_points(bonds: list[dict], today: dt.date) -> list[dict]:
     return pts
 
 
-def nsdl_market() -> dict:
+def market_stats() -> dict:
     base = "https://www.indiabondinfo.nsdl.com/bds-service/v1/public/bdsinfo/"
     out = {}
     for key in ["outstandingbondsinfo", "newbondissues", "dueforredemption", "currentissuance", "previousissuance"]:
@@ -190,7 +190,7 @@ def main() -> int:
     pts = curve_points(bonds, today) if bonds else prev.get("curve", [])
     print(f"G-Secs priced: {len(bonds)}; curve points: {len(pts)}; exact maturities: {len(maturities)}")
 
-    nm = nsdl_market()
+    nm = market_stats()
     info = nm.get("outstandingbondsinfo") or {}
     payload = {
         "updated": dt.datetime.now(IST).isoformat(timespec="minutes"),
