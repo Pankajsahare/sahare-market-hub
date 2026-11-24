@@ -1,11 +1,11 @@
 {
- "updated": "2026-11-24T18:34+05:30",
+ "updated": "2026-11-25T04:48+05:30",
  "pricesAsOf": "2026-11-23",
  "curve": [
   {
    "t": 1,
    "label": "1Y",
-   "ytm": 6.4,
+   "ytm": 6.39,
    "n": 3,
    "bonds": [
     "7.06% GS 2028",
@@ -121,11 +121,11 @@
    "maturity": "2027-06-30",
    "exactMaturity": false,
    "price": 100.99,
-   "ytm": 5.074,
+   "ytm": 5.066,
    "turnover": 9139595.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 0.5968514715947981
+   "years": 0.5941136208076659
   },
   {
    "name": "8.26% GS 2027",
@@ -134,11 +134,11 @@
    "maturity": "2027-06-30",
    "exactMaturity": false,
    "price": 103.0,
-   "ytm": 3.138,
+   "ytm": 3.116,
    "turnover": 515000.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 0.5968514715947981
+   "years": 0.5941136208076659
   },
   {
    "name": "7.06% GS 2028",
@@ -147,11 +147,11 @@
    "maturity": "2028-06-30",
    "exactMaturity": false,
    "price": 100.91,
-   "ytm": 6.446,
+   "ytm": 6.445,
    "turnover": 1307628.54,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 1.5989048596851472
+   "years": 1.596167008898015
   },
   {
    "name": "7.37% GS 2028",
@@ -160,11 +160,11 @@
    "maturity": "2028-06-30",
    "exactMaturity": false,
    "price": 100.49,
-   "ytm": 7.034,
+   "ytm": 7.033,
    "turnover": 10049.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 1.5989048596851472
+   "years": 1.596167008898015
   },
   {
    "name": "6.01% GS 2028",
@@ -177,7 +177,7 @@
    "turnover": 100500.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 1.5989048596851472
+   "years": 1.596167008898015
   },
   {
    "name": "7.17% GS 2028",
@@ -186,11 +186,11 @@
    "maturity": "2028-06-30",
    "exactMaturity": false,
    "price": 103.5,
-   "ytm": 4.864,
+   "ytm": 4.86,
    "turnover": 51750.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 1.5989048596851472
+   "years": 1.596167008898015
   },
   {
    "name": "6.20% GS 2029",
@@ -203,7 +203,7 @@
    "turnover": 39949.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 2.598220396988364
+   "years": 2.595482546201232
   },
   {
    "name": "6.03% GS 2029",
@@ -216,7 +216,7 @@
    "turnover": 5150.49,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 2.598220396988364
+   "years": 2.595482546201232
   },
   {
    "name": "7.04% GS 2029",
@@ -225,11 +225,11 @@
    "maturity": "2029-06-30",
    "exactMaturity": false,
    "price": 103.35,
-   "ytm": 5.633,
+   "ytm": 5.631,
    "turnover": 1253669.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 2.598220396988364
+   "years": 2.595482546201232
   },
   {
    "name": "7.10% GS 2029",
@@ -238,11 +238,11 @@
    "maturity": "2029-06-30",
    "exactMaturity": false,
    "price": 105.0,
-   "ytm": 5.02,
+   "ytm": 5.019,
    "turnover": 30148.49,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 2.598220396988364
+   "years": 2.595482546201232
   },
   {
    "name": "7.88% GS 2030",
@@ -253,7 +253,7 @@
    "turnover": 1231302000.0,
    "src": "BSE",
    "day": "2026-11-23",
-   "years": 3.3155373032169746
+   "years": 3.3127994524298425
   },
   {
    "name": "6.01% GS 2030",
@@ -262,11 +262,11 @@
    "maturity": "2030-06-30",
    "exactMaturity": false,
    "price": 104.74,
-   "ytm": 4.565,
+   "ytm": 4.564,
    "turnover": 10474.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 3.597535934291581
+   "years": 3.594798083504449
   },
   {
    "name": "7.17% GS 2030",
@@ -279,7 +279,7 @@
    "turnover": 177084.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 3.597535934291581
+   "years": 3.594798083504449
   },
   {
    "name": "7.32% GS 2030",
@@ -292,7 +292,7 @@
    "turnover": 332340.44,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 3.597535934291581
+   "years": 3.594798083504449
   },
   {
    "name": "6.10% GS 2031",
@@ -301,11 +301,11 @@
    "maturity": "2031-06-30",
    "exactMaturity": false,
    "price": 101.5,
-   "ytm": 5.723,
+   "ytm": 5.722,
    "turnover": 203.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 4.596851471594798
+   "years": 4.594113620807666
   },
   {
    "name": "6.28% GS 2032",
@@ -318,7 +318,7 @@
    "turnover": 38526.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 5.598904859685147
+   "years": 5.596167008898015
   },
   {
    "name": "6.54% GS 2032",
@@ -327,11 +327,11 @@
    "maturity": "2032-06-30",
    "exactMaturity": false,
    "price": 98.8,
-   "ytm": 6.799,
+   "ytm": 6.8,
    "turnover": 155797.6,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 5.598904859685147
+   "years": 5.596167008898015
   },
   {
    "name": "7.26% GS 2032",
@@ -344,7 +344,7 @@
    "turnover": 124438.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 5.598904859685147
+   "years": 5.596167008898015
   },
   {
    "name": "8.28% GS 2032",
@@ -353,11 +353,11 @@
    "maturity": "2032-06-30",
    "exactMaturity": false,
    "price": 105.75,
-   "ytm": 7.018,
+   "ytm": 7.017,
    "turnover": 5290159.4,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 5.598904859685147
+   "years": 5.596167008898015
   },
   {
    "name": "6.57% GS 2033",
@@ -370,7 +370,7 @@
    "turnover": 194100.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 6.598220396988364
+   "years": 6.595482546201232
   },
   {
    "name": "6.68% GS 2033",
@@ -383,7 +383,7 @@
    "turnover": 5657112.7,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 6.598220396988364
+   "years": 6.595482546201232
   },
   {
    "name": "7.18% GS 2033",
@@ -396,7 +396,7 @@
    "turnover": 524434.23,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 6.598220396988364
+   "years": 6.595482546201232
   },
   {
    "name": "7.26% GS 2033",
@@ -409,7 +409,7 @@
    "turnover": 258781.2,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 6.598220396988364
+   "years": 6.595482546201232
   },
   {
    "name": "6.48% GS 2035",
@@ -418,11 +418,11 @@
    "maturity": "2035-06-30",
    "exactMaturity": false,
    "price": 95.01,
-   "ytm": 7.269,
+   "ytm": 7.27,
    "turnover": 152016.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 8.596851471594798
+   "years": 8.594113620807667
   },
   {
    "name": "6.94% GS 2036",
@@ -435,7 +435,7 @@
    "turnover": 167033.3,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 9.598904859685147
+   "years": 9.596167008898014
   },
   {
    "name": "7.41% GS 2036",
@@ -448,7 +448,7 @@
    "turnover": 518626.32,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 9.598904859685147
+   "years": 9.596167008898014
   },
   {
    "name": "7.54% GS 2036",
@@ -461,7 +461,7 @@
    "turnover": 62325929.26,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 9.598904859685147
+   "years": 9.596167008898014
   },
   {
    "name": "7.18% GS 2037",
@@ -474,7 +474,7 @@
    "turnover": 14823570.29,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 10.598220396988363
+   "years": 10.595482546201232
   },
   {
    "name": "6.68% GS 2040",
@@ -487,7 +487,7 @@
    "turnover": 97600.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 13.598904859685147
+   "years": 13.596167008898014
   },
   {
    "name": "7.06% GS 2041",
@@ -500,7 +500,7 @@
    "turnover": 40284.3,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 14.598220396988363
+   "years": 14.595482546201232
   },
   {
    "name": "8.83% GS 2041",
@@ -513,7 +513,7 @@
    "turnover": 11270.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 14.598220396988363
+   "years": 14.595482546201232
   },
   {
    "name": "7.72% GS 2049",
@@ -526,7 +526,7 @@
    "turnover": 10733.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 22.598220396988363
+   "years": 22.595482546201232
   },
   {
    "name": "6.67% GS 2050",
@@ -539,7 +539,7 @@
    "turnover": 64330.0,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 23.59753593429158
+   "years": 23.59479808350445
   },
   {
    "name": "7.16% GS 2050",
@@ -552,7 +552,7 @@
    "turnover": 36943.1,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 23.59753593429158
+   "years": 23.59479808350445
   },
   {
    "name": "6.99% GS 2051",
@@ -565,7 +565,7 @@
    "turnover": 9377.2,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 24.5968514715948
+   "years": 24.594113620807665
   },
   {
    "name": "7.36% GS 2052",
@@ -578,7 +578,7 @@
    "turnover": 456566.3,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 25.598904859685145
+   "years": 25.596167008898014
   },
   {
    "name": "7.09% GS 2054",
@@ -591,7 +591,7 @@
    "turnover": 2260430.54,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 27.59753593429158
+   "years": 27.59479808350445
   },
   {
    "name": "7.24% GS 2055",
@@ -604,7 +604,7 @@
    "turnover": 6397611.47,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 28.5968514715948
+   "years": 28.594113620807665
   },
   {
    "name": "7.50% GS 2056",
@@ -617,7 +617,7 @@
    "turnover": 99.1,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 29.598904859685145
+   "years": 29.596167008898014
   },
   {
    "name": "7.63% GS 2056",
@@ -630,7 +630,7 @@
    "turnover": 20057.97,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 29.598904859685145
+   "years": 29.596167008898014
   },
   {
    "name": "7.19% GS 2060",
@@ -643,7 +643,7 @@
    "turnover": 108231.65,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 33.59890485968515
+   "years": 33.596167008898014
   },
   {
    "name": "6.76% GS 2061",
@@ -656,7 +656,7 @@
    "turnover": 915994.03,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 34.59822039698837
+   "years": 34.59548254620123
   },
   {
    "name": "6.95% GS 2061",
@@ -669,7 +669,7 @@
    "turnover": 52649.86,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 34.59822039698837
+   "years": 34.59548254620123
   },
   {
    "name": "7.25% GS 2063",
@@ -682,7 +682,7 @@
    "turnover": 14775421.31,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 36.596851471594796
+   "years": 36.59411362080767
   },
   {
    "name": "7.34% GS 2064",
@@ -695,7 +695,7 @@
    "turnover": 24613018.45,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 37.59890485968515
+   "years": 37.596167008898014
   },
   {
    "name": "6.90% GS 2065",
@@ -708,7 +708,7 @@
    "turnover": 15306698.55,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 38.59822039698837
+   "years": 38.59548254620123
   },
   {
    "name": "7.71% GS 2066",
@@ -721,7 +721,7 @@
    "turnover": 54084241.81,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 39.59753593429158
+   "years": 39.59479808350445
   },
   {
    "name": "7.46% GS 2073",
@@ -734,7 +734,7 @@
    "turnover": 55948.85,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 46.59822039698837
+   "years": 46.59548254620123
   },
   {
    "name": "7.09% GS 2074",
@@ -747,7 +747,7 @@
    "turnover": 465777.13,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 47.59753593429158
+   "years": 47.59479808350445
   },
   {
    "name": "7.43% GS 2076",
@@ -760,7 +760,7 @@
    "turnover": 735436.91,
    "src": "NSE",
    "day": "2026-11-23",
-   "years": 49.59890485968515
+   "years": 49.596167008898014
   }
  ],
  "gsecMaturity": {
@@ -852,179 +852,179 @@
   ],
   "maturingSoon": [
    {
-    "isin": "INE02PG07561",
-    "issuer": "A B T Limited",
-    "sizeCr": 2.93,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BK0",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.1,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BI4",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.06,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BN4",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.25,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BM6",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.3,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BO2",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.48,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE093JA70I6",
+    "isin": "INE093JA72I2",
     "issuer": "Anand Rathi Global Finance Limited",
-    "sizeCr": 13.8,
-    "allotted": "2021-10-06",
-    "maturity": "2026-11-24"
+    "sizeCr": 2.3,
+    "allotted": "2021-10-07",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE093JA71I4",
+    "isin": "INE093JA73I0",
     "issuer": "Anand Rathi Global Finance Limited",
-    "sizeCr": 13.8,
-    "allotted": "2021-10-06",
-    "maturity": "2026-11-24"
+    "sizeCr": 2.3,
+    "allotted": "2021-10-07",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE093JA79H9",
+    "isin": "INE093JA71L8",
     "issuer": "Anand Rathi Global Finance Limited",
-    "sizeCr": 13.8,
-    "allotted": "2021-10-06",
-    "maturity": "2026-11-24"
+    "sizeCr": 7.5,
+    "allotted": "2021-10-27",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE1PK507047",
-    "issuer": "Anscer Robotics Private Limited",
-    "sizeCr": 0.25,
-    "allotted": "2025-11-22",
-    "maturity": "2026-11-24"
+    "isin": "INE12VA07504",
+    "issuer": "Branch International Financial Services Private Limited",
+    "sizeCr": 80.0,
+    "allotted": "2025-11-20",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE0L5W08054",
-    "issuer": "Arthmatetech Private Limited",
-    "sizeCr": 4.3,
-    "allotted": "2023-11-25",
-    "maturity": "2026-11-24"
+    "isin": "INE646H08160",
+    "issuer": "Capital Small Finance Bank Limited",
+    "sizeCr": 18.0,
+    "allotted": "2016-11-25",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE01ZK08620",
-    "issuer": "Hedge Finance Ltd",
-    "sizeCr": 10.0,
-    "allotted": "2025-01-24",
-    "maturity": "2026-11-24"
+    "isin": "INE03DO07AJ6",
+    "issuer": "Indus Credit Limited",
+    "sizeCr": 0.11,
+    "allotted": "2025-11-20",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE0BUS08021",
-    "issuer": "Indel Money  Limited",
-    "sizeCr": 0.8393,
-    "allotted": "2021-10-25",
-    "maturity": "2026-11-24"
+    "isin": "INE03DO07AI8",
+    "issuer": "Indus Credit Limited",
+    "sizeCr": 0.05,
+    "allotted": "2025-11-20",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE0BUS08013",
-    "issuer": "Indel Money  Limited",
-    "sizeCr": 27.0118,
-    "allotted": "2021-10-25",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE053F08338",
-    "issuer": "Indian Railway Finance Corporation Limited",
-    "sizeCr": 2404.0,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE950O08105",
-    "issuer": "Mahindra Rural Housing Finance Limited",
-    "sizeCr": 17.0,
-    "allotted": "2016-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0PM707323",
-    "issuer": "Mpokket Financial Services Private Limited",
-    "sizeCr": 125.0,
-    "allotted": "2025-10-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE918K07KE2",
-    "issuer": "Nuvama Wealth Finance Limited",
-    "sizeCr": 10.0,
-    "allotted": "2023-05-26",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE918K07LI1",
+    "isin": "INE918K07LK7",
     "issuer": "Nuvama Wealth Finance Limited",
     "sizeCr": 30.0,
     "allotted": "2023-07-13",
-    "maturity": "2026-11-24"
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE918K07KB8",
-    "issuer": "Nuvama Wealth Finance Limited",
-    "sizeCr": 50.0,
-    "allotted": "2023-05-25",
-    "maturity": "2026-11-24"
+    "isin": "INE134E07141",
+    "issuer": "Power Finance Corporation Limited",
+    "sizeCr": 209.34,
+    "allotted": "2011-11-25",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE417F07139",
-    "issuer": "Si Capital & Financial Services Limited",
-    "sizeCr": 0.33,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
+    "isin": "INE07H908013",
+    "issuer": "Printline Media Private Limited",
+    "sizeCr": 7.9968,
+    "allotted": "2016-11-26",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE0TTM07012",
-    "issuer": "Swaminarayan Galleria Private Limited",
-    "sizeCr": 135.06,
-    "allotted": "2024-05-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE692A08045",
-    "issuer": "Union Bank Of India",
+    "isin": "INE775A08063",
+    "issuer": "Samvardhana Motherson International Limited",
     "sizeCr": 750.0,
-    "allotted": "2016-11-24",
-    "maturity": "2026-11-24"
+    "allotted": "2021-11-25",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE692A08045",
-    "issuer": "Union Bank Of India",
+    "isin": "INE775A08063",
+    "issuer": "Samvardhana Motherson International Limited",
     "sizeCr": 750.0,
-    "allotted": "2016-11-24",
-    "maturity": "2026-11-24"
+    "allotted": "2021-11-25",
+    "maturity": "2026-11-25"
    },
    {
-    "isin": "INE692A08045",
-    "issuer": "Union Bank Of India",
-    "sizeCr": 750.0,
-    "allotted": "2016-11-24",
-    "maturity": "2026-11-24"
+    "isin": "INE0M7V07293",
+    "issuer": "Snapmint Financial Services Private Limited",
+    "sizeCr": 5.0,
+    "allotted": "2025-10-31",
+    "maturity": "2026-11-25"
+   },
+   {
+    "isin": "INE03WN07710",
+    "issuer": "Tattva Fincorp Limited",
+    "sizeCr": 0.0,
+    "allotted": "2020-11-25",
+    "maturity": "2026-11-25"
+   },
+   {
+    "isin": "INE216P07217",
+    "issuer": "Aavas Financiers Limited",
+    "sizeCr": 99.0,
+    "allotted": "2021-11-26",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE11B608043",
+    "issuer": "Esr Industrial Park Realty Private Limited",
+    "sizeCr": 18.78483,
+    "allotted": "2021-11-26",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE413U07210",
+    "issuer": "Iifl Samasta Finance Limited",
+    "sizeCr": 200.0,
+    "allotted": "2023-05-26",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE050N07FU4",
+    "issuer": "Kings Infra Ventures Limited",
+    "sizeCr": 0.085,
+    "allotted": "2025-10-27",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE050N07FT6",
+    "issuer": "Kings Infra Ventures Limited",
+    "sizeCr": 0.315,
+    "allotted": "2025-10-27",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE050N07FV2",
+    "issuer": "Kings Infra Ventures Limited",
+    "sizeCr": 0.05,
+    "allotted": "2025-10-27",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE848E07757",
+    "issuer": "Nhpc Limited",
+    "sizeCr": 55.0,
+    "allotted": "2014-11-26",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE2M8U07010",
+    "issuer": "Thirukochi Fincap Limited",
+    "sizeCr": 1.84,
+    "allotted": "2025-11-24",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE2M8U07077",
+    "issuer": "Thirukochi Fincap Limited",
+    "sizeCr": 0.45,
+    "allotted": "2025-11-24",
+    "maturity": "2026-11-26"
+   },
+   {
+    "isin": "INE742F07411",
+    "issuer": "Adani Ports And Special Economic Zone Limited",
+    "sizeCr": 1300.0,
+    "allotted": "2016-11-29",
+    "maturity": "2026-11-27"
+   },
+   {
+    "isin": "INE01ZK07IW7",
+    "issuer": "Hedge Finance Ltd",
+    "sizeCr": 0.0,
+    "allotted": "2023-07-27",
+    "maturity": "2026-11-27"
    }
   ]
  }
