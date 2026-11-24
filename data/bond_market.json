@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T17:26+05:30",
+ "updated": "2026-11-24T18:30+05:30",
  "pricesAsOf": "2026-11-23",
  "curve": [
   {
@@ -859,30 +859,9 @@
     "maturity": "2026-11-24"
    },
    {
-    "isin": "INE0LLX07BI4",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.06,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BM6",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.3,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
     "isin": "INE0LLX07BO2",
     "issuer": "Ahalia Finforex Limited",
     "sizeCr": 0.48,
-    "allotted": "2023-11-24",
-    "maturity": "2026-11-24"
-   },
-   {
-    "isin": "INE0LLX07BN4",
-    "issuer": "Ahalia Finforex Limited",
-    "sizeCr": 0.25,
     "allotted": "2023-11-24",
     "maturity": "2026-11-24"
    },
@@ -894,10 +873,24 @@
     "maturity": "2026-11-24"
    },
    {
-    "isin": "INE093JA70I6",
-    "issuer": "Anand Rathi Global Finance Limited",
-    "sizeCr": 13.8,
-    "allotted": "2021-10-06",
+    "isin": "INE0LLX07BM6",
+    "issuer": "Ahalia Finforex Limited",
+    "sizeCr": 0.3,
+    "allotted": "2023-11-24",
+    "maturity": "2026-11-24"
+   },
+   {
+    "isin": "INE0LLX07BI4",
+    "issuer": "Ahalia Finforex Limited",
+    "sizeCr": 0.06,
+    "allotted": "2023-11-24",
+    "maturity": "2026-11-24"
+   },
+   {
+    "isin": "INE0LLX07BN4",
+    "issuer": "Ahalia Finforex Limited",
+    "sizeCr": 0.25,
+    "allotted": "2023-11-24",
     "maturity": "2026-11-24"
    },
    {
@@ -909,6 +902,13 @@
    },
    {
     "isin": "INE093JA79H9",
+    "issuer": "Anand Rathi Global Finance Limited",
+    "sizeCr": 13.8,
+    "allotted": "2021-10-06",
+    "maturity": "2026-11-24"
+   },
+   {
+    "isin": "INE093JA70I6",
     "issuer": "Anand Rathi Global Finance Limited",
     "sizeCr": 13.8,
     "allotted": "2021-10-06",
@@ -936,16 +936,16 @@
     "maturity": "2026-11-24"
    },
    {
-    "isin": "INE0BUS08021",
+    "isin": "INE0BUS08013",
     "issuer": "Indel Money  Limited",
-    "sizeCr": 0.8393,
+    "sizeCr": 27.0118,
     "allotted": "2021-10-25",
     "maturity": "2026-11-24"
    },
    {
-    "isin": "INE0BUS08013",
+    "isin": "INE0BUS08021",
     "issuer": "Indel Money  Limited",
-    "sizeCr": 27.0118,
+    "sizeCr": 0.8393,
     "allotted": "2021-10-25",
     "maturity": "2026-11-24"
    },
