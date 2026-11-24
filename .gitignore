@@ -1,4 +1,4 @@
 __pycache__/
 *.pyc
-data/nsdl_cache.json
+data/cache.json
 data/corp_history.json

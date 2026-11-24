@@ -1,9 +1,9 @@
 # A4U Bond Centre data — सोम ते शुक्र, संध्याकाळी 7:23 IST ला आपोआप चालतो
 #   (तासाच्या ठोक्यावर GitHub वर गर्दी असते, म्हणून मुद्दाम :53 मिनिट निवडलं)
-#   1) fetch_market.py     → data/bond_market.json  (G-Sec curve, NSDL बाजार आकडे, RBI rates)
+#   1) fetch_market.py     → data/bond_market.json  (G-Sec curve, बाजार आकडे, RBI rates)
 #   2) fetch_bonds.py      → data/bonds.json        (SGB + G-Sec)
-#   3) fetch_corp_bonds.py → data/corp_list.json + corp_details.json + corp_bonds.json (corporate bonds + NSDL माहिती)
-# NSDL cache आणि रोजचा व्यवहार-इतिहास "data-cache" branch मध्ये राहतो (main हलकी राहते).
+#   3) fetch_corp_bonds.py → data/corp_list.json + corp_details.json + corp_bonds.json (corporate bonds + issue details)
+# Details cache आणि रोजचा व्यवहार-इतिहास "data-cache" branch मध्ये राहतो (main हलकी राहते).
 # हाताने चालवायचं असेल: Actions टॅब → "Update bond prices" → "Run workflow"
 name: Update bond prices
 
@@ -36,18 +36,17 @@ jobs:
       - name: Restore pipeline cache (data-cache branch)
         run: |
           git fetch --depth=1 origin data-cache
-          for f in nsdl_cache.json corp_history.json; do
-            git show "FETCH_HEAD:$f" > "data/$f"
-          done
-          echo "OLD_CACHE_BYTES=$(stat -c%s data/nsdl_cache.json)" >> "$GITHUB_ENV"
+          git show FETCH_HEAD:cache.json > data/cache.json 2>/dev/null || git show FETCH_HEAD:nsdl_cache.json > data/cache.json   # जुनं नाव → नवं नाव (एकदाच)
+          git show FETCH_HEAD:corp_history.json > data/corp_history.json
+          echo "OLD_CACHE_BYTES=$(stat -c%s data/cache.json)" >> "$GITHUB_ENV"
 
-      - name: Market snapshot (curve, NSDL stats)
+      - name: Market snapshot (curve, market stats)
         run: python scripts/fetch_market.py
 
       - name: SGB + G-Sec prices
         run: python scripts/fetch_bonds.py
 
-      - name: Corporate bonds + NSDL details
+      - name: Corporate bonds + issue details
         run: python scripts/fetch_corp_bonds.py
 
       - name: Commit if changed
@@ -70,9 +69,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           [ -n "$OLD_CACHE_BYTES" ] || { echo "Cache was not restored; not saving"; exit 0; }
-          new=$(stat -c%s data/nsdl_cache.json 2>/dev/null || echo 0)
+          new=$(stat -c%s data/cache.json 2>/dev/null || echo 0)
           if [ "$new" -lt $((OLD_CACHE_BYTES / 2)) ]; then echo "New cache looks too small ($new bytes); keeping old"; exit 0; fi
-          rm -rf /tmp/dc && mkdir /tmp/dc && cp data/nsdl_cache.json data/corp_history.json /tmp/dc/
+          rm -rf /tmp/dc && mkdir /tmp/dc && cp data/cache.json data/corp_history.json /tmp/dc/
           cd /tmp/dc
           git init -q -b data-cache
           git config user.name "github-actions[bot]"
