@@ -49,6 +49,9 @@ jobs:
       - name: Corporate bonds + issue details
         run: python scripts/fetch_corp_bonds.py
 
+      - name: NDX match check (calculator formula)
+        run: python scripts/ndx_check.py
+
       - name: Commit if changed
         if: always()
         run: |

@@ -1,0 +1,106 @@
+[
+ {
+  "isin": "INE01YL07391",
+  "trade": "2026-11-23",
+  "yield": 10.1,
+  "units": 1,
+  "ndx": {
+   "price": 100.5734,
+   "accrued": -381.1,
+   "principal": 100573.4,
+   "stamp": 0,
+   "total": 100192.3
+  }
+ },
+ {
+  "isin": "INE01YL07391",
+  "trade": "2026-11-23",
+  "yield": 9.15,
+  "units": 1,
+  "ndx": {
+   "price": 101.0561,
+   "accrued": -381.1,
+   "principal": 101056.1,
+   "stamp": 0,
+   "total": 100675.0
+  }
+ },
+ {
+  "isin": "INE0NES07287",
+  "trade": "2026-11-23",
+  "yield": 11.5,
+  "units": 1,
+  "ndx": {
+   "price": 100.2969,
+   "accrued": -3.12,
+   "principal": 10029.69,
+   "stamp": 0,
+   "total": 10026.57
+  }
+ },
+ {
+  "isin": "INE0NES07287",
+  "trade": "2026-11-23",
+  "yield": 10.55,
+  "units": 1,
+  "ndx": {
+   "price": 100.8505,
+   "accrued": -3.12,
+   "principal": 10085.05,
+   "stamp": 0,
+   "total": 10081.93
+  }
+ },
+ {
+  "isin": "INE101Q07BY9",
+  "trade": "2026-11-23",
+  "yield": 9.51,
+  "units": 1,
+  "ndx": {
+   "price": 100.1501,
+   "accrued": 32.95,
+   "principal": 10015.01,
+   "stamp": 0,
+   "total": 10047.96
+  }
+ },
+ {
+  "isin": "INE101Q07BY9",
+  "trade": "2026-11-23",
+  "yield": 8.5,
+  "units": 1,
+  "ndx": {
+   "price": 101.2627,
+   "accrued": 32.95,
+   "principal": 10126.27,
+   "stamp": 0,
+   "total": 10159.22
+  }
+ },
+ {
+  "isin": "INE321N07509",
+  "trade": "2026-11-24",
+  "yield": 8.75,
+  "units": 200,
+  "ndx": {
+   "price": 100.6342,
+   "accrued": 187397.26,
+   "principal": 20126840.0,
+   "stamp": 20,
+   "total": 20314257.26
+  }
+ },
+ {
+  "isin": "INE321N07509",
+  "trade": "2026-11-24",
+  "yield": 8.15,
+  "units": 200,
+  "ndx": {
+   "price": 100.9901,
+   "accrued": 187397.26,
+   "principal": 20198020.0,
+   "stamp": 20,
+   "total": 20385437.26
+  }
+ }
+]
