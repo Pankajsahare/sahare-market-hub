@@ -664,6 +664,12 @@ def full_flows(n: dict, face: float | None = None) -> list[dict]:
     for f in sorted(flows, key=lambda x: (x["d"], 0 if is_int(x) else 1)):
         d = dt.date.fromisoformat(f["d"])
         if is_int(f):
+            if last_int and (d - last_int).days > 0 and outstanding > 0:
+                exact = [outstanding * coupon / 100 * (d - last_int).days / bs for bs in (365, _basis(d))]
+                best = min(exact, key=lambda x: abs(x - f["a"]))
+                # schedule मधली रक्कम रुपयात कापलेली असते (उदा. 2368.00) — NDX अचूक रक्कम वापरतो (2368.49)
+                if 0.004 < abs(best - f["a"]) <= max(1.0, 0.0005 * f["a"]):
+                    f = dict(f, a=round(best, 2))
             last_int = d
         elif event_code(f.get("e")) == "R":
             if f["d"] not in int_days and last_int and 0.7 * period <= (d - last_int).days <= 1.3 * period:
@@ -765,14 +771,17 @@ def event_code(e: str | None) -> str:
 def write_schedules(bonds: list[dict], cache: dict, today: dt.date) -> None:
     """{ISIN: [[तारीख, रक्कम प्रति bond, I/R/O], ...]} — फक्त आजपासूनचे payouts."""
     t = today.isoformat()
-    out = {}
+    out, prev = {}, {}
     for b in bonds:
         n = cache.get(b["isin"], {})
         flows = [[f["d"], f["a"], event_code(f.get("e"))] for f in full_flows(n, b.get("face"))
                  if f["d"] >= t and f.get("a") is not None]
         if flows:
             out[b["isin"]] = flows
-    write_json(SCHED_FILE, {"asOf": t, "basis": "per bond (one unit of face value)", "schedules": out})
+            past = [f["d"] for f in n.get("flows", []) if f["d"] < t and event_code(f.get("e")) == "I"]
+            if past:
+                prev[b["isin"]] = max(past)          # मागची व्याज-तारीख → accrued चे दिवस अचूक (NDX प्रमाणे)
+    write_json(SCHED_FILE, {"asOf": t, "basis": "per bond (one unit of face value)", "schedules": out, "prev": prev})
     print(f"Schedules written for {len(out)} bonds")
 
 
