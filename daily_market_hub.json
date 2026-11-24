@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-11-23T11:06:10.896741Z",
-  "as_of_date": "2026-11-23",
+  "updated_at_utc": "2026-11-24T12:50:32.440234Z",
+  "as_of_date": "2026-11-24",
   "advisor": {
     "firm": "Sahare Financial Services",
     "arn": "ARN-151469",
@@ -30,7 +30,7 @@
     {
       "name": "Nifty Midcap 150",
       "value": 17695.35,
-      "change_pct": -1.07,
+      "change_pct": -1.06,
       "pe": 26.65
     },
     {
@@ -47,8 +47,8 @@
     },
     {
       "name": "USD/INR",
-      "value": 92.91,
-      "change_pct": 0.27,
+      "value": 92.9,
+      "change_pct": 0.0,
       "pe": null
     }
   ],
