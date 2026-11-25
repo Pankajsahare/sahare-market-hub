@@ -1,16 +1,16 @@
 {
- "checked_on": "2026-11-23 00:12 IST",
+ "checked_on": "2026-11-25 20:29 IST",
  "links": {
   "https://licindia.in": {
    "label": "LIC of India — website",
-   "status": 206,
-   "fails": 0,
+   "status": 0,
+   "fails": 1,
    "alerted": false
   },
   "https://licindia.in/lics-yuva-term-uin-512n355v01": {
    "label": "LIC's Yuva Term (Plan 875) — PAGE",
-   "status": 0,
-   "fails": 1,
+   "status": 206,
+   "fails": 0,
    "alerted": false
   },
   "https://www.hdfclife.com": {
@@ -75,7 +75,7 @@
   },
   "https://www.axismaxlife.com/static-page/assets/homepage/STEP-Prospectus.pdf": {
    "label": "Axis Max Life Smart Total Elite Protection Term Plan — PDF",
-   "status": 200,
+   "status": 403,
    "fails": 0,
    "alerted": false
   },
@@ -135,7 +135,7 @@
   },
   "https://www.tataaia.com/life-insurance-plans/term-insurance/sampoorna-raksha-promise.html": {
    "label": "Tata AIA Sampoorna Raksha Promise — PAGE",
-   "status": 200,
+   "status": 206,
    "fails": 0,
    "alerted": false
   },
@@ -255,8 +255,8 @@
   },
   "https://ageasfederal.com/term-insurance-plans/isecure-plan": {
    "label": "Ageas Federal Life Insurance iSecure Plan — PAGE",
-   "status": 206,
-   "fails": 0,
+   "status": 0,
+   "fails": 1,
    "alerted": false
   },
   "https://www.bandhanlife.com": {
@@ -333,7 +333,7 @@
   },
   "https://www.avivaindia.com": {
    "label": "Aviva India — website",
-   "status": 206,
+   "status": 200,
    "fails": 0,
    "alerted": false
   },
