@@ -131,6 +131,7 @@ function a4u_lic_tools() {
 		'bonus-rates'         => array( 'LIC Bonus Rates', 'Bonus rates used for LIC with-profit plans in our illustrations.', '🎁' ),
 		'branch-locator'      => array( 'LIC Branch Locator', 'Find an LIC branch office by city, PIN code or name.', '📍' ),
 		'lic-services'        => array( 'LIC Online Services', 'Official LIC links: pay premium, e-NACH, policy status, NAV, claims.', '🔗' ),
+		'medical-tests'       => array( 'LIC Medical Tests Checker', 'Which special medical reports LIC may ask for, by age and total sum assured.', '🩺' ),
 		'policy-service-guide' => array( 'LIC Policy Service Guide', 'Loan, nominee, NACH, mode change, bank and PAN update, address change, assignment and ULIP rules, plus older plan versions (914, 915, 936, 945…).', '📘' ),
 	);
 }

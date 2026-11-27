@@ -31,6 +31,9 @@ function a4u_lic_render_tool( $k, $with_head = true ) {
 		case 'lic-services':
 			$h .= a4u_lic_services_html();
 			break;
+		case 'medical-tests':
+			$h .= a4u_lic_medical_html();
+			break;
 		case 'policy-service-guide':
 			$h .= a4u_lic_service_guide_html();
 			break;
@@ -311,5 +314,79 @@ function a4u_lic_service_guide_html() {
 	}
 	$h .= '</tbody></table></div><p class="a4h-note">Riders on most of these plans: Term and Critical Illness ₹1 lakh–₹25 lakh; Accidental Death &amp; Disability ₹10,000–₹1 crore; Accident Benefit ₹20,000–₹1 crore.</p></section>';
 	$h .= '<p class="a4h-note">Source: rules shown on LIC\'s online service pages and LIC plan terms, written in our own words. Please confirm with your LIC branch or agent before acting.</p>';
+	return $h;
+}
+
+/* =====================================================================
+ * v4.4.1: Medical tests checker — LIC Annexure-1 (Special Medical Reports),
+ * Chart-I आणि Chart-II, वय (मागचा वाढदिवस) × SUC (एकूण विचाराधीन विमा रक्कम)
+ * ===================================================================== */
+function a4u_lic_medical_html() {
+	$N = 'No special report';
+	$E1 = 'REST ECG, FBS, RUA, Lipidogram, Hb%';
+	$a = 'REST ECG, SBT-13, RUA, Hb%';
+	$b = 'REST ECG, SBT-13, RUA, Haemogram, HbA1c';
+	$c = 'REST ECG, SBT-13, RUA, Haemogram, HbA1c, CTMT';
+	$big = 'REST ECG, SBT-13, RUA, Haemogram, HbA1c, CTMT, Chest X-Ray, Anti HCV, USG Abdomen & Pelvis, Spot Urine Micro-albumin, 2D Echocardiogram with Doppler';
+	$d = array(
+		// [SUC पर्यंत (₹), वय 18–35, 36–45, 46–50, 51–55, 56–60/56+]
+		'c1' => array(
+			array( 300000, $N, $N, $N, $N, $N ),
+			array( 1300000, $N, $N, $N, $N, $E1 ),
+			array( 2000000, $N, $N, 'FBS, Lipidogram, RUA', $a, $a ),
+			array( 2500000, $N, $N, 'FBS, Lipidogram, RUA', $a, $b ),
+			array( 3000000, $N, $N, $a, $a, $b ),
+			array( 5000000, $N, $a, $a . ', HbA1c, CTMT', $c, $c ),
+			array( 10000000, $a, $a . ', HbA1c', $a . ', HbA1c, CTMT', $c, $c ),
+		),
+		'c2' => array(
+			array( 300000, $N, $N, $N, $N, 'REST ECG, FBS' ),
+			array( 400000, $N, $N, $N, 'FBS, RUA', $E1 ),
+			array( 600000, $N, $N, $N, 'REST ECG, FBS, RUA', $E1 ),
+			array( 1200000, $N, $N, 'FBS, RUA', $E1, $E1 ),
+			array( 2000000, $N, $N, $a, $a, $a ),
+			array( 3000000, 'Lipidogram, RUA, ELISA for HIV, Hb%', 'SBT-13, RUA, Hb%', $a, 'REST ECG, SBT-13, RUA, Haemogram', $b ),
+			array( 10000000, $a, $a . ', HbA1c', $a . ', HbA1c, CTMT', $c, $c ),
+			array( 250000000, $b, $c, $c, $c, $c ),
+			array( 399900000, $c, $c, $c, $c, $c . ', Chest X-Ray' ),
+			array( PHP_INT_MAX, $big, $big, $big, $big, $big . ' (plus PSA test for men)' ),
+		),
+	);
+	$gl = array(
+		'MER' => 'Medical Examination Report by an LIC-panel doctor (VMER = by video).',
+		'REST ECG' => 'Resting ECG (heart tracing).',
+		'FBS' => 'Fasting blood sugar.',
+		'RUA' => 'Routine urine analysis.',
+		'Lipidogram' => 'Cholesterol and lipid profile.',
+		'Hb% / Haemogram' => 'Haemoglobin / complete blood count.',
+		'SBT-13' => 'A panel of 13 blood chemistry tests (sugar, kidney, liver and similar).',
+		'HbA1c' => 'Average blood sugar of the last 3 months.',
+		'CTMT' => 'Computerised treadmill (stress) test.',
+		'ELISA for HIV' => 'HIV screening test.',
+	);
+	$h = '<section class="a4h-box a4h-med"><div class="a4h-frow">' .
+		'<label><span>Age (completed, last birthday)</span><input type="number" id="a4h-mage" min="0" max="80" value="35" inputmode="numeric"></label>' .
+		'<label><span>Total sum assured under consideration (₹)</span><input type="number" id="a4h-msuc" min="0" step="50000" value="2500000" inputmode="numeric"></label>' .
+		'<label><span>Underwriting category</span><select id="a4h-mcat"><option value="c2">Regular (Chart II)</option><option value="c1">Qualifies for Preferred / Special Non-Medical (Chart I)</option></select></label>' .
+		'</div><div class="a4h-mout" aria-live="polite"></div>' .
+		'<p class="a4h-note">"Sum under consideration" = this new proposal plus your other LIC policies that LIC counts together (your agent can confirm the figure).</p></section>';
+	$h .= '<section class="a4h-box"><h2>How to read the result</h2><ul class="a4h-ticks">' .
+		'<li>"No special report" means no extra lab tests. LIC may still call a medical examination (MER or video MER) if you do not qualify for non-medical cover.</li>' .
+		'<li>Wherever special reports apply, the medical examination (MER) is also compulsory.</li>' .
+		'<li>Chart I applies (up to age 60 and ₹1 crore) only when you qualify for LIC\'s Preferred or Special Non-Medical but need a medical because of the amount, age or a health condition. Everyone else, and anyone above age 60 or ₹1 crore, follows Chart II.</li>' .
+		'<li>Pure term plans (Jeevan Amar, Tech Term) and Saral Jeevan Bima follow their own rules; for term plans above ₹10 crore extra tests apply.</li>' .
+		'<li>A urine cotinine test may be needed for non-smoker rates. LIC can ask for more reports depending on your health history.</li></ul></section>';
+	$h .= '<section class="a4h-box"><h2>Test names in plain words</h2><table class="a4h-table"><tbody>';
+	foreach ( $gl as $k => $v ) { $h .= '<tr><th>' . esc_html( $k ) . '</th><td>' . esc_html( $v ) . '</td></tr>'; }
+	$h .= '</tbody></table><p class="a4h-note">Source: LIC\'s Special Medical Reports chart (Annexure-1, Charts I and II). LIC revises underwriting rules from time to time; your agent or LIC branch confirms the final requirement.</p></section>';
+	$h .= '<script>(function(){var D=' . wp_json_encode( $d ) . ';function inr(n){return "₹"+Number(n).toLocaleString("en-IN");}
+function run(){var a=parseInt(document.getElementById("a4h-mage").value,10),s=Number(document.getElementById("a4h-msuc").value)||0,c=document.getElementById("a4h-mcat").value,o=document.querySelector(".a4h-mout");
+if(!(a>=0)){o.innerHTML="";return;}
+if(a<18){o.innerHTML="<p class=\"a4h-med-r\">This chart is for adults (18+). For children, LIC decides medical requirements from the child\'s and parents\' details — ask your agent.</p>";return;}
+var note="";if(c==="c1"&&(a>60||s>10000000)){c="c2";note="<p class=\"a4h-note\">Chart I applies only up to age 60 and ₹1 crore, so Chart II is used.</p>";}
+var col=a<=35?1:a<=45?2:a<=50?3:a<=55?4:5,row=null;D[c].some(function(r){if(s<=r[0]){row=r;return true;}return false;});
+if(!row){o.innerHTML="";return;}var t=row[col],none=/^No special/.test(t);
+o.innerHTML="<p class=\"a4h-med-r "+(none?"ok":"need")+"\"><strong>"+(none?"No special medical reports":"Special reports likely: ")+"</strong>"+(none?"":t+" (with medical examination, MER)")+"</p>"+note;}
+["a4h-mage","a4h-msuc","a4h-mcat"].forEach(function(i){var e=document.getElementById(i);e.addEventListener("input",run);e.addEventListener("change",run);});run();})();</script>';
 	return $h;
 }

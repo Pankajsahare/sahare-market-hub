@@ -389,7 +389,9 @@
 		}
 		var modes = Object.keys(MODES).filter(function (k) { return !(p.allowed_modes && p.allowed_modes.length) || p.allowed_modes.indexOf(k) > -1; }).map(function (k) { var y = yearlyIn(k) * g; return [k, y / MODES[k][1], y]; });
 		var yp = yearlyIn(inp.mode) * g;
-		return { rebate: rebate, tabular: tabular, base: base, riders: riders, inst: yp / MODES[inp.mode][1], yearPay: yp, modes: modes };
+		// v4.4.1: GSV साठी प्रत्यक्ष भरलेला मूळ हप्ता (mode rebate नंतर; GST, riders शिवाय) — LIC BI (736) शी पडताळलेलं
+		var adj0 = modeAdj(p, inp.mode), gsvBase = adj0 === null ? base * (Number(C.modal[inp.mode]) || 1) * MODES[inp.mode][1] : Math.max(0, tabular * (1 + adj0 / 100) - rebate);
+		return { rebate: rebate, tabular: tabular, base: base, gsvBase: gsvBase, riders: riders, inst: yp / MODES[inp.mode][1], yearPay: yp, modes: modes };
 	}
 
 	// S3 (v1.4): bonus — term band असल्यास तो, नाहीतर एकच SRB/FAB
@@ -592,7 +594,7 @@
 			case 'endow':
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
-				return (pusa + cumAdd) * ((f1 || 0) + (f2 || 0));
+				return (pusa + (y >= 3 ? cumAdd : 0)) * ((f1 || 0) + (f2 || 0)); // v4.4.1: पहिल्या 2 वर्षांत bonus SSV मध्ये नाही (LIC BI 736)
 			case 'lakshya': // 733: (PUSA + बोनस) × F2 + (मृत्यू-नंतरचं 10% उत्पन्न, भरलेल्या हप्त्यांच्या प्रमाणात) × F1 — खऱ्या report शी पडताळलेलं
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
@@ -638,7 +640,7 @@
 		var adb = inp.r && inp.r.adb ? Number(inp.r.adbSA) || 0 : 0;
 		var loanRate = (Number(C.loanRate) || 9.5) / 100;
 		for (var y = 1; y <= o.T; y++) {
-			var prem = y <= o.P ? o.pr.yearPay : 0, basePrem = y <= o.P ? (single ? o.pr.tabular || o.pr.base : o.pr.base) : 0;
+			var prem = y <= o.P ? o.pr.yearPay : 0, basePrem = y <= o.P ? (single ? o.pr.tabular || o.pr.base : (o.pr.gsvBase || o.pr.base)) : 0;
 			cumPrem += prem; cumBase += basePrem; // दाखवायला भरलेला हप्ता; GSV साठी मूळ (tax/rider शिवाय)
 			var add = 0;
 			if (isGA && y <= gaYears) { add = p.type === 'platinum' ? o.ga / o.P : p.ga_per_1000 * o.sa / 1000; }

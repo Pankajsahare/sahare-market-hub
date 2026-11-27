@@ -150,7 +150,7 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 	$cat  = function_exists( 'a4u_lic_catalog' ) ? a4u_lic_catalog() : array();
 	if ( $cat ) {
 		$strip = '<nav class="a4u-lic a4u-hub-strip" aria-label="LIC plans and tools"><a class="a4u-hub-main" href="' . esc_url( home_url( '/' . a4u_lic_hub_slug() . '/' ) ) . '">📚 All LIC Plans — details, benefits &amp; calculators →</a><span>';
-		foreach ( array( 'compare-plans', 'revival-calculator', 'bonus-rates', 'branch-locator', 'lic-services', 'policy-service-guide' ) as $k ) {
+		foreach ( array( 'compare-plans', 'revival-calculator', 'medical-tests', 'bonus-rates', 'branch-locator', 'lic-services', 'policy-service-guide' ) as $k ) {
 			$t = a4u_lic_tools()[ $k ];
 			$strip .= '<a href="' . esc_url( a4u_lic_tool_url( $k ) ) . '">' . $t[2] . ' ' . esc_html( $t[0] ) . '</a>';
 		}
