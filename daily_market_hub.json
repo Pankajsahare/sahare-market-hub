@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-11-26T11:22:45.656290Z",
-  "as_of_date": "2026-11-26",
+  "updated_at_utc": "2026-11-27T11:16:30.901331Z",
+  "as_of_date": "2026-11-27",
   "advisor": {
     "firm": "Sahare Financial Services",
     "arn": "ARN-151469",
@@ -17,38 +17,38 @@
   "indices_and_benchmarks": [
     {
       "name": "Nifty 50",
-      "value": 25884.5,
-      "change_pct": 2.11,
+      "value": 25607.2,
+      "change_pct": -0.82,
       "pe": 19.43
     },
     {
       "name": "BSE Sensex",
-      "value": 84328.59,
-      "change_pct": 2.3,
+      "value": 83339.26,
+      "change_pct": -0.71,
       "pe": null
     },
     {
       "name": "Nifty Midcap 150",
-      "value": 17885.1,
-      "change_pct": 1.07,
+      "value": 17886.9,
+      "change_pct": 0.62,
       "pe": 26.65
     },
     {
       "name": "Nifty Smallcap 250",
-      "value": 19372.15,
-      "change_pct": 0.74,
+      "value": 19481.3,
+      "change_pct": 0.56,
       "pe": null
     },
     {
       "name": "India VIX",
-      "value": 16.84,
-      "change_pct": -4.89,
+      "value": 16.55,
+      "change_pct": -6.37,
       "pe": null
     },
     {
       "name": "USD/INR",
-      "value": 92.54,
-      "change_pct": 0.35,
+      "value": 92.98,
+      "change_pct": 0.59,
       "pe": null
     }
   ],
