@@ -23,7 +23,7 @@ OUT = os.path.join(os.path.dirname(__file__), '..', 'wp', 'a4u-lic-calculator', 
 # calculator मधले plans आणि त्यांचं SSV कुटुंब
 CALC = {
     # 733 (Lakshya) आणि money-back plans चं SSV सूत्र खऱ्या quote शी पडताळलेलं नाही → फक्त GSV
-    '714': 'endow', '715': 'endow', '717': 'endow', '733': 'lakshya', '736': 'endow', '760': 'endow',
+    '714': 'endow', '715': 'anand', '717': 'endow', '733': 'lakshya', '736': 'endow', '760': 'endow',
     '720': 'mb', '721': None, '732': None,
     '745': 'umang', '771': 'utsav', '883': 'utsav_sp',
     '894': None,  # Jeevan Raksha (term) — surrender value नाही
@@ -109,7 +109,7 @@ def tariff(c):
         if has(c, f'TermRider_{p}'):
             d['term_rider'] = grid(c, f'TermRider_{p}')
         ssv = None
-        if fam in ('endow', 'mb', 'lakshya'):
+        if fam in ('endow', 'mb', 'lakshya', 'anand'):
             if has(c, f'ssv_{p}_f1') and has(c, f'ssv_{p}_f2'):
                 ssv = {'family': fam, 'f1': grid(c, f'ssv_{p}_f1'), 'f2': grid(c, f'ssv_{p}_f2')}
         elif fam == 'umang':  # 745: (PUSA + bonus) × F1 + paid-up income × F3_<PPT> (LIC BI शी पडताळलेलं)
@@ -123,6 +123,8 @@ def tariff(c):
             g = grid(c, f'ssv_{p}_f1_f2')
             f1 = {'c': [0], 'r': {k: [round((v[0] or 0) + (v[1] or 0), 6)] for k, v in g['r'].items()}}
             ssv = {'family': fam, 'f1': f1, 'f3': grid(c, f'ssv_{p}_f3'), 'f4': grid(c, f'ssv_{p}_f4')}
+        if ssv and fam == 'anand' and has(c, f'ssv_{p}_f3'):  # 715: whole-life cover चं मूल्य, maturity च्या वयानुसार
+            ssv['f3'] = {'c': [0], 'r': {str(int(a)): [num(v)] for a, v in c.execute(f'select Age, F3 from "ssv_{p}_f3"') if num(v) is not None}}
         if ssv:
             d['ssv'] = ssv
         out[p] = d

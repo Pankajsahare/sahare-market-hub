@@ -595,6 +595,12 @@
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
 				return (pusa + (y >= 3 ? cumAdd : 0)) * ((f1 || 0) + (f2 || 0)); // v4.4.1: पहिल्या 2 वर्षांत bonus SSV मध्ये नाही (LIC BI 736)
+			case 'anand': // 715 (v4.5.1): + whole-life cover आणि 125% मृत्यू लाभ — LIC चे 3 BI (वय 26/36/46) सगळ्या वर्षांत जुळतात
+				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
+				if (f1 === null && f2 === null) { return null; }
+				f1 = f1 || 0; f2 = f2 || 0;
+				var f3a = t.f3 ? (tgrid(t.f3, o.age + o.T, 0) || 0) : 0;
+				return (pusa + (y >= 3 ? cumAdd : 0)) * (f1 + f2) + pusa * (0.25 * f1 + f2 * f3a);
 			case 'lakshya': // 733: (PUSA + बोनस) × F2 + (मृत्यू-नंतरचं 10% उत्पन्न, भरलेल्या हप्त्यांच्या प्रमाणात) × F1 — खऱ्या report शी पडताळलेलं
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
