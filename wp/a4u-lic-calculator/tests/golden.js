@@ -164,6 +164,19 @@ for (const p of plans) {
   if (!r.errors && r.basis !== 'tariff') fails.push(`${p.id}: basis ${r.basis} (tariff expected)`);
 }
 
+// v4.4: rider मर्यादा — Term ₹1–25 लाख, ADDB कमाल ₹1 कोटी
+{
+  const p = plans.find(x => x.id === '736');
+  const a = inp(30, 16, 5000000); a.r = { term: true, termSA: 3000000 };
+  const r1 = E.compute(p, a, {}); checked++;
+  if (!r1.errors || !/between/.test(r1.errors[0])) fails.push('736: term rider 30 lakh should be refused');
+  const b = inp(30, 16, 5000000); b.r = { term: true };
+  const r2 = E.compute(p, b, {}); checked++;
+  if (r2.errors) fails.push('736: blank term rider SA with SA 50 lakh should default to 25 lakh: ' + r2.errors);
+  const c = inp(30, 16, 50000); c.r = { term: true, termSA: 50000 };
+  const r3 = E.compute(p, c, {}); checked++;
+  if (!r3.errors) fails.push('736: term rider below 1 lakh should be refused');
+}
 console.log(`Golden tests: ${checked} checks on ${plans.length} plans, ${fails.length} failure(s)`);
 if (fails.length) { fails.slice(0, 40).forEach(f => console.log(' ✗ ' + f)); process.exit(1); }
 console.log('✓ all good');

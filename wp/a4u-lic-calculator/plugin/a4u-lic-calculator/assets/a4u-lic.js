@@ -11,6 +11,8 @@
 	var MODES = { yearly: ['Yearly', 1], half: ['Half-yearly', 2], quarter: ['Quarterly', 4], month: ['Monthly', 12] };
 	// verified rates नसतील तेव्हा फक्त अंदाजासाठी demo factor
 	var DEMO_FACTOR = { endowment: 0.98, anand: 1.02, labh: 0.84, lakshya: 0.9, umang: 1.25, utsav: 1.6 };
+	// v4.4: LIC rider SA मर्यादा [किमान, कमाल]
+	var RIDER_LIM = { term: [100000, 2500000], adb: [20000, 10000000], addb: [10000, 10000000] };
 	var SINGLE = { single: 1, utsav_sp: 1, term_sp: 1 };
 	var TERMS = { term: 1, term_sp: 1 };            // v4.3: शुद्ध term (maturity नाही)       // एकदाच premium भरायचे plans
 	var GOALS = {
@@ -110,7 +112,7 @@
 		field('<span data-target-label>Maturity amount you want (₹, estimated incl. bonus)</span>', '<input type="number" name="target" min="10000" step="10000" value="1000000" inputmode="numeric">', 'a4u-by-maturity') +
 		'<div class="a4u-row">' +
 		field('<span data-term-label>Policy term</span>', '<select name="term"></select>') +
-		field('Payment mode', '<select name="mode">' + modeOpts + '</select>', 'a4u-mode') +
+		field('Payment mode', '<select name="mode">' + modeOpts + '</select><small class="a4u-nach" hidden>Monthly premium is collected by NACH (bank auto-debit). Without NACH, LIC charges 5% extra on monthly mode.</small>', 'a4u-mode') +
 		'</div>' +
 		field('Smoking', '<select name="smoker"><option value="NS">Non-smoker</option><option value="S">Smoker</option></select>', 'a4u-smoker') + // v4.2: 894
 		field('Income option', '<select name="income"><option value="regular">Regular Income (paid every year)</option><option value="flexi">Flexi Income (accumulate @ 5.5% p.a.)</option></select>', 'a4u-income') +
@@ -144,9 +146,9 @@
 
 	function riderHtml(p) {
 		var h = '';
-		if (has(p, 'adb')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_adb" value="1"> ' + RIDERS.adb + '</label>' + field('Rider Sum Assured (up to 3 × SA; blank = SA)', '<input type="number" name="r_adb_sa" min="0" step="5000" inputmode="numeric">', 'a4u-sub-field') + '</div>'; }
-		if (has(p, 'addb')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_addb" value="1"> ' + RIDERS.addb + ' (age 18–60)</label></div>'; }
-		if (has(p, 'term')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_term" value="1"> ' + RIDERS.term + ' (age 18+)</label>' + field('Term rider Sum Assured (up to SA; blank = SA)', '<input type="number" name="r_term_sa" min="0" step="5000" inputmode="numeric">', 'a4u-sub-field') + '</div>'; }
+		if (has(p, 'adb')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_adb" value="1"> ' + RIDERS.adb + '</label>' + field('Rider Sum Assured (₹20,000 – ₹1 crore, up to 3 × SA; blank = SA)', '<input type="number" name="r_adb_sa" min="0" step="5000" inputmode="numeric">', 'a4u-sub-field') + '</div>'; }
+		if (has(p, 'addb')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_addb" value="1"> ' + RIDERS.addb + ' (age 18–60, cover up to ₹1 crore)</label></div>'; }
+		if (has(p, 'term')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_term" value="1"> ' + RIDERS.term + ' (age 18+)</label>' + field('Term rider Sum Assured (₹1 lakh – ₹25 lakh, up to SA; blank = SA up to ₹25 lakh)', '<input type="number" name="r_term_sa" min="0" step="5000" inputmode="numeric">', 'a4u-sub-field') + '</div>'; }
 		if (has(p, 'pwb')) { h += '<div class="a4u-rider"><label class="a4u-check"><input type="checkbox" name="r_pwb" value="1"> ' + RIDERS.pwb + ' (child policies)</label>' + field('Proposer / parent age', '<input type="number" name="r_pwb_age" min="18" max="50" inputmode="numeric">', 'a4u-sub-field') + '</div>'; }
 		return h || '<p class="a4u-note">No riders for this plan.</p>';
 	}
@@ -370,9 +372,9 @@
 		}
 		var base = Math.max(0, tabular - rebate); // annualised premium (mode loading शिवाय)
 		var riders = {}, rTotal = 0, term = ctx.T || inp.term;
-		if (inp.r.adb) { riders.adb = riderRate('adb', inp.age, term) * (inp.r.adbSA || sa) / 1000; }
-		if (inp.r.addb) { riders.addb = riderRate('addb', inp.age, term) * sa / 1000; }
-		if (inp.r.term) { riders.term = ((p.tariff && tgrid(p.tariff.term_rider_by_ppt ? p.tariff.term_rider_by_ppt[ctx.P || 0] : p.tariff.term_rider, inp.age, term)) || riderRate('term', inp.age, term)) * (inp.r.termSA || sa) / 1000; }
+		if (inp.r.adb) { riders.adb = riderRate('adb', inp.age, term) * (inp.r.adbSA || Math.min(sa, RIDER_LIM.adb[1])) / 1000; }
+		if (inp.r.addb) { riders.addb = riderRate('addb', inp.age, term) * Math.min(sa, RIDER_LIM.addb[1]) / 1000; } // v4.4: ADDB कमाल ₹1 कोटी
+		if (inp.r.term) { riders.term = ((p.tariff && tgrid(p.tariff.term_rider_by_ppt ? p.tariff.term_rider_by_ppt[ctx.P || 0] : p.tariff.term_rider, inp.age, term)) || riderRate('term', inp.age, term)) * (inp.r.termSA || Math.min(sa, RIDER_LIM.term[1])) / 1000; }
 		if (inp.r.pwb) { riders.pwb = riderRate('pwb', inp.r.pwbAge, ctx.P || term) / 100 * base; }
 		Object.keys(riders).forEach(function (k) { rTotal += riders[k]; });
 		var g = 1 + inp.gst / 100;
@@ -484,6 +486,10 @@
 		if (sa % slab[1] !== 0) { return { errors: ['Sum Assured must be in multiples of ' + inr(slab[1]) + ' (for example ' + inr(floorToSlab(p, sa)) + ').'] }; }
 		if (inp.r.adb && inp.r.adbSA > 3 * sa) { return { errors: ['Accident Benefit rider Sum Assured can be up to 3 × Sum Assured (' + inr(3 * sa) + ').'] }; }
 		if (inp.r.term && inp.r.termSA > sa) { return { errors: ['Term rider Sum Assured can be up to the Sum Assured (' + inr(sa) + ').'] }; }
+		// v4.4: LIC च्या rider मर्यादा (Term ₹1 लाख–₹25 लाख, AB ₹20,000–₹1 कोटी); रिकामं ठेवलं तर कमाल मर्यादेपर्यंत आपोआप
+		var tSA = inp.r.term ? (inp.r.termSA || Math.min(sa, RIDER_LIM.term[1])) : 0, aSA = inp.r.adb ? (inp.r.adbSA || Math.min(sa, RIDER_LIM.adb[1])) : 0;
+		if (inp.r.term && (tSA < RIDER_LIM.term[0] || tSA > RIDER_LIM.term[1])) { return { errors: ['Term rider Sum Assured must be between ' + inr(RIDER_LIM.term[0]) + ' and ' + inr(RIDER_LIM.term[1]) + '.'] }; }
+		if (inp.r.adb && (aSA < RIDER_LIM.adb[0] || aSA > RIDER_LIM.adb[1])) { return { errors: ['Accident Benefit rider Sum Assured must be between ' + inr(RIDER_LIM.adb[0]) + ' and ' + inr(RIDER_LIM.adb[1]) + '.'] }; }
 
 		var G = tp.G || 0;
 		var pr = premiumFor(p, inp, rate, sa, { T: T, P: P });
@@ -1294,6 +1300,8 @@
 			.then(function () { calcBtn.disabled = false; calcBtn.textContent = 'Calculate'; });
 	}
 
+	// v4.4: monthly निवडलं की NACH टीप
+	(function () { var m = f(form, 'mode'), n = root.querySelector('.a4u-nach'); if (!m || !n) { return; } var u = function () { n.hidden = m.value !== 'month'; }; m.addEventListener('change', u); u(); })();
 	f(form, 'plan').addEventListener('change', fillPlanUI);
 	Array.prototype.forEach.call(form.querySelectorAll('input[name="by"]'), function (el) { el.addEventListener('change', syncBy); });
 	f(form, 'doc').value = isoDate(new Date());

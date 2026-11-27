@@ -31,6 +31,9 @@ function a4u_lic_render_tool( $k, $with_head = true ) {
 		case 'lic-services':
 			$h .= a4u_lic_services_html();
 			break;
+		case 'policy-service-guide':
+			$h .= a4u_lic_service_guide_html();
+			break;
 	}
 	$h .= a4u_lic_lead_box( a4u_lic_tools()[ $k ][0] ) . a4u_lic_disclaimer();
 	return $h;
@@ -228,3 +231,85 @@ add_action( 'wp_head', function () {
 		echo '<meta name="twitter:title" content="' . esc_attr( $m[0] ) . '"><meta name="twitter:description" content="' . esc_attr( $m[1] ) . '">' . "\n";
 	}
 }, PHP_INT_MAX );
+
+/* =====================================================================
+ * v4.4: LIC policy सेवा मार्गदर्शक + जुन्या plan आवृत्त्या (आपल्या शब्दांत;
+ * नियम LIC च्या online सेवा पानांवरून, plan अटी LIC च्या V02 आवृत्त्यांवरून)
+ * ===================================================================== */
+function a4u_lic_service_guide_html() {
+	$li = function ( $en, $mr ) { return '<li data-mr="' . esc_attr( $mr ) . '">' . esc_html( $en ) . '</li>'; };
+	$g = array(
+		array( 'Policy loan', 'पॉलिसीवर कर्ज', array(
+			array( 'Loan is available once the policy has acquired surrender value (usually after 2 full years of premium in current plans; 3 years in many older plans).', 'पॉलिसीला surrender value आल्यानंतर कर्ज मिळतं (सध्याच्या plans मध्ये साधारण 2 वर्षांचे पूर्ण हप्ते भरल्यानंतर; अनेक जुन्या plans मध्ये 3 वर्षांनंतर).' ),
+			array( 'You can apply online with OTP; the money is paid by NEFT to your registered bank account.', 'OTP वापरून online अर्ज करता येतो; रक्कम नोंदवलेल्या बँक खात्यात NEFT ने जमा होते.' ),
+			array( 'For the first loan, the original policy bond and a signed loan form are given to the branch, assigning the policy to LIC.', 'पहिल्या कर्जासाठी मूळ policy bond आणि सही केलेला loan form शाखेत द्यावा लागतो (policy LIC च्या नावे assign होते).' ),
+			array( 'The final loan amount can change on the payment date, depending on premiums paid and interest due.', 'प्रत्यक्ष पैसे मिळण्याच्या दिवशी, भरलेले हप्ते आणि थकलेलं व्याज यानुसार कर्जाची रक्कम थोडी बदलू शकते.' ),
+		) ),
+		array( 'Nomination', 'Nominee नोंदणी', array(
+			array( 'The policyholder must be 18 or older to make a nomination.', 'Nomination करायला policyholder चं वय 18 पूर्ण असावं लागतं.' ),
+			array( 'If the nominee is below 18, name an adult appointee who gives consent.', 'Nominee 18 पेक्षा लहान असेल तर एक प्रौढ appointee नेमावा लागतो आणि त्याची संमती लागते.' ),
+			array( 'An online request alone is not enough: submit the signed nomination form with the original policy bond and ID proof at any branch.', 'फक्त online अर्ज पुरेसा नाही: सही केलेला nomination form, मूळ policy bond आणि ओळखपत्र कोणत्याही शाखेत द्यावं लागतं.' ),
+			array( 'Changing an existing nomination carries a small fee as per LIC rules.', 'आधीचं nomination बदलायला LIC च्या नियमानुसार छोटं शुल्क लागतं.' ),
+		) ),
+		array( 'Auto-debit (NACH)', 'बँकेतून आपोआप हप्ता (NACH)', array(
+			array( 'NACH works for yearly, half-yearly, quarterly and monthly modes, for new and existing policies.', 'NACH वार्षिक, सहामाही, तिमाही आणि मासिक सगळ्या modes साठी, नवीन आणि जुन्या policies वर चालतं.' ),
+			array( 'On monthly mode, the 5% extra that LIC charges for monthly payment is waived when you pay by NACH.', 'मासिक mode वर LIC जो 5% जादा हप्ता घेते, तो NACH ने भरल्यास माफ होतो.' ),
+			array( 'Keep money in the account for at least 3 days after the debit date. A bounced debit has to be paid at the branch, with charges.', 'Debit च्या तारखेनंतर किमान 3 दिवस खात्यात पैसे ठेवा. Debit परत गेला तर हप्ता शुल्कासह शाखेत भरावा लागतो.' ),
+			array( 'To stop NACH, tell your branch about 20 days (monthly) or 30 days (other modes) before the debit date.', 'NACH बंद करायचं असेल तर debit तारखेच्या साधारण 20 दिवस (मासिक) किंवा 30 दिवस (इतर modes) आधी शाखेला कळवा.' ),
+		) ),
+		array( 'Change of premium mode', 'हप्त्याचा mode बदलणे', array(
+			array( 'Only in-force policies can change mode. A lapsed policy must first be revived in its current mode.', 'फक्त चालू (in-force) policy चा mode बदलता येतो. बंद पडलेली policy आधी आहे त्याच mode मध्ये revive करावी लागते.' ),
+			array( 'Single premium cannot be changed to a regular mode, or the other way round.', 'Single premium मधून regular mode मध्ये, किंवा उलट, बदल करता येत नाही.' ),
+			array( 'GST and a small alteration fee may apply.', 'GST आणि छोटं बदल शुल्क लागू शकतं.' ),
+		) ),
+		array( 'Bank account (NEFT) and PAN', 'बँक खाते (NEFT) आणि PAN', array(
+			array( 'Register your bank account with a scanned cancelled cheque and PAN card; all future policy payments go to this account.', 'Cancelled cheque आणि PAN card ची scan प्रत देऊन बँक खाते नोंदवा; पुढचे सगळे पैसे याच खात्यात येतात.' ),
+			array( 'PAN can be registered online for policies on your own life and on your minor children.', 'स्वतःच्या आणि अल्पवयीन मुलांच्या policies वर PAN online नोंदवता येतो.' ),
+		) ),
+		array( 'Change of address', 'पत्ता बदल', array(
+			array( 'With Aadhaar: approve with the OTP sent to your Aadhaar-linked mobile (for policies where Aadhaar is linked).', 'Aadhaar सह: Aadhaar शी जोडलेल्या mobile वर आलेल्या OTP ने मंजुरी (ज्या policies ला Aadhaar जोडलेला आहे त्यांच्यासाठी).' ),
+			array( 'Without Aadhaar: upload a self-attested address proof in your own name (in-force or paid-up policies only).', 'Aadhaar शिवाय: स्वतःच्या नावाचा, स्वसाक्षांकित पत्त्याचा पुरावा upload करा (फक्त चालू किंवा paid-up policies साठी).' ),
+		) ),
+		array( 'Assignment (transfer of rights)', 'Assignment (हक्क हस्तांतरण)', array(
+			array( 'Write the assignee\'s full name and age, and the amount received in words.', 'ज्याच्या नावे हक्क देत आहात त्याचं पूर्ण नाव आणि वय, आणि मिळालेली रक्कम शब्दांत लिहा.' ),
+			array( 'Sign in front of a witness who is not the assignee, then send the deed to LIC\'s divisional office for registration.', 'Assignee नसलेल्या साक्षीदारासमोर सही करा, आणि नोंदणीसाठी ते पत्र LIC च्या divisional office ला पाठवा.' ),
+			array( 'For assignment as loan security, take legal advice on the form and stamp duty.', 'कर्जासाठी तारण म्हणून assignment करताना form आणि stamp duty बद्दल कायदेशीर सल्ला घ्या.' ),
+		) ),
+		array( 'ULIP: fund switch and partial withdrawal', 'ULIP: fund switch आणि partial withdrawal', array(
+			array( 'Four fund switches in a policy year are free; the 5th and 6th cost ₹100 each, taken from your units.', 'एका policy वर्षात 4 fund switch मोफत; 5 वा आणि 6 वा switch प्रत्येकी ₹100 ला, units मधून कापून.' ),
+			array( 'Partial withdrawal is allowed after the 3rd or 5th policy anniversary (as per plan), when all premiums are paid and no loan is outstanding.', 'सगळे हप्ते भरलेले आणि कर्ज नसल्यास, 3 ऱ्या किंवा 5 व्या policy वर्धापनदिनानंतर (plan प्रमाणे) partial withdrawal करता येतं.' ),
+			array( 'Requests complete at the branch before 3 pm get that day\'s closing NAV; later requests get the next working day\'s NAV.', 'शाखेत दुपारी 3 पूर्वी पूर्ण झालेल्या अर्जाला त्याच दिवसाचा NAV, नंतरच्या अर्जाला पुढच्या कामाच्या दिवसाचा NAV.' ),
+		) ),
+	);
+	$h = '<section class="a4h-box"><p data-mr="जुनी LIC policy आहे? कर्ज, nominee, NACH, पत्ता बदल यांसारख्या सेवा कशा मिळवायच्या, ते इथे थोडक्यात. अंतिम नियम तुमच्या policy च्या अटी आणि LIC शाखा सांगेल.">Have an existing LIC policy? Here is how the common services work, in short. Your policy document and LIC branch have the final rules.</p></section>';
+	foreach ( $g as $sec ) {
+		$h .= '<section class="a4h-box"><h2 data-mr="' . esc_attr( $sec[1] ) . '">' . esc_html( $sec[0] ) . '</h2><ul class="a4h-ticks">';
+		foreach ( $sec[2] as $r ) { $h .= $li( $r[0], $r[1] ); }
+		$h .= '</ul></section>';
+	}
+	// जुन्या आवृत्त्या (V02, 2020–21) — फक्त संदर्भासाठी
+	$old = array(
+		array( '914', 'New Endowment', '512N277V02', '8–55', '12–35', 'Same as term', '1 lakh', '714' ),
+		array( '915', 'New Jeevan Anand', '512N279V02', '18–50', '15–35', 'Same as term', '1 lakh', '715' ),
+		array( '933', 'New Jeevan Lakshya', '512N297V02', '18–50', '13–25', 'Term − 3', '1 lakh', '733' ),
+		array( '920', 'New Money Back 20 years', '512N280V02', '13–50', '20', '15', '1 lakh', '720' ),
+		array( '921', 'New Money Back 25 years', '512N278V02', '13–45', '25', '20', '1 lakh', '721' ),
+		array( '936', 'New Jeevan Labh', '512N304V02', '8–59', '16, 21, 25', '10, 15, 16', '2 lakh', '736' ),
+		array( '945', 'Jeevan Umang', '512N312V02', '90 days–55', '100 − age', '15, 20, 25, 30', '2 lakh', '745' ),
+		array( '948', 'Bima Shree', '512N316V02', '8–55', '14–20', 'Term − 4', '10 lakh', '' ),
+		array( '947', 'Jeevan Shiromani', '512N315V02', '18–55', '14–20', 'Term − 4', '1 crore', '' ),
+		array( '943', 'Aadhaar Stambh', '512N310V02', '8–55', '10–20', 'Same as term', '75,000', '' ),
+		array( '944', 'Aadhaar Shila', '512N309V02', '8–55', '10–20', 'Same as term', '75,000', '' ),
+		array( '916', 'New Bima Bachat', '512N284V02', '15–50', '9, 12, 15', 'Single', '35,000', '' ),
+		array( '917', 'Single Premium Endowment', '512N283V02', '90 days–65', '10–25', 'Single', '50,000', '' ),
+	);
+	$cat = function_exists( 'a4u_lic_catalog' ) ? a4u_lic_catalog() : array();
+	$h .= '<section class="a4h-box"><h2 data-mr="जुन्या plan आवृत्त्या (2020–21)">Older plan versions (2020–21)</h2><p data-mr="या plans आता नवीन क्रमांकाने (7xx) विकले जातात. जुन्या policies च्या अटी या आवृत्तीनुसारच राहतात. फक्त संदर्भासाठी — नवीन policy साठी सध्याचा plan पाहा.">These plans are now sold under new numbers (7xx). Existing policies keep the terms of the version they were issued under. For reference only; for a new policy see the current plan.</p><div class="a4u-scroll"><table class="a4h-table"><thead><tr><th>Plan</th><th>UIN</th><th>Entry age</th><th>Term (years)</th><th>Premium paying</th><th>Min. Sum Assured</th><th>Current version</th></tr></thead><tbody>';
+	foreach ( $old as $o ) {
+		$cur = ( $o[7] && isset( $cat[ $o[7] ] ) ) ? '<a href="' . esc_url( a4u_lic_plan_url( $cat[ $o[7] ] ) ) . '">' . esc_html( $cat[ $o[7] ]['name'] ?? $o[7] ) . ' (' . $o[7] . ')</a>' : '—';
+		$h .= '<tr><td>' . esc_html( $o[0] . ' ' . $o[1] ) . '</td><td>' . esc_html( $o[2] ) . '</td><td>' . esc_html( $o[3] ) . '</td><td>' . esc_html( $o[4] ) . '</td><td>' . esc_html( $o[5] ) . '</td><td>₹' . esc_html( $o[6] ) . '</td><td>' . $cur . '</td></tr>';
+	}
+	$h .= '</tbody></table></div><p class="a4h-note">Riders on most of these plans: Term and Critical Illness ₹1 lakh–₹25 lakh; Accidental Death &amp; Disability ₹10,000–₹1 crore; Accident Benefit ₹20,000–₹1 crore.</p></section>';
+	$h .= '<p class="a4h-note">Source: rules shown on LIC\'s online service pages and LIC plan terms, written in our own words. Please confirm with your LIC branch or agent before acting.</p>';
+	return $h;
+}
