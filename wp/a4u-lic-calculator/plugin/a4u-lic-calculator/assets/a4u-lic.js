@@ -11,7 +11,8 @@
 	var MODES = { yearly: ['Yearly', 1], half: ['Half-yearly', 2], quarter: ['Quarterly', 4], month: ['Monthly', 12] };
 	// verified rates नसतील तेव्हा फक्त अंदाजासाठी demo factor
 	var DEMO_FACTOR = { endowment: 0.98, anand: 1.02, labh: 0.84, lakshya: 0.9, umang: 1.25, utsav: 1.6 };
-	var SINGLE = { single: 1, utsav_sp: 1 };       // एकदाच premium भरायचे plans
+	var SINGLE = { single: 1, utsav_sp: 1, term_sp: 1 };
+	var TERMS = { term: 1, term_sp: 1 };            // v4.3: शुद्ध term (maturity नाही)       // एकदाच premium भरायचे plans
 	var GOALS = {
 		child: { label: 'Child education / marriage', plans: ['732', '736', '733'] },
 		retire: { label: 'Retirement income', plans: ['745', '771'] },
@@ -136,7 +137,7 @@
 		if (p.type === 'labh') { return t + ' years (pay ' + p.ppt_map[t] + ' years)'; }
 		if (p.type === 'lakshya') { return t + ' years (pay ' + (t - 3) + ' years)'; }
 		if (p.type === 'platinum') { return (t % 100) + ' years (pay ' + Math.floor(t / 100) + ' years)'; } // v4.1: 770 — PPT×100 + term
-		if (p.type === 'term') { var tp = Math.floor(t / 100), tt = t % 100; return tt + ' years (' + (tp === tt ? 'pay every year' : 'pay ' + tp + ' years') + ')'; } // v4.2: 894
+		if (p.type === 'term') { var tp = Math.floor(t / 100), tt = t % 100; return tt + ' years (' + (tp === 1 ? 'single premium' : (tp === tt ? 'pay every year' : 'pay ' + tp + ' years')) + ')'; } // v4.2: 894
 		return t + ' years';
 	}
 	function termLabel(p) { return p.type === 'utsav_sp' ? 'Guaranteed Addition period' : (BY_PPT[p.type] ? 'Premium paying term' : 'Policy term'); }
@@ -321,7 +322,7 @@
 			case 'lakshya': return { T: sel, P: sel - 3 };
 			case 'ga_endow': return { T: sel, P: sel - (p.ppt_less || 5) }; // 760 Bima Jyoti: PPT = term − 5
 			case 'platinum': return { T: sel % 100, P: Math.floor(sel / 100) }; // 770 Bima Platinum
-			case 'term': return { T: sel % 100, P: Math.floor(sel / 100) };     // 894 Jeevan Raksha (P = T म्हणजे नियमित)
+			case 'term': case 'term_sp': return { T: sel % 100, P: Math.floor(sel / 100) }; // 894 Jeevan Raksha (P = T नियमित, P = 1 single)
 			case 'umang':
 			case 'utsav': return { T: (p.maturity_age || 100) - age, P: sel };
 			case 'single': return { T: sel, P: 1 };
@@ -361,9 +362,10 @@
 		var single = !!SINGLE[p.type];
 		var tabular = rate * sa / 1000;
 		var rebate = rebatePer1000(p, sa, inp.age) * sa / 1000;
-		if (p.rebate_pct_bands && p.rebate_pct_bands.length) { // v4.2: 894 — tabular premium च्या % मध्ये (वय गट × SA गट)
+		var rbands = p.type === 'term_sp' && p.rebate_pct_bands_sp && p.rebate_pct_bands_sp.length ? p.rebate_pct_bands_sp : p.rebate_pct_bands;
+		if (rbands && rbands.length) { // v4.2: 894 — tabular premium च्या % मध्ये (वय गट × SA गट); single साठी वेगळा तक्ता
 			var rp = 0;
-			p.rebate_pct_bands.some(function (b) { if (inp.age <= b[0]) { b[1].forEach(function (x) { if (sa >= x[0]) { rp = x[1]; } }); return true; } return false; });
+			rbands.some(function (b) { if (inp.age <= b[0]) { b[1].forEach(function (x) { if (sa >= x[0]) { rp = x[1]; } }); return true; } return false; });
 			rebate = tabular * rp / 100;
 		}
 		var base = Math.max(0, tabular - rebate); // annualised premium (mode loading शिवाय)
@@ -412,6 +414,11 @@
 
 	function compute(p, inp, rates) {
 		var age = inp.age, tp = resolveTerms(p, age, inp.term), T = tp.T, P = tp.P, errs = [];
+		if (p.type === 'term' && P === 1) { // v4.3: 894 single premium — त्याच plan ची single आवृत्ती
+			p._sp = p._sp || Object.assign({}, p, { type: 'term_sp', allowed_modes: [], _sp: null });
+			p._sp.tariff = p.tariff;
+			p = p._sp;
+		}
 		if (!(age >= p.min_age && age <= p.max_age)) { errs.push('Entry age for this plan must be ' + p.min_age + ' to ' + p.max_age + ' years.'); }
 		var minByTerm = p.min_age_by_term ? p.min_age_by_term[inp.term] : undefined;
 		if (minByTerm !== undefined && age < minByTerm) { errs.push('For this term the minimum entry age is ' + (minByTerm === 0 ? '30 days' : minByTerm + ' years') + '.'); }
@@ -443,7 +450,7 @@
 		// दराचा क्रम: CSV (tariff) → खरी quotation → brochure estimate → demo
 		var rate = rates[age + '|' + key], basis = p.verified ? 'verified' : 'csv';
 		if (!rate && p.tariff) { // v4: LIC tariff (दर per 1000 SA) — अचूक
-			var tr = p.tariff.rate_by_opt ? tgrid(p.tariff.rate_by_opt[(inp.gender === 'F' ? 'F' : 'M') + '_' + (inp.smoker === 'S' ? 'S' : 'NS') + '_' + (P === T ? 'RP' : 'LP_' + P)], age, T)
+			var tr = p.tariff.rate_by_opt ? tgrid(p.tariff.rate_by_opt[(inp.gender === 'F' ? 'F' : 'M') + '_' + (inp.smoker === 'S' ? 'S' : 'NS') + '_' + (P === 1 ? 'SP' : (P === T ? 'RP' : 'LP_' + P))], age, T)
 				: (p.tariff.rate_by_ppt ? tgrid(p.tariff.rate_by_ppt[P], age, T) : tgrid(p.tariff.rate, age, key));
 			if (tr) { rate = tr; basis = 'tariff'; }
 		}
@@ -457,7 +464,7 @@
 		var bn = bonusFor(p, T);
 		if (inp.srbO !== null) { bn.srb = inp.srbO; }
 		if (inp.fabO !== null) { bn.fab = inp.fabO; }
-		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow' || p.type === 'platinum' || p.type === 'term') ? 0 : T);
+		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow' || p.type === 'platinum' || p.type === 'term' || p.type === 'term_sp') ? 0 : T);
 
 		var sa = inp.sa;
 		if (inp.by === 'maturity') { // B: लक्ष्य रकमेवरून SA (वर round — लक्ष्य पूर्ण व्हावं म्हणून)
@@ -497,7 +504,7 @@
 		if (p.type === 'utsav_sp') { maturity = Math.max(sa, 1.25 * pr.tabular) + ga; }
 		else if (p.type === 'moneyback') { maturity = (p.mat_pct || 0) * sa / 100 + bonus + fab; }
 		else if (p.type === 'ga_endow' || p.type === 'platinum') { maturity = sa + ga; }
-		else if (p.type !== 'utsav' && p.type !== 'term') { maturity = sa + bonus + fab; }
+		else if (p.type !== 'utsav' && p.type !== 'term' && p.type !== 'term_sp') { maturity = sa + bonus + fab; }
 		var sbMap = p.type === 'moneyback' ? mbSchedule(p, age) : {};
 
 		var rows = [], cf = [], cum = 0, totalPrem = 0, totalSurv = 0, flexiBal = 0, y;
@@ -519,7 +526,7 @@
 			rows.push([y, age + y, prem, ben, cum]);
 		}
 		var deathSA = 0, deathNote = '';
-		if (p.type === 'single' || p.type === 'utsav_sp') {
+		if (p.type === 'single' || p.type === 'utsav_sp' || p.type === 'term_sp') {
 			var mult = 1.25;
 			(p.death_sp || []).some(function (d) { if (age <= d[0]) { mult = d[1]; return true; } return false; });
 			deathSA = Math.max(sa, mult * (p.type === 'utsav_sp' ? pr.tabular : pr.base));
@@ -550,7 +557,7 @@
 		cfB[T] -= cut;
 		return {
 			totalBenefitLow: totalBenefit - cut, irrLow: cut ? irr(cfB) : irr(cf), bonusCut: cut,
-			pvBenefit: pvBenefit, taxNotes: taxNotes, fabRate: bn.fab, gender: inp.gender, target: inp.by === 'maturity' ? inp.target : 0,
+			pvBenefit: pvBenefit, taxNotes: taxNotes, fabRate: bn.fab, gender: inp.gender, smoker: inp.smoker || 'NS', target: inp.by === 'maturity' ? inp.target : 0,
 			docText: niceDate(docD), matText: niceDate(matD),
 			plan: p, age: age, sa: sa, T: T, P: P, G: G, mode: SINGLE[p.type] ? 'single' : inp.mode, by: inp.by, gst: inp.gst, r: inp.r, income: flexi ? 'flexi' : 'regular',
 			basis: basis, demo: demo, rate: rate, pr: pr, inst: pr.inst, totalPrem: totalPrem, bonus: bonus, fab: fab, ga: ga, srb: bn.srb,
@@ -727,8 +734,8 @@
 		last = r;
 		var p = r.plan, m = modeName(r), h = '', pr = r.pr;
 		if (r.mode === 'single') { m = 'Single premium'; }
-		if (p.type === 'term') { h += '<div class="a4u-banner a4u-exact">Pure term plan: if the life assured dies during the term, the family gets the Sum Assured. There is no maturity or surrender value.</div>'; }
-		if (r.basis === 'tariff') { h += '<div class="a4u-banner a4u-exact">Premium worked out from the LIC tariff rate for this age and term. Surrender and loan values are estimates.</div>'; }
+		if (p.type === 'term' || p.type === 'term_sp') { h += '<div class="a4u-banner a4u-exact">Pure term plan: if the life assured dies during the term, the family gets the Sum Assured. There is no maturity or surrender value.</div>'; }
+		if (r.basis === 'tariff') { h += '<div class="a4u-banner a4u-exact">Premium worked out from the LIC tariff rate for this age and term.' + (TERMS[p.type] ? '' : ' Surrender and loan values are estimates.') + '</div>'; }
 		if (r.basis === 'quote') { h += '<div class="a4u-banner a4u-exact">Based on an actual LIC quotation for this age and term.</div>'; }
 		if (r.basis === 'brochure') { h += '<div class="a4u-banner a4u-est">Estimated from the sample premiums in the official LIC sales brochure. The actual premium may differ slightly for this age and term.</div>'; }
 		else if (r.basis === 'demo') { h += '<div class="a4u-banner">Demo rates — rough figures only. Verified LIC rates for this plan are being updated.</div>'; }
@@ -742,7 +749,7 @@
 		h += '<div class="a4u-cards">' +
 			card(SINGLE[p.type] ? 'Single premium' : 'Installment (' + m + ')', inr(r.inst)) +
 			card('Total premium paid', inr(r.totalPrem)) +
-			(p.type === 'term' ? card('Life cover (on death)', inr(Math.max(r.deathSA || 0, r.sa))) + card('Cover till age', String(r.age + r.T)) // v4.2: term — maturity नाही
+			(TERMS[p.type] ? card('Life cover (on death)', inr(Math.max(r.deathSA || 0, r.sa))) + card('Cover till age', String(r.age + r.T)) // v4.2: term — maturity नाही
 			: card(r.totalSurv ? 'Estimated total benefits' : 'Estimated maturity', inr(r.totalBenefit)) +
 			card('Return (IRR, approx.)', r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '% p.a.')) +
 			'</div>';
@@ -751,7 +758,7 @@
 		var RI = reportInfo(r), sp1 = !!SINGLE[p.type];
 		h += '<div class="a4u-rep"><div class="a4u-paybox">' +
 			'<div><span>' + RL.paytot + '</span><b>' + inr(r.totalPrem) + '</b>' + (sp1 ? '' : '<small>' + rfmt(rlEN, 'perday', { d: inr(RI.perDay) }) + '</small>') + '</div>' +
-			(p.type === 'term' ? '<div class="get"><span>Family gets on death</span><b>' + inr(Math.max(r.deathSA || 0, r.sa)) + '</b><small>Pure protection: nothing is paid if you survive the term</small></div></div>'
+			(TERMS[p.type] ? '<div class="get"><span>Family gets on death</span><b>' + inr(Math.max(r.deathSA || 0, r.sa)) + '</b><small>Pure protection: nothing is paid if you survive the term</small></div></div>'
 			: '<div class="get"><span>' + RL.gettot + '</span><b>' + inr(r.totalBenefit) + '</b>' + (RI.ratio ? '<small>' + rfmt(rlEN, 'every1', { x: RI.ratio.toFixed(2) }) + '</small>' : '') + '</div></div>') +
 			'<h4>Benefit illustration</h4><div class="a4u-tl">' + timelineSvg(r, '#0b4ea2', '#1f8f4e') + '</div>' +
 			'<p class="a4u-tl-leg"><span class="k pay"></span>' + RL.youpay + ' <span class="k cov"></span>' + RL.lcover + ' <span class="k get"></span>' + RL.youget + ' <em>(age)</em></p>' +
@@ -774,7 +781,7 @@
 			r.sbList.forEach(function (x) { rows += tr('<b>Guaranteed:</b> Money back ' + x[1] + '% of SA at end of year ' + x[0] + ' (age ' + (r.age + x[0]) + ')', inr(x[1] * r.sa / 100)); });
 			rows += tr('<b>Guaranteed:</b> ' + p.mat_pct + '% of SA on maturity (age ' + (r.age + r.T) + ')', inr(p.mat_pct * r.sa / 100));
 		}
-		else if (p.type !== 'utsav' && p.type !== 'term') { rows += tr('<b>Guaranteed:</b> Basic Sum Assured on maturity', inr(r.sa)); }
+		else if (p.type !== 'utsav' && !TERMS[p.type]) { rows += tr('<b>Guaranteed:</b> Basic Sum Assured on maturity', inr(r.sa)); }
 		if (r.totalSurv && p.type !== 'moneyback') {
 			var incName = p.type === 'umang' ? 'Survival benefit' : (r.income === 'flexi' ? 'Flexi income' : 'Regular income');
 			rows += tr('<b>Guaranteed:</b> ' + incName + ' ' + p.survival_pct + '% of SA yearly from year ' + r.incomeStart, inr(r.survival) + ' / yr');
@@ -1006,7 +1013,7 @@
 	// Maturity Details — [label, value] यादी
 	function maturityRows(r, t) {
 		var p = r.plan, I = reportInfo(r), out = [];
-		if (p.type !== 'utsav' && p.type !== 'utsav_sp' && p.type !== 'term') { out.push([t('m_sa') + (p.type === 'moneyback' ? ' <small>(' + p.mat_pct + '% × ' + inr(r.sa) + ')</small>' : ''), inr(p.type === 'moneyback' ? p.mat_pct * r.sa / 100 : r.sa)]); }
+		if (p.type !== 'utsav' && p.type !== 'utsav_sp' && !TERMS[p.type]) { out.push([t('m_sa') + (p.type === 'moneyback' ? ' <small>(' + p.mat_pct + '% × ' + inr(r.sa) + ')</small>' : ''), inr(p.type === 'moneyback' ? p.mat_pct * r.sa / 100 : r.sa)]); }
 		if (r.ga) { out.push([t('m_ga') + (I.gaYears ? ' <small>(' + inr(p.ga_per_1000 * r.sa / 1000) + ' × ' + I.gaYears + ')</small>' : ''), inr(r.ga)]); }
 		if (r.bonus) { out.push([t('m_srb') + (I.bonusYears ? ' <small>(' + inr(r.srb * r.sa / 1000) + ' × ' + I.bonusYears + ')</small>' : ''), inr(r.bonus)]); }
 		if (r.fab) { out.push([t('m_fab'), inr(r.fab)]); }
@@ -1060,8 +1067,17 @@
 
 	/* ---------- v3.1: Ready Reckoner ---------- */
 	var lastRR = null;
-	function pickTerms(p, n) { // जास्तीत जास्त n terms, सगळ्या range मधून
+	var ENC = { platinum: 1, term: 1, term_sp: 1 }; // v4.3: terms = PPT×100 + term असलेले plans
+	function termShort(p, t) { // तक्त्याच्या शीर्षकासाठी छोटं नाव
+		if (!ENC[p.type]) { return String(t); }
+		var P = Math.floor(t / 100), T = t % 100;
+		return T + (P === T ? '' : ' (pay ' + P + ')');
+	}
+	function pickTerms(p, n, r) { // जास्तीत जास्त n terms, सगळ्या range मधून
 		var t = p.terms.slice();
+		if (ENC[p.type] && r) { // त्याच हप्ता-पर्यायाच्या मुदती (उदा. 10 वर्षं भरा → 20, 25, 30…)
+			t = t.filter(function (k) { var P = Math.floor(k / 100), T = k % 100; return p.type === 'term' || p.type === 'term_sp' ? ((P === T) === (r.P === r.T) && (P === T || P === r.P)) : P === r.P; });
+		}
 		if (t.length <= n) { return t; }
 		var out = [];
 		for (var i = 0; i < n; i++) { out.push(t[Math.round(i * (t.length - 1) / (n - 1))]); }
@@ -1070,19 +1086,19 @@
 	function showReckoner() {
 		var r = last, p = r.plan, box = result.querySelector('.a4u-rr-out');
 		getRates(p).then(function (rates) {
-			var terms = pickTerms(p, 6), ages = [];
+			var terms = pickTerms(p, 6, r), ages = [];
 			for (var a = Math.max(p.min_age, 0); a <= p.max_age; a += 5) { ages.push(a); }
 			if (ages.indexOf(r.age) === -1) { ages.push(r.age); ages.sort(function (x, y) { return x - y; }); }
 			var single = !!SINGLE[p.type];
 			var rows = ages.map(function (age) {
 				return [age, terms.map(function (t) {
-					var x = compute(p, { age: age, term: t, sa: r.sa, by: 'sa', mode: 'yearly', gst: r.gst, income: 'regular', r: {}, srbO: null, fabO: null, doc: new Date(), gender: r.gender }, rates);
+					var x = compute(p, { age: age, term: t, sa: r.sa, by: 'sa', mode: 'yearly', gst: r.gst, income: 'regular', r: {}, srbO: null, fabO: null, doc: new Date(), gender: r.gender, smoker: r.smoker }, rates);
 					return x.errors ? null : (single ? x.inst : x.pr.yearPay);
 				})];
 			});
-			lastRR = { r: r, terms: terms, rows: rows, single: single };
+			lastRR = { r: r, terms: terms, labels: terms.map(function (t) { return termShort(p, t); }), rows: rows, single: single };
 			box.innerHTML = '<h4>Ready Reckoner — ' + esc(p.name) + ' · SA ' + inr(r.sa) + ' · ' + (single ? 'single premium' : 'yearly premium') + '</h4>' +
-				'<div class="a4u-scroll"><table class="a4u-rr"><thead><tr><th>Age \\ ' + (BY_PPT[p.type] ? 'PPT' : 'Term') + '</th>' + terms.map(function (t) { return '<th>' + t + '</th>'; }).join('') + '</tr></thead><tbody>' +
+				'<div class="a4u-scroll"><table class="a4u-rr"><thead><tr><th>Age \\ ' + (BY_PPT[p.type] ? 'PPT' : 'Term') + '</th>' + terms.map(function (t) { return '<th>' + esc(termShort(p, t)) + '</th>'; }).join('') + '</tr></thead><tbody>' +
 				rows.map(function (row) {
 					return '<tr' + (row[0] === r.age ? ' class="sel"' : '') + '><th>' + row[0] + '</th>' + row[1].map(function (v) { return '<td>' + (v ? inr(v) : '—') + '</td>'; }).join('') + '</tr>';
 				}).join('') + '</tbody></table></div><p class="a4u-note">— = not allowed for that age/term. Included in the PDF presentation.</p>';

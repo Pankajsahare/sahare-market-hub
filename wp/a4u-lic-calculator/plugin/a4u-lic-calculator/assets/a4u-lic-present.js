@@ -283,7 +283,7 @@
 		} else {
 			c3 += '<div class="a4p-modes"><div class="sel"><span>' + tt('once') + '</span><b>' + inr(r.inst) + '</b></div></div>';
 		}
-		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inr(r.totalPrem) + '</b></div><div class="get"><span>' + (p.type === 'term' ? tt('lcover') : tt('gettot')) + '</span><b>' + inr(p.type === 'term' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + '</b></div></div>' +
+		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inr(r.totalPrem) + '</b></div><div class="get"><span>' + (p.type === 'term' || p.type === 'term_sp' ? tt('lcover') : tt('gettot')) + '</span><b>' + inr(p.type === 'term' || p.type === 'term_sp' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + '</b></div></div>' +
 			(RI.ratio ? '<p class="a4p-every">' + fmtT('every1', { x: RI.ratio.toFixed(2) }) + '</p>' : '');
 		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
 			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
@@ -339,7 +339,7 @@
 		var rr = A.rr && A.rr();
 		if (rr && rr.r === r) {
 			pages.push('<h2 class="a4p-h">' + tt('rr') + '</h2><p class="a4p-sub">' + fmtT('rrsub', { sa: inr(r.sa) }) + ' (' + (rr.single ? tt('rrsp') : tt('rryr')) + ')</p>' +
-				'<table class="a4p-t a4p-rr"><thead><tr><th>' + tt('age') + ' \\ ' + tt('term') + '</th>' + rr.terms.map(function (t) { return '<th>' + t + '</th>'; }).join('') + '</tr></thead><tbody>' +
+				'<table class="a4p-t a4p-rr"><thead><tr><th>' + tt('age') + ' \\ ' + tt('term') + '</th>' + (rr.labels || rr.terms).map(function (t) { return '<th>' + esc(String(t)) + '</th>'; }).join('') + '</tr></thead><tbody>' +
 				rr.rows.map(function (row) { return '<tr' + (row[0] === r.age ? ' class="sel"' : '') + '><th>' + row[0] + '</th>' + row[1].map(function (v) { return '<td>' + (v ? inr(v) : '—') + '</td>'; }).join('') + '</tr>'; }).join('') +
 				'</tbody></table><p class="a4p-sub">' + tt('rrnote') + '</p>');
 		}

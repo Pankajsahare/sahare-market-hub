@@ -133,6 +133,19 @@ for (const rp of REPORTS) {
     if (r.errors) { fails.push(`894 age ${age} key ${key}: ${r.errors.join(' ')}`); return; }
     if (Math.abs(r.pr.yearPay - v[i]) > 1) fails.push(`894 age ${age} key ${key}: expected ${v[i]} got ${Math.round(r.pr.yearPay)}`);
   }));
+  // v4.3: single premium (brochure: 19,035 / 23,805 / 41,770) + single चा rebate (वय 30, 20 लाख → 17%)
+  p894.rebate_pct_bands_sp = [[30, [[700000, 4], [1000000, 9], [1500000, 14], [2000000, 17]]], [45, [[700000, 2], [1000000, 5], [1500000, 8], [2000000, 11]]]];
+  [[20, 19035], [30, 23805], [40, 41770]].forEach(([age, want]) => {
+    checked++;
+    const r = E.compute(p894, inp(age, 120, 500000), {});
+    if (r.errors) { fails.push(`894 SP age ${age}: ${r.errors.join(' ')}`); return; }
+    if (Math.abs(r.inst - want) > 1 || r.plan.type !== 'term_sp') fails.push(`894 SP age ${age}: expected ${want} got ${Math.round(r.inst)} (${r.plan.type})`);
+    checked++;
+    if (Math.abs(r.deathSA - Math.max(500000, 1.25 * want)) > 1) fails.push(`894 SP age ${age}: death ${r.deathSA}`);
+  });
+  checked++;
+  const s1 = E.compute(p894, inp(30, 120, 500000), {}), s4 = E.compute(p894, inp(30, 120, 2000000), {});
+  if (Math.abs(s4.inst - s1.inst * 4 * 0.83) > 2) fails.push(`894 SP rebate at 20 lakh: expected ${Math.round(s1.inst * 4 * 0.83)} got ${Math.round(s4.inst)}`);
   // 894 high SA rebate: वय 30, SA 20 लाख → 18% कमी
   checked++;
   const a = E.compute(p894, inp(30, 2020, 500000), {}), b = E.compute(p894, inp(30, 2020, 2000000), {});

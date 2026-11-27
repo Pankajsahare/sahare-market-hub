@@ -30,8 +30,8 @@ CALC = {
     '770': None,  # Bima Platinum: दर PPT नुसार वेगळे तक्ते; SSV पडताळलेलं नाही → GSV
 }
 PPT_TABLES = {'770': [7, 10, 12, 15, 18]}
-# 894 Jeevan Raksha: लिंग (M/F) × धूम्रपान (NS/S) × हप्ता पर्याय (RP / LP_10 / LP_15) — single premium वगळला
-OPT_TABLES = {'894': [g + '_' + s + '_' + o for g in ('M', 'F') for s in ('NS', 'S') for o in ('RP', 'LP_10', 'LP_15')]}
+# 894 Jeevan Raksha: लिंग (M/F) × धूम्रपान (NS/S) × हप्ता पर्याय (RP / LP_10 / LP_15 / SP)
+OPT_TABLES = {'894': [g + '_' + s + '_' + o for g in ('M', 'F') for s in ('NS', 'S') for o in ('RP', 'LP_10', 'LP_15', 'SP')]}
 
 
 def num(v):

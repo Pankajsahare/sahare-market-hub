@@ -156,10 +156,18 @@ add_action( 'rest_api_init', function () {
 			'do' => array( 'type' => 'string', 'default' => '' ),
 		),
 		'callback'            => function ( WP_REST_Request $req ) {
-			$all  = a4u_lic_json( 'lic-branches.json' );
-			$rows = (array) ( $all['rows'] ?? array() );
 			$q    = strtolower( trim( substr( sanitize_text_field( (string) $req->get_param( 'q' ) ), 0, 60 ) ) );
 			$dv   = trim( substr( sanitize_text_field( (string) $req->get_param( 'do' ) ), 0, 80 ) );
+			// v4.3 (S5): एकाच शोधाचा निकाल 1 दिवस cache — मोठी file पुन्हा पुन्हा वाचायची गरज नाही
+			$ck   = 'a4u_lic_br_' . md5( A4U_LIC_VER . '|' . $q . '|' . $dv );
+			$hit  = get_transient( $ck );
+			if ( is_array( $hit ) ) {
+				$res = rest_ensure_response( $hit );
+				$res->header( 'Cache-Control', 'public, max-age=3600' );
+				return $res;
+			}
+			$all  = a4u_lic_json( 'lic-branches.json' );
+			$rows = (array) ( $all['rows'] ?? array() );
 			$out  = array();
 			if ( '' !== $q || '' !== $dv ) {
 				foreach ( $rows as $r ) {
@@ -173,9 +181,11 @@ add_action( 'rest_api_init', function () {
 			if ( false === $divs ) {
 				$divs = array_values( array_unique( array_filter( array_map( function ( $r ) { return $r[6]; }, $rows ) ) ) );
 				sort( $divs );
-				set_transient( 'a4u_lic_divs', $divs, DAY_IN_SECONDS );
+				set_transient( 'a4u_lic_divs', $divs, WEEK_IN_SECONDS );
 			}
-			$res = rest_ensure_response( array( 'total' => count( $rows ), 'rows' => $out, 'divisions' => $divs, 'more' => count( $out ) >= 60 ) );
+			$data = array( 'total' => count( $rows ), 'rows' => $out, 'divisions' => $divs, 'more' => count( $out ) >= 60 );
+			if ( strlen( $q ) <= 30 ) { set_transient( $ck, $data, DAY_IN_SECONDS ); }
+			$res = rest_ensure_response( $data );
 			$res->header( 'Cache-Control', 'public, max-age=3600' );
 			return $res;
 		},

@@ -20,7 +20,7 @@ function a4u_lic_std_mode() {
 function a4u_lic_brochure_keys() {
 	return array( 'name', 'type', 'min_age', 'max_age', 'min_sa', 'max_maturity', 'min_maturity', 'terms', 'ppt_map', 'ppt_options', 'ppt_max_age_sum',
 		'maturity_age', 'survival_pct', 'ga_per_1000', 'tail_age', 'min_age_by_term', 'sa_slabs', 'rebate_slabs', 'rebate_bands', 'mode_adj',
-		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands', 'ppt_age', 'ga_prem_per_1000', 'booster_pct', 'ga_hsa', 'rebate_pct_bands', 'allowed_modes', 'max_sa', 'loan_pct', 'ppt_less' );
+		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands', 'ppt_age', 'ga_prem_per_1000', 'booster_pct', 'ga_hsa', 'rebate_pct_bands', 'rebate_pct_bands_sp', 'allowed_modes', 'max_sa', 'loan_pct', 'ppt_less' );
 }
 
 function a4u_lic_default_plans() {
@@ -93,11 +93,12 @@ function a4u_lic_default_plans() {
 		'894' => array_merge( $base, array(
 			'name' => 'Jeevan Raksha (894)', 'type' => 'term',
 			'min_age' => 18, 'max_age' => 45, 'min_maturity' => 33, 'max_maturity' => 60,
-			'terms' => array_merge( array_map( function ( $t ) { return $t * 100 + $t; }, range( 15, 42 ) ), array_map( function ( $t ) { return 1500 + $t; }, range( 20, 42 ) ), array_map( function ( $t ) { return 1000 + $t; }, range( 15, 42 ) ) ),
+			'terms' => array_merge( array_map( function ( $t ) { return $t * 100 + $t; }, range( 15, 42 ) ), array_map( function ( $t ) { return 1500 + $t; }, range( 20, 42 ) ), array_map( function ( $t ) { return 1000 + $t; }, range( 15, 42 ) ), array_map( function ( $t ) { return 100 + $t; }, range( 15, 42 ) ) ), // 100+term = single premium
 			'min_sa' => 500000, 'max_sa' => 2400000, 'sa_slabs' => array( array( 500000, 50000 ), array( 800000, 100000 ) ),
 			'rebate_slabs' => array(),
 			// high SA rebate, tabular premium च्या % मध्ये: [कमाल वय, [[SA पासून, %]]]
 			'rebate_pct_bands' => array( array( 30, array( array( 700000, 5 ), array( 1000000, 10 ), array( 1500000, 15 ), array( 2000000, 18 ) ) ), array( 45, array( array( 700000, 3 ), array( 1000000, 6 ), array( 1500000, 10 ), array( 2000000, 14 ) ) ) ),
+			'rebate_pct_bands_sp' => array( array( 30, array( array( 700000, 4 ), array( 1000000, 9 ), array( 1500000, 14 ), array( 2000000, 17 ) ) ), array( 45, array( array( 700000, 2 ), array( 1000000, 5 ), array( 1500000, 8 ), array( 2000000, 11 ) ) ) ),
 			'mode_adj' => array( 'yearly' => 0, 'half' => 2 ), 'allowed_modes' => array( 'yearly', 'half' ),
 			'death_pct' => 100, 'riders' => array( 'adb' ), 'sample_sa' => 0, 'samples' => array(), 'source' => 'LIC tariff rates', 'brochure' => '',
 		) ),

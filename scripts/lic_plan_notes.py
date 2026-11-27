@@ -8,6 +8,10 @@ status: open = विक्रीत, closed = बंद, check = LIC कडे 
 """
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lic_plan_notes_tr import TR  # noqa: E402
 
 N = {
     '714': ('New Endowment', 'endowment', 'open', 'A classic savings-cum-protection plan: life cover for the whole term and a lump sum with bonuses at maturity.',
@@ -108,6 +112,10 @@ N = {
             ['Pension rates fixed at the start', 'Regular or single premium; deferment up to 15 years', 'Options to return part or all of the premiums', 'Top-up and liquidity options'], 'Planning a guaranteed pension in advance'),
     '894': ('Jeevan Raksha', 'term', 'open', 'Pure term plan with separate rates for men and women, smokers and non-smokers.',
             ['Pure protection, no maturity benefit', 'Regular, limited (10/15 years) or single premium', 'Death: higher of Sum Assured or 7 times yearly premium'], 'Affordable family protection'),
+    '876': ('Digi Term', 'term', 'open', 'Online-only term plan with level or increasing cover and a choice of premium terms.',
+            ['Pure protection, no maturity benefit', 'Bought directly on LIC website', 'Level or increasing Sum Assured options'], 'Self-directed buyers who want cover online'),
+    '878': ('Digi Credit Life', 'term', 'open', 'Online-only decreasing cover plan that protects a home or other loan.',
+            ['Cover reduces with the loan balance', 'Single premium or limited premium', 'Bought directly on LIC website'], 'Borrowers buying online'),
     '905': ('Cancer Cover', 'health', 'closed', 'Old cancer protection plan (replaced by New Cancer Cover 908).',
             ['Lump sum on early or major stage cancer'], 'Existing policyholders only'),
     '906': ('Arogya Rakshak', 'health', 'check', 'Fixed benefit health plan that pays defined amounts for hospitalisation and surgery, whatever the actual bill.',
@@ -131,6 +139,55 @@ N = {
 }
 
 
+# LIC च्या स्वतःच्या "Insurance Plans" पानांवरील यादी (27 Nov 2026 ला वाचली) — ही plans सध्या विक्रीत
+LIC_LIST = {
+    '717': ('512N283V03', 'https://licindia.in/web/guest/lic-s-single-premium-endowment-plan-717-512n283v03'),
+    '714': ('512N277V03', 'https://licindia.in/web/guest/lic-s-new-endowment-plan-714-512n277v03'),
+    '715': ('512N279V03', 'https://licindia.in/web/guest/lic-s-new-jeevan-anand-715%09512n279v03'),
+    '733': ('512N297V03', 'https://licindia.in/web/guest/lic-s-jeevan-lakshya-733-512n297v03'),
+    '736': ('512N304V03', 'https://licindia.in/web/guest/lic-s-jeevan-labh-plan-736-512n304v03'),
+    '774': ('512N365V02', 'https://licindia.in/web/guest/lic-s-amritbaal-774%09512n365v02'),
+    '912': ('512N387V02', 'https://licindia.in/web/guest/lic-s-nav-jeevan-shree-plan-no.912-1'),
+    '881': ('512N389V01', 'https://licindia.in/web/guest/lic-s-bima-lakshmi-881-512n389v01'),
+    '888': ('512N393V01', 'https://licindia.in/web/guest/lic-s-new-jeevan-sathi-single-premium-'),
+    '889': ('512N394V01', 'https://licindia.in/web/guest/lic-s-new-jeevan-sathi-limited-premium-'),
+    '890': ('512N395V01', 'https://licindia.in/web/guest/lic-s-new-bima-jyoti'),
+    '770': ('512N397V01', 'https://licindia.in/web/guest/lic-s-bima-platinum2'),
+    '745': ('512N312V03', 'https://licindia.in/web/guest/lic-sjeevanumang-745%09512n312v03'),
+    '771': ('512N363V02', 'https://licindia.in/web/guest/lic-s-jeevan-utsav2'),
+    '883': ('512N392V01', 'https://licindia.in/web/guest/lic-s-jeevan-utsav-single-premium'),
+    '748': ('512N316V03', 'https://licindia.in/web/guest/lic-s-bima-shree'),
+    '720': ('512N280V03', 'https://licindia.in/web/guest/lic-s-new-money-back-plan-20-years'),
+    '721': ('512N278V03', 'https://licindia.in/web/guest/lic-s-new-money-back-plan-25-years'),
+    '732': ('512N296V03', 'https://licindia.in/web/guest/lic-s-new-children-s-money-back-plan'),
+    '734': ('512N299V03', 'https://licindia.in/web/guest/lic-s-jeevan-tarun'),
+    '876': ('512N356V02', 'https://licindia.in/web/guest/lic-s-digi-term-876-512n356v01'),
+    '878': ('512N358V01', 'https://licindia.in/web/guest/lic-s-digi-credit-life-878-512n358v01'),
+    '877': ('512N357V01', 'https://licindia.in/web/guest/lic-s-yuva-credit-life-877-512n357v01'),
+    '875': ('512N355V02', 'https://licindia.in/web/guest/lic-s-yuva-term-875-512n355v01'),
+    '954': ('512N351V02', 'https://licindia.in/web/guest/lic-s-new-tech-term-954-512n351v01'),
+    '859': ('512N341V01', 'https://licindia.in/web/guest/lic-s-saral-jeevan-bima'),
+    '887': ('512N360V01', 'https://licindia.in/web/guest/lic-s-bima-kavach'),
+    '894': ('512N368V01', 'https://licindia.in/web/guest/lic-s-jeevan-raksha'),
+    '867': ('512L347V01', 'https://licindia.in/web/guest/lic-s-new-pension-plus-867-512l347v01'),
+    '857': ('512N337V07', 'https://licindia.in/web/guest/lic-s-jeevan-akshay-vii-plan-no.-857-uin-512n337v07-'),
+    '758': ('512N338V08', 'https://licindia.in/web/guest/lic-s-new-jeevan-shanti-plan-no.-758-uin-512n338v08-'),
+    '862': ('512N342V05', 'https://licindia.in/web/guest/lic-s-saral-pension'),
+    '879': ('512N386V01', 'https://licindia.in/web/guest/lic-s-smart-pension'),
+    '892': ('512N398V01', 'https://licindia.in/web/guest/lic-s-new-jeevan-dhara-ii'),
+    '873': ('512L354V01', 'https://licindia.in/web/guest/lic-s-index-plus-873-512l354v01'),
+    '749': ('512L317V02', 'https://licindia.in/web/guest/lic-s-nivesh-plus'),
+    '752': ('512L334V02', 'https://licindia.in/web/guest/lic-s-siip'),
+    '886': ('512L361V01', 'https://licindia.in/web/guest/lic-s-protection-plus'),
+    '907': ('512N369V01', 'https://licindia.in/web/guest/lic-s-health-shield'),
+    '908': ('512N370V01', 'https://licindia.in/web/guest/lic-s-new-cancer-cover'),
+    '751': ('512N329V03', 'https://licindia.in/web/guest/lic-smicro-bachat-751-512n329v03'),
+    '880': ('512N388V01', 'https://licindia.in/web/guest/lic-s-jan-suraksha-880-512n388v01'),
+}
+# LIC यादीत नसलेले पण ज्यांची जागा नवीन plan ने घेतली, किंवा विक्री-काळ संपला
+REPLACED = {'760': '890', '905': '908', '872': '892', '911': None, '869': None, '856': None}
+
+
 def slugify(name, pid):
     import re
     s = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
@@ -140,7 +197,15 @@ def slugify(name, pid):
 def main():
     out = {}
     for pid, (name, cat, status, tag, points, best) in N.items():
-        out[pid] = {'name': name, 'slug': slugify(name, pid), 'category': cat, 'status': status, 'tagline': tag, 'points': points, 'best_for': best}
+        if pid in LIC_LIST:
+            status = 'open'          # LIC च्या अधिकृत यादीत आहे
+        elif pid in REPLACED:
+            status = 'closed'
+        elif status == 'open':
+            status = 'check'         # आपल्याला open वाटत होतं पण LIC यादीत नाही → खात्री करा
+        uin, url = LIC_LIST.get(pid, ('', ''))
+        out[pid] = {'name': name, 'slug': slugify(name, pid), 'category': cat, 'status': status, 'tagline': tag, 'points': points, 'best_for': best,
+                    'uin': uin, 'lic_url': url, 'replaced_by': REPLACED.get(pid) or '', 'tr': TR.get(pid, {})}
     p = os.path.join(os.path.dirname(__file__), '..', 'wp', 'a4u-lic-calculator', 'plugin', 'a4u-lic-calculator', 'assets', 'data', 'lic-plan-notes.json')
     with open(p, 'w', encoding='utf-8') as fh:
         json.dump({'v': 1, 'plans': out}, fh, ensure_ascii=False, indent=0)
