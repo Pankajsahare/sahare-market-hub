@@ -1,11 +1,11 @@
 {
- "run_at": "2026-11-28 04:49",
+ "run_at": "2026-11-28 05:10",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
    "whole-life-plans": 200,
-   "money-back-plans": 200,
-   "term-assurance-plans": 200,
+   "money-back-plans": 0,
+   "term-assurance-plans": 0,
    "pension-plans": 404,
    "unit-linked-plans": 200,
    "micro-insurance-plans": 200,
@@ -13,7 +13,7 @@
    "insurance-plan": 200,
    "licindia.in": 200
   },
-  "plans_found": 36
+  "plans_found": 23
  },
  "plans": {
   "714": {
@@ -81,10 +81,9 @@
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1319704/LIC+Jeevan+Lakshya+Sales+Brochure_Eng_06112025.pdf/fcc745f6-e73e-c825-d3a6-9831221c5cc9?t=1762449288188",
-   "pdf_http": 200,
-   "pdf_bytes": 380818,
-   "sha256": "e83a73ed5bd065efa2f46f459b7fbbe49dd1f69c36a84cf96429143a6e09a324",
-   "result": "unchanged"
+   "pdf_http": 0,
+   "pdf_bytes": 0,
+   "error": "pdf download failed"
   },
   "736": {
    "page_http": 200,
@@ -126,11 +125,9 @@
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1248984/LIC_Jeevan+Umang_Sales+Brochure_Eng_Single_26112026.pdf/fcfb20d0-a66b-0be9-abc9-7597b2b2a73c?t=1795684681021",
-   "pdf_http": 200,
-   "pdf_bytes": 1410369,
-   "sha256": "347e081a9b18e25f349597a4d01e30bbd2c827cbb83a9da5a75e56768f885550",
-   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
-   "result": "updated"
+   "pdf_http": 0,
+   "pdf_bytes": 0,
+   "error": "pdf download failed"
   },
   "717": {
    "page_http": 200,
@@ -188,7 +185,7 @@
    "result": "unchanged"
   },
   "720": {
-   "page_http": 404,
+   "page_http": 0,
    "candidates": [
     [
      1762495378862,
@@ -203,7 +200,7 @@
    "result": "unchanged"
   },
   "721": {
-   "page_http": 404,
+   "page_http": 0,
    "candidates": [
     [
      1762495379517,
@@ -212,13 +209,12 @@
     ]
    ],
    "brochure": "https://licindia.in/documents/20121/1319704/LIC_Money+Back+25+yrs+Sales+Brochure+Eng_06112025.pdf/7e7718e0-e37d-9fa8-c17e-f632e69c965f?t=1762495379517",
-   "pdf_http": 200,
-   "pdf_bytes": 349221,
-   "sha256": "fe74ac81580af22014008e6be072b82c3ea04414485181565dca09fbba619156",
-   "result": "unchanged"
+   "pdf_http": 0,
+   "pdf_bytes": 0,
+   "error": "pdf download failed"
   },
   "732": {
-   "page_http": 404,
+   "page_http": 0,
    "candidates": [
     [
      1736489668006,
