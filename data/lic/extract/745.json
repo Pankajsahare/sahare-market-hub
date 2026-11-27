@@ -1,7 +1,7 @@
 {
  "plan_no": "745",
  "uin": "512N312V03",
- "plan_name": "LIC's Jeevan Umang",
+ "plan_name": "LIC's JEEVAN UMANG",
  "min_entry_age": 0,
  "max_entry_age": 55,
  "min_maturity_age": null,
@@ -59,8 +59,8 @@
  "mode_adjust_pct": {
   "yearly": -2.0,
   "half": -1.0,
-  "quarter": 0.0,
-  "month": 0.0
+  "quarter": 0,
+  "month": 0
  },
  "survival_benefit_pct_of_bsa": 8.0,
  "guaranteed_addition_per_1000": null,
