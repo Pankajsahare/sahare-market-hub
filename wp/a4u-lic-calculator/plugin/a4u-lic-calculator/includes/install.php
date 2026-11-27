@@ -153,3 +153,17 @@ add_filter( 'rank_math/frontend/description', function ( $desc ) {
 	$cp = a4u_lic_current_plan();
 	return $cp ? 'Calculate premium, maturity and year-wise benefits for LIC ' . $cp[1]['name'] . '. Free educational illustration based on LIC brochure figures.' : $desc;
 } );
+
+/* =====================================================================
+ * v4.3.4: plugin update झाल्यावर Elementor चा जुना widget cache (Element Caching)
+ * आणि LiteSpeed cache साफ — नाहीतर नवीन calculator output 24 तास दिसत नाही
+ * ===================================================================== */
+add_action( 'init', function () {
+	if ( get_option( 'a4u_lic_cache_ver' ) === A4U_LIC_VER ) { return; }
+	update_option( 'a4u_lic_cache_ver', A4U_LIC_VER, false );
+	delete_post_meta_by_key( '_elementor_element_cache' );
+	if ( class_exists( '\Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance->files_manager ) ) {
+		\Elementor\Plugin::$instance->files_manager->clear_cache();
+	}
+	do_action( 'litespeed_purge_all' );
+}, 99 );
