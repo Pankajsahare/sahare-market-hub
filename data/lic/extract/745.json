@@ -1,7 +1,7 @@
 {
  "plan_no": "745",
  "uin": "512N312V03",
- "plan_name": "LIC's Jeevan Umang",
+ "plan_name": "LIC’s Jeevan Umang",
  "min_entry_age": 0,
  "max_entry_age": 55,
  "min_maturity_age": null,
@@ -14,50 +14,55 @@
   30
  ],
  "term_to_ppt": null,
- "min_entry_age_by_term": null,
+ "min_entry_age_by_term": {
+  "15": 3,
+  "20": 0,
+  "25": 0,
+  "30": 0
+ },
  "max_entry_age_by_term": {
   "15": 55,
   "20": 50,
   "25": 45,
   "30": 40
  },
- "min_bsa": 200000,
+ "min_bsa": 200000.0,
  "bsa_multiples": [
   [
-   200000,
-   25000
+   200000.0,
+   25000.0
   ],
   [
-   450001,
-   50000
+   450001.0,
+   50000.0
   ],
   [
-   900001,
-   100000
+   900001.0,
+   100000.0
   ]
  ],
  "hsa_rebate_per_1000": [
   [
-   500000,
+   500000.0,
    2.5
   ],
   [
-   1000000,
+   1000000.0,
    3.5
   ],
   [
-   2500000,
+   2500000.0,
    4.0
   ]
  ],
  "hsa_rebate_by_age": [],
  "mode_adjust_pct": {
-  "yearly": -2,
-  "half": -1,
-  "quarter": 0,
-  "month": 0
+  "yearly": -2.0,
+  "half": -1.0,
+  "quarter": 0.0,
+  "month": 0.0
  },
- "survival_benefit_pct_of_bsa": 8,
+ "survival_benefit_pct_of_bsa": 8.0,
  "guaranteed_addition_per_1000": null,
  "death_sa_pct_of_bsa": null,
  "sample_bsa": 200000,
@@ -125,7 +130,7 @@
   [
    50,
    15,
-   16562
+   16542
   ],
   [
    50,
