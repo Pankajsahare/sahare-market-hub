@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * ===================================================================== */
 
 function a4u_lic_remote_info( $force = false ) {
+	// v4.3.6: Dashboard → Updates → "Check again" (force-check) दाबलं की लगेच नवीन तपास
+	if ( ! $force && is_admin() && ! empty( $_GET['force-check'] ) ) { $force = true; } // phpcs:ignore
 	$info = $force ? false : get_transient( 'a4u_lic_update_info' );
 	if ( false === $info ) {
 		$d   = a4u_lic_data();
@@ -20,7 +22,9 @@ function a4u_lic_remote_info( $force = false ) {
 				if ( is_array( $j ) && ! empty( $j['version'] ) && ! empty( $j['download_url'] ) ) { $info = $j; }
 			}
 		}
-		set_transient( 'a4u_lic_update_info', $info, 3 * HOUR_IN_SECONDS );
+		// नवीन version नसेल तर फक्त 20 मिनिटं cache (पुढचं update लवकर दिसावं); असेल तर 3 तास
+		$newer = ! empty( $info['version'] ) && version_compare( $info['version'], A4U_LIC_VER, '>' );
+		set_transient( 'a4u_lic_update_info', $info, $newer ? 3 * HOUR_IN_SECONDS : 20 * MINUTE_IN_SECONDS );
 	}
 	return $info;
 }
