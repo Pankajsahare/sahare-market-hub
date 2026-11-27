@@ -145,11 +145,21 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 	if ( function_exists( 'a4u_lic_hub_inline_assets' ) ) { a4u_lic_hub_inline_assets( a4u_lic_hub_route() ); } // v4: नवीन charts
 	$html = '<div id="a4u-lic-app" class="a4u-lic"><noscript>Please enable JavaScript to use the LIC calculator.</noscript></div>';
 	if ( function_exists( 'a4u_lic_hub_route' ) && a4u_lic_hub_route() ) { return $html; } // v4: hub/plan पानावर links व FAQ आधीच आहेत
-	// S7: सगळ्या plan pages च्या links (Google ला सापडण्यासाठी)
+	// v4.3.3: plan links थेट नवीन /lic-plans/<plan>/ पानांकडे (जुनी /lic-calculator/<id>/ लिंक 301 घेत होती) + सगळ्या plans / tools ची पट्टी
 	$slug = a4u_lic_base_slug();
+	$cat  = function_exists( 'a4u_lic_catalog' ) ? a4u_lic_catalog() : array();
+	if ( $cat ) {
+		$html .= '<nav class="a4u-lic a4u-hub-strip" aria-label="LIC plans and tools"><a class="a4u-hub-main" href="' . esc_url( home_url( '/' . a4u_lic_hub_slug() . '/' ) ) . '">📚 All LIC Plans — details, benefits &amp; calculators →</a><span>';
+		foreach ( array( 'compare-plans', 'revival-calculator', 'bonus-rates', 'branch-locator', 'lic-services' ) as $k ) {
+			$t = a4u_lic_tools()[ $k ];
+			$html .= '<a href="' . esc_url( a4u_lic_tool_url( $k ) ) . '">' . $t[2] . ' ' . esc_html( $t[0] ) . '</a>';
+		}
+		$html .= '</span></nav>';
+	}
 	$html .= '<nav class="a4u-lic a4u-plan-links" aria-label="LIC plan calculators"><strong>Plan-wise calculators:</strong> ';
-	$html .= implode( ' · ', array_map( function ( $p ) use ( $slug ) {
-		return '<a href="' . esc_url( home_url( '/' . $slug . '/' . $p['id'] . '/' ) ) . '">' . esc_html( $p['name'] ) . '</a>';
+	$html .= implode( ' · ', array_map( function ( $p ) use ( $slug, $cat ) {
+		$url = isset( $cat[ (string) $p['id'] ] ) ? a4u_lic_plan_url( $cat[ (string) $p['id'] ] ) . '#a4h-calc' : home_url( '/' . $slug . '/' . $p['id'] . '/' );
+		return '<a href="' . esc_url( $url ) . '">' . esc_html( $p['name'] ) . '</a>';
 	}, $plans ) ) . '</nav>';
 	static $faq_done = false;
 	if ( ! empty( $s['faq'] ) && ! $faq_done ) { $html .= a4u_lic_faq_html(); $faq_done = true; }
@@ -224,3 +234,39 @@ add_action( 'admin_post_a4u_lic_offline', function () {
 	echo '</body></html>';
 	exit;
 } );
+
+/* =====================================================================
+ * v4.3.3: मुख्य calculator पान (/lic-calculator/) — "Lic Calculator" ऐवजी
+ * स्पष्ट title, heading आणि description (फक्त याच पानापुरतं)
+ * ===================================================================== */
+function a4u_lic_is_main_calc_page() {
+	if ( is_admin() || ! is_page() || '' !== (string) get_query_var( 'a4u_plan' ) ) { return false; }
+	$slug = a4u_lic_base_slug();
+	return '' !== $slug && is_page( $slug );
+}
+function a4u_lic_main_calc_meta() {
+	return array(
+		'LIC Premium Calculator 2026 — Maturity, Bonus & Surrender Value | Advisor4u',
+		'LIC Premium Calculator 2026',
+		'Free LIC premium calculator for 2026: premium, maturity, bonus, year-wise surrender value and loan for popular LIC plans, based on LIC tariff and brochure figures.',
+	);
+}
+add_filter( 'pre_get_document_title', function ( $t ) { return a4u_lic_is_main_calc_page() ? a4u_lic_main_calc_meta()[0] : $t; }, 40 );
+add_filter( 'rank_math/frontend/title', function ( $t ) { return a4u_lic_is_main_calc_page() ? a4u_lic_main_calc_meta()[0] : $t; } );
+add_filter( 'rank_math/frontend/description', function ( $t ) { return a4u_lic_is_main_calc_page() ? a4u_lic_main_calc_meta()[2] : $t; } );
+add_filter( 'the_title', function ( $title, $id = 0 ) {
+	if ( ! $id || ! a4u_lic_is_main_calc_page() || (int) $id !== (int) get_queried_object_id() ) { return $title; }
+	return a4u_lic_main_calc_meta()[1];
+}, 20, 2 );
+// इतर SEO plugin (ThinkRank) चा description नसेल तर आपला; असल्यास तो तसाच ठेवायचा नाही — बदलायचा
+add_action( 'wp_head', function () { if ( a4u_lic_is_main_calc_page() ) { ob_start(); } }, -999 );
+add_action( 'wp_head', function () {
+	if ( ! a4u_lic_is_main_calc_page() ) { return; }
+	$h = (string) ob_get_clean();
+	$h = preg_replace( '#<meta[^>]+(name|property)=["\'](description|og:description|twitter:description|og:title|twitter:title)["\'][^>]*>\s*#i', '', $h );
+	$m = a4u_lic_main_calc_meta();
+	echo $h; // phpcs:ignore
+	echo '<meta name="description" content="' . esc_attr( $m[2] ) . '">' . "\n";
+	echo '<meta property="og:title" content="' . esc_attr( $m[0] ) . '">' . "\n";
+	echo '<meta property="og:description" content="' . esc_attr( $m[2] ) . '">' . "\n";
+}, PHP_INT_MAX - 1 );
