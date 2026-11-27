@@ -29,6 +29,8 @@ CALC = {
     '894': None,  # Jeevan Raksha (term) — surrender value नाही
     '770': None,  # Bima Platinum: दर PPT नुसार वेगळे तक्ते; SSV पडताळलेलं नाही → GSV
 }
+_BG = os.path.join(os.path.dirname(__file__), 'lic_gsv_brochure.json')
+BROCHURE_GSV = json.load(open(_BG)) if os.path.exists(_BG) else {}
 PPT_TABLES = {'770': [7, 10, 12, 15, 18]}
 # 894 Jeevan Raksha: लिंग (M/F) × धूम्रपान (NS/S) × हप्ता पर्याय (RP / LP_10 / LP_15 / SP)
 OPT_TABLES = {'894': [g + '_' + s + '_' + o for g in ('M', 'F') for s in ('NS', 'S') for o in ('RP', 'LP_10', 'LP_15', 'SP')]}
@@ -101,6 +103,9 @@ def tariff(c):
         for t, k in ((f'gsv_b_{p}', 'gsv_b'), (f'gsv_g_{p}', 'gsv_g'), (f'gsv_ga_{p}', 'gsv_ga')):
             if has(c, t):
                 d[k] = grid(c, t)
+        # LIC च्या नवीन brochure मधले GSV factors (DB पेक्षा नवीन असल्यास) → हेच वापरा
+        if p in BROCHURE_GSV:
+            d.update(BROCHURE_GSV[p])
         if has(c, f'TermRider_{p}'):
             d['term_rider'] = grid(c, f'TermRider_{p}')
         ssv = None
