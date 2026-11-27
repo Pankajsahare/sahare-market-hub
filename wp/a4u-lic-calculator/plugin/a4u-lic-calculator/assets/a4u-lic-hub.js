@@ -43,7 +43,11 @@
 		$$('.a4h-langs button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-lang') === l); });
 		document.documentElement.setAttribute('data-a4h-lang', l);
 		store('a4h_lang', l);
+		LANG_HOOKS.forEach(function (f) { f(); }); // v4.5.0: tools चे निकाल नव्या भाषेत
 	}
+	var LANG_HOOKS = [];
+	function curLang() { return document.documentElement.getAttribute('data-a4h-lang') || 'en'; }
+	function L3(en, mr, hi) { var l = curLang(); return l === 'mr' ? mr : (l === 'hi' ? hi : en); }
 
 	/* =====================================================================
 	 * 2. Fixed header खाली headline जाऊ नये
@@ -537,6 +541,84 @@
 		});
 	}
 
+
+	/* =====================================================================
+	 * v4.5.0: Medical tests checker (data पानातल्या JSON मधून)
+	 * ===================================================================== */
+	function medicalTool() {
+		var dEl = document.getElementById('a4h-med-data'), o = document.querySelector('.a4h-mout');
+		if (!dEl || !o) { return; }
+		var D = JSON.parse(dEl.textContent);
+		function run() {
+			var a = parseInt(document.getElementById('a4h-mage').value, 10), s = Number(document.getElementById('a4h-msuc').value) || 0, c = document.getElementById('a4h-mcat').value;
+			if (!(a >= 0)) { o.innerHTML = ''; return; }
+			if (a < 18) { o.innerHTML = '<p class="a4h-med-r">' + L3('This chart is for adults (18+). For children, LIC decides medical requirements from the child\'s and parents\' details — ask your agent.', 'हा तक्ता प्रौढांसाठी (18+) आहे. मुलांसाठी LIC मूल आणि पालकांच्या माहितीवरून medical ठरवते — तुमच्या agent ला विचारा.', 'यह तालिका वयस्कों (18+) के लिए है. बच्चों के लिए LIC बच्चे और माता-पिता की जानकारी से मेडिकल तय करती है — अपने एजेंट से पूछें.') + '</p>'; return; }
+			var note = '';
+			if (c === 'c1' && (a > 60 || s > 10000000)) { c = 'c2'; note = '<p class="a4h-note">' + L3('Chart I applies only up to age 60 and ₹1 crore, so Chart II is used.', 'Chart I फक्त वय 60 आणि ₹1 कोटीपर्यंत लागू, म्हणून Chart II वापरला.', 'Chart I केवल 60 वर्ष और ₹1 करोड़ तक लागू है, इसलिए Chart II लिया गया.') + '</p>'; }
+			var col = a <= 35 ? 1 : a <= 45 ? 2 : a <= 50 ? 3 : a <= 55 ? 4 : 5, row = null;
+			D[c].some(function (r) { if (s <= r[0]) { row = r; return true; } return false; });
+			if (!row) { o.innerHTML = ''; return; }
+			var t = row[col], none = /^No special/.test(t);
+			o.innerHTML = '<p class="a4h-med-r ' + (none ? 'ok' : 'need') + '"><strong>' + (none ? L3('No special medical reports', 'Special medical reports लागणार नाहीत', 'Special medical reports की ज़रूरत नहीं') : L3('Special reports likely: ', 'लागू शकणारे special reports: ', 'संभावित special reports: ')) + '</strong>' + (none ? '' : esc(t) + L3(' (with medical examination, MER)', ' (वैद्यकीय तपासणी MER सह)', ' (चिकित्सा जाँच MER सहित)')) + '</p>' + note;
+		}
+		['a4h-mage', 'a4h-msuc', 'a4h-mcat'].forEach(function (i) { var e = document.getElementById(i); e.addEventListener('input', run); e.addEventListener('change', run); });
+		LANG_HOOKS.push(run); run();
+	}
+
+	/* =====================================================================
+	 * v4.5.0: Goal planner — हिशोब, तीन भाषा, WhatsApp / PDF
+	 * ===================================================================== */
+	function goalTool() {
+		var dEl = document.getElementById('a4g-data'), o = document.querySelector('.a4g-out');
+		if (!dEl || !o) { return; }
+		var P = JSON.parse(dEl.textContent), last = null;
+		function v(i) { var e = document.getElementById('a4g-' + i); return e ? Math.max(0, Number(e.value) || 0) : 0; }
+		function inr(n) { n = Math.round(n); var cr = L3(' crore', ' कोटी', ' करोड़'), lk = L3(' lakh', ' लाख', ' लाख'); if (n >= 1e7) { return '₹' + (n / 1e7).toFixed(2) + cr; } if (n >= 1e5) { return '₹' + (n / 1e5).toFixed(2) + lk; } return '₹' + n.toLocaleString('en-IN'); }
+		function sip(fv, r, yrs) { var i = r / 1200, n = Math.round(yrs * 12); if (fv <= 0 || n <= 0) { return 0; } if (i === 0) { return fv / n; } return fv * i / ((Math.pow(1 + i, n) - 1) * (1 + i)); }
+		function pvg(a, g, d, n) { if (Math.abs(d - g) < 1e-9) { return a * n; } return a * (1 - Math.pow((1 + g) / (1 + d), n)) / (d - g); }
+		function yrsTxt(y) { return L3(' for ' + y + ' years', ' — ' + y + ' वर्षं', ' — ' + y + ' वर्ष'); }
+		function show() {
+			var gs = document.getElementById('a4g-goal'), goal = gs.value, type = goal === 'income' ? 'income' : (goal === 'retirement' ? 'retirement' : 'cost');
+			$$('.a4g [data-g]').forEach(function (l) { l.hidden = (' ' + l.getAttribute('data-g') + ' ').indexOf(' ' + type + ' ') < 0; });
+			var i = v('infl') / 100, r = v('ret') / 100, rows = [], gap = 0, need = 0, yrs = 0, sp = 0;
+			if (type === 'cost') {
+				yrs = v('years'); need = v('cost') * Math.pow(1 + i, yrs); var have = v('assets') * Math.pow(1 + r, yrs); gap = Math.max(0, need - have); sp = sip(gap, v('ret'), yrs);
+				rows = [[L3('Cost in ' + yrs + ' years', yrs + ' वर्षांनंतरचा खर्च', yrs + ' वर्ष बाद की लागत'), inr(need)], [L3('Your savings may grow to', 'तुमची बचत इतकी वाढू शकते', 'आपकी बचत इतनी बढ़ सकती है'), inr(have)], [L3('Gap to arrange', 'उभी करायची रक्कम', 'जुटाने वाली राशि'), inr(gap)], [L3('Monthly saving needed', 'लागणारी मासिक बचत', 'ज़रूरी मासिक बचत'), inr(sp) + yrsTxt(yrs)]];
+			} else if (type === 'income') {
+				var surplus = Math.max(0, v('inc') - v('self')); need = pvg(surplus, i, Math.max(r, 0.0001), v('iyears')) + v('liab'); gap = Math.max(0, need - v('cover') - v('assets'));
+				rows = [[L3('Income your family would need (today\'s value)', 'कुटुंबाला लागणारं उत्पन्न (आजच्या मूल्यात)', 'परिवार को ज़रूरी आय (आज के मूल्य में)'), inr(need - v('liab'))], [L3('Plus loans', 'अधिक कर्ज', 'साथ में कर्ज़'), inr(v('liab'))], [L3('Less existing cover and savings', 'वजा सध्याचं cover आणि बचत', 'घटा मौजूदा कवर और बचत'), inr(v('cover') + v('assets'))], [L3('Additional life cover to consider', 'विचार करायचं अतिरिक्त life cover', 'विचार करने लायक अतिरिक्त life cover'), inr(Math.ceil(gap / 100000) * 100000)]];
+			} else {
+				yrs = v('years'); var ry = v('ryears'), e0 = v('mexp') * 12 * Math.pow(1 + i, yrs), pr = Math.max(r * 0.7, 0.0001);
+				need = pvg(e0, i, pr, ry) * (1 + pr); var have2 = v('assets') * Math.pow(1 + r, yrs) + v('rben'); gap = Math.max(0, need - have2); sp = sip(gap, v('ret'), yrs);
+				rows = [[L3('Yearly expenses at retirement', 'निवृत्तीच्या वेळचा वार्षिक खर्च', 'सेवानिवृत्ति पर वार्षिक खर्च'), inr(e0)], [L3('Corpus needed for ' + ry + ' years', ry + ' वर्षांसाठी लागणारी रक्कम', ry + ' वर्षों के लिए ज़रूरी राशि'), inr(need)], [L3('PF/gratuity and savings may give', 'PF/gratuity आणि बचतीतून मिळू शकतील', 'PF/ग्रेच्युटी और बचत से मिल सकते हैं'), inr(have2)], [L3('Gap to arrange', 'उभी करायची रक्कम', 'जुटाने वाली राशि'), inr(gap)], [L3('Monthly saving needed', 'लागणारी मासिक बचत', 'ज़रूरी मासिक बचत'), inr(sp) + yrsTxt(yrs)]];
+			}
+			var pl = (P[goal] || []).map(function (x) { return '<li><a href="' + esc(x[1]) + '">' + esc(x[0]) + '</a></li>'; }).join('');
+			var mf = type === 'income' ? '' : '<li>' + L3('Mutual fund SIP: equity or hybrid funds for goals more than 7 years away, debt funds for shorter ones (to discuss with us)', 'Mutual fund SIP: 7 वर्षांपेक्षा लांबच्या ध्येयासाठी equity किंवा hybrid funds, कमी कालावधीसाठी debt funds (आमच्याशी चर्चा करा)', 'म्यूचुअल फंड SIP: 7 वर्ष से दूर के लक्ष्य के लिए equity या hybrid funds, कम अवधि के लिए debt funds (हमसे चर्चा करें)') + '</li>';
+			o.innerHTML = '<table class="a4h-table"><tbody>' + rows.map(function (x) { return '<tr><th>' + x[0] + '</th><td><b>' + x[1] + '</b></td></tr>'; }).join('') + '</tbody></table>' +
+				(gap > 0 ? '<h3>' + L3('Options to discuss', 'चर्चेसाठी पर्याय', 'चर्चा के विकल्प') + '</h3><ul class="a4h-ticks">' + pl + mf + '</ul>' : '<p class="a4h-med-r ok">' + L3('Your current savings look enough for this goal at these assumptions.', 'या गृहीतकांवर तुमची सध्याची बचत या ध्येयासाठी पुरेशी दिसते.', 'इन मान्यताओं पर आपकी मौजूदा बचत इस लक्ष्य के लिए पर्याप्त लगती है.') + '</p>');
+			last = { goal: gs.options[gs.selectedIndex].textContent, rows: rows };
+			var sh = document.querySelector('.a4g-share'); if (sh) { sh.hidden = false; }
+			var adv = document.querySelector('[data-a4g="adv"]'); if (adv) { adv.href = 'https://wa.me/919405908605?text=' + encodeURIComponent(summary() + '\n' + L3('Please help me plan this.', 'हे नियोजन करायला मदत करा.', 'कृपया इसकी योजना बनाने में मदद करें.')); }
+		}
+		function summary() {
+			if (!last) { return ''; }
+			return L3('My goal: ', 'माझं ध्येय: ', 'मेरा लक्ष्य: ') + last.goal + '\n' + last.rows.map(function (x) { return '• ' + x[0] + ': ' + x[1]; }).join('\n') + '\n' + location.href.split('#')[0];
+		}
+		document.addEventListener('click', function (e) {
+			var b = e.target.closest && e.target.closest('[data-a4g]'); if (!b || !last) { return; }
+			var k = b.getAttribute('data-a4g');
+			if (k === 'wa') { window.open('https://wa.me/?text=' + encodeURIComponent(summary()), '_blank', 'noopener'); }
+			if (k === 'pdf') {
+				var w = window.open('', '_blank'); if (!w) { return; }
+				var note = $$('.a4h-note').pop();
+				w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Goal Plan - Advisor4u</title><style>body{font-family:system-ui,sans-serif;margin:32px;color:#1d2433}h1{font-size:22px;margin:0 0 4px}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #ccd5e3;padding:8px;text-align:left}th{background:#f4f8fd;width:60%}p{font-size:12px;color:#555}</style></head><body><h1>' + esc(last.goal) + '</h1><p>www.advisor4u.in · WhatsApp 9405908605 · ' + new Date().toLocaleDateString('en-IN') + '</p><table>' + last.rows.map(function (x) { return '<tr><th>' + x[0] + '</th><td><b>' + x[1] + '</b></td></tr>'; }).join('') + '</table>' + (o.innerHTML.split('</table>')[1] || '') + '<p>' + (note ? esc(note.textContent) : '') + '</p></body></html>');
+				w.document.close(); w.focus(); setTimeout(function () { w.print(); }, 300);
+			}
+		});
+		$$('.a4g input,.a4g select').forEach(function (e) { e.addEventListener('input', show); e.addEventListener('change', show); });
+		LANG_HOOKS.push(show); show();
+	}
+
 	/* =====================================================================
 	 * Start
 	 * ===================================================================== */
@@ -547,7 +629,7 @@
 		fixHeader();
 		window.addEventListener('resize', fixHeader);
 		setTimeout(fixHeader, 800);
-		hubFilters(); leadForms(); planSample(); bonusSample(); compareTool(); revivalTool(); branchTool(); planCard();
+		hubFilters(); leadForms(); planSample(); bonusSample(); compareTool(); revivalTool(); branchTool(); planCard(); medicalTool(); goalTool();
 	}
 	if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', start); } else { start(); }
 })();

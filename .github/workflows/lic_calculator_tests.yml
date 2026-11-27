@@ -1,0 +1,43 @@
+# A4U LIC Calculator — प्रत्येक push/PR वर golden tests (LIC brochure नमुने + अधिकृत Benefit Illustrations)
+# चूक असेल तर run लाल होतो → release करू नये. PHP syntax आणि minify-build सुद्धा तपासतो.
+name: LIC calculator tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - wp/a4u-lic-calculator/**
+      - data/lic/lic-plans.json
+      - scripts/build_lic_tariff.py
+      - scripts/build_lic_zip.sh
+      - .github/workflows/lic_calculator_tests.yml
+  pull_request:
+    paths:
+      - wp/a4u-lic-calculator/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install test deps
+        run: npm install --no-save --prefix /tmp/t jsdom@24 esbuild@0.24
+      - name: Golden tests
+        working-directory: wp/a4u-lic-calculator
+        env:
+          NODE_PATH: /tmp/t/node_modules
+        run: node tests/golden.js ../../data/lic/lic-plans.json
+      - name: PHP syntax
+        run: for f in wp/a4u-lic-calculator/plugin/a4u-lic-calculator/*.php wp/a4u-lic-calculator/plugin/a4u-lic-calculator/includes/*.php; do php -l "$f"; done
+      - name: Minified build check
+        env:
+          ESBUILD: /tmp/t/node_modules/.bin/esbuild
+        run: bash scripts/build_lic_zip.sh ci && rm wp/a4u-lic-calculator/a4u-lic-calculator-ci.zip

@@ -86,6 +86,8 @@ for (const p of plans) {
 const REPORTS = [
   { id: '771', age: 3, term: 16, sa: 500000, cv: { 1: 3905, 2: 17910, 3: 32542, 16: 582593, 17: 626255, 18: 673575, 19: 674744 } },
   // ANANDA report (27 Nov 2026): 733 सर्व 13 वर्षं तंतोतंत; 720 पहिली 5 वर्षं (पहिल्या survival benefit आधी) ±2.5%
+  // LIC अधिकृत BI (28 Nov 2026), monthly mode: 745 वय 26 PPT 15 — हप्ते काळ आणि नंतरची 40 वर्षं
+  { id: '745', age: 26, term: 15, sa: 1000000, srb: 0.0001, mode: 'month', tol: 0.002, cv: { 1: 5080, 2: 48542, 3: 91305, 5: 202260, 10: 506749, 14: 953027, 15: 1019980, 20: 1014368, 30: 1000080, 40: 980816, 50: 959872 } },
   // LIC अधिकृत BI (ebiz.licindia.in, 28 Nov 2026): 714 सगळी वर्षं; 715 वर्ष 2–20; 720 पहिल्या SB नंतरही वर्ष 12 पर्यंत; 745 हप्ते काळ
   { id: '714', age: 36, term: 35, sa: 1000000, srb: 11.5, tol: 0.002, cv: { 1: 3194, 2: 17327, 3: 31013, 5: 75654, 10: 170262, 15: 281927, 20: 411362, 25: 557593, 30: 842822, 34: 1265151 } },
   { id: '714', age: 36, term: 35, sa: 1000000, srb: 29, tol: 0.002, cv: { 1: 3194, 2: 17327, 3: 32063, 5: 80913, 10: 194989, 15: 322746, 20: 470967, 25: 727991, 30: 1210900, 34: 1817668 } },
@@ -104,7 +106,8 @@ const REPORTS = [
 for (const rp of REPORTS) {
   const p = plans.find(x => x.id === rp.id);
   if (!p || !p.tariff) { fails.push(`${rp.id}: tariff missing`); continue; }
-  const r = E.compute(p, inp(rp.age, rp.term, rp.sa, rp.srb), {});
+  const ri = inp(rp.age, rp.term, rp.sa, rp.srb); if (rp.mode) { ri.mode = rp.mode; }
+  const r = E.compute(p, ri, {});
   if (r.errors) { fails.push(`${rp.id}: report case → ${r.errors.join(' ')}`); continue; }
   for (const [y, want] of Object.entries(rp.cv)) {
     checked++;

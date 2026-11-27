@@ -114,7 +114,8 @@ def tariff(c):
                 ssv = {'family': fam, 'f1': grid(c, f'ssv_{p}_f1'), 'f2': grid(c, f'ssv_{p}_f2')}
         elif fam == 'umang':  # 745: (PUSA + bonus) × F1 + paid-up income × F3_<PPT> (LIC BI शी पडताळलेलं)
             f1, f3 = split_cols(c, f'ssv_{p}_factors', 'F3')
-            ssv = {'family': fam, 'f1': f1, 'f3': f3}
+            f2 = {'c': [0], 'r': {str(int(float(r[0]))): [num(r[1])] for r in c.execute(f'select Term, F2 from "ssv_{p}_factors"') if num(r[1]) is not None}}
+            ssv = {'family': fam, 'f1': f1, 'f2': f2, 'f3': f3}
         elif fam == 'utsav':
             f1, f2 = split_cols(c, f'ssv_{p}_factors', 'F2')
             ssv = {'family': fam, 'f1': f1, 'f2': f2}

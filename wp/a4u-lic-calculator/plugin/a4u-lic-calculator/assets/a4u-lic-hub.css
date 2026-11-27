@@ -155,3 +155,7 @@ svg.a4c rect:not(.hov):hover{opacity:.8}
 .a4g .a4g-out { margin-top: 14px; }
 .a4g .a4g-out h3 { margin: 16px 0 6px; font-size: 1.05em; }
 .a4g label[hidden] { display: none !important; }
+
+.a4g-share { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.a4g-share[hidden] { display: none; }
+.a4h-btn.a4h-btn-alt { background: #fff; color: #0b4ea2; border: 1px solid #0b4ea2; }

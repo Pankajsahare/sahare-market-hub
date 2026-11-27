@@ -1,0 +1,49 @@
+# A4U LIC Calculator — जुन्या release zip GitHub Releases मध्ये हलवतो (सगळ्या versions जपल्या जातात; repo हलका)
+# सगळ्यात नवीन 2 zip repo मध्येच राहतात (update.json त्यांच्याकडे दाखवतं).
+# प्रत्येक zip: release तयार → asset upload पडताळणी → मगच repo मधून git rm.
+# हाताने: Actions → "Archive LIC calculator zips" → Run workflow
+name: Archive LIC calculator zips
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/lic_archive_zips.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lic-archive-zips
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move old zips to releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd wp/a4u-lic-calculator
+          mapfile -t ZIPS < <(ls a4u-lic-calculator-*.zip | sort -V)
+          n=${#ZIPS[@]}
+          [ "$n" -le 2 ] && { echo "Nothing to archive"; exit 0; }
+          moved=0
+          for z in "${ZIPS[@]:0:$((n-2))}"; do
+            v="${z#a4u-lic-calculator-}"; v="${v%.zip}"; tag="lic-calculator-v$v"
+            if ! gh release view "$tag" >/dev/null 2>&1; then
+              gh release create "$tag" "$z" --title "A4U LIC Calculator $v" --notes "Archived release zip of the A4U LIC Calculator WordPress plugin, version $v. Install: WordPress → Plugins → Add New → Upload Plugin."
+            fi
+            size=$(stat -c %s "$z")
+            up=$(gh release view "$tag" --json assets --jq ".assets[] | select(.name==\"$z\") | .size")
+            if [ "$up" = "$size" ]; then git rm -q "$z"; moved=$((moved+1)); echo "archived $z"; else echo "::warning::$z upload not verified, kept in repo"; fi
+          done
+          if [ "$moved" -gt 0 ]; then
+            git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -qm "Archive $moved old A4U LIC Calculator zips to GitHub Releases"
+            git pull -q --rebase && git push -q
+          fi

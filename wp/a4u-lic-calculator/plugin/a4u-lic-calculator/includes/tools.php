@@ -335,8 +335,15 @@ function a4u_lic_service_guide_html() {
 }
 
 /* =====================================================================
- * v4.4.1: Medical tests checker — LIC Annexure-1 (Special Medical Reports),
- * Chart-I आणि Chart-II, वय (मागचा वाढदिवस) × SUC (एकूण विचाराधीन विमा रक्कम)
+ * v4.5.0: मजकूर तीन भाषांत — data-mr / data-hi (hub.js भाषा बटणाने बदलतो)
+ * ===================================================================== */
+function a4u_lic_t( $en, $mr, $hi, $tag = 'span', $attr = '' ) {
+	return '<' . $tag . $attr . ' data-mr="' . esc_attr( $mr ) . '" data-hi="' . esc_attr( $hi ) . '">' . esc_html( $en ) . '</' . $tag . '>';
+}
+
+/* =====================================================================
+ * Medical tests checker — LIC Annexure-1 (Special Medical Reports), Chart-I / Chart-II
+ * वय (मागचा वाढदिवस) × SUC. हिशोब hub.js मध्ये (v4.5.0), data इथून JSON म्हणून.
  * ===================================================================== */
 function a4u_lic_medical_html() {
 	$N = 'No special report';
@@ -346,7 +353,6 @@ function a4u_lic_medical_html() {
 	$c = 'REST ECG, SBT-13, RUA, Haemogram, HbA1c, CTMT';
 	$big = 'REST ECG, SBT-13, RUA, Haemogram, HbA1c, CTMT, Chest X-Ray, Anti HCV, USG Abdomen & Pelvis, Spot Urine Micro-albumin, 2D Echocardiogram with Doppler';
 	$d = array(
-		// [SUC पर्यंत (₹), वय 18–35, 36–45, 46–50, 51–55, 56–60/56+]
 		'c1' => array(
 			array( 300000, $N, $N, $N, $N, $N ),
 			array( 1300000, $N, $N, $N, $N, $E1 ),
@@ -366,51 +372,47 @@ function a4u_lic_medical_html() {
 			array( 10000000, $a, $a . ', HbA1c', $a . ', HbA1c, CTMT', $c, $c ),
 			array( 250000000, $b, $c, $c, $c, $c ),
 			array( 399900000, $c, $c, $c, $c, $c . ', Chest X-Ray' ),
-			array( PHP_INT_MAX, $big, $big, $big, $big, $big . ' (plus PSA test for men)' ),
+			array( 9.9e18, $big, $big, $big, $big, $big . ' (plus PSA test for men)' ),
 		),
 	);
 	$gl = array(
-		'MER' => 'Medical Examination Report by an LIC-panel doctor (VMER = by video).',
-		'REST ECG' => 'Resting ECG (heart tracing).',
-		'FBS' => 'Fasting blood sugar.',
-		'RUA' => 'Routine urine analysis.',
-		'Lipidogram' => 'Cholesterol and lipid profile.',
-		'Hb% / Haemogram' => 'Haemoglobin / complete blood count.',
-		'SBT-13' => 'A panel of 13 blood chemistry tests (sugar, kidney, liver and similar).',
-		'HbA1c' => 'Average blood sugar of the last 3 months.',
-		'CTMT' => 'Computerised treadmill (stress) test.',
-		'ELISA for HIV' => 'HIV screening test.',
+		array( 'MER', 'Medical Examination Report by an LIC-panel doctor (VMER = by video).', 'LIC च्या panel doctor कडून वैद्यकीय तपासणी अहवाल (VMER = video वरून).', 'LIC पैनल डॉक्टर द्वारा चिकित्सा जाँच रिपोर्ट (VMER = वीडियो से).' ),
+		array( 'REST ECG', 'Resting ECG (heart tracing).', 'विश्रांती अवस्थेतला ECG (हृदयाची तपासणी).', 'आराम की अवस्था में ECG (हृदय जाँच).' ),
+		array( 'FBS', 'Fasting blood sugar.', 'उपाशीपोटी रक्तातील साखर.', 'खाली पेट ब्लड शुगर.' ),
+		array( 'RUA', 'Routine urine analysis.', 'लघवीची नेहमीची तपासणी.', 'पेशाब की सामान्य जाँच.' ),
+		array( 'Lipidogram', 'Cholesterol and lipid profile.', 'कोलेस्टेरॉल आणि चरबीची तपासणी.', 'कोलेस्ट्रॉल और लिपिड प्रोफाइल.' ),
+		array( 'Hb% / Haemogram', 'Haemoglobin / complete blood count.', 'हिमोग्लोबिन / संपूर्ण रक्त तपासणी.', 'हीमोग्लोबिन / संपूर्ण रक्त गणना.' ),
+		array( 'SBT-13', 'A panel of 13 blood chemistry tests (sugar, kidney, liver and similar).', 'रक्ताच्या 13 तपासण्यांचा संच (साखर, मूत्रपिंड, यकृत वगैरे).', 'रक्त की 13 जाँचों का समूह (शुगर, किडनी, लिवर आदि).' ),
+		array( 'HbA1c', 'Average blood sugar of the last 3 months.', 'मागच्या 3 महिन्यांची सरासरी रक्तातील साखर.', 'पिछले 3 महीनों की औसत ब्लड शुगर.' ),
+		array( 'CTMT', 'Computerised treadmill (stress) test.', 'Treadmill वर चालवून हृदयाची तपासणी (stress test).', 'ट्रेडमिल पर चलाकर हृदय की जाँच (स्ट्रेस टेस्ट).' ),
+		array( 'ELISA for HIV', 'HIV screening test.', 'HIV ची तपासणी.', 'HIV की जाँच.' ),
 	);
+	$t = 'a4u_lic_t';
 	$h = '<section class="a4h-box a4h-med"><div class="a4h-frow">' .
-		'<label><span>Age (completed, last birthday)</span><input type="number" id="a4h-mage" min="0" max="80" value="35" inputmode="numeric"></label>' .
-		'<label><span>Total sum assured under consideration (₹)</span><input type="number" id="a4h-msuc" min="0" step="50000" value="2500000" inputmode="numeric"></label>' .
-		'<label><span>Underwriting category</span><select id="a4h-mcat"><option value="c2">Regular (Chart II)</option><option value="c1">Qualifies for Preferred / Special Non-Medical (Chart I)</option></select></label>' .
+		'<label>' . $t( 'Age (completed, last birthday)', 'वय (पूर्ण वर्षं, मागचा वाढदिवस)', 'आयु (पूरे वर्ष, पिछला जन्मदिन)' ) . '<input type="number" id="a4h-mage" min="0" max="80" value="35" inputmode="numeric"></label>' .
+		'<label>' . $t( 'Total sum assured under consideration (₹)', 'विचाराधीन एकूण विमा रक्कम (₹)', 'विचाराधीन कुल बीमा राशि (₹)' ) . '<input type="number" id="a4h-msuc" min="0" step="50000" value="2500000" inputmode="numeric"></label>' .
+		'<label>' . $t( 'Underwriting category', 'Underwriting प्रकार', 'अंडरराइटिंग श्रेणी' ) . '<select id="a4h-mcat">' . $t( 'Regular (Chart II)', 'नेहमीचा (Chart II)', 'सामान्य (Chart II)', 'option', ' value="c2"' ) . $t( 'Qualifies for Preferred / Special Non-Medical (Chart I)', 'Preferred / Special Non-Medical साठी पात्र (Chart I)', 'Preferred / Special Non-Medical के लिए पात्र (Chart I)', 'option', ' value="c1"' ) . '</select></label>' .
 		'</div><div class="a4h-mout" aria-live="polite"></div>' .
-		'<p class="a4h-note">"Sum under consideration" = this new proposal plus your other LIC policies that LIC counts together (your agent can confirm the figure).</p></section>';
-	$h .= '<section class="a4h-box"><h2>How to read the result</h2><ul class="a4h-ticks">' .
-		'<li>"No special report" means no extra lab tests. LIC may still call a medical examination (MER or video MER) if you do not qualify for non-medical cover.</li>' .
-		'<li>Wherever special reports apply, the medical examination (MER) is also compulsory.</li>' .
-		'<li>Chart I applies (up to age 60 and ₹1 crore) only when you qualify for LIC\'s Preferred or Special Non-Medical but need a medical because of the amount, age or a health condition. Everyone else, and anyone above age 60 or ₹1 crore, follows Chart II.</li>' .
-		'<li>Pure term plans (Jeevan Amar, Tech Term) and Saral Jeevan Bima follow their own rules; for term plans above ₹10 crore extra tests apply.</li>' .
-		'<li>A urine cotinine test may be needed for non-smoker rates. LIC can ask for more reports depending on your health history.</li></ul></section>';
-	$h .= '<section class="a4h-box"><h2>Test names in plain words</h2><table class="a4h-table"><tbody>';
-	foreach ( $gl as $k => $v ) { $h .= '<tr><th>' . esc_html( $k ) . '</th><td>' . esc_html( $v ) . '</td></tr>'; }
-	$h .= '</tbody></table><p class="a4h-note">Source: LIC\'s Special Medical Reports chart (Annexure-1, Charts I and II). LIC revises underwriting rules from time to time; your agent or LIC branch confirms the final requirement.</p></section>';
-	$h .= '<script>(function(){var D=' . wp_json_encode( $d ) . ';function inr(n){return "₹"+Number(n).toLocaleString("en-IN");}
-function run(){var a=parseInt(document.getElementById("a4h-mage").value,10),s=Number(document.getElementById("a4h-msuc").value)||0,c=document.getElementById("a4h-mcat").value,o=document.querySelector(".a4h-mout");
-if(!(a>=0)){o.innerHTML="";return;}
-if(a<18){o.innerHTML="<p class=\"a4h-med-r\">This chart is for adults (18+). For children, LIC decides medical requirements from the child\'s and parents\' details — ask your agent.</p>";return;}
-var note="";if(c==="c1"&&(a>60||s>10000000)){c="c2";note="<p class=\"a4h-note\">Chart I applies only up to age 60 and ₹1 crore, so Chart II is used.</p>";}
-var col=a<=35?1:a<=45?2:a<=50?3:a<=55?4:5,row=null;D[c].some(function(r){if(s<=r[0]){row=r;return true;}return false;});
-if(!row){o.innerHTML="";return;}var t=row[col],none=/^No special/.test(t);
-o.innerHTML="<p class=\"a4h-med-r "+(none?"ok":"need")+"\"><strong>"+(none?"No special medical reports":"Special reports likely: ")+"</strong>"+(none?"":t+" (with medical examination, MER)")+"</p>"+note;}
-["a4h-mage","a4h-msuc","a4h-mcat"].forEach(function(i){var e=document.getElementById(i);e.addEventListener("input",run);e.addEventListener("change",run);});run();})();</script>';
+		$t( '"Sum under consideration" = this new proposal plus your other LIC policies that LIC counts together (your agent can confirm the figure).', '"विचाराधीन रक्कम" = हा नवीन proposal आणि LIC एकत्र धरते त्या तुमच्या इतर LIC policies (नेमका आकडा तुमचा agent सांगेल).', '"विचाराधीन राशि" = यह नया प्रस्ताव और आपकी अन्य LIC पॉलिसियाँ जिन्हें LIC साथ गिनती है (सही आँकड़ा आपका एजेंट बताएगा).', 'p', ' class="a4h-note"' ) .
+		'<script type="application/json" id="a4h-med-data">' . wp_json_encode( $d ) . '</script></section>';
+	$li = array(
+		array( '"No special report" means no extra lab tests. LIC may still call a medical examination (MER or video MER) if you do not qualify for non-medical cover.', '"No special report" म्हणजे जादा lab तपासण्या नाहीत. पण तुम्ही non-medical साठी पात्र नसाल तर LIC तरीही वैद्यकीय तपासणी (MER किंवा video MER) मागू शकते.', '"No special report" का मतलब अतिरिक्त लैब जाँच नहीं. पर आप non-medical के लिए पात्र न हों तो LIC फिर भी चिकित्सा जाँच (MER या वीडियो MER) माँग सकती है.' ),
+		array( 'Wherever special reports apply, the medical examination (MER) is also compulsory.', 'जिथे special reports लागतात तिथे वैद्यकीय तपासणी (MER) सुद्धा आवश्यक असते.', 'जहाँ special reports लागू हों, वहाँ चिकित्सा जाँच (MER) भी अनिवार्य है.' ),
+		array( 'Chart I applies (up to age 60 and ₹1 crore) only when you qualify for LIC\'s Preferred or Special Non-Medical but need a medical because of the amount, age or a health condition. Everyone else, and anyone above age 60 or ₹1 crore, follows Chart II.', 'Chart I (वय 60 आणि ₹1 कोटीपर्यंत) फक्त तेव्हाच लागू होतो जेव्हा तुम्ही LIC च्या Preferred किंवा Special Non-Medical साठी पात्र आहात पण रक्कम, वय किंवा आरोग्यामुळे medical लागतो. बाकी सगळ्यांसाठी, आणि वय 60 किंवा ₹1 कोटीपेक्षा जास्त असल्यास, Chart II लागू.', 'Chart I (आयु 60 और ₹1 करोड़ तक) तभी लागू होता है जब आप LIC के Preferred या Special Non-Medical के लिए पात्र हों पर राशि, आयु या स्वास्थ्य के कारण मेडिकल ज़रूरी हो. बाकी सभी के लिए, और 60 वर्ष या ₹1 करोड़ से ऊपर, Chart II लागू.' ),
+		array( 'Pure term plans (Jeevan Amar, Tech Term) and Saral Jeevan Bima follow their own rules; for term plans above ₹10 crore extra tests apply.', 'Pure term plans (Jeevan Amar, Tech Term) आणि Saral Jeevan Bima चे नियम वेगळे आहेत; ₹10 कोटीवरील term plans साठी जादा तपासण्या लागतात.', 'Pure term plans (Jeevan Amar, Tech Term) और Saral Jeevan Bima के नियम अलग हैं; ₹10 करोड़ से ऊपर के term plans में अतिरिक्त जाँच लगती है.' ),
+		array( 'A urine cotinine test may be needed for non-smoker rates. LIC can ask for more reports depending on your health history.', 'Non-smoker दरांसाठी लघवीची cotinine तपासणी लागू शकते. आरोग्याच्या इतिहासानुसार LIC आणखी reports मागू शकते.', 'Non-smoker दरों के लिए पेशाब की cotinine जाँच लग सकती है. स्वास्थ्य इतिहास के अनुसार LIC और रिपोर्ट माँग सकती है.' ),
+	);
+	$h .= '<section class="a4h-box">' . $t( 'How to read the result', 'निकाल कसा वाचायचा', 'परिणाम कैसे पढ़ें', 'h2' ) . '<ul class="a4h-ticks">';
+	foreach ( $li as $x ) { $h .= $t( $x[0], $x[1], $x[2], 'li' ); }
+	$h .= '</ul></section><section class="a4h-box">' . $t( 'Test names in plain words', 'तपासण्यांची नावं सोप्या शब्दांत', 'जाँचों के नाम आसान शब्दों में', 'h2' ) . '<table class="a4h-table"><tbody>';
+	foreach ( $gl as $x ) { $h .= '<tr><th>' . esc_html( $x[0] ) . '</th>' . $t( $x[1], $x[2], $x[3], 'td' ) . '</tr>'; }
+	$h .= '</tbody></table>' . $t( 'Source: LIC\'s Special Medical Reports chart (Annexure-1, Charts I and II). LIC revises underwriting rules from time to time; your agent or LIC branch confirms the final requirement.', 'स्रोत: LIC चा Special Medical Reports तक्ता (Annexure-1, Chart I आणि II). LIC वेळोवेळी नियम बदलते; अंतिम गरज तुमचा agent किंवा LIC शाखा सांगेल.', 'स्रोत: LIC की Special Medical Reports तालिका (Annexure-1, Chart I और II). LIC समय-समय पर नियम बदलती है; अंतिम आवश्यकता आपका एजेंट या LIC शाखा बताएगी.', 'p', ' class="a4h-note"' ) . '</section>';
 	return $h;
 }
 
 /* =====================================================================
- * v4.4.2: Goal planner — LIC च्या Financial Needs Analysis सारखे ध्येय-प्रकार,
- * पण हिशोब आणि मजकूर आपला: खर्चाचं ध्येय / कुटुंब संरक्षण (HLV) / निवृत्ती
+ * Goal planner — LIC च्या Financial Needs Analysis सारखे ध्येय-प्रकार, हिशोब आपला.
+ * v4.5.0: हिशोब hub.js मध्ये, तीन भाषा, निकाल WhatsApp / PDF
  * ===================================================================== */
 function a4u_lic_goal_html() {
 	$cat = function_exists( 'a4u_lic_catalog' ) ? a4u_lic_catalog() : array();
@@ -425,45 +427,47 @@ function a4u_lic_goal_html() {
 			if ( isset( $cat[ $id ] ) ) { $plans[ $g ][] = array( $cat[ $id ]['name'] . ' (' . $id . ')', a4u_lic_plan_url( $cat[ $id ] ) ); }
 		}
 	}
-	$f = function ( $id, $label, $val, $step = '1000', $extra = '' ) {
-		return '<label data-g="' . esc_attr( $extra ) . '"><span>' . esc_html( $label ) . '</span><input type="number" id="a4g-' . $id . '" value="' . esc_attr( $val ) . '" step="' . $step . '" min="0" inputmode="decimal"></label>';
+	$t = 'a4u_lic_t';
+	$f = function ( $id, $en, $mr, $hi, $val, $step, $extra ) use ( $t ) {
+		return '<label data-g="' . esc_attr( $extra ) . '">' . $t( $en, $mr, $hi ) . '<input type="number" id="a4g-' . $id . '" value="' . esc_attr( $val ) . '" step="' . $step . '" min="0" inputmode="decimal"></label>';
 	};
-	$h = '<section class="a4h-box a4g"><div class="a4h-frow"><label><span>Your goal</span><select id="a4g-goal">' .
-		'<option value="education">Children\'s education</option><option value="marriage">Children\'s marriage</option><option value="house">Buying a house</option><option value="parent">Becoming a parent</option><option value="holiday">Holiday / pilgrimage</option><option value="health">Health expenses</option>' .
-		'<option value="income">Protect family income (life cover)</option><option value="retirement">Retirement</option></select></label></div>' .
-		'<div class="a4h-frow">' .
-		$f( 'cost', 'Cost today (₹)', 1500000, '10000', 'cost' ) . $f( 'years', 'Years to goal', 12, '1', 'cost retirement' ) .
-		$f( 'inc', 'Family income per year (₹)', 1200000, '10000', 'income' ) . $f( 'self', 'Your own yearly expenses (₹)', 300000, '10000', 'income' ) .
-		$f( 'iyears', 'Years your income is needed', 25, '1', 'income' ) . $f( 'liab', 'Loans outstanding (₹)', 0, '10000', 'income' ) .
-		$f( 'cover', 'Existing life cover (₹)', 0, '10000', 'income' ) .
-		$f( 'mexp', 'Monthly expenses today (₹)', 40000, '1000', 'retirement' ) . $f( 'ryears', 'Years in retirement', 25, '1', 'retirement' ) .
-		$f( 'rben', 'Expected PF / gratuity at retirement (₹)', 0, '10000', 'retirement' ) .
-		$f( 'assets', 'Savings already kept for this goal (₹)', 0, '10000', 'cost retirement income' ) .
-		$f( 'infl', 'Inflation (% a year)', 6, '0.5', 'cost retirement income' ) . $f( 'ret', 'Expected return on savings (% a year)', 10, '0.5', 'cost retirement income' ) .
-		'</div><div class="a4g-out" aria-live="polite"></div></section>';
-	$h .= '<section class="a4h-box"><h2>How the numbers are worked out</h2><ul class="a4h-ticks">' .
-		'<li>Goal cost: today\'s cost grown at your inflation rate to the goal year, less what your existing savings can grow to. The gap is shown as a monthly saving (SIP) at your expected return.</li>' .
-		'<li>Family income: the present value of the income your family would lose (your income minus your own expenses) for the years it is needed, plus loans, less existing cover and savings. This is the life cover to consider.</li>' .
-		'<li>Retirement: the corpus needed at retirement to pay your inflation-linked expenses for the years you choose, less PF/gratuity and what your savings can grow to. After retirement, savings are assumed to earn 70% of your expected return (safer investments).</li>' .
-		'<li>These are illustrations for discussion, not advice or a guarantee. Returns on market-linked investments are not assured.</li></ul>' .
-		'<p class="a4h-note">LIC plans are shown as options to discuss with your LIC agent. Mutual fund investments are subject to market risks; read all scheme related documents carefully. Advisor4u (Sahare Financial Services) is an AMFI-registered Mutual Fund Distributor (ARN-151469) and an LIC agent, not a SEBI-registered investment adviser.</p></section>';
-	$h .= '<script>(function(){var P=' . wp_json_encode( $plans ) . ';
-function v(i){var e=document.getElementById("a4g-"+i);return e?Math.max(0,Number(e.value)||0):0;}
-function inr(n){n=Math.round(n);if(n>=1e7)return "₹"+(n/1e7).toFixed(2)+" crore";if(n>=1e5)return "₹"+(n/1e5).toFixed(2)+" lakh";return "₹"+n.toLocaleString("en-IN");}
-function sip(fv,r,yrs){var i=r/1200,n=Math.round(yrs*12);if(fv<=0||n<=0)return 0;if(i===0)return fv/n;return fv*i/((Math.pow(1+i,n)-1)*(1+i));}
-function pvg(a,g,d,n){if(Math.abs(d-g)<1e-9)return a*n;return a*(1-Math.pow((1+g)/(1+d),n))/(d-g);}
-function show(){var goal=document.getElementById("a4g-goal").value,type=goal==="income"?"income":(goal==="retirement"?"retirement":"cost");
-document.querySelectorAll(".a4g [data-g]").forEach(function(l){l.hidden=(" "+l.getAttribute("data-g")+" ").indexOf(" "+type+" ")<0;});
-var i=v("infl")/100,r=v("ret")/100,o=document.querySelector(".a4g-out"),rows=[],gap=0,need=0,yrs=0,sipAmt=0;
-if(type==="cost"){yrs=v("years");need=v("cost")*Math.pow(1+i,yrs);var have=v("assets")*Math.pow(1+r,yrs);gap=Math.max(0,need-have);sipAmt=sip(gap,v("ret"),yrs);
-rows=[["Cost in "+yrs+" years",inr(need)],["Your savings may grow to",inr(have)],["Gap to arrange",inr(gap)],["Monthly saving needed",inr(sipAmt)+" for "+yrs+" years"]];}
-else if(type==="income"){var surplus=Math.max(0,v("inc")-v("self"));need=pvg(surplus,i,Math.max(r,0.0001),v("iyears"))+v("liab");gap=Math.max(0,need-v("cover")-v("assets"));
-rows=[["Income your family would need (today\'s value)",inr(need-v("liab"))],["Plus loans",inr(v("liab"))],["Less existing cover and savings",inr(v("cover")+v("assets"))],["Additional life cover to consider",inr(Math.ceil(gap/100000)*100000)]];}
-else{yrs=v("years");var ry=v("ryears"),e0=v("mexp")*12*Math.pow(1+i,yrs);need=pvg(e0,i,Math.max(r*0.7,0.0001),ry)*(1+Math.max(r*0.7,0));var have2=v("assets")*Math.pow(1+r,yrs)+v("rben");gap=Math.max(0,need-have2);sipAmt=sip(gap,v("ret"),yrs);
-rows=[["Yearly expenses at retirement",inr(e0)],["Corpus needed for "+ry+" years",inr(need)],["PF/gratuity and savings may give",inr(have2)],["Gap to arrange",inr(gap)],["Monthly saving needed",inr(sipAmt)+" for "+yrs+" years"]];}
-var pl=(P[goal]||[]).map(function(x){return "<li><a href=\""+x[1]+"\">"+x[0]+"</a></li>";}).join("");
-var mf=type==="income"?"":"<li>Mutual fund SIP: equity or hybrid funds for goals more than 7 years away, debt funds for shorter ones (to discuss with us)</li>";
-o.innerHTML="<table class=\"a4h-table\"><tbody>"+rows.map(function(x){return "<tr><th>"+x[0]+"</th><td><b>"+x[1]+"</b></td></tr>";}).join("")+"</tbody></table>"+(gap>0?"<h3>Options to discuss</h3><ul class=\"a4h-ticks\">"+pl+mf+"</ul>":"<p class=\"a4h-med-r ok\">Your current savings look enough for this goal at these assumptions.</p>");}
-document.querySelectorAll(".a4g input,.a4g select").forEach(function(e){e.addEventListener("input",show);e.addEventListener("change",show);});show();})();</script>';
+	$opts = array(
+		array( 'education', 'Children\'s education', 'मुलांचं शिक्षण', 'बच्चों की शिक्षा' ),
+		array( 'marriage', 'Children\'s marriage', 'मुलांचं लग्न', 'बच्चों की शादी' ),
+		array( 'house', 'Buying a house', 'घर घेणे', 'घर खरीदना' ),
+		array( 'parent', 'Becoming a parent', 'पालक होणे', 'माता-पिता बनना' ),
+		array( 'holiday', 'Holiday / pilgrimage', 'सहल / तीर्थयात्रा', 'छुट्टी / तीर्थयात्रा' ),
+		array( 'health', 'Health expenses', 'आरोग्य खर्च', 'स्वास्थ्य खर्च' ),
+		array( 'income', 'Protect family income (life cover)', 'कुटुंबाचं उत्पन्न सुरक्षित (life cover)', 'परिवार की आय सुरक्षित (life cover)' ),
+		array( 'retirement', 'Retirement', 'निवृत्ती', 'सेवानिवृत्ति' ),
+	);
+	$sel = '';
+	foreach ( $opts as $o ) { $sel .= $t( $o[1], $o[2], $o[3], 'option', ' value="' . $o[0] . '"' ); }
+	$h = '<section class="a4h-box a4g"><div class="a4h-frow"><label>' . $t( 'Your goal', 'तुमचं ध्येय', 'आपका लक्ष्य' ) . '<select id="a4g-goal">' . $sel . '</select></label></div><div class="a4h-frow">' .
+		$f( 'cost', 'Cost today (₹)', 'आजचा खर्च (₹)', 'आज की लागत (₹)', 1500000, '10000', 'cost' ) .
+		$f( 'years', 'Years to goal', 'ध्येयापर्यंत वर्षं', 'लक्ष्य तक वर्ष', 12, '1', 'cost retirement' ) .
+		$f( 'inc', 'Family income per year (₹)', 'कुटुंबाचं वार्षिक उत्पन्न (₹)', 'परिवार की वार्षिक आय (₹)', 1200000, '10000', 'income' ) .
+		$f( 'self', 'Your own yearly expenses (₹)', 'तुमचा स्वतःचा वार्षिक खर्च (₹)', 'आपका अपना वार्षिक खर्च (₹)', 300000, '10000', 'income' ) .
+		$f( 'iyears', 'Years your income is needed', 'उत्पन्न किती वर्षं लागेल', 'आय कितने वर्ष चाहिए', 25, '1', 'income' ) .
+		$f( 'liab', 'Loans outstanding (₹)', 'बाकी कर्ज (₹)', 'बकाया कर्ज़ (₹)', 0, '10000', 'income' ) .
+		$f( 'cover', 'Existing life cover (₹)', 'सध्याचं life cover (₹)', 'मौजूदा life cover (₹)', 0, '10000', 'income' ) .
+		$f( 'mexp', 'Monthly expenses today (₹)', 'आजचा मासिक खर्च (₹)', 'आज का मासिक खर्च (₹)', 40000, '1000', 'retirement' ) .
+		$f( 'ryears', 'Years in retirement', 'निवृत्तीनंतरची वर्षं', 'सेवानिवृत्ति के वर्ष', 25, '1', 'retirement' ) .
+		$f( 'rben', 'Expected PF / gratuity at retirement (₹)', 'निवृत्तीला मिळणारा PF / gratuity (₹)', 'सेवानिवृत्ति पर अपेक्षित PF / ग्रेच्युटी (₹)', 0, '10000', 'retirement' ) .
+		$f( 'assets', 'Savings already kept for this goal (₹)', 'या ध्येयासाठी आधीची बचत (₹)', 'इस लक्ष्य के लिए मौजूदा बचत (₹)', 0, '10000', 'cost retirement income' ) .
+		$f( 'infl', 'Inflation (% a year)', 'महागाई (% दरवर्षी)', 'महँगाई (% प्रति वर्ष)', 6, '0.5', 'cost retirement income' ) .
+		$f( 'ret', 'Expected return on savings (% a year)', 'बचतीवर अपेक्षित परतावा (% दरवर्षी)', 'बचत पर अपेक्षित रिटर्न (% प्रति वर्ष)', 10, '0.5', 'cost retirement income' ) .
+		'</div><div class="a4g-out" aria-live="polite"></div>' .
+		'<div class="a4g-share" hidden><button type="button" class="a4h-btn" data-a4g="wa">' . $t( 'Send to WhatsApp', 'WhatsApp वर पाठवा', 'WhatsApp पर भेजें' ) . '</button> <button type="button" class="a4h-btn a4h-btn-alt" data-a4g="pdf">' . $t( 'Save as PDF', 'PDF म्हणून जतन करा', 'PDF के रूप में सहेजें' ) . '</button> <a class="a4h-btn a4h-btn-alt" data-a4g="adv" target="_blank" rel="noopener" href="https://wa.me/919405908605">' . $t( 'Discuss with Advisor4u', 'Advisor4u शी चर्चा करा', 'Advisor4u से चर्चा करें' ) . '</a></div>' .
+		'<script type="application/json" id="a4g-data">' . wp_json_encode( $plans ) . '</script></section>';
+	$li = array(
+		array( 'Goal cost: today\'s cost grown at your inflation rate to the goal year, less what your existing savings can grow to. The gap is shown as a monthly saving (SIP) at your expected return.', 'ध्येयाचा खर्च: आजचा खर्च महागाईच्या दराने ध्येयाच्या वर्षापर्यंत वाढवून, त्यातून तुमची आधीची बचत किती वाढेल ती वजा. उरलेली रक्कम अपेक्षित परताव्यावर मासिक बचत (SIP) म्हणून दाखवली आहे.', 'लक्ष्य की लागत: आज की लागत महँगाई दर से लक्ष्य वर्ष तक बढ़ाकर, उसमें से आपकी मौजूदा बचत कितनी बढ़ेगी वह घटाकर. बाकी राशि अपेक्षित रिटर्न पर मासिक बचत (SIP) के रूप में दिखाई गई है.' ),
+		array( 'Family income: the present value of the income your family would lose (your income minus your own expenses) for the years it is needed, plus loans, less existing cover and savings. This is the life cover to consider.', 'कुटुंबाचं उत्पन्न: कुटुंबाला जितकी वर्षं उत्पन्न लागेल तितक्या वर्षांचं गमावलं जाणारं उत्पन्न (तुमचं उत्पन्न वजा तुमचा स्वतःचा खर्च) आजच्या मूल्यात, अधिक कर्ज, वजा सध्याचं cover आणि बचत. हेच विचार करायचं life cover.', 'परिवार की आय: जितने वर्ष आय चाहिए उतने वर्षों की खोने वाली आय (आपकी आय घटा आपका अपना खर्च) आज के मूल्य में, साथ में कर्ज़, घटा मौजूदा कवर और बचत. यही विचार करने लायक life cover है.' ),
+		array( 'Retirement: the corpus needed at retirement to pay your inflation-linked expenses for the years you choose, less PF/gratuity and what your savings can grow to. After retirement, savings are assumed to earn 70% of your expected return (safer investments).', 'निवृत्ती: निवडलेल्या वर्षांसाठी महागाईसह वाढणारा खर्च भागवायला निवृत्तीला लागणारी रक्कम, वजा PF/gratuity आणि बचत किती वाढेल ती. निवृत्तीनंतर बचतीवर अपेक्षित परताव्याच्या 70% परतावा (सुरक्षित गुंतवणूक) धरला आहे.', 'सेवानिवृत्ति: चुने गए वर्षों तक महँगाई के साथ बढ़ते खर्च के लिए सेवानिवृत्ति पर ज़रूरी राशि, घटा PF/ग्रेच्युटी और बचत कितनी बढ़ेगी. सेवानिवृत्ति के बाद बचत पर अपेक्षित रिटर्न का 70% (सुरक्षित निवेश) माना गया है.' ),
+		array( 'These are illustrations for discussion, not advice or a guarantee. Returns on market-linked investments are not assured.', 'हे आकडे चर्चेसाठीचे उदाहरण आहेत, सल्ला किंवा हमी नाही. बाजाराशी जोडलेल्या गुंतवणुकीवरचा परतावा निश्चित नसतो.', 'ये आँकड़े चर्चा के लिए उदाहरण हैं, सलाह या गारंटी नहीं. बाज़ार से जुड़े निवेश पर रिटर्न निश्चित नहीं होता.' ),
+	);
+	$h .= '<section class="a4h-box">' . $t( 'How the numbers are worked out', 'आकडे कसे काढले', 'आँकड़े कैसे निकाले गए', 'h2' ) . '<ul class="a4h-ticks">';
+	foreach ( $li as $x ) { $h .= $t( $x[0], $x[1], $x[2], 'li' ); }
+	$h .= '</ul>' . $t( 'LIC plans are shown as options to discuss with your LIC agent. Mutual fund investments are subject to market risks; read all scheme related documents carefully. Advisor4u (Sahare Financial Services) is an AMFI-registered Mutual Fund Distributor (ARN-151469) and an LIC agent, not a SEBI-registered investment adviser.', 'LIC plans हे तुमच्या LIC agent शी चर्चा करायचे पर्याय आहेत. Mutual fund गुंतवणूक बाजारातील जोखमीच्या अधीन आहे; योजनेची सगळी कागदपत्रं नीट वाचा. Advisor4u (Sahare Financial Services) हे AMFI-नोंदणीकृत Mutual Fund Distributor (ARN-151469) आणि LIC agent आहेत, SEBI-नोंदणीकृत गुंतवणूक सल्लागार नाहीत.', 'LIC plans आपके LIC एजेंट से चर्चा के विकल्प हैं. म्यूचुअल फंड निवेश बाज़ार जोखिमों के अधीन है; योजना के सभी दस्तावेज़ ध्यान से पढ़ें. Advisor4u (Sahare Financial Services) AMFI-पंजीकृत म्यूचुअल फंड डिस्ट्रीब्यूटर (ARN-151469) और LIC एजेंट है, SEBI-पंजीकृत निवेश सलाहकार नहीं.', 'p', ' class="a4h-note"' ) . '</section>';
 	return $h;
 }

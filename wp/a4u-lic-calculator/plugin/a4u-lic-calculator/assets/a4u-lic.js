@@ -599,12 +599,15 @@
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
 				return (pusa + cumAdd) * (f2 || 0) + 0.1 * o.sa * Math.min(paidYears, n) / n * (f1 || 0);
-			case 'umang': // 745 (v4.4.2): हप्ते भरण्याच्या काळात (PUSA + bonus) × F1 + paid-up income × F3 — LIC BI शी 0.1% आत
-				if (y >= n) { return null; } // हप्ते संपल्यानंतरचं सूत्र अजून पडताळलं नाही → फक्त GSV
+			case 'umang': // 745: LIC BI (PPT 15 व 30) शी पडताळलेलं
 				f1 = tgrid(t.f1, y, 0);
 				if (f1 === null) { return null; }
-				var f3u = y >= 6 ? (tgrid(t.f3, y, n) || 0) : 0;
-				return (pusa + (y >= 3 ? cumAdd : 0)) * f1 + (o.survival || 0) * Math.min(paidYears, n) / n * f3u;
+				var f3u = tgrid(t.f3, y, n) || 0, incPU = (o.survival || 0) * Math.min(paidYears, n) / n;
+				if (y < n) { // हप्ते काळ: (PUSA + bonus) × F1 + paid-up income × F3 (income भाग PPT च्या 1/5 वर्षांनंतर)
+					return (pusa + (y >= 3 ? cumAdd : 0)) * f1 + (y >= n / 5 ? incPU * f3u : 0);
+				}
+				// हप्ते संपल्यानंतर: SA × (F1+F2) + income × F3 + bonus × F1 (bonus भाग LIC पेक्षा कमीच धरलेला — सुरक्षित)
+				return o.sa * (f1 + (tgrid(t.f2, y, 0) || 0)) + incPU * f3u + cumAdd * f1;
 			case 'mb':
 				if (y < 3) { cumAdd = 0; } // v4.4.2: पहिल्या 2 वर्षांत bonus SSV मध्ये नाही (LIC BI 720)
 				if (sbPaid > 0) { return null; } // पहिलं survival benefit दिल्यानंतरचं सूत्र खऱ्या report शी जुळत नाही → फक्त GSV
