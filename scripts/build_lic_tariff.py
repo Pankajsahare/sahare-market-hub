@@ -25,7 +25,7 @@ CALC = {
     # 733 (Lakshya) आणि money-back plans चं SSV सूत्र खऱ्या quote शी पडताळलेलं नाही → फक्त GSV
     '714': 'endow', '715': 'endow', '717': 'endow', '733': 'lakshya', '736': 'endow', '760': 'endow',
     '720': 'mb', '721': None, '732': None,
-    '745': None, '771': 'utsav', '883': 'utsav_sp',
+    '745': 'umang', '771': 'utsav', '883': 'utsav_sp',
     '894': None,  # Jeevan Raksha (term) — surrender value नाही
     '770': None,  # Bima Platinum: दर PPT नुसार वेगळे तक्ते; SSV पडताळलेलं नाही → GSV
 }
@@ -112,6 +112,9 @@ def tariff(c):
         if fam in ('endow', 'mb', 'lakshya'):
             if has(c, f'ssv_{p}_f1') and has(c, f'ssv_{p}_f2'):
                 ssv = {'family': fam, 'f1': grid(c, f'ssv_{p}_f1'), 'f2': grid(c, f'ssv_{p}_f2')}
+        elif fam == 'umang':  # 745: (PUSA + bonus) × F1 + paid-up income × F3_<PPT> (LIC BI शी पडताळलेलं)
+            f1, f3 = split_cols(c, f'ssv_{p}_factors', 'F3')
+            ssv = {'family': fam, 'f1': f1, 'f3': f3}
         elif fam == 'utsav':
             f1, f2 = split_cols(c, f'ssv_{p}_factors', 'F2')
             ssv = {'family': fam, 'f1': f1, 'f2': f2}

@@ -150,3 +150,8 @@ svg.a4c rect:not(.hov):hover{opacity:.8}
 .a4h-med .a4h-mout { margin-top: 14px; }
 .a4h-med-r { padding: 12px 14px; border-radius: 10px; background: #fff7e6; border: 1px solid #f3d08a; margin: 0; }
 .a4h-med-r.ok { background: #eaf7ef; border-color: #9fd8b3; }
+
+/* v4.4.2: goal planner */
+.a4g .a4g-out { margin-top: 14px; }
+.a4g .a4g-out h3 { margin: 16px 0 6px; font-size: 1.05em; }
+.a4g label[hidden] { display: none !important; }

@@ -31,6 +31,9 @@ function a4u_lic_render_tool( $k, $with_head = true ) {
 		case 'lic-services':
 			$h .= a4u_lic_services_html();
 			break;
+		case 'goal-planner':
+			$h .= a4u_lic_goal_html();
+			break;
 		case 'medical-tests':
 			$h .= a4u_lic_medical_html();
 			break;
@@ -313,6 +316,20 @@ function a4u_lic_service_guide_html() {
 		$h .= '<tr><td>' . esc_html( $o[0] . ' ' . $o[1] ) . '</td><td>' . esc_html( $o[2] ) . '</td><td>' . esc_html( $o[3] ) . '</td><td>' . esc_html( $o[4] ) . '</td><td>' . esc_html( $o[5] ) . '</td><td>₹' . esc_html( $o[6] ) . '</td><td>' . $cur . '</td></tr>';
 	}
 	$h .= '</tbody></table></div><p class="a4h-note">Riders on most of these plans: Term and Critical Illness ₹1 lakh–₹25 lakh; Accidental Death &amp; Disability ₹10,000–₹1 crore; Accident Benefit ₹20,000–₹1 crore.</p></section>';
+	// v4.4.2: LIC च्या अधिकृत पानांचे दुवे
+	$links = array(
+		array( 'Policy conditions', 'https://licindia.in/policy-conditions', 'Standard conditions of LIC policies.', 'पॉलिसीच्या प्रमाणित अटी.' ),
+		array( 'Policy guidelines and helpline', 'https://licindia.in/web/guest/policy-guidelines-helpline', 'Service rules and LIC\'s customer helpline numbers.', 'सेवा नियम आणि LIC चे ग्राहक helpline क्रमांक.' ),
+		array( 'Customer services', 'https://licindia.in/web/guest/customer-services', 'All LIC customer services in one place.', 'LIC च्या सगळ्या ग्राहक सेवा एकाच ठिकाणी.' ),
+		array( 'Download forms', 'https://licindia.in/web/guest/download-forms', 'Nomination, loan, NEFT, health declaration (Form 680) and other forms.', 'Nomination, कर्ज, NEFT, आरोग्य निवेदन (Form 680) आणि इतर forms.' ),
+		array( 'Benefit illustration and need analysis (customer portal)', 'https://ebiz.licindia.in/D2CPM/', 'Official premium quote, benefit illustration and Financial Needs Analysis (login needed).', 'अधिकृत premium quote, benefit illustration आणि Financial Needs Analysis (login लागतो).' ),
+		array( 'Press releases', 'https://licindia.in/press-release', 'LIC announcements, new plans and bonus declarations.', 'LIC च्या घोषणा, नवीन plans आणि bonus जाहीर.' ),
+	);
+	$h .= '<section class="a4h-box"><h2 data-mr="LIC चे अधिकृत दुवे">Official LIC links</h2><ul class="a4h-links">';
+	foreach ( $links as $l ) {
+		$h .= '<li><a href="' . esc_url( $l[1] ) . '" target="_blank" rel="noopener">' . esc_html( $l[0] ) . '</a> — <span data-mr="' . esc_attr( $l[3] ) . '">' . esc_html( $l[2] ) . '</span></li>';
+	}
+	$h .= '</ul></section>';
 	$h .= '<p class="a4h-note">Source: rules shown on LIC\'s online service pages and LIC plan terms, written in our own words. Please confirm with your LIC branch or agent before acting.</p>';
 	return $h;
 }
@@ -388,5 +405,65 @@ var col=a<=35?1:a<=45?2:a<=50?3:a<=55?4:5,row=null;D[c].some(function(r){if(s<=r
 if(!row){o.innerHTML="";return;}var t=row[col],none=/^No special/.test(t);
 o.innerHTML="<p class=\"a4h-med-r "+(none?"ok":"need")+"\"><strong>"+(none?"No special medical reports":"Special reports likely: ")+"</strong>"+(none?"":t+" (with medical examination, MER)")+"</p>"+note;}
 ["a4h-mage","a4h-msuc","a4h-mcat"].forEach(function(i){var e=document.getElementById(i);e.addEventListener("input",run);e.addEventListener("change",run);});run();})();</script>';
+	return $h;
+}
+
+/* =====================================================================
+ * v4.4.2: Goal planner — LIC च्या Financial Needs Analysis सारखे ध्येय-प्रकार,
+ * पण हिशोब आणि मजकूर आपला: खर्चाचं ध्येय / कुटुंब संरक्षण (HLV) / निवृत्ती
+ * ===================================================================== */
+function a4u_lic_goal_html() {
+	$cat = function_exists( 'a4u_lic_catalog' ) ? a4u_lic_catalog() : array();
+	$sug = array(
+		'education' => array( '733', '774', '732' ), 'marriage' => array( '733', '774', '736' ), 'parent' => array( '774', '736' ),
+		'house' => array( '736', '714', '771' ), 'holiday' => array( '714', '771' ), 'health' => array( '907', '908' ),
+		'income' => array( '955', '894', '875' ), 'retirement' => array( '879', '758', '892' ),
+	);
+	$plans = array();
+	foreach ( $sug as $g => $ids ) {
+		foreach ( $ids as $id ) {
+			if ( isset( $cat[ $id ] ) ) { $plans[ $g ][] = array( $cat[ $id ]['name'] . ' (' . $id . ')', a4u_lic_plan_url( $cat[ $id ] ) ); }
+		}
+	}
+	$f = function ( $id, $label, $val, $step = '1000', $extra = '' ) {
+		return '<label data-g="' . esc_attr( $extra ) . '"><span>' . esc_html( $label ) . '</span><input type="number" id="a4g-' . $id . '" value="' . esc_attr( $val ) . '" step="' . $step . '" min="0" inputmode="decimal"></label>';
+	};
+	$h = '<section class="a4h-box a4g"><div class="a4h-frow"><label><span>Your goal</span><select id="a4g-goal">' .
+		'<option value="education">Children\'s education</option><option value="marriage">Children\'s marriage</option><option value="house">Buying a house</option><option value="parent">Becoming a parent</option><option value="holiday">Holiday / pilgrimage</option><option value="health">Health expenses</option>' .
+		'<option value="income">Protect family income (life cover)</option><option value="retirement">Retirement</option></select></label></div>' .
+		'<div class="a4h-frow">' .
+		$f( 'cost', 'Cost today (₹)', 1500000, '10000', 'cost' ) . $f( 'years', 'Years to goal', 12, '1', 'cost retirement' ) .
+		$f( 'inc', 'Family income per year (₹)', 1200000, '10000', 'income' ) . $f( 'self', 'Your own yearly expenses (₹)', 300000, '10000', 'income' ) .
+		$f( 'iyears', 'Years your income is needed', 25, '1', 'income' ) . $f( 'liab', 'Loans outstanding (₹)', 0, '10000', 'income' ) .
+		$f( 'cover', 'Existing life cover (₹)', 0, '10000', 'income' ) .
+		$f( 'mexp', 'Monthly expenses today (₹)', 40000, '1000', 'retirement' ) . $f( 'ryears', 'Years in retirement', 25, '1', 'retirement' ) .
+		$f( 'rben', 'Expected PF / gratuity at retirement (₹)', 0, '10000', 'retirement' ) .
+		$f( 'assets', 'Savings already kept for this goal (₹)', 0, '10000', 'cost retirement income' ) .
+		$f( 'infl', 'Inflation (% a year)', 6, '0.5', 'cost retirement income' ) . $f( 'ret', 'Expected return on savings (% a year)', 10, '0.5', 'cost retirement income' ) .
+		'</div><div class="a4g-out" aria-live="polite"></div></section>';
+	$h .= '<section class="a4h-box"><h2>How the numbers are worked out</h2><ul class="a4h-ticks">' .
+		'<li>Goal cost: today\'s cost grown at your inflation rate to the goal year, less what your existing savings can grow to. The gap is shown as a monthly saving (SIP) at your expected return.</li>' .
+		'<li>Family income: the present value of the income your family would lose (your income minus your own expenses) for the years it is needed, plus loans, less existing cover and savings. This is the life cover to consider.</li>' .
+		'<li>Retirement: the corpus needed at retirement to pay your inflation-linked expenses for the years you choose, less PF/gratuity and what your savings can grow to. After retirement, savings are assumed to earn 70% of your expected return (safer investments).</li>' .
+		'<li>These are illustrations for discussion, not advice or a guarantee. Returns on market-linked investments are not assured.</li></ul>' .
+		'<p class="a4h-note">LIC plans are shown as options to discuss with your LIC agent. Mutual fund investments are subject to market risks; read all scheme related documents carefully. Advisor4u (Sahare Financial Services) is an AMFI-registered Mutual Fund Distributor (ARN-151469) and an LIC agent, not a SEBI-registered investment adviser.</p></section>';
+	$h .= '<script>(function(){var P=' . wp_json_encode( $plans ) . ';
+function v(i){var e=document.getElementById("a4g-"+i);return e?Math.max(0,Number(e.value)||0):0;}
+function inr(n){n=Math.round(n);if(n>=1e7)return "₹"+(n/1e7).toFixed(2)+" crore";if(n>=1e5)return "₹"+(n/1e5).toFixed(2)+" lakh";return "₹"+n.toLocaleString("en-IN");}
+function sip(fv,r,yrs){var i=r/1200,n=Math.round(yrs*12);if(fv<=0||n<=0)return 0;if(i===0)return fv/n;return fv*i/((Math.pow(1+i,n)-1)*(1+i));}
+function pvg(a,g,d,n){if(Math.abs(d-g)<1e-9)return a*n;return a*(1-Math.pow((1+g)/(1+d),n))/(d-g);}
+function show(){var goal=document.getElementById("a4g-goal").value,type=goal==="income"?"income":(goal==="retirement"?"retirement":"cost");
+document.querySelectorAll(".a4g [data-g]").forEach(function(l){l.hidden=(" "+l.getAttribute("data-g")+" ").indexOf(" "+type+" ")<0;});
+var i=v("infl")/100,r=v("ret")/100,o=document.querySelector(".a4g-out"),rows=[],gap=0,need=0,yrs=0,sipAmt=0;
+if(type==="cost"){yrs=v("years");need=v("cost")*Math.pow(1+i,yrs);var have=v("assets")*Math.pow(1+r,yrs);gap=Math.max(0,need-have);sipAmt=sip(gap,v("ret"),yrs);
+rows=[["Cost in "+yrs+" years",inr(need)],["Your savings may grow to",inr(have)],["Gap to arrange",inr(gap)],["Monthly saving needed",inr(sipAmt)+" for "+yrs+" years"]];}
+else if(type==="income"){var surplus=Math.max(0,v("inc")-v("self"));need=pvg(surplus,i,Math.max(r,0.0001),v("iyears"))+v("liab");gap=Math.max(0,need-v("cover")-v("assets"));
+rows=[["Income your family would need (today\'s value)",inr(need-v("liab"))],["Plus loans",inr(v("liab"))],["Less existing cover and savings",inr(v("cover")+v("assets"))],["Additional life cover to consider",inr(Math.ceil(gap/100000)*100000)]];}
+else{yrs=v("years");var ry=v("ryears"),e0=v("mexp")*12*Math.pow(1+i,yrs);need=pvg(e0,i,Math.max(r*0.7,0.0001),ry)*(1+Math.max(r*0.7,0));var have2=v("assets")*Math.pow(1+r,yrs)+v("rben");gap=Math.max(0,need-have2);sipAmt=sip(gap,v("ret"),yrs);
+rows=[["Yearly expenses at retirement",inr(e0)],["Corpus needed for "+ry+" years",inr(need)],["PF/gratuity and savings may give",inr(have2)],["Gap to arrange",inr(gap)],["Monthly saving needed",inr(sipAmt)+" for "+yrs+" years"]];}
+var pl=(P[goal]||[]).map(function(x){return "<li><a href=\""+x[1]+"\">"+x[0]+"</a></li>";}).join("");
+var mf=type==="income"?"":"<li>Mutual fund SIP: equity or hybrid funds for goals more than 7 years away, debt funds for shorter ones (to discuss with us)</li>";
+o.innerHTML="<table class=\"a4h-table\"><tbody>"+rows.map(function(x){return "<tr><th>"+x[0]+"</th><td><b>"+x[1]+"</b></td></tr>";}).join("")+"</tbody></table>"+(gap>0?"<h3>Options to discuss</h3><ul class=\"a4h-ticks\">"+pl+mf+"</ul>":"<p class=\"a4h-med-r ok\">Your current savings look enough for this goal at these assumptions.</p>");}
+document.querySelectorAll(".a4g input,.a4g select").forEach(function(e){e.addEventListener("input",show);e.addEventListener("change",show);});show();})();</script>';
 	return $h;
 }
