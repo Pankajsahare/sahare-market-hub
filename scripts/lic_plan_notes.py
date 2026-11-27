@@ -48,7 +48,7 @@ N = {
             ['25% of Sum Assured in each of the two years before maturity', '50% of Sum Assured plus guaranteed additions at maturity', 'Guaranteed additions accrue every year'], 'Planned expenses just before a goal year'),
     '768': ('Jeevan Azad', 'endowment', 'check', 'Simple guaranteed endowment where you pay for 8 years less than the term and get the Sum Assured back.',
             ['Maturity: full Basic Sum Assured', 'Premium payment term is the policy term minus 8 years', 'Death: higher of Sum Assured or 7 times the yearly premium'], 'Guaranteed savings with short premium payment'),
-    '770': ('Bima Platinum', 'wholelife', 'check', 'Limited premium savings plan with guaranteed additions, yearly income after premiums end, and a booster payout.',
+    '770': ('Bima Platinum', 'wholelife', 'open', 'Limited premium savings plan with guaranteed additions, yearly income after premiums end, and a booster payout (on sale till 31 March 2027).',
             ['Guaranteed additions every year while premiums are paid', 'Regular income of 10% of Sum Assured every year after premium payment', 'One-time booster income and Sum Assured plus additions at maturity', 'Choose premium terms of 7, 10, 12, 15 or 18 years'], 'Guaranteed income in later years'),
     '771': ('Jeevan Utsav', 'wholelife', 'open', 'Whole life plan with guaranteed additions while you pay, then 10% of the Sum Assured every year for life.',
             ['Guaranteed additions of Rs 40 per 1,000 Sum Assured every year of premium payment', 'Lifelong income of 10% of Sum Assured (or let it grow with LIC at interest)', 'Death: Sum Assured on death plus all guaranteed additions', 'Premium terms from 5 to 16 years'], 'Lifelong guaranteed income with life cover'),

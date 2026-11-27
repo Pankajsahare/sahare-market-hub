@@ -75,6 +75,16 @@ function a4u_lic_default_plans() {
 			'sample_sa' => 200000, 'samples' => array( array( 20, 15, 16542 ), array( 20, 20, 11407 ), array( 20, 25, 8536 ), array( 20, 30, 6840 ), array( 30, 15, 16542 ), array( 30, 20, 11407 ), array( 30, 25, 8595 ), array( 30, 30, 7027 ), array( 40, 15, 16542 ), array( 40, 20, 11476 ), array( 40, 25, 9036 ), array( 40, 30, 7664 ), array( 50, 15, 16562 ), array( 50, 20, 12368 ) ),
 			'brochure' => $b . "1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15",
 		) ),
+		// v4.1: 770 Bima Platinum — term व PPT स्वतंत्र; terms = PPT×100 + term (उदा. 1020 = 10 वर्षं भरा, 20 वर्षं मुदत)
+		'770' => array_merge( $base, array(
+			'name' => 'Bima Platinum (770)', 'type' => 'platinum',
+			'min_age' => 0, 'max_age' => 55, 'min_maturity' => 28, 'max_maturity' => 75,
+			'terms' => array_merge( ...array_map( function ( $ppt ) { $min = array( 7 => 17, 10 => 20, 12 => 22, 15 => 25, 18 => 28 ); return array_map( function ( $t ) use ( $ppt ) { return $ppt * 100 + $t; }, range( $min[ $ppt ], 40 ) ); }, array( 10, 7, 12, 15, 18 ) ) ),
+			'ppt_age' => array( 7 => array( 11, 55 ), 10 => array( 8, 55 ), 12 => array( 6, 53 ), 15 => array( 3, 50 ), 18 => array( 0, 47 ) ),
+			'min_sa' => 300000, 'sa_slabs' => array( array( 300000, 10000 ) ), 'rebate_slabs' => array(),
+			'survival_pct' => 10, 'booster_pct' => 70, 'ga_prem_per_1000' => 70, 'loan_pct' => 75, 'loan_from' => 1,
+			'riders' => array( 'adb', 'addb', 'term', 'pwb' ), 'sample_sa' => 0, 'samples' => array(), 'source' => 'LIC tariff rates', 'brochure' => '',
+		) ),
 		'760' => array_merge( $base, array(
 			'name' => 'Bima Jyoti (760)', 'type' => 'ga_endow', 'ppt_less' => 5,
 			'min_age' => 0, 'max_age' => 60, 'max_maturity' => 75, 'terms' => range( 15, 20 ),

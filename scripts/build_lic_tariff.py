@@ -26,7 +26,9 @@ CALC = {
     '714': 'endow', '715': 'endow', '717': 'endow', '733': None, '736': 'endow', '760': 'endow',
     '720': None, '721': None, '732': None,
     '745': None, '771': 'utsav', '883': 'utsav_sp',
+    '770': None,  # Bima Platinum: दर PPT नुसार वेगळे तक्ते; SSV पडताळलेलं नाही → GSV
 }
+PPT_TABLES = {'770': [7, 10, 12, 15, 18]}
 
 
 def num(v):
@@ -84,10 +86,14 @@ def split_cols(c, table, prefix):
 def tariff(c):
     out = {}
     for p, fam in CALC.items():
-        d = {'rate': grid(c, f'table_{p}')}
+        if p in PPT_TABLES:
+            d = {'rate_by_ppt': {str(k): grid(c, f'table_{p}_{k}') for k in PPT_TABLES[p]},
+                 'term_rider_by_ppt': {str(k): grid(c, f'TermRider_{p}_{k}') for k in PPT_TABLES[p] if has(c, f'TermRider_{p}_{k}')}}
+        else:
+            d = {'rate': grid(c, f'table_{p}')}
         if has(c, f'gsv_p_{p}'):
             d['gsv_p'] = grid(c, f'gsv_p_{p}')
-        for t, k in ((f'gsv_b_{p}', 'gsv_b'), (f'gsv_g_{p}', 'gsv_g')):
+        for t, k in ((f'gsv_b_{p}', 'gsv_b'), (f'gsv_g_{p}', 'gsv_g'), (f'gsv_ga_{p}', 'gsv_ga')):
             if has(c, t):
                 d[k] = grid(c, t)
         if has(c, f'TermRider_{p}'):
@@ -221,6 +227,11 @@ def main():
         'lic-branches.json': {'v': 1, 'cols': ['code', 'name', 'office', 'address', 'pin', 'do_code', 'do_name'], 'rows': branches(c)},
         'lic-tools.json': dict({'v': 1}, **tools(c)),
     }
+    # S2: प्रत्येक plan ची स्वतंत्र tariff file — calculator फक्त निवडलेल्या plan ची मागवतो
+    os.makedirs(os.path.join(OUT, 'tariff'), exist_ok=True)
+    for pid, t in files['lic-tariff.json']['plans'].items():
+        with open(os.path.join(OUT, 'tariff', pid + '.json'), 'w', encoding='utf-8') as fh:
+            json.dump(t, fh, ensure_ascii=False, separators=(',', ':'))
     for name, data in files.items():
         p = os.path.join(OUT, name)
         with open(p, 'w', encoding='utf-8') as fh:

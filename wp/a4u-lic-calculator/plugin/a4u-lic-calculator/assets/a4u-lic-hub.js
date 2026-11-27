@@ -60,7 +60,7 @@
 	 * 3. Charts (SVG, hover tooltip) — calculator, plan पानं, PDF सगळीकडे एकच
 	 * ===================================================================== */
 	var COL = { pay: '#0b4ea2', get: '#1f8f4e', cover: '#d9822b', cv: '#7a4bc2', grid: '#e6e9ef', ink: '#1d2433', mute: '#6b7280', mat: '#b8924a' };
-	function CW() { return (window.innerWidth || 800) < 600 ? 440 : 760; } // mobile वर अरुंद chart → अक्षरं वाचता येतील
+	var CW = function () { return (window.innerWidth || 800) < 600 ? 440 : 760; }; // mobile वर अरुंद chart → अक्षरं वाचता येतील
 	function niceMax(v) {
 		if (!(v > 0)) { return 1; }
 		var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
@@ -81,7 +81,7 @@
 		var bw = (W - L - R) / n, s = '';
 		var yU = function (v) { return zero - v / top * (zero - Tp); }, yD = function (v) { return zero + v / bot * (Hh - B - zero); };
 		ticks(top, 4).forEach(function (t) { var y = yU(t); s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '" stroke="' + COL.grid + '"/><text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end" class="ax">' + short(t) + '</text>'; });
-		ticks(bot, 2).slice(1).forEach(function (t) { var y = yD(t); s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '" stroke="' + COL.grid + '"/><text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end" class="ax">−' + short(t) + '</text>'; });
+		[bot].forEach(function (t) { var y = yD(t); s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '" stroke="' + COL.grid + '"/><text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end" class="ax">−' + short(t) + '</text>'; });
 		tb.forEach(function (x, i) {
 			var x0 = L + i * bw + bw * 0.14, w = Math.max(1.5, bw * 0.72);
 			var tip = 'Year ' + x.y + ' · age ' + (x.age + 1) + (x.prem ? ' · pay ' + inr(x.prem) : '') + (x.ret ? ' · get ' + inr(x.ret) : '');
@@ -256,7 +256,19 @@
 		box.innerHTML = chartsHtml(r);
 		bindValueTips(box, r);
 	}
-	window.A4U_CHARTS = { html: chartsHtml, render: renderCharts, cashflow: cashflowSvg, value: valueSvg, timeline: lifeTimelineSvg, buildup: buildupSvg };
+	// S1: PDF साठी — स्वतंत्र SVG (xmlns + आतली style), नेहमी desktop रुंदी
+	var PDF_CSS = '<style>.ax{font:11px Arial,sans-serif;fill:#6b7280}.lb{font:700 12px Arial,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}.in{font:700 12px Arial,sans-serif;fill:#fff}</style>';
+	function standalone(fn, r) {
+		var save = CW;
+		CW = function () { return 760; };
+		var svg = '';
+		try { svg = fn(r) || ''; } finally { CW = save; }
+		var m = svg.match(/<svg[\s\S]*<\/svg>/);
+		if (!m) { return ''; }
+		return m[0].replace(/<foreignObject[\s\S]*?<\/foreignObject>/g, '').replace(/<rect class="hov"[^>]*\/>/g, '').replace(/<svg ([^>]*?)viewBox="0 0 (\d+) (\d+)"/, '<svg xmlns="http://www.w3.org/2000/svg" width="$2" height="$3" $1viewBox="0 0 $2 $3"').replace(/(<svg[^>]*>)/, '$1' + PDF_CSS);
+	}
+	window.A4U_CHARTS = { html: chartsHtml, render: renderCharts, cashflow: cashflowSvg, value: valueSvg, timeline: lifeTimelineSvg, buildup: buildupSvg,
+		pdf: { timeline: function (r) { return standalone(lifeTimelineSvg, r); }, cashflow: function (r) { return standalone(cashflowSvg, r); }, value: function (r) { return standalone(valueSvg, r); } } };
 
 	// calculator चा निकाल आला की charts
 	document.addEventListener('a4u-lic-result', function (e) {
@@ -279,7 +291,8 @@
 		var terms = (p.terms || []).slice();
 		if (!terms.length) { return null; }
 		var want = term || (p.type === 'single' ? 15 : 20);
-		var order = terms.slice().sort(function (a, b) { return Math.abs(a - want) - Math.abs(b - want); });
+		var tv = function (t) { return p.type === 'platinum' ? t % 100 + Math.abs(Math.floor(t / 100) - 10) / 100 : t; }; // 770: term ≈ want, PPT 10 जवळ
+		var order = terms.slice().sort(function (a, b) { return Math.abs(tv(a) - want) - Math.abs(tv(b) - want); });
 		for (var i = 0; i < order.length; i++) {
 			var a = Math.min(Math.max(age, p.min_age), p.max_age);
 			var r = A.compute(p, inp(a, order[i], roundSA(p, sa)), {});
@@ -292,11 +305,14 @@
 		if (!box) { return; }
 		whenApi(function (A) {
 			var p = A.planById(box.getAttribute('data-sample'));
-			var r = p && sampleFor(A, p, 30, p.type === 'single' || p.type === 'utsav_sp' ? 500000 : 1000000);
+			if (!p) { return; }
+			(A.load ? A.load(p) : Promise.resolve()).then(function () {
+			var r = sampleFor(A, p, 30, p.type === 'single' || p.type === 'utsav_sp' ? 500000 : 1000000);
 			if (!r) { box.innerHTML = '<p class="a4h-note">Use the calculator below to see the illustration.</p>'; return; }
 			box.innerHTML = '<div class="a4h-kpis"><div><span>Yearly premium</span><b>' + inr(r.pr.yearPay) + '</b></div><div><span>Total premium</span><b>' + inr(r.totalPrem) + '</b></div><div><span>Total benefit (est.)</span><b>' + inr(r.totalBenefit) + '</b></div><div><span>Return (IRR)</span><b>' + (r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '%') + '</b></div></div>' +
 				'<p class="a4h-sub">Age ' + r.age + ' · Sum Assured ' + inr(r.sa) + ' · Term ' + r.T + ' yrs · Premium for ' + (r.P === 1 ? 'one time' : r.P + ' yrs') + '</p>' + chartsHtml(r);
 			bindValueTips(box, r);
+			});
 		});
 	}
 	function bonusSample() {
@@ -304,8 +320,11 @@
 		if (!box) { return; }
 		whenApi(function (A) {
 			var p = A.planById(box.getAttribute('data-bonus'));
-			var r = p && sampleFor(A, p, 30, 1000000, 21);
-			if (r) { box.innerHTML = '<p class="a4h-sub">' + esc(p.name) + ', age ' + r.age + ', Sum Assured ' + inr(r.sa) + ', term ' + r.T + ' years.</p>' + buildupSvg(r); }
+			if (!p) { return; }
+			(A.load ? A.load(p) : Promise.resolve()).then(function () {
+				var r = sampleFor(A, p, 30, 1000000, 21);
+				if (r) { box.innerHTML = '<p class="a4h-sub">' + esc(p.name) + ', age ' + r.age + ', Sum Assured ' + inr(r.sa) + ', term ' + r.T + ' years.</p>' + buildupSvg(r); }
+			});
 		});
 	}
 
@@ -368,6 +387,8 @@
 		function run() {
 			whenApi(function (A) {
 				var age = Number($('#a4h-cage').value) || 30, sa = Number($('#a4h-csa').value) || 1000000, term = Number($('#a4h-cterm').value) || 20, out = [];
+				var chosen = sels.map(function (s) { return s.value && A.planById(s.value); }).filter(Boolean);
+				Promise.all(chosen.map(function (p) { return A.load ? A.load(p) : null; })).then(function () {
 				sels.forEach(function (s) {
 					if (!s.value) { return; }
 					var p = A.planById(s.value), r = p && sampleFor(A, p, age, sa, term);
@@ -403,6 +424,7 @@
 				}
 				box.innerHTML = h;
 				history.replaceState(null, '', location.pathname + '?plans=' + sels.map(function (s) { return s.value; }).filter(Boolean).join(','));
+				});
 			});
 		}
 		go.addEventListener('click', run);
@@ -445,32 +467,31 @@
 	function branchTool() {
 		var q = $('#a4h-bq');
 		if (!q) { return; }
-		var dsel = $('#a4h-bdo'), cnt = $('.a4h-branch .a4h-count'), list = $('.a4h-blist'), rows = [];
-		getJSON('lic-branches.json').then(function (j) {
-			rows = j.rows;
-			var dos = {};
-			rows.forEach(function (r) { if (r[6]) { dos[r[6]] = 1; } });
-			Object.keys(dos).sort().forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = k; dsel.appendChild(o); });
-			run();
-		}).catch(function () { cnt.textContent = 'Could not load the branch list. Please try again.'; });
-		function run() {
-			var s = (q.value || '').toLowerCase().trim(), dv = dsel.value, out = [];
-			for (var i = 0; i < rows.length && out.length < 60; i++) {
-				var r = rows[i];
-				if (dv && r[6] !== dv) { continue; }
-				if (s && (r[1] + ' ' + r[3] + ' ' + r[4] + ' ' + r[6] + ' ' + r[0]).toLowerCase().indexOf(s) < 0) { continue; }
-				out.push(r);
-			}
-			if (!s && !dv) { cnt.textContent = rows.length + ' LIC offices. Type a city, PIN code or branch name.'; list.innerHTML = ''; return; }
-			cnt.textContent = out.length >= 60 ? 'Showing first 60 matches — type more to narrow down.' : out.length + ' match' + (out.length === 1 ? '' : 'es');
-			list.innerHTML = out.map(function (r) {
-				var addr = r[3] + (r[4] ? ' — ' + r[4] : '');
-				return '<article class="a4h-bcard"><b>' + esc(r[1]) + '</b> <small>' + esc(r[2]) + ' · Code ' + esc(r[0]) + '</small><p>' + esc(addr) + '</p><small>Division: ' + esc(r[6]) + '</small> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('LIC ' + r[1] + ' ' + addr) + '">Map ↗</a></article>';
-			}).join('');
+		var dsel = $('#a4h-bdo'), cnt = $('.a4h-branch .a4h-count'), list = $('.a4h-blist'), seq = 0, first = true;
+		function card(r) {
+			var addr = r[3] + (r[4] ? ' — ' + r[4] : '');
+			return '<article class="a4h-bcard"><b>' + esc(r[1]) + '</b> <small>' + esc(r[2]) + ' · Code ' + esc(r[0]) + '</small><p>' + esc(addr) + '</p><small>Division: ' + esc(r[6]) + '</small> <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('LIC ' + r[1] + ' ' + addr) + '">Map ↗</a></article>';
+		}
+		function run() { // v4.1 (S3): server वर शोध — फक्त जुळलेल्या नोंदी येतात
+			var my = ++seq, s = (q.value || '').trim(), dv = dsel.value;
+			fetch(H.rest + 'branches?q=' + encodeURIComponent(s) + '&do=' + encodeURIComponent(dv))
+				.then(function (r) { if (!r.ok) { throw new Error(r.status); } return r.json(); })
+				.then(function (j) {
+					if (my !== seq) { return; }
+					if (first) {
+						first = false;
+						(j.divisions || []).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = k; dsel.appendChild(o); });
+					}
+					if (!s && !dv) { cnt.textContent = j.total + ' LIC offices. Type a city, PIN code or branch name.'; list.innerHTML = ''; return; }
+					cnt.textContent = j.more ? 'Showing first 60 matches — type more to narrow down.' : j.rows.length + ' match' + (j.rows.length === 1 ? '' : 'es');
+					list.innerHTML = j.rows.map(card).join('');
+				})
+				.catch(function () { if (my === seq) { cnt.textContent = 'Could not load the branch list. Please try again.'; } });
 		}
 		var t;
-		q.addEventListener('input', function () { clearTimeout(t); t = setTimeout(run, 150); });
+		q.addEventListener('input', function () { clearTimeout(t); t = setTimeout(run, 250); });
 		dsel.addEventListener('change', run);
+		run();
 	}
 
 	/* =====================================================================

@@ -68,7 +68,10 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 			'points'          => (object) ( $p['points'] ?? array() ),
 			'ppt_less'        => (int) ( $p['ppt_less'] ?? 0 ),
 			'loan_pct'        => (int) ( $p['loan_pct'] ?? 75 ),
-			'tariff'          => a4u_lic_tariff_for( (string) $id ), // v4: LIC दर + surrender factors
+			'has_tariff'      => is_readable( plugin_dir_path( A4U_LIC_FILE ) . 'assets/data/tariff/' . $id . '.json' ), // v4.1: tariff लागेल तेव्हा
+			'ppt_age'         => (object) ( $p['ppt_age'] ?? array() ),
+			'ga_prem_per_1000' => (float) ( $p['ga_prem_per_1000'] ?? 0 ),
+			'booster_pct'     => (float) ( $p['booster_pct'] ?? 0 ),
 		);
 	}
 	$links = array();
@@ -81,6 +84,7 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 	$cfg = array(
 		'rest'       => esc_url_raw( rest_url( 'a4u-lic/v1/' ) ),
 		'version'    => (int) $d['rate_version'],
+		'dataUrl'    => plugin_dir_url( A4U_LIC_FILE ) . 'assets/data/',
 		'gst'        => (float) $s['gst'],
 		'modal'      => $s['modal'],
 		'riderRates' => array( 'adb' => (float) $s['rider_per_1000'], 'addb' => (float) ( $s['rider_addb'] ?? 1 ), 'term' => (float) ( $s['rider_term'] ?? 1.5 ), 'pwb' => (float) ( $s['rider_pwb_pct'] ?? 2 ) ),
@@ -190,6 +194,7 @@ add_action( 'admin_post_a4u_lic_offline', function () {
 		if ( ! empty( $p['active'] ) && ! empty( $p['rates'] ) ) { $rates[ (string) $id ] = (object) $p['rates']; }
 	}
 	$cfg['offlineRates'] = (object) $rates;
+	foreach ( $cfg['plans'] as $i => $pl ) { $cfg['plans'][ $i ]['tariff'] = a4u_lic_tariff_for( (string) $pl['id'] ); } // offline: tariff आतच
 	// logo data URL मध्ये (बाहेरचा URL असेल तर default logo)
 	$logo = $dir . 'brand-logo.png';
 	if ( is_readable( $logo ) ) { $cfg['brand']['logo'] = 'data:image/png;base64,' . base64_encode( file_get_contents( $logo ) ); } // phpcs:ignore

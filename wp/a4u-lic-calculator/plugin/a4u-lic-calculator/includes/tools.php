@@ -142,3 +142,79 @@ add_action( 'a4u_lic_lead_saved', function ( $lead ) {
 		wp_remote_post( 'https://api.telegram.org/bot' . $tok . '/sendMessage', array( 'timeout' => 5, 'blocking' => false, 'body' => array( 'chat_id' => $chat, 'text' => $text ) ) );
 	}
 } );
+
+/* =====================================================================
+ * v4.1 (S3): शाखा शोध server वर — 460KB file browser ला पाठवायची गरज नाही
+ * GET /wp-json/a4u-lic/v1/branches?q=nagpur&do=  (कमाल 60 नोंदी)
+ * ===================================================================== */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'a4u-lic/v1', '/branches', array(
+		'methods'             => 'GET',
+		'permission_callback' => '__return_true',
+		'args'                => array(
+			'q'  => array( 'type' => 'string', 'default' => '' ),
+			'do' => array( 'type' => 'string', 'default' => '' ),
+		),
+		'callback'            => function ( WP_REST_Request $req ) {
+			$all  = a4u_lic_json( 'lic-branches.json' );
+			$rows = (array) ( $all['rows'] ?? array() );
+			$q    = strtolower( trim( substr( sanitize_text_field( (string) $req->get_param( 'q' ) ), 0, 60 ) ) );
+			$dv   = trim( substr( sanitize_text_field( (string) $req->get_param( 'do' ) ), 0, 80 ) );
+			$out  = array();
+			if ( '' !== $q || '' !== $dv ) {
+				foreach ( $rows as $r ) {
+					if ( '' !== $dv && $r[6] !== $dv ) { continue; }
+					if ( '' !== $q && false === strpos( strtolower( $r[1] . ' ' . $r[3] . ' ' . $r[4] . ' ' . $r[6] . ' ' . $r[0] ), $q ) ) { continue; }
+					$out[] = $r;
+					if ( count( $out ) >= 60 ) { break; }
+				}
+			}
+			$divs = get_transient( 'a4u_lic_divs' );
+			if ( false === $divs ) {
+				$divs = array_values( array_unique( array_filter( array_map( function ( $r ) { return $r[6]; }, $rows ) ) ) );
+				sort( $divs );
+				set_transient( 'a4u_lic_divs', $divs, DAY_IN_SECONDS );
+			}
+			$res = rest_ensure_response( array( 'total' => count( $rows ), 'rows' => $out, 'divisions' => $divs, 'more' => count( $out ) >= 60 ) );
+			$res->header( 'Cache-Control', 'public, max-age=3600' );
+			return $res;
+		},
+	) );
+} );
+
+/* =====================================================================
+ * v4.1 (S6): जुनी /lic-calculator/<plan>/ पानं → नवीन plan पानाकडे 301
+ * ===================================================================== */
+add_action( 'template_redirect', function () {
+	$id = (string) get_query_var( 'a4u_plan' );
+	if ( '' === $id ) { return; }
+	$cat = a4u_lic_catalog();
+	if ( isset( $cat[ $id ] ) ) {
+		wp_safe_redirect( a4u_lic_plan_url( $cat[ $id ] ) . '#a4h-calc', 301 );
+		exit;
+	}
+}, 5 );
+
+/* =====================================================================
+ * v4.1 (S7): hub पानांवर इतर SEO plugin (ThinkRank वगैरे) चे canonical /
+ * description / og tags काढून फक्त आपले ठेवायचे — चुकीचा (homepage) canonical जाऊ नये
+ * ===================================================================== */
+add_action( 'wp_head', function () {
+	if ( a4u_lic_hub_route() ) { ob_start(); }
+}, -1000 );
+add_action( 'wp_head', function () {
+	if ( ! a4u_lic_hub_route() ) { return; }
+	$html = (string) ob_get_clean();
+	$m    = a4u_lic_hub_meta();
+	$html = preg_replace( '#<link[^>]+rel=["\']canonical["\'][^>]*>\s*#i', '', $html );
+	$html = preg_replace( '#<meta[^>]+(name|property)=["\'](description|og:title|og:description|og:url|og:type|twitter:title|twitter:description)["\'][^>]*>\s*#i', '', $html );
+	$html = preg_replace( '#<meta[^>]+name=["\']robots["\'][^>]*>\s*#i', '', $html );
+	echo $html; // phpcs:ignore -- WordPress head जसाच्या तसा
+	if ( $m ) {
+		echo '<link rel="canonical" href="' . esc_url( $m[2] ) . '">' . "\n";
+		echo '<meta name="description" content="' . esc_attr( $m[1] ) . '">' . "\n";
+		echo '<meta name="robots" content="index, follow, max-image-preview:large">' . "\n";
+		echo '<meta property="og:type" content="website"><meta property="og:title" content="' . esc_attr( $m[0] ) . '"><meta property="og:description" content="' . esc_attr( $m[1] ) . '"><meta property="og:url" content="' . esc_url( $m[2] ) . '">' . "\n";
+		echo '<meta name="twitter:title" content="' . esc_attr( $m[0] ) . '"><meta name="twitter:description" content="' . esc_attr( $m[1] ) . '">' . "\n";
+	}
+}, PHP_INT_MAX );

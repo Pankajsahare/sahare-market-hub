@@ -99,6 +99,18 @@ for (const rp of REPORTS) {
     if (!(got > 0) || Math.abs(got - want) / want > 0.01) fails.push(`${rp.id}: year ${y} cash value expected ${want} got ${got ? Math.round(got) : got}`);
   }
 }
+// 4b. v4.1: loan = 75% of cash value (2+ वर्षं भरलेले, in-force) — रिकामी loan_ga_bands चूक परत येऊ नये
+{
+  const p = plans.find(x => x.id === '736');
+  const r = p && E.compute(p, inp(30, 21, 1000000), {});
+  if (r && !r.errors) {
+    for (const y of [3, 5, 10]) {
+      checked++;
+      const row = r.table[y - 1];
+      if (!(row.cv > 0) || Math.abs(row.loan / row.cv - 0.75) > 0.001) fails.push(`736: year ${y} loan should be 75% of cash value (got ${row.loan} / ${row.cv})`);
+    }
+  }
+}
 // 5. v4: tariff असलेल्या plans मध्ये premium tariff वरूनच येतो का
 for (const p of plans) {
   if (!p.tariff) continue;

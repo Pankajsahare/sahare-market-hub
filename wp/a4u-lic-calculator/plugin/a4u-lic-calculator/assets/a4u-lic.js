@@ -134,6 +134,7 @@
 		if (p.type === 'utsav_sp') { return t + ' years (income from year ' + (t + 1) + ')'; }
 		if (p.type === 'labh') { return t + ' years (pay ' + p.ppt_map[t] + ' years)'; }
 		if (p.type === 'lakshya') { return t + ' years (pay ' + (t - 3) + ' years)'; }
+		if (p.type === 'platinum') { return (t % 100) + ' years (pay ' + Math.floor(t / 100) + ' years)'; } // v4.1: 770 — PPT×100 + term
 		return t + ' years';
 	}
 	function termLabel(p) { return p.type === 'utsav_sp' ? 'Guaranteed Addition period' : (BY_PPT[p.type] ? 'Premium paying term' : 'Policy term'); }
@@ -214,7 +215,18 @@
 	}
 
 	/* ---------- Rates + engine ---------- */
-	function getRates(p) {
+	// v4.1 (S2): tariff फक्त लागेल तेव्हाच — plan निवडल्यावर (पान हलकं)
+	function getTariff(p) {
+		if (!p || p.tariff || !p.has_tariff || !C.dataUrl) { return Promise.resolve(); }
+		if (p._tp) { return p._tp; }
+		p._tp = fetch(C.dataUrl + 'tariff/' + encodeURIComponent(p.id) + '.json?v=' + C.version)
+			.then(function (r) { if (!r.ok) { throw new Error('tariff'); } return r.json(); })
+			.then(function (j) { p.tariff = j; })
+			.catch(function () { p._tp = null; }); // मिळालं नाही तर brochure अंदाज
+		return p._tp;
+	}
+	function getRates(p) { return getTariff(p).then(function () { return getRatesRaw(p); }); }
+	function getRatesRaw(p) {
 		if (!p.has_rates) { return Promise.resolve({}); }
 		if (rateCache[p.id]) { return Promise.resolve(rateCache[p.id]); }
 		if (C.offlineRates && C.offlineRates[p.id]) { rateCache[p.id] = C.offlineRates[p.id]; return Promise.resolve(rateCache[p.id]); }
@@ -304,6 +316,7 @@
 			case 'labh': return { T: sel, P: Number(p.ppt_map[sel]) };
 			case 'lakshya': return { T: sel, P: sel - 3 };
 			case 'ga_endow': return { T: sel, P: sel - (p.ppt_less || 5) }; // 760 Bima Jyoti: PPT = term − 5
+			case 'platinum': return { T: sel % 100, P: Math.floor(sel / 100) }; // 770 Bima Platinum
 			case 'umang':
 			case 'utsav': return { T: (p.maturity_age || 100) - age, P: sel };
 			case 'single': return { T: sel, P: 1 };
@@ -347,7 +360,7 @@
 		var riders = {}, rTotal = 0, term = ctx.T || inp.term;
 		if (inp.r.adb) { riders.adb = riderRate('adb', inp.age, term) * (inp.r.adbSA || sa) / 1000; }
 		if (inp.r.addb) { riders.addb = riderRate('addb', inp.age, term) * sa / 1000; }
-		if (inp.r.term) { riders.term = ((p.tariff && tgrid(p.tariff.term_rider, inp.age, term)) || riderRate('term', inp.age, term)) * (inp.r.termSA || sa) / 1000; }
+		if (inp.r.term) { riders.term = ((p.tariff && tgrid(p.tariff.term_rider_by_ppt ? p.tariff.term_rider_by_ppt[ctx.P || 0] : p.tariff.term_rider, inp.age, term)) || riderRate('term', inp.age, term)) * (inp.r.termSA || sa) / 1000; }
 		if (inp.r.pwb) { riders.pwb = riderRate('pwb', inp.r.pwbAge, ctx.P || term) / 100 * base; }
 		Object.keys(riders).forEach(function (k) { rTotal += riders[k]; });
 		var g = 1 + inp.gst / 100;
@@ -407,6 +420,10 @@
 			if (!(inp.r.pwbAge >= 18 && inp.r.pwbAge <= 50)) { errs.push('Proposer / parent age for Premium Waiver rider must be 18 to 50.'); }
 			else if (inp.r.pwbAge <= age) { errs.push('Proposer age must be more than the child\'s age.'); }
 		}
+		if (p.type === 'platinum' && p.ppt_age && p.ppt_age[P]) { // 770: PPT नुसार प्रवेश वय
+			var pa = p.ppt_age[P];
+			if (age < pa[0] || age > pa[1]) { errs.length = 0; errs.push('For a ' + P + '-year premium term the entry age must be ' + (pa[0] === 0 ? '30 days' : pa[0] + ' years') + ' to ' + pa[1] + ' years.'); }
+		}
 		if (errs.length) { return { errors: errs }; }
 
 		var key = BY_PPT[p.type] ? P : T;
@@ -414,7 +431,7 @@
 		// दराचा क्रम: CSV (tariff) → खरी quotation → brochure estimate → demo
 		var rate = rates[age + '|' + key], basis = p.verified ? 'verified' : 'csv';
 		if (!rate && p.tariff) { // v4: LIC tariff (दर per 1000 SA) — अचूक
-			var tr = tgrid(p.tariff.rate, age, key);
+			var tr = p.tariff.rate_by_ppt ? tgrid(p.tariff.rate_by_ppt[P], age, T) : tgrid(p.tariff.rate, age, key);
 			if (tr) { rate = tr; basis = 'tariff'; }
 		}
 		if (!rate && p.points && p.points[age + '|' + key]) { rate = Number(p.points[age + '|' + key]); basis = 'quote'; }
@@ -427,7 +444,7 @@
 		var bn = bonusFor(p, T);
 		if (inp.srbO !== null) { bn.srb = inp.srbO; }
 		if (inp.fabO !== null) { bn.fab = inp.fabO; }
-		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow') ? 0 : T);
+		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow' || p.type === 'platinum') ? 0 : T);
 
 		var sa = inp.sa;
 		if (inp.by === 'maturity') { // B: लक्ष्य रकमेवरून SA (वर round — लक्ष्य पूर्ण व्हावं म्हणून)
@@ -453,7 +470,8 @@
 		var bonus = bn.srb * sa / 1000 * bonusYears;
 		var fab = (T >= p.fab_min_term || inp.fabO !== null ? bn.fab : 0) * sa / 1000;
 		var ga = (p.ga_per_1000 || 0) * sa / 1000 * (p.type === 'utsav_sp' ? G : (p.type === 'ga_endow' ? T : P));
-		var hasIncome = p.type === 'umang' || p.type === 'utsav' || p.type === 'utsav_sp';
+		if (p.type === 'platinum') { ga = (p.ga_prem_per_1000 || 70) / 1000 * pr.base * P; } // 770: एकूण वार्षिक premium वर ₹70/1000 (SA-आधारित जादा GA धरलेला नाही)
+		var hasIncome = p.type === 'umang' || p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'platinum';
 		var survival = hasIncome ? p.survival_pct * sa / 100 : 0;
 		var incomeStart = p.type === 'utsav' ? Math.max(11, P + 3) : (p.type === 'utsav_sp' ? G + 1 : P);
 		var flexi = inp.income === 'flexi' && (p.type === 'utsav' || p.type === 'utsav_sp');
@@ -461,7 +479,7 @@
 		var maturity = 0;
 		if (p.type === 'utsav_sp') { maturity = Math.max(sa, 1.25 * pr.tabular) + ga; }
 		else if (p.type === 'moneyback') { maturity = (p.mat_pct || 0) * sa / 100 + bonus + fab; }
-		else if (p.type === 'ga_endow') { maturity = sa + ga; }
+		else if (p.type === 'ga_endow' || p.type === 'platinum') { maturity = sa + ga; }
 		else if (p.type !== 'utsav') { maturity = sa + bonus + fab; }
 		var sbMap = p.type === 'moneyback' ? mbSchedule(p, age) : {};
 
@@ -471,6 +489,7 @@
 			var prem = y <= P ? pr.yearPay : 0, ben = 0, inc = 0;
 			if (survival && y >= incomeStart && (p.type === 'utsav' ? y <= T : y < T)) { inc = survival; totalSurv += survival; }
 			if (sbMap[y]) { inc = sbMap[y] * sa / 100; totalSurv += inc; } // money-back हप्ता
+			if (p.type === 'platinum' && y === P + 5 && y < T) { var boost = (p.booster_pct || 70) * sa / 100; inc += boost; totalSurv += boost; } // 770: booster
 			if (flexi) {
 				flexiBal = flexiBal * 1.055 + inc; // S5: Flexi — 5.5% ने जमा
 				if (y === T) { ben += flexiBal; }
@@ -491,11 +510,14 @@
 		} else if (p.type === 'lakshya') {
 			deathSA = Math.max(7 * pr.base, (p.death_pct || 110) / 100 * sa);
 			deathNote = 'plus 10% of SA every year till maturity (Annual Income Benefit)';
+		} else if (p.type === 'platinum') {
+			deathSA = Math.max(11 * pr.base, sa);
+			deathNote = 'plus accrued Guaranteed Additions';
 		} else if (p.death_pct > 0) {
 			deathSA = Math.max(p.death_pct / 100 * sa, 7 * pr.base);
 		}
 		var totalBenefit = maturity + (flexi ? flexiBal : totalSurv);
-		var table = buildTable(p, inp, { age: age, sa: sa, T: T, P: P, G: G, pr: pr, bn: bn, bonusYears: bonusYears, survival: survival, incomeStart: incomeStart, sbMap: sbMap, maturity: maturity, fab: fab, deathSA: deathSA, flexi: flexi });
+		var table = buildTable(p, inp, { age: age, sa: sa, T: T, P: P, G: G, pr: pr, bn: bn, bonusYears: bonusYears, survival: survival, incomeStart: incomeStart, sbMap: sbMap, maturity: maturity, fab: fab, deathSA: deathSA, flexi: flexi, ga: ga });
 		// G: आजच्या पैशात किंमत (महागाई वजा करून)
 		var infl = (Number(C.inflation) || 0) / 100, pvBenefit = 0;
 		rows.forEach(function (x) { pvBenefit += x[3] / Math.pow(1 + infl, x[0]); });
@@ -563,7 +585,7 @@
 		if (!t || !t.gsv_p) { return null; }
 		var fp = tgrid(t.gsv_p, y, o.T);
 		if (fp === null) { fp = 0; }
-		var fa = t.gsv_b ? tgrid(t.gsv_b, y, o.T) : (t.gsv_g ? tgrid(t.gsv_g, y, o.T) : 0);
+		var fa = t.gsv_b ? tgrid(t.gsv_b, y, o.T) : (t.gsv_g ? tgrid(t.gsv_g, y, o.T) : (t.gsv_ga ? tgrid(t.gsv_ga, y, o.T) : 0));
 		var prem = single ? (o.pr.tabular || o.pr.base) : cumBase;
 		return Math.max(0, fp * prem + (fa || 0) * cumAdd - (p.gsv_less_income || p.type === 'moneyback' ? sbPaid : 0));
 	}
@@ -574,7 +596,7 @@
 	}
 	function buildTable(p, inp, o) {
 		var out = [], cumPrem = 0, cumBase = 0, cumAdd = 0, paidOut = 0;
-		var isGA = p.ga_per_1000 > 0, single = !!SINGLE[p.type];
+		var isGA = p.ga_per_1000 > 0 || p.type === 'platinum', single = !!SINGLE[p.type];
 		var gaYears = p.type === 'utsav_sp' ? o.G : (p.type === 'ga_endow' ? o.T : o.P);
 		// लहान मुलांसाठी जोखीम (risk) उशिरा सुरू: 8 वर्षांखाली — 2 वर्षे किंवा 8 वय, जे आधी
 		var riskStart = o.age < 8 ? Math.min(2, 8 - o.age) : 0;
@@ -584,12 +606,13 @@
 			var prem = y <= o.P ? o.pr.yearPay : 0, basePrem = y <= o.P ? (single ? o.pr.tabular || o.pr.base : o.pr.base) : 0;
 			cumPrem += prem; cumBase += basePrem; // दाखवायला भरलेला हप्ता; GSV साठी मूळ (tax/rider शिवाय)
 			var add = 0;
-			if (isGA && y <= gaYears) { add = p.ga_per_1000 * o.sa / 1000; }
+			if (isGA && y <= gaYears) { add = p.type === 'platinum' ? o.ga / o.P : p.ga_per_1000 * o.sa / 1000; }
 			else if (!isGA && y <= o.bonusYears) { add = o.bn.srb * o.sa / 1000; }
 			cumAdd += add;
 			var inc = 0;
 			if (o.survival && y >= o.incomeStart && (p.type === 'utsav' ? y <= o.T : y < o.T)) { inc = o.survival; }
 			if (o.sbMap[y]) { inc = o.sbMap[y] * o.sa / 100; }
+			if (p.type === 'platinum' && y === o.P + 5 && y < o.T) { inc += (p.booster_pct || 70) * o.sa / 100; } // 770 booster
 			var ret = inc + (y === o.T ? o.maturity : 0);
 			var cover = y <= riskStart ? cumPrem : Math.max(o.deathSA || 0, o.sa) + cumAdd;
 			// Guaranteed Surrender Value (brochure factors असतील तरच)
@@ -601,7 +624,7 @@
 				cv = Math.max(tg, ts || 0);
 				if (y >= (p.loan_from || 1)) {
 					var lp2 = paidYears >= 2 ? (p.loan_pct || 75) / 100 : 0.5;
-					if (p.loan_ga_bands && y <= gaYears) { lp2 = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp2 = b[1] / 100; } }); }
+					if (p.loan_ga_bands && p.loan_ga_bands.length && y <= gaYears) { lp2 = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp2 = b[1] / 100; } }); }
 					loan = lp2 * cv;
 					if (o.survival && y >= o.incomeStart) { loan = Math.min(loan, Math.floor(0.5 * o.survival / loanRate / 10000) * 10000); }
 					if (!(loan > 0)) { loan = null; }
@@ -613,7 +636,7 @@
 				if (y >= (p.loan_from || 2)) {
 					var incomeStarted = o.survival && y >= o.incomeStart;
 					var lp = 0.75;
-					if (p.loan_ga_bands && y <= gaYears) { lp = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp = b[1] / 100; } }); }
+					if (p.loan_ga_bands && p.loan_ga_bands.length && y <= gaYears) { lp = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp = b[1] / 100; } }); }
 					loan = lp * cv;
 					if (incomeStarted) { loan = Math.min(loan, Math.floor(0.5 * o.survival / loanRate / 10000) * 10000); }
 				}
@@ -1007,7 +1030,7 @@
 	}
 
 	window.A4U_LIC_API = {
-		C: C, inr: inr, esc: esc, pct: pct, MODES: MODES, SINGLE: SINGLE, chartSvg: chartSvg, track: track, vendor: vendor,
+		C: C, inr: inr, esc: esc, pct: pct, MODES: MODES, SINGLE: SINGLE, chartSvg: chartSvg, track: track, vendor: vendor, load: getRates, // v4.1: load = tariff + rates
 		last: function () { return last; }, cmp: function () { return lastCmp; }, client: function () { return clientInfo(); },
 		rr: function () { return lastRR && last && lastRR.r === last ? lastRR : null; }, mix: function () { return mixList.slice(); }, mixIrr: function () { return mixList.length ? mixTotals().irr : null; }, api: api, post: post,
 		// golden tests (GitHub Actions) साठी engine थेट वापरता यावा

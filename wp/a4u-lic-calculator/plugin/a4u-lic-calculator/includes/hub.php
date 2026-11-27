@@ -18,8 +18,9 @@ function a4u_lic_json( $file ) {
 
 // calculator साठी एका plan चा tariff (दर, GSV/SSV factors, term rider)
 function a4u_lic_tariff_for( $id ) {
-	$t = a4u_lic_json( 'lic-tariff.json' );
-	return isset( $t['plans'][ $id ] ) ? $t['plans'][ $id ] : null;
+	if ( ! preg_match( '/^\d{3}$/', (string) $id ) ) { return null; }
+	$t = a4u_lic_json( 'tariff/' . $id . '.json' ); // v4.1: प्रत्येक plan ची स्वतंत्र file
+	return $t ? $t : null;
 }
 
 function a4u_lic_hub_slug() {
@@ -208,10 +209,7 @@ add_action( 'wp_head', function () {
 	$r = a4u_lic_hub_route();
 	$m = a4u_lic_hub_meta();
 	if ( ! $r || ! $m ) { return; }
-	if ( ! defined( 'RANK_MATH_VERSION' ) ) {
-		echo '<meta name="description" content="' . esc_attr( $m[1] ) . '">' . "\n";
-		echo '<link rel="canonical" href="' . esc_url( $m[2] ) . '">' . "\n";
-	}
+	// description / canonical: tools.php (S7) मध्ये — इतर SEO plugin चे tags काढून
 	$crumbs = array( array( 'Home', home_url( '/' ) ), array( 'LIC Plans', home_url( '/' . a4u_lic_hub_slug() . '/' ) ) );
 	if ( 'plan' === $r['type'] ) { $crumbs[] = array( $r['plan']['name'], $m[2] ); }
 	if ( 'tool' === $r['type'] ) { $crumbs[] = array( a4u_lic_tools()[ $r['key'] ][0], $m[2] ); }

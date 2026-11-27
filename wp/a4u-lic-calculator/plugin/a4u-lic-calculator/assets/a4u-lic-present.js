@@ -3,6 +3,7 @@
 	'use strict';
 	var A = window.A4U_LIC_API;
 	if (!A) { return; }
+	var V4 = window.A4U_CHARTS && window.A4U_CHARTS.pdf; // v4.1: नवीन charts (hub.js) असतील तर
 	var C = A.C, inr = A.inr, esc = A.esc, pct = A.pct, MODES = A.MODES, SINGLE = A.SINGLE, chartSvg = A.chartSvg, track = A.track, vendor = A.vendor;
 	var last = null, lastCmp = null;
 
@@ -264,9 +265,11 @@
 
 		// 2. Benefit Illustration — timeline + Maturity Details
 		var c2 = '<h2 class="a4p-h">' + tt('ill') + '</h2>' +
-			'<div class="a4p-tl"><img src="' + img(A.timelineSvg(r, GREEN, GOLD)) + '" alt=""></div>' +
+			(V4 ? '<div class="a4p-tl"><img src="' + img(V4.timeline(r)) + '" alt=""></div>' +
+				'<p class="a4p-tlleg"><i style="background:#0b4ea2"></i>' + tt('youpay') + ' <i style="background:#d9822b;opacity:.55"></i>' + tt('lcover') + ' <i style="background:#1f8f4e"></i>' + tt('youget') + ' <small>(' + tt('age') + ')</small></p>'
+			: '<div class="a4p-tl"><img src="' + img(A.timelineSvg(r, GREEN, GOLD)) + '" alt=""></div>' +
 			'<p class="a4p-tlleg"><i style="background:' + GREEN + '"></i>' + tt('youpay') + ' <i style="background:' + GOLD + ';opacity:.4"></i>' + tt('lcover') +
-			' <i style="background:' + GOLD + '"></i>' + tt('youget') + ' <small>(' + tt('age') + ')</small></p>' +
+			' <i style="background:' + GOLD + '"></i>' + tt('youget') + ' <small>(' + tt('age') + ')</small></p>') +
 			'<h3>' + tt('md') + '</h3><table class="a4p-t a4p-kv2"><tbody>' + A.maturityRows(r, tt).map(function (q) { return kv(q[0], q[1]); }).join('') + '</tbody></table>' +
 			(r.bonus || r.fab ? '<p class="a4p-note">' + tt('bonusas') + ': SRB ₹' + r.srb + (r.fabRate ? ' · FAB ₹' + r.fabRate : '') + ' — ' + tt('d2') + '</p>' : '') +
 			(r.basis !== 'verified' && r.basis !== 'quote' ? '<p class="a4p-note">' + tt('est') + '</p>' : '');
@@ -285,8 +288,15 @@
 		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
 			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
 			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + inr(r.totalBenefitLow - r.totalPrem) + '</td><td>' + pct(r.irrLow) + '</td></tr>' : '') + '</tbody></table>';
+		if (V4) { // v4.1 (S1): screen वरचेच charts PDF मध्ये
+			c3 += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="' + img(V4.cashflow(r)) + '" alt="">' +
+				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#1f8f4e"></span>' + tt('got') + '</p>' +
+				'<img class="a4p-chart" src="' + img(V4.value(r)) + '" alt="">' +
+				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#d9822b"></span>' + tt('lcover') + (r.table && r.table.some(function (x) { return x.cv > 0; }) ? ' <span style="background:#7a4bc2"></span>Surrender value' : '') + '</p>';
+		} else {
 		c3 += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="' + img(chartSvg(r, GREEN, GOLD)) + '" alt="">' +
 			'<p class="a4p-legend"><span style="background:' + GREEN + '"></span>' + tt('paid') + ' <span style="background:' + GOLD + '"></span>' + tt('got') + '</p>';
+		}
 		c3 += '<table class="a4p-t a4p-kv2" style="margin-top:8px"><tbody>' + kv(tt('pv') + ' <small>(' + fmtT('pvnote', { i: C.inflation }) + ')</small>', inr(r.pvBenefit)) + '</tbody></table>';
 		if (r.taxNotes && r.taxNotes.length) { c3 += '<h3>' + tt('tax') + '</h3><ul class="a4p-notes">' + r.taxNotes.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
 		pages.push(c3);
