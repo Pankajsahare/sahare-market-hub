@@ -23,8 +23,8 @@ OUT = os.path.join(os.path.dirname(__file__), '..', 'wp', 'a4u-lic-calculator', 
 # calculator मधले plans आणि त्यांचं SSV कुटुंब
 CALC = {
     # 733 (Lakshya) आणि money-back plans चं SSV सूत्र खऱ्या quote शी पडताळलेलं नाही → फक्त GSV
-    '714': 'endow', '715': 'endow', '717': 'endow', '733': None, '736': 'endow', '760': 'endow',
-    '720': None, '721': None, '732': None,
+    '714': 'endow', '715': 'endow', '717': 'endow', '733': 'lakshya', '736': 'endow', '760': 'endow',
+    '720': 'mb', '721': None, '732': None,
     '745': None, '771': 'utsav', '883': 'utsav_sp',
     '894': None,  # Jeevan Raksha (term) — surrender value नाही
     '770': None,  # Bima Platinum: दर PPT नुसार वेगळे तक्ते; SSV पडताळलेलं नाही → GSV
@@ -109,7 +109,7 @@ def tariff(c):
         if has(c, f'TermRider_{p}'):
             d['term_rider'] = grid(c, f'TermRider_{p}')
         ssv = None
-        if fam in ('endow', 'mb'):
+        if fam in ('endow', 'mb', 'lakshya'):
             if has(c, f'ssv_{p}_f1') and has(c, f'ssv_{p}_f2'):
                 ssv = {'family': fam, 'f1': grid(c, f'ssv_{p}_f1'), 'f2': grid(c, f'ssv_{p}_f2')}
         elif fam == 'utsav':

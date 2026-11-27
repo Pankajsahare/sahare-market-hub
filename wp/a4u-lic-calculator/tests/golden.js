@@ -46,7 +46,7 @@ if (!E || !E.compute) { console.error('engine API missing'); process.exit(1); }
 const SINGLE = { single: 1, utsav_sp: 1 };
 const fails = [];
 let checked = 0;
-const inp = (age, term, sa) => ({ age, term, sa, by: 'sa', mode: 'yearly', gst: 0, income: 'regular', r: {}, srbO: null, fabO: null, doc: new Date(), gender: 'M' });
+const inp = (age, term, sa, srb) => ({ age, term, sa, by: 'sa', mode: 'yearly', gst: 0, income: 'regular', r: {}, srbO: srb || null, fabO: null, doc: new Date(), gender: 'M' });
 
 for (const p of plans) {
   // 1. samples जसेच्या तसे
@@ -85,18 +85,21 @@ for (const p of plans) {
 // 4. v4: खऱ्या LIC benefit report शी surrender value (Cash Value) जुळते का (±1%)
 const REPORTS = [
   { id: '771', age: 3, term: 16, sa: 500000, cv: { 1: 3905, 2: 17910, 3: 32542, 16: 582593, 17: 626255, 18: 673575, 19: 674744 } },
+  // ANANDA report (27 Nov 2026): 733 सर्व 13 वर्षं तंतोतंत; 720 पहिली 5 वर्षं (पहिल्या survival benefit आधी) ±2.5%
+  { id: '733', age: 36, term: 13, sa: 1000000, srb: 40, tol: 0.002, cv: { 1: 58749, 2: 126202, 3: 203316, 5: 391090, 8: 776920, 10: 1123080, 12: 1374628, 13: 1520000 } },
+  { id: '720', age: 36, term: 20, sa: 1000000, srb: 38, tol: 0.025, cv: { 1: 27231, 2: 58400, 3: 101674, 4: 183646, 5: 230412 } },
   { id: '883', age: 3, term: 14, sa: 500000, cv: { 1: 267313, 2: 287731, 5: 358911, 10: 519067, 14: 698300, 20: 700469 } },
 ];
 for (const rp of REPORTS) {
   const p = plans.find(x => x.id === rp.id);
   if (!p || !p.tariff) { fails.push(`${rp.id}: tariff missing`); continue; }
-  const r = E.compute(p, inp(rp.age, rp.term, rp.sa), {});
+  const r = E.compute(p, inp(rp.age, rp.term, rp.sa, rp.srb), {});
   if (r.errors) { fails.push(`${rp.id}: report case → ${r.errors.join(' ')}`); continue; }
   for (const [y, want] of Object.entries(rp.cv)) {
     checked++;
     const row = r.table[Number(y) - 1];
     const got = row && row.cv;
-    if (!(got > 0) || Math.abs(got - want) / want > 0.01) fails.push(`${rp.id}: year ${y} cash value expected ${want} got ${got ? Math.round(got) : got}`);
+    if (!(got > 0) || Math.abs(got - want) / want > (rp.tol || 0.01)) fails.push(`${rp.id}: year ${y} cash value expected ${want} got ${got ? Math.round(got) : got}`);
   }
 }
 // 4b. v4.1: loan = 75% of cash value (2+ वर्षं भरलेले, in-force) — रिकामी loan_ga_bands चूक परत येऊ नये

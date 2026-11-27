@@ -587,7 +587,12 @@
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
 				return (pusa + cumAdd) * ((f1 || 0) + (f2 || 0));
+			case 'lakshya': // 733: (PUSA + बोनस) × F2 + (मृत्यू-नंतरचं 10% उत्पन्न, भरलेल्या हप्त्यांच्या प्रमाणात) × F1 — खऱ्या report शी पडताळलेलं
+				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
+				if (f1 === null && f2 === null) { return null; }
+				return (pusa + cumAdd) * (f2 || 0) + 0.1 * o.sa * Math.min(paidYears, n) / n * (f1 || 0);
 			case 'mb':
+				if (sbPaid > 0) { return null; } // पहिलं survival benefit दिल्यानंतरचं सूत्र खऱ्या report शी जुळत नाही → फक्त GSV
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
 				return (pusa + cumAdd) * (f1 || 0) + Math.max(0, pusa - sbPaid + cumAdd) * (f2 || 0);
