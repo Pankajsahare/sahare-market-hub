@@ -133,6 +133,7 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 	$title = sanitize_text_field( $atts['title'] );
 	$cp    = a4u_lic_current_plan();
 	if ( '' === $title && $cp ) { $title = 'LIC ' . $cp[1]['name'] . ' Premium Calculator'; }
+	if ( '' === $title && a4u_lic_is_main_calc_page() ) { $title = 'LIC Premium Calculator 2026 — Maturity, Bonus & Surrender Value'; } // v4.3.5
 	$cfg   = a4u_lic_build_config( $init, $title );
 	$plans = $cfg['plans'];
 	$s     = a4u_lic_data()['settings'];
@@ -145,17 +146,18 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 	if ( function_exists( 'a4u_lic_hub_inline_assets' ) ) { a4u_lic_hub_inline_assets( a4u_lic_hub_route() ); } // v4: नवीन charts
 	$html = '<div id="a4u-lic-app" class="a4u-lic"><noscript>Please enable JavaScript to use the LIC calculator.</noscript></div>';
 	if ( function_exists( 'a4u_lic_hub_route' ) && a4u_lic_hub_route() ) { return $html; } // v4: hub/plan पानावर links व FAQ आधीच आहेत
-	// v4.3.3: plan links थेट नवीन /lic-plans/<plan>/ पानांकडे (जुनी /lic-calculator/<id>/ लिंक 301 घेत होती) + सगळ्या plans / tools ची पट्टी
 	$slug = a4u_lic_base_slug();
 	$cat  = function_exists( 'a4u_lic_catalog' ) ? a4u_lic_catalog() : array();
 	if ( $cat ) {
-		$html .= '<nav class="a4u-lic a4u-hub-strip" aria-label="LIC plans and tools"><a class="a4u-hub-main" href="' . esc_url( home_url( '/' . a4u_lic_hub_slug() . '/' ) ) . '">📚 All LIC Plans — details, benefits &amp; calculators →</a><span>';
+		$strip = '<nav class="a4u-lic a4u-hub-strip" aria-label="LIC plans and tools"><a class="a4u-hub-main" href="' . esc_url( home_url( '/' . a4u_lic_hub_slug() . '/' ) ) . '">📚 All LIC Plans — details, benefits &amp; calculators →</a><span>';
 		foreach ( array( 'compare-plans', 'revival-calculator', 'bonus-rates', 'branch-locator', 'lic-services' ) as $k ) {
 			$t = a4u_lic_tools()[ $k ];
-			$html .= '<a href="' . esc_url( a4u_lic_tool_url( $k ) ) . '">' . $t[2] . ' ' . esc_html( $t[0] ) . '</a>';
+			$strip .= '<a href="' . esc_url( a4u_lic_tool_url( $k ) ) . '">' . $t[2] . ' ' . esc_html( $t[0] ) . '</a>';
 		}
-		$html .= '</span></nav>';
+		$strip .= '</span></nav>';
+		$html  = $strip . $html; // v4.3.5: calculator च्या वर
 	}
+	// v4.3.3: plan links थेट नवीन /lic-plans/<plan>/ पानांकडे (जुनी /lic-calculator/<id>/ लिंक 301 घेत होती) + सगळ्या plans / tools ची पट्टी
 	$html .= '<nav class="a4u-lic a4u-plan-links" aria-label="LIC plan calculators"><strong>Plan-wise calculators:</strong> ';
 	$html .= implode( ' · ', array_map( function ( $p ) use ( $slug, $cat ) {
 		$url = isset( $cat[ (string) $p['id'] ] ) ? a4u_lic_plan_url( $cat[ (string) $p['id'] ] ) . '#a4h-calc' : home_url( '/' . $slug . '/' . $p['id'] . '/' );
