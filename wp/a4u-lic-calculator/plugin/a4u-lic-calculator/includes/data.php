@@ -75,6 +75,14 @@ function a4u_lic_default_plans() {
 			'sample_sa' => 200000, 'samples' => array( array( 20, 15, 16542 ), array( 20, 20, 11407 ), array( 20, 25, 8536 ), array( 20, 30, 6840 ), array( 30, 15, 16542 ), array( 30, 20, 11407 ), array( 30, 25, 8595 ), array( 30, 30, 7027 ), array( 40, 15, 16542 ), array( 40, 20, 11476 ), array( 40, 25, 9036 ), array( 40, 30, 7664 ), array( 50, 15, 16562 ), array( 50, 20, 12368 ) ),
 			'brochure' => $b . "1319704/745+LIC_Jeevan+Umang_Eng+_141025.pdf/d67dc9dc-ca37-7e1e-d662-132423c49d15",
 		) ),
+		'760' => array_merge( $base, array(
+			'name' => 'Bima Jyoti (760)', 'type' => 'ga_endow', 'ppt_less' => 5,
+			'min_age' => 0, 'max_age' => 60, 'max_maturity' => 75, 'terms' => range( 15, 20 ),
+			'min_sa' => 125000, 'sa_slabs' => array( array( 125000, 25000 ) ),
+			'rebate_slabs' => array(), 'ga_per_1000' => 50, 'death_pct' => 125, 'riders' => array( 'adb', 'addb', 'term', 'pwb' ),
+			'sample_sa' => 0, 'samples' => array(), 'source' => 'LIC tariff rates', 'loan_pct' => 90,
+			'brochure' => '',
+		) ),
 		'717' => array_merge( $base, array(
 			'name' => 'Single Premium Endowment (717)', 'type' => 'single',
 			'min_age' => 0, 'max_age' => 65, 'min_maturity' => 18, 'max_maturity' => 75, 'terms' => range( 10, 25 ),
@@ -186,6 +194,10 @@ function a4u_lic_defaults() {
 			'retention_days' => 180,
 			'faq'            => 1,
 			'base_slug'      => 'lic-calculator', // S7: /lic-calculator/714/
+			'hub_slug'       => 'lic-plans',      // v4: /lic-plans/ (सर्व plans + tools)
+			'lead_email'     => '',
+			'tg_token'       => '',
+			'tg_chat'        => '',
 			// v2.0 — PDF branding (IRDAI जाहिरात नियमांसाठी agent ची माहिती)
 			'brand_name'     => 'Sahare Financial Services',
 			'agent_name'     => 'Pankaj Digambar Sahare',

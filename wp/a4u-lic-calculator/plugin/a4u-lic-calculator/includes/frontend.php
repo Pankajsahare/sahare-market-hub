@@ -66,6 +66,9 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 			'brochure'        => (string) ( $p['brochure'] ?? '' ),
 			'uin'             => (string) ( $p['uin'] ?? '' ),
 			'points'          => (object) ( $p['points'] ?? array() ),
+			'ppt_less'        => (int) ( $p['ppt_less'] ?? 0 ),
+			'loan_pct'        => (int) ( $p['loan_pct'] ?? 75 ),
+			'tariff'          => a4u_lic_tariff_for( (string) $id ), // v4: LIC दर + surrender factors
 		);
 	}
 	$links = array();
@@ -130,7 +133,9 @@ add_shortcode( 'a4u_lic_calculator', function ( $atts = array() ) {
 	wp_enqueue_style( 'a4u-lic' );
 	wp_enqueue_script( 'a4u-lic' );
 	wp_add_inline_script( 'a4u-lic', 'window.A4U_LIC=' . wp_json_encode( $cfg ) . ';', 'before' );
+	if ( function_exists( 'a4u_lic_hub_inline_assets' ) ) { a4u_lic_hub_inline_assets( a4u_lic_hub_route() ); } // v4: नवीन charts
 	$html = '<div id="a4u-lic-app" class="a4u-lic"><noscript>Please enable JavaScript to use the LIC calculator.</noscript></div>';
+	if ( function_exists( 'a4u_lic_hub_route' ) && a4u_lic_hub_route() ) { return $html; } // v4: hub/plan पानावर links व FAQ आधीच आहेत
 	// S7: सगळ्या plan pages च्या links (Google ला सापडण्यासाठी)
 	$slug = a4u_lic_base_slug();
 	$html .= '<nav class="a4u-lic a4u-plan-links" aria-label="LIC plan calculators"><strong>Plan-wise calculators:</strong> ';

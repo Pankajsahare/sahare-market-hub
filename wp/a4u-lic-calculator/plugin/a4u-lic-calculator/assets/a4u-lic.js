@@ -3,7 +3,7 @@
 	'use strict';
 
 	var C = window.A4U_LIC;
-	var root = document.getElementById('a4u-lic-app');
+	var root = document.getElementById('a4u-lic-app') || (C && C.apiOnly ? document.createElement('div') : null); // v4: apiOnly = फक्त engine (compare/plan chart)
 	if (!C || !root) { return; }
 	root.classList.add('a4u-lic'); // shortcode शिवाय (उदा. HTML widget) वापरलं तरी styles लागू
 
@@ -303,6 +303,7 @@
 		switch (p.type) {
 			case 'labh': return { T: sel, P: Number(p.ppt_map[sel]) };
 			case 'lakshya': return { T: sel, P: sel - 3 };
+			case 'ga_endow': return { T: sel, P: sel - (p.ppt_less || 5) }; // 760 Bima Jyoti: PPT = term − 5
 			case 'umang':
 			case 'utsav': return { T: (p.maturity_age || 100) - age, P: sel };
 			case 'single': return { T: sel, P: 1 };
@@ -346,7 +347,7 @@
 		var riders = {}, rTotal = 0, term = ctx.T || inp.term;
 		if (inp.r.adb) { riders.adb = riderRate('adb', inp.age, term) * (inp.r.adbSA || sa) / 1000; }
 		if (inp.r.addb) { riders.addb = riderRate('addb', inp.age, term) * sa / 1000; }
-		if (inp.r.term) { riders.term = riderRate('term', inp.age, term) * (inp.r.termSA || sa) / 1000; }
+		if (inp.r.term) { riders.term = ((p.tariff && tgrid(p.tariff.term_rider, inp.age, term)) || riderRate('term', inp.age, term)) * (inp.r.termSA || sa) / 1000; }
 		if (inp.r.pwb) { riders.pwb = riderRate('pwb', inp.r.pwbAge, ctx.P || term) / 100 * base; }
 		Object.keys(riders).forEach(function (k) { rTotal += riders[k]; });
 		var g = 1 + inp.gst / 100;
@@ -412,17 +413,21 @@
 		if (p.type === 'utsav_sp') { key = inp.term; }
 		// दराचा क्रम: CSV (tariff) → खरी quotation → brochure estimate → demo
 		var rate = rates[age + '|' + key], basis = p.verified ? 'verified' : 'csv';
+		if (!rate && p.tariff) { // v4: LIC tariff (दर per 1000 SA) — अचूक
+			var tr = tgrid(p.tariff.rate, age, key);
+			if (tr) { rate = tr; basis = 'tariff'; }
+		}
 		if (!rate && p.points && p.points[age + '|' + key]) { rate = Number(p.points[age + '|' + key]); basis = 'quote'; }
 		if (!rate) {
 			rate = sampleRate(p, age, key);
 			basis = 'brochure';
 			if (!rate) { rate = demoRate(p, age, P, T); basis = 'demo'; }
 		}
-		var demo = basis !== 'verified' && basis !== 'quote';
+		var demo = basis !== 'verified' && basis !== 'quote' && basis !== 'tariff';
 		var bn = bonusFor(p, T);
 		if (inp.srbO !== null) { bn.srb = inp.srbO; }
 		if (inp.fabO !== null) { bn.fab = inp.fabO; }
-		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp') ? 0 : T);
+		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow') ? 0 : T);
 
 		var sa = inp.sa;
 		if (inp.by === 'maturity') { // B: लक्ष्य रकमेवरून SA (वर round — लक्ष्य पूर्ण व्हावं म्हणून)
@@ -447,7 +452,7 @@
 		var pr = premiumFor(p, inp, rate, sa, { T: T, P: P });
 		var bonus = bn.srb * sa / 1000 * bonusYears;
 		var fab = (T >= p.fab_min_term || inp.fabO !== null ? bn.fab : 0) * sa / 1000;
-		var ga = (p.ga_per_1000 || 0) * sa / 1000 * (p.type === 'utsav_sp' ? G : P);
+		var ga = (p.ga_per_1000 || 0) * sa / 1000 * (p.type === 'utsav_sp' ? G : (p.type === 'ga_endow' ? T : P));
 		var hasIncome = p.type === 'umang' || p.type === 'utsav' || p.type === 'utsav_sp';
 		var survival = hasIncome ? p.survival_pct * sa / 100 : 0;
 		var incomeStart = p.type === 'utsav' ? Math.max(11, P + 3) : (p.type === 'utsav_sp' ? G + 1 : P);
@@ -456,6 +461,7 @@
 		var maturity = 0;
 		if (p.type === 'utsav_sp') { maturity = Math.max(sa, 1.25 * pr.tabular) + ga; }
 		else if (p.type === 'moneyback') { maturity = (p.mat_pct || 0) * sa / 100 + bonus + fab; }
+		else if (p.type === 'ga_endow') { maturity = sa + ga; }
 		else if (p.type !== 'utsav') { maturity = sa + bonus + fab; }
 		var sbMap = p.type === 'moneyback' ? mbSchedule(p, age) : {};
 
@@ -511,11 +517,56 @@
 			basis: basis, demo: demo, rate: rate, pr: pr, inst: pr.inst, totalPrem: totalPrem, bonus: bonus, fab: fab, ga: ga, srb: bn.srb,
 			sbList: Object.keys(sbMap).map(function (k) { return [Number(k), sbMap[k]]; }),
 			survival: survival, incomeStart: incomeStart, totalSurv: totalSurv, flexiBal: flexiBal, deathSA: deathSA, deathNote: deathNote,
-			maturity: maturity, totalBenefit: totalBenefit, irr: irr(cf), rows: rows, table: table, hasCV: !!(p.gsv_prem && p.gsv_prem.length)
+			maturity: maturity, totalBenefit: totalBenefit, irr: irr(cf), rows: rows, table: table, hasCV: !!(p.gsv_prem && p.gsv_prem.length) || !!(p.tariff && p.tariff.gsv_p)
 		};
 	}
 
 	/* ---------- v3.2: वर्षवार Benefit & Coverage तक्ता (LIC report सारखा) ---------- */
+	// v4: tariff grid {c:[columns], r:{row:[values]}} — एक column असेल तर तोच
+	function tgrid(g, row, col) {
+		if (!g || !g.r) { return null; }
+		var r = g.r[String(row)];
+		if (!r) { return null; }
+		var i = g.c.length === 1 ? 0 : g.c.indexOf(Number(col));
+		var v = i < 0 ? null : r[i];
+		return v ? Number(v) : null;
+	}
+	// v4: Special Surrender Value (LIC factors) — मिळालं नाही तर null
+	function ssvFor(p, o, y, paidYears, cumAdd, sbPaid) {
+		var t = p.tariff && p.tariff.ssv;
+		if (!t || paidYears < 1) { return null; }
+		var n = o.P || 1, pusa = o.sa * Math.min(paidYears, n) / n, f1, f2;
+		switch (t.family) {
+			case 'endow':
+				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
+				if (f1 === null && f2 === null) { return null; }
+				return (pusa + cumAdd) * ((f1 || 0) + (f2 || 0));
+			case 'mb':
+				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
+				if (f1 === null && f2 === null) { return null; }
+				return (pusa + cumAdd) * (f1 || 0) + Math.max(0, pusa - sbPaid + cumAdd) * (f2 || 0);
+			case 'utsav':
+				f1 = tgrid(t.f1, y, 0);
+				if (f1 === null) { return null; }
+				f2 = paidYears >= n ? (tgrid(t.f2, y, n) || 0) : 0; // पूर्ण भरलेल्या policy लाच income चं मूल्य
+				return (pusa + cumAdd) * f1 + o.survival * f2;
+			case 'utsav_sp':
+				f1 = tgrid(t.f1, y, 0);
+				if (f1 === null) { return null; }
+				var gaYr = (p.ga_per_1000 || 0) * o.sa / 1000;
+				return (o.sa + cumAdd) * f1 + o.survival * (tgrid(t.f3, y, o.G) || 0) + gaYr * (tgrid(t.f4, y, o.G) || 0);
+		}
+		return null;
+	}
+	function gsvFor(p, o, y, cumBase, cumAdd, sbPaid, single) {
+		var t = p.tariff;
+		if (!t || !t.gsv_p) { return null; }
+		var fp = tgrid(t.gsv_p, y, o.T);
+		if (fp === null) { fp = 0; }
+		var fa = t.gsv_b ? tgrid(t.gsv_b, y, o.T) : (t.gsv_g ? tgrid(t.gsv_g, y, o.T) : 0);
+		var prem = single ? (o.pr.tabular || o.pr.base) : cumBase;
+		return Math.max(0, fp * prem + (fa || 0) * cumAdd - (p.gsv_less_income || p.type === 'moneyback' ? sbPaid : 0));
+	}
 	function stepPct(list, y) { // [[वर्ष, %]...] — त्या वर्षापर्यंतचा शेवटचा
 		var v = 0;
 		(list || []).forEach(function (x) { if (y >= x[0]) { v = Number(x[1]); } });
@@ -524,7 +575,7 @@
 	function buildTable(p, inp, o) {
 		var out = [], cumPrem = 0, cumBase = 0, cumAdd = 0, paidOut = 0;
 		var isGA = p.ga_per_1000 > 0, single = !!SINGLE[p.type];
-		var gaYears = p.type === 'utsav_sp' ? o.G : o.P;
+		var gaYears = p.type === 'utsav_sp' ? o.G : (p.type === 'ga_endow' ? o.T : o.P);
 		// लहान मुलांसाठी जोखीम (risk) उशिरा सुरू: 8 वर्षांखाली — 2 वर्षे किंवा 8 वय, जे आधी
 		var riskStart = o.age < 8 ? Math.min(2, 8 - o.age) : 0;
 		var adb = inp.r && inp.r.adb ? Number(inp.r.adbSA) || 0 : 0;
@@ -543,7 +594,19 @@
 			var cover = y <= riskStart ? cumPrem : Math.max(o.deathSA || 0, o.sa) + cumAdd;
 			// Guaranteed Surrender Value (brochure factors असतील तरच)
 			var cv = null, loan = null;
-			if (p.gsv_prem && p.gsv_prem.length && y < o.T) {
+			var paidYears = Math.min(y, o.P);
+			var tg = y < o.T ? gsvFor(p, o, y, cumBase, cumAdd, paidOut, single) : null;
+			if (tg !== null) { // v4: LIC चे GSV + SSV factors — दोन्हीपैकी जास्त
+				var ts = ssvFor(p, o, y, paidYears, cumAdd, paidOut);
+				cv = Math.max(tg, ts || 0);
+				if (y >= (p.loan_from || 1)) {
+					var lp2 = paidYears >= 2 ? (p.loan_pct || 75) / 100 : 0.5;
+					if (p.loan_ga_bands && y <= gaYears) { lp2 = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp2 = b[1] / 100; } }); }
+					loan = lp2 * cv;
+					if (o.survival && y >= o.incomeStart) { loan = Math.min(loan, Math.floor(0.5 * o.survival / loanRate / 10000) * 10000); }
+					if (!(loan > 0)) { loan = null; }
+				}
+			} else if (p.gsv_prem && p.gsv_prem.length && y < o.T) {
 				cv = stepPct(p.gsv_prem, y) * (single ? (o.pr.tabular || o.pr.base) : cumBase) + stepPct(p.gsv_add, y) * cumAdd;
 				if (p.gsv_less_income) { cv -= paidOut; }
 				cv = Math.max(0, cv);
@@ -554,7 +617,7 @@
 					loan = lp * cv;
 					if (incomeStarted) { loan = Math.min(loan, Math.floor(0.5 * o.survival / loanRate / 10000) * 10000); }
 				}
-			} else if (p.gsv_prem && p.gsv_prem.length && y === o.T && o.maturity) { cv = o.maturity; }
+			} else if ((p.tariff && p.tariff.gsv_p || p.gsv_prem && p.gsv_prem.length) && y === o.T && o.maturity) { cv = o.maturity; }
 			paidOut += inc;
 			out.push({ y: y, age: o.age + y - 1, prem: prem, cumPrem: cumPrem, add: add, cumAdd: cumAdd, cover: cover, acc: cover + (y > riskStart ? adb : 0), cv: cv, loan: loan, ret: ret });
 		}
@@ -624,6 +687,7 @@
 		last = r;
 		var p = r.plan, m = modeName(r), h = '', pr = r.pr;
 		if (r.mode === 'single') { m = 'Single premium'; }
+		if (r.basis === 'tariff') { h += '<div class="a4u-banner a4u-exact">Premium worked out from the LIC tariff rate for this age and term. Surrender and loan values are estimates.</div>'; }
 		if (r.basis === 'quote') { h += '<div class="a4u-banner a4u-exact">Based on an actual LIC quotation for this age and term.</div>'; }
 		if (r.basis === 'brochure') { h += '<div class="a4u-banner a4u-est">Estimated from the sample premiums in the official LIC sales brochure. The actual premium may differ slightly for this age and term.</div>'; }
 		else if (r.basis === 'demo') { h += '<div class="a4u-banner">Demo rates — rough figures only. Verified LIC rates for this plan are being updated.</div>'; }
@@ -693,6 +757,7 @@
 		if (r.taxNotes.length) { h += '<div class="a4u-tax"><b>Tax points to note</b><ul>' + r.taxNotes.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><small>General information only — please consult your tax adviser.</small></div>'; }
 		if (p.closed) { h += '<p class="a4u-note">This plan is closed for new business — figures are for existing policyholders\' reference only.</p>'; }
 
+		h += '<div class="a4u-v4charts" aria-label="Benefit charts"></div>'; // v4: नवीन charts (a4u-lic-hub.js)
 		h += chart(r);
 		h += '<details class="a4u-years"' + (r.table.length <= 25 ? ' open' : '') + '><summary>' + RL.bct + '</summary><div class="a4u-scroll">' +
 			benefitTableHtml(r, rlEN, 'a4u-bct', 0, undefined, true) + '</div>' +
@@ -745,6 +810,7 @@
 			'For education only. This is not an official LIC quotation and is not provided by LIC of India. Bonus figures are not guaranteed. Please verify with the policy document before buying.</p>';
 
 		result.innerHTML = h;
+		try { document.dispatchEvent(new CustomEvent('a4u-lic-result', { detail: r })); } catch (e) { /* जुने browser */ }
 		result.hidden = false;
 		lastCmp = null;
 		var cp = result.querySelector('[data-cmp="plan"]');

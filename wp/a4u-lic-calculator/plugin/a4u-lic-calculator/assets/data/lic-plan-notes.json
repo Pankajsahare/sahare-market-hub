@@ -1,0 +1,777 @@
+{
+"v": 1,
+"plans": {
+"714": {
+"name": "New Endowment",
+"slug": "new-endowment-714",
+"category": "endowment",
+"status": "open",
+"tagline": "A classic savings-cum-protection plan: life cover for the whole term and a lump sum with bonuses at maturity.",
+"points": [
+"Pays Sum Assured plus all bonuses on maturity",
+"Death benefit is Sum Assured plus bonuses (never less than 7 times the yearly premium)",
+"Bonuses are declared by LIC each year and stay added once declared",
+"Loan facility after the first policy year"
+],
+"best_for": "First-time savers who want a simple, disciplined plan"
+},
+"715": {
+"name": "New Jeevan Anand",
+"slug": "new-jeevan-anand-715",
+"category": "endowment",
+"status": "open",
+"tagline": "Endowment plan with a bonus-linked maturity and life cover that continues even after the maturity is paid.",
+"points": [
+"Maturity: Sum Assured plus bonuses",
+"Death during the term: 125% of Sum Assured plus bonuses",
+"After maturity, a free life cover equal to the Sum Assured stays till age 100",
+"Popular as a family protection plus savings plan"
+],
+"best_for": "Families who want savings and lifelong cover in one policy"
+},
+"717": {
+"name": "Single Premium Endowment",
+"slug": "single-premium-endowment-717",
+"category": "endowment",
+"status": "open",
+"tagline": "Pay once and get a bonus-linked lump sum at maturity, with life cover during the term.",
+"points": [
+"Only one premium at the start",
+"Maturity: Sum Assured plus bonuses",
+"Life cover for the full term",
+"Loan available on the policy"
+],
+"best_for": "People with a lump sum (bonus, gift, maturity) to park safely"
+},
+"720": {
+"name": "New Money Back 20 Years",
+"slug": "new-money-back-20-years-720",
+"category": "moneyback",
+"status": "open",
+"tagline": "Money back plan that returns 20% of the Sum Assured every five years, with bonuses at the end.",
+"points": [
+"20% of Sum Assured after 5, 10 and 15 years",
+"40% of Sum Assured plus bonuses at maturity (year 20)",
+"Death benefit is the full cover plus bonuses, even after money-back payments",
+"Premium paid for 15 years only"
+],
+"best_for": "Planned expenses every few years, such as education or home needs"
+},
+"721": {
+"name": "New Money Back 25 Years",
+"slug": "new-money-back-25-years-721",
+"category": "moneyback",
+"status": "open",
+"tagline": "Longer money back plan with 15% of the Sum Assured paid every five years and bonuses at maturity.",
+"points": [
+"15% of Sum Assured after 5, 10, 15 and 20 years",
+"40% of Sum Assured plus bonuses at maturity (year 25)",
+"Full life cover continues even after the money-back payments",
+"Premium paid for 20 years"
+],
+"best_for": "Long-term goals with regular cash needs along the way"
+},
+"732": {
+"name": "New Children's Money Back",
+"slug": "new-children-s-money-back-732",
+"category": "child",
+"status": "open",
+"tagline": "Child plan that pays money at ages 18, 20 and 22 and the balance with bonuses at 25.",
+"points": [
+"20% of Sum Assured each at ages 18, 20 and 22",
+"40% of Sum Assured plus bonuses at age 25",
+"Policy is on the child; entry from birth up to age 12",
+"Premium Waiver rider can protect the plan if the parent dies"
+],
+"best_for": "Funding a child's higher education and marriage"
+},
+"733": {
+"name": "Jeevan Lakshya",
+"slug": "jeevan-lakshya-733",
+"category": "endowment",
+"status": "open",
+"tagline": "Goal plan for families: if the policyholder dies, the family gets yearly income and the full maturity is still paid.",
+"points": [
+"Death: 10% of Sum Assured every year till maturity, plus 110% of Sum Assured at maturity",
+"Survival: Sum Assured plus bonuses at maturity",
+"Premiums stop on death; the goal amount stays protected",
+"Premium paying term is 3 years less than the policy term"
+],
+"best_for": "Parents saving for a child's future goal"
+},
+"734": {
+"name": "Jeevan Tarun",
+"slug": "jeevan-tarun-734",
+"category": "child",
+"status": "check",
+"tagline": "Child plan with a choice of survival payouts from age 20 to 24 and the balance at 25.",
+"points": [
+"Choose between no payout, 5%, 10% or 15% of Sum Assured each year from age 20 to 24",
+"Balance Sum Assured plus bonuses at age 25",
+"Entry from 90 days to 12 years of age"
+],
+"best_for": "Parents planning for a child's college years"
+},
+"735": {
+"name": "New Endowment Plus",
+"slug": "new-endowment-plus-735",
+"category": "ulip",
+"status": "check",
+"tagline": "Unit-linked endowment plan where premiums are invested in a chosen fund with life cover.",
+"points": [
+"Returns depend on fund performance (market-linked)",
+"Fund value paid at maturity",
+"Death: higher of Sum Assured or fund value"
+],
+"best_for": "Investors comfortable with market-linked returns"
+},
+"736": {
+"name": "Jeevan Labh",
+"slug": "jeevan-labh-736",
+"category": "endowment",
+"status": "open",
+"tagline": "Limited payment endowment: pay for 10, 15 or 16 years and stay covered for 16, 21 or 25 years.",
+"points": [
+"Policy terms 16, 21 and 25 years with shorter premium payment",
+"Maturity: Sum Assured plus bonuses",
+"Death: Sum Assured plus bonuses (at least 7 times the yearly premium)",
+"One of the most popular LIC plans for tax-free maturity"
+],
+"best_for": "Earning people who want to finish paying early"
+},
+"745": {
+"name": "Jeevan Umang",
+"slug": "jeevan-umang-745",
+"category": "wholelife",
+"status": "open",
+"tagline": "Whole life plan that pays 8% of the Sum Assured every year for life after the premium paying term, and a lump sum at 100.",
+"points": [
+"8% of Sum Assured every year from the end of premium paying term till age 100",
+"Sum Assured plus bonuses at age 100 or to the family on death",
+"Premium paying terms 15, 20, 25 or 30 years",
+"Works like a family pension with life cover"
+],
+"best_for": "Retirement income with lifelong cover"
+},
+"748": {
+"name": "Bima Shree",
+"slug": "bima-shree-748",
+"category": "moneyback",
+"status": "check",
+"tagline": "High Sum Assured money back plan with guaranteed additions and survival benefits in the last years.",
+"points": [
+"Guaranteed additions every year during premium payment",
+"Part of the Sum Assured paid in the last few policy years",
+"Balance Sum Assured plus additions at maturity",
+"Minimum Sum Assured is high (for HNI customers)"
+],
+"best_for": "High-income customers wanting guaranteed additions"
+},
+"749": {
+"name": "Nivesh Plus",
+"slug": "nivesh-plus-749",
+"category": "ulip",
+"status": "check",
+"tagline": "Single premium unit-linked plan with a choice of funds and life cover.",
+"points": [
+"One-time investment in market-linked funds",
+"Fund value at maturity",
+"Death: higher of Sum Assured (less withdrawals) or fund value"
+],
+"best_for": "Lump-sum investors open to market risk"
+},
+"751": {
+"name": "Micro Bachat",
+"slug": "micro-bachat-751",
+"category": "endowment",
+"status": "check",
+"tagline": "Low-cost micro insurance savings plan with small Sum Assured.",
+"points": [
+"Small Sum Assured and low premiums",
+"Sum Assured plus loyalty addition at maturity",
+"Simple proposal (Form 505)"
+],
+"best_for": "Low-income families and first-time insurance buyers"
+},
+"752": {
+"name": "SIIP",
+"slug": "siip-752",
+"category": "ulip",
+"status": "open",
+"tagline": "Systematic investment insurance plan: regular premiums invested in LIC unit funds with life cover.",
+"points": [
+"Choose from several fund options and switch between them",
+"Fund value paid at maturity",
+"Death: higher of 10 times yearly premium or fund value",
+"Partial withdrawals after the lock-in period"
+],
+"best_for": "SIP-style investors who also want life cover"
+},
+"758": {
+"name": "New Jeevan Shanti",
+"slug": "new-jeevan-shanti-758",
+"category": "pension",
+"status": "open",
+"tagline": "Single premium deferred annuity: invest once and get a guaranteed pension after a chosen waiting period.",
+"points": [
+"Pension rate fixed on the day you buy",
+"Choose a waiting (deferment) period; single or joint life",
+"Purchase price (plus additions) returned to the family on death"
+],
+"best_for": "Retirement planning with a guaranteed pension"
+},
+"760": {
+"name": "Bima Jyoti",
+"slug": "bima-jyoti-760",
+"category": "endowment",
+"status": "check",
+"tagline": "Non-participating savings plan with a fixed guaranteed addition every year — the maturity amount is known on day one.",
+"points": [
+"Guaranteed addition of Rs 50 per 1,000 Sum Assured every year",
+"Maturity: Sum Assured plus all guaranteed additions",
+"Premium paid for 5 years less than the term",
+"Death: higher of 125% of Sum Assured or 7 times the yearly premium, plus additions"
+],
+"best_for": "People who want a fully guaranteed maturity amount"
+},
+"764": {
+"name": "Bima Ratna",
+"slug": "bima-ratna-764",
+"category": "moneyback",
+"status": "check",
+"tagline": "Money back plan with guaranteed additions and 25% payouts in the last two years before maturity.",
+"points": [
+"25% of Sum Assured in each of the two years before maturity",
+"50% of Sum Assured plus guaranteed additions at maturity",
+"Guaranteed additions accrue every year"
+],
+"best_for": "Planned expenses just before a goal year"
+},
+"768": {
+"name": "Jeevan Azad",
+"slug": "jeevan-azad-768",
+"category": "endowment",
+"status": "check",
+"tagline": "Simple guaranteed endowment where you pay for 8 years less than the term and get the Sum Assured back.",
+"points": [
+"Maturity: full Basic Sum Assured",
+"Premium payment term is the policy term minus 8 years",
+"Death: higher of Sum Assured or 7 times the yearly premium"
+],
+"best_for": "Guaranteed savings with short premium payment"
+},
+"770": {
+"name": "Bima Platinum",
+"slug": "bima-platinum-770",
+"category": "wholelife",
+"status": "check",
+"tagline": "Limited premium savings plan with guaranteed additions, yearly income after premiums end, and a booster payout.",
+"points": [
+"Guaranteed additions every year while premiums are paid",
+"Regular income of 10% of Sum Assured every year after premium payment",
+"One-time booster income and Sum Assured plus additions at maturity",
+"Choose premium terms of 7, 10, 12, 15 or 18 years"
+],
+"best_for": "Guaranteed income in later years"
+},
+"771": {
+"name": "Jeevan Utsav",
+"slug": "jeevan-utsav-771",
+"category": "wholelife",
+"status": "open",
+"tagline": "Whole life plan with guaranteed additions while you pay, then 10% of the Sum Assured every year for life.",
+"points": [
+"Guaranteed additions of Rs 40 per 1,000 Sum Assured every year of premium payment",
+"Lifelong income of 10% of Sum Assured (or let it grow with LIC at interest)",
+"Death: Sum Assured on death plus all guaranteed additions",
+"Premium terms from 5 to 16 years"
+],
+"best_for": "Lifelong guaranteed income with life cover"
+},
+"774": {
+"name": "Amrit Baal",
+"slug": "amrit-baal-774",
+"category": "child",
+"status": "open",
+"tagline": "Child plan with guaranteed additions; the policy matures between ages 18 and 25.",
+"points": [
+"Guaranteed additions accrue every year",
+"Maturity: Sum Assured plus guaranteed additions",
+"Entry for children from 30 days to 13 years",
+"Single, limited or regular premium options"
+],
+"best_for": "Guaranteed fund for a child at 18–25"
+},
+"822": {
+"name": "Anmol Jeevan",
+"slug": "anmol-jeevan-822",
+"category": "term",
+"status": "check",
+"tagline": "Low-cost term cover: pays the Sum Assured only if death happens during the term.",
+"points": [
+"Pure protection, no maturity benefit",
+"Low premium for a high cover"
+],
+"best_for": "Breadwinners needing affordable cover"
+},
+"856": {
+"name": "Pradhan Mantri Vaya Vandana Yojana",
+"slug": "pradhan-mantri-vaya-vandana-yojana-856",
+"category": "pension",
+"status": "closed",
+"tagline": "Government-backed pension scheme for senior citizens (closed for new business).",
+"points": [
+"Pension for 10 years at a fixed rate",
+"Purchase price returned at the end of 10 years"
+],
+"best_for": "Existing policyholders only"
+},
+"857": {
+"name": "Jeevan Akshay VII",
+"slug": "jeevan-akshay-vii-857",
+"category": "pension",
+"status": "open",
+"tagline": "Immediate annuity: buy once and start receiving a guaranteed pension right away.",
+"points": [
+"Pension starts immediately after purchase",
+"Many annuity options: life only, return of purchase price, joint life and more",
+"Rates guaranteed for life on the purchase day"
+],
+"best_for": "Retirees with a lump sum who want pension now"
+},
+"859": {
+"name": "Saral Jeevan Bima",
+"slug": "saral-jeevan-bima-859",
+"category": "term",
+"status": "check",
+"tagline": "Standard term plan with simple, uniform features as prescribed by IRDAI.",
+"points": [
+"Pure protection, no maturity benefit",
+"Death: Sum Assured (at least 10 times yearly premium)",
+"Terms from 5 to 40 years"
+],
+"best_for": "Simple term cover for anyone"
+},
+"861": {
+"name": "Bachat Plus",
+"slug": "bachat-plus-861",
+"category": "endowment",
+"status": "check",
+"tagline": "Savings plan with single or limited premium and loyalty additions.",
+"points": [
+"Single premium or 5-year premium options",
+"Maturity: Sum Assured plus loyalty additions",
+"Death: Sum Assured on death plus loyalty additions after 5 years"
+],
+"best_for": "Short premium payment with savings"
+},
+"862": {
+"name": "Saral Pension",
+"slug": "saral-pension-862",
+"category": "pension",
+"status": "open",
+"tagline": "Standard immediate annuity plan: pension for life with the purchase price returned to the family.",
+"points": [
+"Single life or joint life options",
+"Purchase price returned on death",
+"Pension can be monthly, quarterly, half-yearly or yearly"
+],
+"best_for": "Simple pension for retirees"
+},
+"863": {
+"name": "Dhan Rekha",
+"slug": "dhan-rekha-863",
+"category": "moneyback",
+"status": "check",
+"tagline": "Money back plan with guaranteed additions and periodic survival benefits; also available for women at special rates.",
+"points": [
+"Part of the Sum Assured paid back every few years",
+"Guaranteed additions accrue every year",
+"Single or limited premium options"
+],
+"best_for": "Guaranteed money-back with flexibility"
+},
+"865": {
+"name": "Dhan Sanchay",
+"slug": "dhan-sanchay-865",
+"category": "wholelife",
+"status": "check",
+"tagline": "Guaranteed income plan with a choice of level or increasing income.",
+"points": [
+"Guaranteed income after premium payment",
+"Lump sum terminal benefit at the end",
+"Death: higher of 11 times yearly premium or the maturity sum"
+],
+"best_for": "Guaranteed income for a fixed period"
+},
+"866": {
+"name": "Dhan Varsha",
+"slug": "dhan-varsha-866",
+"category": "endowment",
+"status": "check",
+"tagline": "Single premium guaranteed plan with a choice of death cover of 1.25 or 10 times the premium.",
+"points": [
+"Pay once, get guaranteed additions every year",
+"Maturity: Sum Assured plus guaranteed additions",
+"Choose higher life cover (10 times premium) if needed"
+],
+"best_for": "Lump-sum investors wanting guaranteed returns"
+},
+"867": {
+"name": "New Pension Plus",
+"slug": "new-pension-plus-867",
+"category": "pension",
+"status": "open",
+"tagline": "Unit-linked pension plan: build a retirement fund in LIC unit funds and convert it to pension.",
+"points": [
+"Market-linked retirement corpus",
+"Guaranteed additions on in-force policies",
+"At vesting, buy a pension; part can be commuted as allowed"
+],
+"best_for": "Retirement savers open to market-linked growth"
+},
+"869": {
+"name": "Dhan Vriddhi",
+"slug": "dhan-vriddhi-869",
+"category": "endowment",
+"status": "closed",
+"tagline": "Single premium close-ended guaranteed plan.",
+"points": [
+"Guaranteed additions every year",
+"Maturity: Sum Assured plus additions"
+],
+"best_for": "Existing policyholders only"
+},
+"870": {
+"name": "Jeevan Kiran",
+"slug": "jeevan-kiran-870",
+"category": "term",
+"status": "open",
+"tagline": "Term plan that returns all the premiums paid if you survive the term.",
+"points": [
+"Death: Sum Assured on death during the term",
+"Survival: total premiums paid returned at maturity",
+"Separate rates for smokers and non-smokers"
+],
+"best_for": "Term cover with premium refund"
+},
+"872": {
+"name": "Jeevan Dhara",
+"slug": "jeevan-dhara-872",
+"category": "pension",
+"status": "closed",
+"tagline": "Deferred annuity plan (replaced by New Jeevan Dhara-II).",
+"points": [
+"Annuity from the vesting date",
+"Several annuity options"
+],
+"best_for": "Existing policyholders only"
+},
+"873": {
+"name": "Index Plus",
+"slug": "index-plus-873",
+"category": "ulip",
+"status": "open",
+"tagline": "Unit-linked plan investing in index-based funds with guaranteed additions on premiums.",
+"points": [
+"Funds linked to market indices",
+"Guaranteed additions on in-force policies",
+"Fund value at maturity"
+],
+"best_for": "Long-term investors wanting index exposure"
+},
+"875": {
+"name": "Yuva Term",
+"slug": "yuva-term-875",
+"category": "term",
+"status": "open",
+"tagline": "Affordable term plan for young earners with level cover.",
+"points": [
+"Pure protection, no maturity benefit",
+"Regular, limited or single premium",
+"Entry from 18 to 45 years"
+],
+"best_for": "Young earners starting their family"
+},
+"877": {
+"name": "Yuva Credit Life",
+"slug": "yuva-credit-life-877",
+"category": "term",
+"status": "open",
+"tagline": "Decreasing cover term plan to protect a home, vehicle or education loan.",
+"points": [
+"Cover reduces as the loan is repaid",
+"Protects the family from loan repayment on death"
+],
+"best_for": "Borrowers with a home or personal loan"
+},
+"879": {
+"name": "Smart Pension",
+"slug": "smart-pension-879",
+"category": "pension",
+"status": "open",
+"tagline": "Single premium immediate annuity with many single and joint life options, including liquidity.",
+"points": [
+"Pension starts right away",
+"Joint life options for spouse",
+"Partial withdrawal option under selected annuity options"
+],
+"best_for": "Retirees wanting flexible pension"
+},
+"880": {
+"name": "Jan Suraksha",
+"slug": "jan-suraksha-880",
+"category": "endowment",
+"status": "open",
+"tagline": "Micro insurance savings plan with guaranteed additions for low-income families.",
+"points": [
+"Small Sum Assured and low premium",
+"Maturity: Sum Assured plus guaranteed additions",
+"Simple proposal (Form 505)"
+],
+"best_for": "Rural and low-income families"
+},
+"881": {
+"name": "Bima Lakshmi",
+"slug": "bima-lakshmi-881",
+"category": "moneyback",
+"status": "open",
+"tagline": "Savings plan for women with guaranteed additions and a choice of payout patterns.",
+"points": [
+"Policy term of 25 years",
+"Choose a payout at the end of premium term, every 2 years or every 4 years",
+"Guaranteed additions accrue every year"
+],
+"best_for": "Women planning their own savings"
+},
+"883": {
+"name": "Jeevan Utsav Single Premium",
+"slug": "jeevan-utsav-single-premium-883",
+"category": "wholelife",
+"status": "open",
+"tagline": "Pay once, earn guaranteed additions during a waiting period, then get 10% of the Sum Assured every year for life.",
+"points": [
+"Single premium only",
+"Guaranteed additions during the chosen waiting period (7 to 17 years)",
+"Lifelong income of 10% of Sum Assured after the waiting period",
+"Sum Assured plus additions to the family on death"
+],
+"best_for": "Lump sum today for guaranteed lifelong income"
+},
+"886": {
+"name": "Protection Plus",
+"slug": "protection-plus-886",
+"category": "ulip",
+"status": "open",
+"tagline": "Unit-linked plan with a strong life cover and refund of mortality charges at maturity.",
+"points": [
+"Market-linked fund growth",
+"Mortality charges refunded at maturity",
+"Choice of policy and premium terms"
+],
+"best_for": "Investors wanting cover plus market growth"
+},
+"887": {
+"name": "Bima Kavach",
+"slug": "bima-kavach-887",
+"category": "term",
+"status": "open",
+"tagline": "Non-linked term plan with level or increasing cover options.",
+"points": [
+"Pure protection, no maturity benefit",
+"Regular, limited or single premium",
+"Cover up to age 100 on some options"
+],
+"best_for": "High cover at low cost"
+},
+"888": {
+"name": "New Jeevan Sathi (Single Premium)",
+"slug": "new-jeevan-sathi-single-premium-888",
+"category": "endowment",
+"status": "open",
+"tagline": "Joint life savings plan for couples with a single premium.",
+"points": [
+"One policy covers both spouses",
+"Maturity: Sum Assured plus guaranteed additions if both survive",
+"Benefits on first and second death are defined separately"
+],
+"best_for": "Married couples"
+},
+"889": {
+"name": "New Jeevan Sathi (Limited Premium)",
+"slug": "new-jeevan-sathi-limited-premium-889",
+"category": "endowment",
+"status": "open",
+"tagline": "Joint life savings plan for couples with limited premium payment.",
+"points": [
+"One policy covers both spouses",
+"Maturity: Sum Assured plus guaranteed additions if both survive",
+"Premium paid for a limited period"
+],
+"best_for": "Married couples"
+},
+"890": {
+"name": "New Bima Jyoti",
+"slug": "new-bima-jyoti-890",
+"category": "endowment",
+"status": "open",
+"tagline": "Guaranteed savings plan where additions grow with the premiums paid.",
+"points": [
+"Guaranteed additions every year based on premiums paid",
+"Maturity: Sum Assured plus all additions",
+"Death: higher of 125% of Sum Assured or 7 times yearly premium, plus additions"
+],
+"best_for": "Fully guaranteed maturity"
+},
+"892": {
+"name": "New Jeevan Dhara-II",
+"slug": "new-jeevan-dhara-ii-892",
+"category": "pension",
+"status": "open",
+"tagline": "Deferred annuity: pay regularly or once, and get a guaranteed pension for life from the vesting date.",
+"points": [
+"Pension rates fixed at the start",
+"Regular or single premium; deferment up to 15 years",
+"Options to return part or all of the premiums",
+"Top-up and liquidity options"
+],
+"best_for": "Planning a guaranteed pension in advance"
+},
+"894": {
+"name": "Jeevan Raksha",
+"slug": "jeevan-raksha-894",
+"category": "term",
+"status": "open",
+"tagline": "Pure term plan with separate rates for men and women, smokers and non-smokers.",
+"points": [
+"Pure protection, no maturity benefit",
+"Regular, limited (10/15 years) or single premium",
+"Death: higher of Sum Assured or 7 times yearly premium"
+],
+"best_for": "Affordable family protection"
+},
+"905": {
+"name": "Cancer Cover",
+"slug": "cancer-cover-905",
+"category": "health",
+"status": "closed",
+"tagline": "Old cancer protection plan (replaced by New Cancer Cover 908).",
+"points": [
+"Lump sum on early or major stage cancer"
+],
+"best_for": "Existing policyholders only"
+},
+"906": {
+"name": "Arogya Rakshak",
+"slug": "arogya-rakshak-906",
+"category": "health",
+"status": "check",
+"tagline": "Fixed benefit health plan that pays defined amounts for hospitalisation and surgery, whatever the actual bill.",
+"points": [
+"Fixed daily hospital cash and surgery benefits",
+"Covers the whole family in one policy",
+"Pays in addition to any mediclaim"
+],
+"best_for": "Extra cash support during hospitalisation"
+},
+"907": {
+"name": "Health Shield",
+"slug": "health-shield-907",
+"category": "health",
+"status": "open",
+"tagline": "Fixed benefit health plan for the family with hospital cash, surgery and day care benefits.",
+"points": [
+"Defined amounts for hospitalisation and surgery",
+"Covers self, spouse, children and parents",
+"Benefits paid irrespective of actual bills"
+],
+"best_for": "Family health safety net"
+},
+"908": {
+"name": "New Cancer Cover",
+"slug": "new-cancer-cover-908",
+"category": "health",
+"status": "open",
+"tagline": "Cancer protection plan that pays a lump sum and monthly income on diagnosis.",
+"points": [
+"25% of cover on early stage cancer and premiums waived for 3 years",
+"100% of cover on major stage cancer plus monthly income",
+"Level or increasing cover options"
+],
+"best_for": "Protection against the cost of cancer treatment"
+},
+"911": {
+"name": "Nav Jeevan Shree Single Premium",
+"slug": "nav-jeevan-shree-single-premium-911",
+"category": "endowment",
+"status": "closed",
+"tagline": "Close-ended single premium guaranteed plan (sale period ended 31 March 2026).",
+"points": [
+"Guaranteed additions every year",
+"Maturity: Sum Assured plus additions"
+],
+"best_for": "Existing policyholders only"
+},
+"912": {
+"name": "Nav Jeevan Shree",
+"slug": "nav-jeevan-shree-912",
+"category": "endowment",
+"status": "closed",
+"tagline": "Close-ended limited premium guaranteed plan (sale period ended 31 March 2026).",
+"points": [
+"Guaranteed additions linked to premium",
+"Maturity: Sum Assured plus additions"
+],
+"best_for": "Existing policyholders only"
+},
+"916": {
+"name": "Bima Bachat",
+"slug": "bima-bachat-916",
+"category": "moneyback",
+"status": "check",
+"tagline": "Single premium money back plan returning 15% of the Sum Assured every three years.",
+"points": [
+"15% of Sum Assured every 3 years",
+"Single premium refunded with loyalty addition at maturity"
+],
+"best_for": "Short-term money back"
+},
+"943": {
+"name": "Aadhaar Stambh",
+"slug": "aadhaar-stambh-943",
+"category": "endowment",
+"status": "check",
+"tagline": "Endowment plan for men with an Aadhaar card, with loyalty additions.",
+"points": [
+"Maturity: Sum Assured plus loyalty addition",
+"Low minimum Sum Assured"
+],
+"best_for": "Basic savings for men"
+},
+"944": {
+"name": "Aadhaar Shila",
+"slug": "aadhaar-shila-944",
+"category": "endowment",
+"status": "check",
+"tagline": "Endowment plan for women with an Aadhaar card, with loyalty additions.",
+"points": [
+"Maturity: Sum Assured plus loyalty addition",
+"Low minimum Sum Assured"
+],
+"best_for": "Basic savings for women"
+},
+"947": {
+"name": "Jeevan Shiromani",
+"slug": "jeevan-shiromani-947",
+"category": "moneyback",
+"status": "check",
+"tagline": "High Sum Assured money back plan with guaranteed additions and critical illness cover.",
+"points": [
+"Guaranteed additions every year during premium payment",
+"Survival benefits in the last years of the term",
+"Minimum Sum Assured of Rs 1 crore"
+],
+"best_for": "High net worth customers"
+}
+}
+}

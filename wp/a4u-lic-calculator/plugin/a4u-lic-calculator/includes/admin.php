@@ -235,6 +235,9 @@ function a4u_lic_admin_page() {
 					<tr><th>Plugin update JSON URL</th><td><input type="url" name="update_url" value="<?php echo esc_attr( $s['update_url'] ); ?>" style="width:100%"></td></tr>
 					<tr><th>WhatsApp number</th><td><input type="text" name="whatsapp" value="<?php echo esc_attr( $s['whatsapp'] ); ?>" style="width:160px"> (country code + number)</td></tr>
 					<tr><th>Lead retention (days)</th><td><input type="number" min="30" max="1095" name="retention_days" value="<?php echo (int) $s['retention_days']; ?>" style="width:90px"></td></tr>
+					<tr><th>LIC plan hub slug</th><td><input type="text" name="hub_slug" value="<?php echo esc_attr( $s['hub_slug'] ?? 'lic-plans' ); ?>" style="width:200px"> <span style="color:#666;">All plans: <a href="<?php echo esc_url( home_url( '/' . ( $s['hub_slug'] ?? 'lic-plans' ) . '/' ) ); ?>" target="_blank"><code>/<?php echo esc_html( $s['hub_slug'] ?? 'lic-plans' ); ?>/</code></a></span></td></tr>
+					<tr><th>Lead alert email</th><td><input type="email" name="lead_email" value="<?php echo esc_attr( $s['lead_email'] ?? '' ); ?>" style="width:260px"> <span style="color:#666;">Each new lead is emailed here (leave blank to switch off).</span></td></tr>
+					<tr><th>Lead alert on Telegram</th><td><input type="password" name="tg_token" value="" placeholder="<?php echo '' !== (string) ( $s['tg_token'] ?? '' ) ? 'Saved — leave blank to keep' : 'Bot token'; ?>" style="width:260px" autocomplete="off"> <input type="text" name="tg_chat" value="<?php echo esc_attr( $s['tg_chat'] ?? '' ); ?>" placeholder="Chat ID" style="width:140px"> <label><input type="checkbox" name="tg_clear" value="1"> remove token</label></td></tr>
 					<tr><th>Calculator page slug</th><td><input type="text" name="base_slug" value="<?php echo esc_attr( $s['base_slug'] ); ?>" style="width:200px"> <span style="color:#666;">Plan pages auto-work at <code>/<?php echo esc_html( $s['base_slug'] ); ?>/714/</code></span></td></tr>
 					<tr><th>Update channel</th><td><select name="update_channel"><option value="stable" <?php selected( $s['update_channel'] ?? 'stable', 'stable' ); ?>>Stable (live site)</option><option value="beta" <?php selected( $s['update_channel'] ?? 'stable', 'beta' ); ?>>Beta (staging site — gets new versions first)</option></select></td></tr>
 					<tr><th>Inflation for "today's money" (%)</th><td><input type="number" min="0" max="15" step="0.1" name="inflation" value="<?php echo esc_attr( $s['inflation'] ?? 6 ); ?>" style="width:80px"></td></tr>
@@ -422,6 +425,15 @@ add_action( 'admin_post_a4u_lic_settings', function () {
 	$new_slug            = sanitize_title( $post['base_slug'] ?? 'lic-calculator' );
 	if ( '' !== $new_slug && $new_slug !== $s['base_slug'] ) { update_option( 'a4u_lic_flush', 1, false ); }
 	$s['base_slug'] = '' !== $new_slug ? $new_slug : 'lic-calculator';
+	$hub_slug = sanitize_title( $post['hub_slug'] ?? 'lic-plans' );
+	if ( '' === $hub_slug ) { $hub_slug = 'lic-plans'; }
+	if ( $hub_slug !== ( $s['hub_slug'] ?? 'lic-plans' ) ) { update_option( 'a4u_lic_flush', 1, false ); }
+	$s['hub_slug']   = $hub_slug;
+	$s['lead_email'] = sanitize_email( (string) ( $post['lead_email'] ?? '' ) );
+	$s['tg_chat']    = preg_replace( '/[^0-9@A-Za-z_-]/', '', (string) ( $post['tg_chat'] ?? '' ) );
+	$tg_new          = trim( (string) ( $post['tg_token'] ?? '' ) );
+	if ( ! empty( $post['tg_clear'] ) ) { $s['tg_token'] = ''; }
+	elseif ( '' !== $tg_new && preg_match( '/^\d+:[A-Za-z0-9_-]{20,}$/', $tg_new ) ) { $s['tg_token'] = $tg_new; }
 	$s['whatsapp']  = preg_replace( '/\D/', '', (string) ( $post['whatsapp'] ?? '' ) );
 	foreach ( array( 'brand_name', 'agent_name', 'agent_type', 'agency_code', 'agency_branch', 'brand_phone', 'brand_web', 'agent_title', 'agent_address' ) as $bk ) { $s[ $bk ] = sanitize_text_field( $post[ $bk ] ?? '' ); }
 	$s['agent_email'] = sanitize_email( $post['agent_email'] ?? '' );

@@ -16,6 +16,9 @@ const { JSDOM } = require('jsdom');
 const dataFile = process.argv[2] || 'data/lic/lic-plans.json';
 const engineFile = path.join(__dirname, '..', 'plugin', 'a4u-lic-calculator', 'assets', 'a4u-lic.js');
 const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+// v4: LIC tariff (plugin सोबत येतो) — plan ला जोडायचा
+const tariffFile = path.join(__dirname, '..', 'plugin', 'a4u-lic-calculator', 'assets', 'data', 'lic-tariff.json');
+const tariff = fs.existsSync(tariffFile) ? JSON.parse(fs.readFileSync(tariffFile, 'utf8')).plans : {};
 
 function planTerms(p) {
   if (p.type === 'labh') return Object.keys(p.ppt_map || {}).map(Number);
@@ -26,7 +29,7 @@ function planTerms(p) {
 const plans = Object.entries(data.plans).filter(([, p]) => p && p.type).map(([id, p]) => Object.assign({
   srb: 0, fab: 0, fab_min_term: 99, mode_adj: {}, rebate_slabs: [], rebate_bands: [], bonus_bands: [], riders: [], samples: [],
   sample_sa: 0, points: {}, death_pct: 0, death_sp: [], min_age_by_term: {}, ppt_map: {}, min_maturity: 0, maturity_age: 100, survival_pct: 0, ga_per_1000: 0
-}, p, { id: String(id), name: p.name || id, terms: planTerms(p), has_rates: false, verified: 0, closed: 0 }));
+}, p, { id: String(id), name: p.name || id, terms: planTerms(p), has_rates: false, verified: 0, closed: 0, tariff: tariff[String(id)] || null }));
 
 const dom = new JSDOM('<div id="a4u-lic-app"></div>', { url: 'https://example.org/lic-calculator/', runScripts: 'outside-only' });
 const w = dom.window;
@@ -77,6 +80,33 @@ for (const p of plans) {
       if (!isFinite(r.inst) || !(r.inst > 0) || !isFinite(r.totalBenefit)) fails.push(`${p.id}: bad result age ${age} term ${t}`);
     }
   }
+}
+
+// 4. v4: खऱ्या LIC benefit report शी surrender value (Cash Value) जुळते का (±1%)
+const REPORTS = [
+  { id: '771', age: 3, term: 16, sa: 500000, cv: { 1: 3905, 2: 17910, 3: 32542, 16: 582593, 17: 626255, 18: 673575, 19: 674744 } },
+  { id: '883', age: 3, term: 14, sa: 500000, cv: { 1: 267313, 2: 287731, 5: 358911, 10: 519067, 14: 698300, 20: 700469 } },
+];
+for (const rp of REPORTS) {
+  const p = plans.find(x => x.id === rp.id);
+  if (!p || !p.tariff) { fails.push(`${rp.id}: tariff missing`); continue; }
+  const r = E.compute(p, inp(rp.age, rp.term, rp.sa), {});
+  if (r.errors) { fails.push(`${rp.id}: report case → ${r.errors.join(' ')}`); continue; }
+  for (const [y, want] of Object.entries(rp.cv)) {
+    checked++;
+    const row = r.table[Number(y) - 1];
+    const got = row && row.cv;
+    if (!(got > 0) || Math.abs(got - want) / want > 0.01) fails.push(`${rp.id}: year ${y} cash value expected ${want} got ${got ? Math.round(got) : got}`);
+  }
+}
+// 5. v4: tariff असलेल्या plans मध्ये premium tariff वरूनच येतो का
+for (const p of plans) {
+  if (!p.tariff) continue;
+  const [age, key] = (p.samples || [])[0] || [];
+  if (age === undefined) continue;
+  const r = E.compute(p, inp(age, key, p.sample_sa), {});
+  checked++;
+  if (!r.errors && r.basis !== 'tariff') fails.push(`${p.id}: basis ${r.basis} (tariff expected)`);
 }
 
 console.log(`Golden tests: ${checked} checks on ${plans.length} plans, ${fails.length} failure(s)`);

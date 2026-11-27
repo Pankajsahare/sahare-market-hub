@@ -72,6 +72,14 @@ function a4u_lic_rest_lead( WP_REST_Request $req ) {
 		return new WP_Error( 'db', 'Could not save right now. Please contact us on WhatsApp.', array( 'status' => 500 ) );
 	}
 	a4u_lic_stat_add( 'lead' );
+	// v4: email / Telegram सूचना (tools.php)
+	do_action( 'a4u_lic_lead_saved', array(
+		'name'   => $name,
+		'mobile' => $mobile,
+		'plan'   => substr( sanitize_text_field( (string) $req->get_param( 'plan' ) ), 0, 100 ),
+		'sa'     => absint( $req->get_param( 'sa' ) ),
+		'page'   => esc_url_raw( (string) $req->get_param( 'page' ) ),
+	) );
 	return array( 'ok' => 1, 'message' => 'Thank you! Our advisor will contact you shortly.' );
 }
 
