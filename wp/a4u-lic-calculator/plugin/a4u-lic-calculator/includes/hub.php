@@ -283,6 +283,7 @@ function a4u_lic_hub_config( $r = null ) {
 	return array(
 		'rest'     => esc_url_raw( rest_url( 'a4u-lic/v1/' ) ),
 		'data'     => plugin_dir_url( A4U_LIC_FILE ) . 'assets/data/',
+		'ver'      => A4U_LIC_VER,
 		'vendor'   => plugin_dir_url( A4U_LIC_FILE ) . 'assets/vendor/',
 		'whatsapp' => preg_replace( '/\D/', '', (string) ( $s['whatsapp'] ?? '' ) ),
 		'page'     => $r ? $r['type'] : '',
@@ -371,13 +372,13 @@ function a4u_lic_disclaimer() {
 }
 
 function a4u_lic_lead_box( $plan_label ) {
-	return '<section class="a4h-lead" id="a4h-lead"><h2 data-i18n="lead_h">Get a free quote and advice</h2><p data-i18n="lead_p">Share your name and mobile number. Our advisor will call you with an exact LIC quote.</p>' .
+	return '<section class="a4h-lead" id="a4h-lead"><h2 data-a4h-i18n="lead_h">Get a free quote and advice</h2><p data-a4h-i18n="lead_p">Share your name and mobile number. Our advisor will call you with an exact LIC quote.</p>' .
 		'<form class="a4h-leadform" novalidate><input type="hidden" name="plan" value="' . esc_attr( $plan_label ) . '">' .
-		'<label><span data-i18n="name">Name</span><input name="name" maxlength="100" autocomplete="name" required></label>' .
-		'<label><span data-i18n="mobile">Mobile</span><input name="mobile" inputmode="numeric" maxlength="13" autocomplete="tel" required></label>' .
+		'<label><span data-a4h-i18n="name">Name</span><input name="name" maxlength="100" autocomplete="name" required></label>' .
+		'<label><span data-a4h-i18n="mobile">Mobile</span><input name="mobile" inputmode="numeric" maxlength="13" autocomplete="tel" required></label>' .
 		'<input class="a4h-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">' .
-		'<label class="a4h-ck"><input type="checkbox" name="consent" value="1" required> <span data-i18n="consent">I agree to be contacted by phone or WhatsApp about LIC plans.</span></label>' .
-		'<button type="submit" class="a4h-btn" data-i18n="send">Request call back</button><p class="a4h-msg" role="status"></p></form></section>';
+		'<label class="a4h-ck"><input type="checkbox" name="consent" value="1" required> <span data-a4h-i18n="consent">I agree to be contacted by phone or WhatsApp about LIC plans.</span></label>' .
+		'<button type="submit" class="a4h-btn" data-a4h-i18n="send">Request call back</button><p class="a4h-msg" role="status"></p></form></section>';
 }
 
 /* =====================================================================
@@ -387,8 +388,8 @@ function a4u_lic_lead_box( $plan_label ) {
 function a4u_lic_render_hub() {
 	$cats = a4u_lic_cat_labels();
 	$all  = a4u_lic_catalog();
-	$h    = '<header class="a4h-hero"><p class="a4h-kicker">LIC of India · Plan guide 2026</p><h1 data-i18n="hub_h">All LIC Plans — details, benefits and calculators</h1>' .
-		'<p class="a4h-lede" data-i18n="hub_p">Choose a plan to see who can buy it, what it pays, riders, loan, surrender value, tax and the proposal form. Popular plans have a free premium and benefit calculator.</p>' .
+	$h    = '<header class="a4h-hero"><p class="a4h-kicker">LIC of India · Plan guide 2026</p><h1 data-a4h-i18n="hub_h">All LIC Plans — details, benefits and calculators</h1>' .
+		'<p class="a4h-lede" data-a4h-i18n="hub_p">Choose a plan to see who can buy it, what it pays, riders, loan, surrender value, tax and the proposal form. Popular plans have a free premium and benefit calculator.</p>' .
 		'<div class="a4h-langs" role="group" aria-label="Language"><button type="button" data-lang="en" class="on">English</button><button type="button" data-lang="mr">मराठी</button><button type="button" data-lang="hi">हिंदी</button></div></header>';
 	// tools पट्टी
 	$h .= '<nav class="a4h-tools" aria-label="LIC tools">';
@@ -397,10 +398,10 @@ function a4u_lic_render_hub() {
 	}
 	$h .= '</nav>';
 	// Plan finder
-	$h .= '<section class="a4h-finder" aria-label="Plan finder"><h2 data-i18n="finder_h">Find the right plan</h2><div class="a4h-frow">' .
-		'<label><span data-i18n="age">Your age</span><input type="number" min="0" max="85" id="a4h-age" placeholder="e.g. 32"></label>' .
-		'<label><span data-i18n="search">Search</span><input type="search" id="a4h-q" placeholder="Plan name or number"></label>' .
-		'<label class="a4h-ck"><input type="checkbox" id="a4h-open" checked> <span data-i18n="open_only">Only plans open for sale</span></label></div>' .
+	$h .= '<section class="a4h-finder" aria-label="Plan finder"><h2 data-a4h-i18n="finder_h">Find the right plan</h2><div class="a4h-frow">' .
+		'<label><span data-a4h-i18n="age">Your age</span><input type="number" min="0" max="85" id="a4h-age" placeholder="e.g. 32"></label>' .
+		'<label><span data-a4h-i18n="search">Search</span><input type="search" id="a4h-q" placeholder="Plan name or number"></label>' .
+		'<label class="a4h-ck"><input type="checkbox" id="a4h-open" checked> <span data-a4h-i18n="open_only">Only plans open for sale</span></label></div>' .
 		'<div class="a4h-chips" role="group" aria-label="Plan type"><button type="button" class="on" data-cat="">All</button>';
 	foreach ( $cats as $k => $c ) { $h .= '<button type="button" data-cat="' . esc_attr( $k ) . '" style="--c:' . esc_attr( $c[1] ) . '">' . esc_html( $c[0] ) . '</button>'; }
 	$h .= '</div><p class="a4h-count" aria-live="polite"></p></section>';
@@ -417,10 +418,10 @@ function a4u_lic_render_hub() {
 			a4u_lic_mini( 'Entry age', a4u_lic_card_age( $f['min_age'] ?? '', $f['max_age'] ?? '' ) ) .
 			a4u_lic_mini( 'Term', a4u_lic_card_term( $f['term'] ?? '' ) ) .
 			a4u_lic_mini( 'Min. cover', a4u_lic_card_money( $f['min_sa'] ?? ( $f['min_price'] ?? '' ) ) ) .
-			'</dl><div class="a4h-actions"><a class="a4h-btn ghost" href="' . esc_url( a4u_lic_plan_url( $p ) ) . '" data-i18n="details">Plan details</a>' .
-			( $p['calc'] ? '<a class="a4h-btn" href="' . esc_url( a4u_lic_plan_url( $p ) ) . '#a4h-calc" data-i18n="calc">Calculate</a>' : '' ) . '</div></article>';
+			'</dl><div class="a4h-actions"><a class="a4h-btn ghost" href="' . esc_url( a4u_lic_plan_url( $p ) ) . '" data-a4h-i18n="details">Plan details</a>' .
+			( $p['calc'] ? '<a class="a4h-btn" href="' . esc_url( a4u_lic_plan_url( $p ) ) . '#a4h-calc" data-a4h-i18n="calc">Calculate</a>' : '' ) . '</div></article>';
 	}
-	$h .= '</div><p class="a4h-none" hidden data-i18n="none">No plan matches. Clear the filters or ask us on WhatsApp.</p>';
+	$h .= '</div><p class="a4h-none" hidden data-a4h-i18n="none">No plan matches. Clear the filters or ask us on WhatsApp.</p>';
 	$h .= a4u_lic_lead_box( 'LIC plan hub' ) . a4u_lic_disclaimer();
 	return $h;
 }
@@ -486,52 +487,52 @@ function a4u_lic_render_plan( $p ) {
 	$h  .= '<header class="a4h-hero a4h-plan"><div class="a4h-badges">' . a4u_lic_badge( $p ) . '</div>' .
 		'<h1>LIC ' . esc_html( $p['name'] ) . ' <span class="no">Plan ' . esc_html( $p['id'] ) . '</span></h1><p class="a4h-lede"' . a4u_lic_tr_attr( $p, 0 ) . '>' . esc_html( $p['tagline'] ) . '</p>' .
 		'<div class="a4h-langs" role="group" aria-label="Language"><button type="button" data-lang="en" class="on">English</button><button type="button" data-lang="mr">मराठी</button><button type="button" data-lang="hi">हिंदी</button></div>' .
-		'<div class="a4h-cta">' . ( $p['calc'] ? '<a class="a4h-btn" href="#a4h-calc" data-i18n="calc_prem">Calculate premium</a>' : '' ) .
-		( $wa ? '<a class="a4h-btn wa" target="_blank" rel="noopener" href="' . esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( 'Hi, I want details of ' . $lbl . '.' ) ) . '" data-i18n="wa">Ask on WhatsApp</a>' : '' ) .
-		'<button type="button" class="a4h-btn ghost" id="a4h-card-pdf" data-i18n="card">Download plan card</button>' .
-		( $p['lic_url'] ? '<a class="a4h-btn ghost" target="_blank" rel="noopener" href="' . esc_url( $p['lic_url'] ) . '" data-i18n="licpage">Official LIC page</a>' : '' ) . '</div></header>';
+		'<div class="a4h-cta">' . ( $p['calc'] ? '<a class="a4h-btn" href="#a4h-calc" data-a4h-i18n="calc_prem">Calculate premium</a>' : '' ) .
+		( $wa ? '<a class="a4h-btn wa" target="_blank" rel="noopener" href="' . esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( 'Hi, I want details of ' . $lbl . '.' ) ) . '" data-a4h-i18n="wa">Ask on WhatsApp</a>' : '' ) .
+		'<button type="button" class="a4h-btn ghost" id="a4h-card-pdf" data-a4h-i18n="card">Download plan card</button>' .
+		( $p['lic_url'] ? '<a class="a4h-btn ghost" target="_blank" rel="noopener" href="' . esc_url( $p['lic_url'] ) . '" data-a4h-i18n="licpage">Official LIC page</a>' : '' ) . '</div></header>';
 	if ( 'closed' === $p['status'] ) {
 		$rep = $p['replaced'] && isset( a4u_lic_catalog()[ $p['replaced'] ] ) ? a4u_lic_catalog()[ $p['replaced'] ] : null;
 		$h  .= '<p class="a4h-warn">This plan is closed for new business. The details are for existing policyholders.' . ( $rep ? ' The current plan in its place is <a href="' . esc_url( a4u_lic_plan_url( $rep ) ) . '">LIC ' . esc_html( $rep['name'] ) . ' (' . esc_html( $rep['id'] ) . ')</a>.' : '' ) . '</p>';
 	}
 	elseif ( 'check' === $p['status'] ) { $h .= '<p class="a4h-note">Please confirm with us that this plan is currently on sale before you apply.</p>'; }
 
-	$h .= '<div class="a4h-two"><section class="a4h-box"><h2 data-i18n="glance">At a glance</h2><table class="a4h-facts"><tbody>';
+	$h .= '<div class="a4h-two"><section class="a4h-box"><h2 data-a4h-i18n="glance">At a glance</h2><table class="a4h-facts"><tbody>';
 	foreach ( a4u_lic_fact_rows( $p ) as $row ) { $h .= '<tr><th>' . esc_html( $row[0] ) . '</th><td>' . esc_html( $row[1] ) . '</td></tr>'; }
-	$h .= '</tbody></table></section><section class="a4h-box"><h2 data-i18n="benefits">Key benefits</h2><ul class="a4h-ticks">';
+	$h .= '</tbody></table></section><section class="a4h-box"><h2 data-a4h-i18n="benefits">Key benefits</h2><ul class="a4h-ticks">';
 	foreach ( $p['points'] as $pt ) { $h .= '<li>' . esc_html( $pt ) . '</li>'; }
-	$h .= '</ul><p class="a4h-best"><b data-i18n="best">Best for:</b> <span' . a4u_lic_tr_attr( $p, 1 ) . '>' . esc_html( $p['best_for'] ) . '</span></p>';
+	$h .= '</ul><p class="a4h-best"><b data-a4h-i18n="best">Best for:</b> <span' . a4u_lic_tr_attr( $p, 1 ) . '>' . esc_html( $p['best_for'] ) . '</span></p>';
 	if ( $p['srb'] > 0 ) { $h .= '<p class="a4h-note">Bonus used in our illustration: Simple Reversionary Bonus ₹' . esc_html( 0 + $p['srb'] ) . ' per ₹1,000 Sum Assured per year' . ( $p['fab'] > 0 ? ', Final Additional Bonus up to ₹' . esc_html( 0 + $p['fab'] ) . ' per ₹1,000' : '' ) . ' (not guaranteed).</p>'; }
 	$h .= '</section></div>';
 
 	// दृश्य: plan कसा चालतो (calculator plans साठी JS नमुना illustration ने भरलं जातं)
-	$h .= '<section class="a4h-box a4h-how" id="a4h-how"><h2 data-i18n="how">How the plan works</h2>';
+	$h .= '<section class="a4h-box a4h-how" id="a4h-how"><h2 data-a4h-i18n="how">How the plan works</h2>';
 	if ( $p['calc'] ) {
-		$h .= '<p class="a4h-sub" data-i18n="sample">Example for age 30 with a typical Sum Assured. Use the calculator below for your own figures.</p><div class="a4h-viz" data-sample="' . esc_attr( $p['id'] ) . '"><div class="a4h-skel">Loading illustration…</div></div>';
+		$h .= '<p class="a4h-sub" data-a4h-i18n="sample">Example for age 30 with a typical Sum Assured. Use the calculator below for your own figures.</p><div class="a4h-viz" data-sample="' . esc_attr( $p['id'] ) . '"><div class="a4h-skel">Loading illustration…</div></div>';
 	} else {
 		$h .= a4u_lic_steps_html( $p );
 	}
 	$h .= '</section>';
 
 	if ( $p['calc'] ) {
-		$h .= '<section class="a4h-box" id="a4h-calc"><h2 data-i18n="calc_h">Premium & benefit calculator</h2>' . do_shortcode( '[a4u_lic_calculator plan="' . esc_attr( $p['id'] ) . '" title="LIC ' . esc_attr( $p['name'] ) . ' Calculator"]' ) . '</section>';
+		$h .= '<section class="a4h-box" id="a4h-calc"><h2 data-a4h-i18n="calc_h">Premium & benefit calculator</h2>' . do_shortcode( '[a4u_lic_calculator plan="' . esc_attr( $p['id'] ) . '" title="LIC ' . esc_attr( $p['name'] ) . ' Calculator"]' ) . '</section>';
 	} else {
-		$h .= '<section class="a4h-box"><h2 data-i18n="quote_h">Get an exact quote</h2><p>This plan\'s premium depends on details that need an official LIC quotation. Ask us for a free quote, or open LIC\'s official online services.</p><p><a class="a4h-btn ghost" href="' . esc_url( a4u_lic_tool_url( 'lic-services' ) ) . '">LIC online services</a></p></section>';
+		$h .= '<section class="a4h-box"><h2 data-a4h-i18n="quote_h">Get an exact quote</h2><p>This plan\'s premium depends on details that need an official LIC quotation. Ask us for a free quote, or open LIC\'s official online services.</p><p><a class="a4h-btn ghost" href="' . esc_url( a4u_lic_tool_url( 'lic-services' ) ) . '">LIC online services</a></p></section>';
 	}
 
 	// documents
-	$h .= '<section class="a4h-box"><h2 data-i18n="docs">Documents usually needed</h2><ul class="a4h-ticks"><li>Proposal form: ' . esc_html( $p['form'] ) . '</li><li>Age proof (birth certificate, school certificate, passport or similar)</li><li>Identity and address proof with KYC (Aadhaar, PAN)</li><li>Recent photograph and bank details for payouts (cancelled cheque)</li><li>Income proof for higher covers; medical reports if LIC asks</li></ul>' .
+	$h .= '<section class="a4h-box"><h2 data-a4h-i18n="docs">Documents usually needed</h2><ul class="a4h-ticks"><li>Proposal form: ' . esc_html( $p['form'] ) . '</li><li>Age proof (birth certificate, school certificate, passport or similar)</li><li>Identity and address proof with KYC (Aadhaar, PAN)</li><li>Recent photograph and bank details for payouts (cancelled cheque)</li><li>Income proof for higher covers; medical reports if LIC asks</li></ul>' .
 		( $p['brochure'] || $p['lic_url'] ? '<p class="a4h-actions">' . ( $p['brochure'] ? '<a class="a4h-btn ghost" target="_blank" rel="noopener" href="' . esc_url( $p['brochure'] ) . '">Official LIC sales brochure (PDF)</a>' : '' ) . ( $p['lic_url'] ? '<a class="a4h-btn ghost" target="_blank" rel="noopener" href="' . esc_url( $p['lic_url'] ) . '">Plan page on licindia.in</a>' : '' ) . '</p>' : '' ) . '</section>';
 
 	// FAQ
-	$h .= '<section class="a4h-box a4h-faq"><h2 data-i18n="faq">Frequently asked questions</h2>';
+	$h .= '<section class="a4h-box a4h-faq"><h2 data-a4h-i18n="faq">Frequently asked questions</h2>';
 	foreach ( a4u_lic_plan_faq( $p ) as $q ) { $h .= '<details><summary>' . esc_html( $q[0] ) . '</summary><p>' . esc_html( $q[1] ) . '</p></details>'; }
 	$h .= '</section>';
 
 	// मिळतेजुळते plans
 	$sim = array_filter( a4u_lic_catalog(), function ( $x ) use ( $p ) { return $x['cat'] === $p['cat'] && $x['id'] !== $p['id'] && 'closed' !== $x['status']; } );
 	if ( $sim ) {
-		$h .= '<section class="a4h-box"><h2 data-i18n="similar">Similar LIC plans</h2><div class="a4h-sim">';
+		$h .= '<section class="a4h-box"><h2 data-a4h-i18n="similar">Similar LIC plans</h2><div class="a4h-sim">';
 		foreach ( array_slice( $sim, 0, 6 ) as $x ) { $h .= '<a href="' . esc_url( a4u_lic_plan_url( $x ) ) . '"><b>' . esc_html( $x['name'] ) . '</b> <span class="no">' . esc_html( $x['id'] ) . '</span></a>'; }
 		$h .= '</div><p><a href="' . esc_url( a4u_lic_tool_url( 'compare-plans' ) . '?plans=' . $p['id'] ) . '">Compare with other plans →</a></p></section>';
 	}

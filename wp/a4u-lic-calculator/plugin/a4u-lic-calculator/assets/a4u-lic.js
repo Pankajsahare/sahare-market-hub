@@ -897,8 +897,8 @@
 				['Premium', function (x) { return inr(x.inst) + ' <small>(' + modeName(x) + ')</small>'; }],
 				['Total premium paid', function (x) { return inr(x.totalPrem); }],
 				['Guaranteed benefits', function (x) { return inr(guaranteedOf(x)); }],
-				['Non-guaranteed bonus (est.)', function (x) { return inr(x.bonus + x.fab); }],
-				['Estimated total benefits', function (x) { return inr(x.totalBenefit); }],
+				['Non-guaranteed bonus (est.)', function (x) { var v = x.bonus + x.fab; return isFinite(v) ? inr(v) : '—'; }],
+				['Estimated total benefits', function (x) { return isFinite(x.totalBenefit) ? inr(x.totalBenefit) : '—'; }],
 				['Return (IRR, approx.)', function (x) { return x.irr === null ? '—' : (x.irr * 100).toFixed(2) + '%'; }],
 				['Last payout at age', function (x) { return String(x.age + x.T); }]
 			];

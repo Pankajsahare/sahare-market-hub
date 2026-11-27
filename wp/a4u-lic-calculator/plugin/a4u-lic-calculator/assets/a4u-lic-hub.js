@@ -20,7 +20,7 @@
 		if ((n || 0) > 100) { return; }
 		setTimeout(function () { whenApi(cb, (n || 0) + 1); }, 100);
 	}
-	function getJSON(f) { return fetch(H.data + f + '?v=4').then(function (r) { if (!r.ok) { throw new Error(r.status); } return r.json(); }); }
+	function getJSON(f) { return fetch(H.data + f + '?v=' + (H.ver || '4')).then(function (r) { if (!r.ok) { throw new Error(r.status); } return r.json(); }); }
 
 	/* =====================================================================
 	 * 1. भाषा (UI शब्द) — English / मराठी / हिंदी
@@ -31,8 +31,8 @@
 	};
 	var EN = {};
 	function setLang(l) {
-		$$('[data-i18n]').forEach(function (el) {
-			var k = el.getAttribute('data-i18n');
+		$$('[data-a4h-i18n]').forEach(function (el) {
+			var k = el.getAttribute('data-a4h-i18n');
 			if (!(k in EN)) { EN[k] = el.textContent; }
 			el.textContent = l !== 'en' && T[l] && T[l][k] ? T[l][k] : EN[k];
 		});

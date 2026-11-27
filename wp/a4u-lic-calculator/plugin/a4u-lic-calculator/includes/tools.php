@@ -25,7 +25,7 @@ function a4u_lic_render_tool( $k, $with_head = true ) {
 			$h .= a4u_lic_bonus_html();
 			break;
 		case 'branch-locator':
-			$h .= '<section class="a4h-box a4h-branch"><div class="a4h-frow"><label><span data-i18n="bsearch">City, PIN code or branch</span><input type="search" id="a4h-bq" placeholder="e.g. Nagpur or 440001" autocomplete="off"></label><label><span data-i18n="division">Division</span><select id="a4h-bdo"><option value="">All divisions</option></select></label></div><p class="a4h-count" aria-live="polite">Loading branches…</p><div class="a4h-blist"></div></section>' .
+			$h .= '<section class="a4h-box a4h-branch"><div class="a4h-frow"><label><span data-a4h-i18n="bsearch">City, PIN code or branch</span><input type="search" id="a4h-bq" placeholder="e.g. Nagpur or 440001" autocomplete="off"></label><label><span data-a4h-i18n="division">Division</span><select id="a4h-bdo"><option value="">All divisions</option></select></label></div><p class="a4h-count" aria-live="polite">Loading branches…</p><div class="a4h-blist"></div></section>' .
 				'<p class="a4h-note">Branch details are from LIC\'s published branch list. Please confirm timings and contact details with the branch.</p>';
 			break;
 		case 'lic-services':
@@ -46,10 +46,10 @@ function a4u_lic_compare_html() {
 		return '<label><span>Plan ' . $n . '</span><select class="a4h-cp" data-def="' . esc_attr( $def ) . '"><option value="">— choose —</option>' . $opts . '</select></label>';
 	};
 	return '<section class="a4h-box a4h-compare"><div class="a4h-frow">' . $sel( 1, '736' ) . $sel( 2, '715' ) . $sel( 3, '' ) . '</div>' .
-		'<div class="a4h-frow"><label><span data-i18n="age">Age</span><input type="number" id="a4h-cage" min="0" max="65" value="30"></label>' .
-		'<label><span data-i18n="sa">Sum Assured (₹)</span><input type="number" id="a4h-csa" min="100000" step="25000" value="1000000"></label>' .
-		'<label><span data-i18n="term">Preferred term (years)</span><input type="number" id="a4h-cterm" min="5" max="40" value="21"></label>' .
-		'<button type="button" class="a4h-btn" id="a4h-cgo" data-i18n="compare">Compare</button></div>' .
+		'<div class="a4h-frow"><label><span data-a4h-i18n="age">Age</span><input type="number" id="a4h-cage" min="0" max="65" value="30"></label>' .
+		'<label><span data-a4h-i18n="sa">Sum Assured (₹)</span><input type="number" id="a4h-csa" min="100000" step="25000" value="1000000"></label>' .
+		'<label><span data-a4h-i18n="term">Preferred term (years)</span><input type="number" id="a4h-cterm" min="5" max="40" value="21"></label>' .
+		'<button type="button" class="a4h-btn" id="a4h-cgo" data-a4h-i18n="compare">Compare</button></div>' .
 		'<p class="a4h-sub">For each plan we use the nearest allowed term or premium paying term. Figures use LIC tariff rates where available and current bonus rates (not guaranteed).</p>' .
 		'<div class="a4h-cout"></div></section>' . a4u_lic_engine_tag();
 }
@@ -66,11 +66,11 @@ function a4u_lic_engine_tag() {
 /* ---------- Revival ---------- */
 function a4u_lic_revival_html() {
 	return '<section class="a4h-box a4h-rev"><div class="a4h-frow">' .
-		'<label><span data-i18n="mode">Premium mode</span><select id="a4h-rmode"><option value="yearly">Yearly</option><option value="half">Half-yearly</option><option value="quarter">Quarterly</option><option value="month">Monthly</option></select></label>' .
-		'<label><span data-i18n="inst">Instalment premium (₹)</span><input type="number" id="a4h-rprem" min="100" step="1" placeholder="e.g. 12500"></label>' .
-		'<label><span data-i18n="fup">First unpaid premium due date (FUP)</span><input type="date" id="a4h-rfup"></label>' .
-		'<label><span data-i18n="revdate">Revival date</span><input type="date" id="a4h-rdate"></label>' .
-		'<button type="button" class="a4h-btn" id="a4h-rgo" data-i18n="calc">Calculate</button></div><div class="a4h-rout"></div>' .
+		'<label><span data-a4h-i18n="mode">Premium mode</span><select id="a4h-rmode"><option value="yearly">Yearly</option><option value="half">Half-yearly</option><option value="quarter">Quarterly</option><option value="month">Monthly</option></select></label>' .
+		'<label><span data-a4h-i18n="inst">Instalment premium (₹)</span><input type="number" id="a4h-rprem" min="100" step="1" placeholder="e.g. 12500"></label>' .
+		'<label><span data-a4h-i18n="fup">First unpaid premium due date (FUP)</span><input type="date" id="a4h-rfup"></label>' .
+		'<label><span data-a4h-i18n="revdate">Revival date</span><input type="date" id="a4h-rdate"></label>' .
+		'<button type="button" class="a4h-btn" id="a4h-rgo" data-a4h-i18n="calc">Calculate</button></div><div class="a4h-rout"></div>' .
 		'<ul class="a4h-ticks a4h-small"><li>A lapsed LIC policy can usually be revived within 5 years from the first unpaid premium (check your plan\'s rules).</li><li>LIC charges interest on each late instalment; the rate is set by LIC from time to time. This tool uses LIC\'s published revival interest factors.</li><li>LIC may ask for a health declaration or medical reports, and may run revival campaigns with concessions on late fees.</li><li>The final amount is shown by LIC at the branch, on the LIC customer portal or by your agent.</li></ul></section>';
 }
 
