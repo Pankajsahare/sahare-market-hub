@@ -283,14 +283,15 @@
 		} else {
 			c3 += '<div class="a4p-modes"><div class="sel"><span>' + tt('once') + '</span><b>' + inr(r.inst) + '</b></div></div>';
 		}
-		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inr(r.totalPrem) + '</b></div><div class="get"><span>' + tt('gettot') + '</span><b>' + inr(r.totalBenefit) + '</b></div></div>' +
+		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inr(r.totalPrem) + '</b></div><div class="get"><span>' + (p.type === 'term' ? tt('lcover') : tt('gettot')) + '</span><b>' + inr(p.type === 'term' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + '</b></div></div>' +
 			(RI.ratio ? '<p class="a4p-every">' + fmtT('every1', { x: RI.ratio.toFixed(2) }) + '</p>' : '');
 		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
 			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
 			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + inr(r.totalBenefitLow - r.totalPrem) + '</td><td>' + pct(r.irrLow) + '</td></tr>' : '') + '</tbody></table>';
 		if (V4) { // v4.1 (S1): screen वरचेच charts PDF मध्ये
-			c3 += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="' + img(V4.cashflow(r)) + '" alt="">' +
-				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#1f8f4e"></span>' + tt('got') + '</p>' +
+			var cfs = V4.cashflow(r);
+			c3 += '<h3>' + tt('chart') + '</h3>' + (cfs ? '<img class="a4p-chart" src="' + img(cfs) + '" alt="">' +
+				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#1f8f4e"></span>' + tt('got') + '</p>' : '') +
 				'<img class="a4p-chart" src="' + img(V4.value(r)) + '" alt="">' +
 				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#d9822b"></span>' + tt('lcover') + (r.table && r.table.some(function (x) { return x.cv > 0; }) ? ' <span style="background:#7a4bc2"></span>Surrender value' : '') + '</p>';
 		} else {

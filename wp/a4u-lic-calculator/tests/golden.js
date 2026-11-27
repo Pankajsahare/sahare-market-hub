@@ -111,6 +111,33 @@ for (const rp of REPORTS) {
     }
   }
 }
+// 4c. v4.2: 770 Bima Platinum आणि 894 Jeevan Raksha — brochure चे sample premium (tariff + mode नियम)
+{
+  const base = { srb: 0, fab: 0, fab_min_term: 99, rebate_slabs: [], rebate_bands: [], bonus_bands: [], riders: [], samples: [], death_sp: [], min_age_by_term: {}, ppt_map: {}, maturity_age: 100, survival_pct: 0, ga_per_1000: 0, verified: 0, closed: 0, has_rates: false };
+  const t770 = tariff['770'], t894 = tariff['894'];
+  const p770 = Object.assign({}, base, { id: '770', name: 'Bima Platinum', type: 'platinum', min_age: 0, max_age: 55, min_maturity: 28, max_maturity: 75, min_sa: 300000, sa_slabs: [[300000, 10000]], mode_adj: { yearly: 0, half: 1.8, quarter: 2.72, month: 3.32 }, survival_pct: 10, booster_pct: 70, ga_prem_per_1000: 70, death_pct: 0, terms: [], tariff: t770 });
+  const S770 = { 15: [81810, 54735, 43020, 32145, 24990], 25: [83145, 55275, 43290, 32220, 25005], 35: [87495, 57015, 44160, 32445, 25005], 45: [100365, 62025, 46770, 33465, 25425] };
+  [7, 10, 12, 15, 18].forEach((P, i) => Object.entries(S770).forEach(([age, v]) => {
+    if (Number(age) === 45 && P === 18) { /* brochure: वय 45 + 18 वर्षं — तरीही नमुना दिलेला */ }
+    checked++;
+    const r = E.compute(p770, inp(Number(age), P * 100 + 30, 300000), {});
+    if (r.errors) { if (!(Number(age) > 47 && P === 18)) fails.push(`770 age ${age} PPT ${P}: ${r.errors.join(' ')}`); return; }
+    if (Math.abs(r.pr.yearPay - v[i]) > 1) fails.push(`770 age ${age} PPT ${P}: expected ${v[i]} got ${Math.round(r.pr.yearPay)}`);
+  }));
+  const p894 = Object.assign({}, base, { id: '894', name: 'Jeevan Raksha', type: 'term', min_age: 18, max_age: 45, min_maturity: 33, max_maturity: 60, min_sa: 500000, max_sa: 2400000, sa_slabs: [[500000, 50000], [800000, 100000]], mode_adj: { yearly: 0, half: 2 }, allowed_modes: ['yearly', 'half'], death_pct: 100, terms: [], tariff: t894,
+    rebate_pct_bands: [[30, [[700000, 5], [1000000, 10], [1500000, 15], [2000000, 18]]], [45, [[700000, 3], [1000000, 6], [1500000, 10], [2000000, 14]]]] });
+  const S894 = { 20: [2290, 2555, 3150], 30: [2730, 3070, 3825], 40: [4435, 5035, 6390] };
+  Object.entries(S894).forEach(([age, v]) => [[2020, 0], [1520, 1], [1020, 2]].forEach(([key, i]) => {
+    checked++;
+    const r = E.compute(p894, inp(Number(age), key, 500000), {});
+    if (r.errors) { fails.push(`894 age ${age} key ${key}: ${r.errors.join(' ')}`); return; }
+    if (Math.abs(r.pr.yearPay - v[i]) > 1) fails.push(`894 age ${age} key ${key}: expected ${v[i]} got ${Math.round(r.pr.yearPay)}`);
+  }));
+  // 894 high SA rebate: वय 30, SA 20 लाख → 18% कमी
+  checked++;
+  const a = E.compute(p894, inp(30, 2020, 500000), {}), b = E.compute(p894, inp(30, 2020, 2000000), {});
+  if (Math.abs(b.pr.yearPay - a.pr.yearPay * 4 * 0.82) > 2) fails.push(`894 rebate at 20 lakh: expected ${Math.round(a.pr.yearPay * 4 * 0.82)} got ${Math.round(b.pr.yearPay)}`);
+}
 // 5. v4: tariff असलेल्या plans मध्ये premium tariff वरूनच येतो का
 for (const p of plans) {
   if (!p.tariff) continue;

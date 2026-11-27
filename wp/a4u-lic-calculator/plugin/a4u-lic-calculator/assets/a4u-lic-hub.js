@@ -71,7 +71,7 @@
 	// A. वर्षवार पैसे: भरलेला हप्ता (खाली, निळा) व मिळालेली रक्कम (वर, हिरवी)
 	function cashflowSvg(r) {
 		var tb = r.table || [], n = tb.length;
-		if (!n) { return ''; }
+		if (!n || !tb.some(function (x) { return x.ret > 0; })) { return ''; } // काहीच मिळत नसेल (term plan) तर हा chart नको
 		var W = CW(), Hh = 300, L = 62, R = 14, Tp = 18, B = 40;
 		var maxUp = 0, maxDn = 0;
 		tb.forEach(function (x) { maxUp = Math.max(maxUp, x.ret || 0); maxDn = Math.max(maxDn, x.prem || 0); });
@@ -243,10 +243,10 @@
 
 	function chartsHtml(r) {
 		var hasCv = (r.table || []).some(function (x) { return x.cv > 0; });
-		var bu = buildupSvg(r);
+		var bu = buildupSvg(r), cf = cashflowSvg(r);
 		return '<div class="a4c-set">' +
 			'<figure><figcaption>Your policy at a glance <small>(age on the scale)</small></figcaption>' + lifeTimelineSvg(r) + legend([['Premium paying years', COL.pay], ['Life cover', COL.cover], ['Money you receive', COL.get], ['Maturity', COL.mat]]) + '</figure>' +
-			'<figure><figcaption>Money in and money out, year by year</figcaption>' + cashflowSvg(r) + legend([['Premium you pay', COL.pay], ['Money you receive', COL.get], ['Maturity', COL.mat]]) + '</figure>' +
+			(cf ? '<figure><figcaption>Money in and money out, year by year</figcaption>' + cf + legend([['Premium you pay', COL.pay], ['Money you receive', COL.get], ['Maturity', COL.mat]]) + '</figure>' : '') +
 			'<figure><figcaption>What your policy is worth each year <small>(hover or tap for figures)</small></figcaption>' + valueSvg(r) + legend([['Premiums paid so far', COL.pay], ['Life cover', COL.cover]].concat(hasCv ? [['Surrender value (estimate)', COL.cv]] : [])) + '</figure>' +
 			(bu ? '<figure><figcaption>How the total benefit adds up</figcaption>' + bu + '<p class="a4c-note">Bonus figures are estimates at current rates and are not guaranteed.</p></figure>' : '') +
 			'</div>';
@@ -291,7 +291,11 @@
 		var terms = (p.terms || []).slice();
 		if (!terms.length) { return null; }
 		var want = term || (p.type === 'single' ? 15 : 20);
-		var tv = function (t) { return p.type === 'platinum' ? t % 100 + Math.abs(Math.floor(t / 100) - 10) / 100 : t; }; // 770: term ≈ want, PPT 10 जवळ
+		var tv = function (t) { // 770: term ≈ want, PPT 10 जवळ; 894: नियमित हप्ता आधी
+			if (p.type === 'platinum') { return t % 100 + Math.abs(Math.floor(t / 100) - 10) / 100; }
+			if (p.type === 'term') { return t % 100 + (Math.floor(t / 100) === t % 100 ? 0 : 0.5); }
+			return t;
+		};
 		var order = terms.slice().sort(function (a, b) { return Math.abs(tv(a) - want) - Math.abs(tv(b) - want); });
 		for (var i = 0; i < order.length; i++) {
 			var a = Math.min(Math.max(age, p.min_age), p.max_age);
@@ -309,7 +313,7 @@
 			(A.load ? A.load(p) : Promise.resolve()).then(function () {
 			var r = sampleFor(A, p, 30, p.type === 'single' || p.type === 'utsav_sp' ? 500000 : 1000000);
 			if (!r) { box.innerHTML = '<p class="a4h-note">Use the calculator below to see the illustration.</p>'; return; }
-			box.innerHTML = '<div class="a4h-kpis"><div><span>Yearly premium</span><b>' + inr(r.pr.yearPay) + '</b></div><div><span>Total premium</span><b>' + inr(r.totalPrem) + '</b></div><div><span>Total benefit (est.)</span><b>' + inr(r.totalBenefit) + '</b></div><div><span>Return (IRR)</span><b>' + (r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '%') + '</b></div></div>' +
+			box.innerHTML = '<div class="a4h-kpis"><div><span>Yearly premium</span><b>' + inr(r.pr.yearPay) + '</b></div><div><span>Total premium</span><b>' + inr(r.totalPrem) + '</b></div>' + (p.type === 'term' ? '<div><span>Life cover</span><b>' + inr(Math.max(r.deathSA || 0, r.sa)) + '</b></div><div><span>Cover till age</span><b>' + (r.age + r.T) + '</b></div>' : '<div><span>Total benefit (est.)</span><b>' + inr(r.totalBenefit) + '</b></div><div><span>Return (IRR)</span><b>' + (r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '%') + '</b></div>') + '</div>' +
 				'<p class="a4h-sub">Age ' + r.age + ' · Sum Assured ' + inr(r.sa) + ' · Term ' + r.T + ' yrs · Premium for ' + (r.P === 1 ? 'one time' : r.P + ' yrs') + '</p>' + chartsHtml(r);
 			bindValueTips(box, r);
 			});

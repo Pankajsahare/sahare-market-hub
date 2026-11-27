@@ -72,6 +72,10 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 			'ppt_age'         => (object) ( $p['ppt_age'] ?? array() ),
 			'ga_prem_per_1000' => (float) ( $p['ga_prem_per_1000'] ?? 0 ),
 			'booster_pct'     => (float) ( $p['booster_pct'] ?? 0 ),
+			'ga_hsa'          => (object) ( $p['ga_hsa'] ?? array() ),
+			'rebate_pct_bands' => array_values( (array) ( $p['rebate_pct_bands'] ?? array() ) ),
+			'allowed_modes'   => array_values( (array) ( $p['allowed_modes'] ?? array() ) ),
+			'max_sa'          => (int) ( $p['max_sa'] ?? 0 ),
 		);
 	}
 	$links = array();

@@ -111,6 +111,7 @@
 		field('<span data-term-label>Policy term</span>', '<select name="term"></select>') +
 		field('Payment mode', '<select name="mode">' + modeOpts + '</select>', 'a4u-mode') +
 		'</div>' +
+		field('Smoking', '<select name="smoker"><option value="NS">Non-smoker</option><option value="S">Smoker</option></select>', 'a4u-smoker') + // v4.2: 894
 		field('Income option', '<select name="income"><option value="regular">Regular Income (paid every year)</option><option value="flexi">Flexi Income (accumulate @ 5.5% p.a.)</option></select>', 'a4u-income') +
 		(C.advisor ? '<details class="a4u-adv a4u-bonus-box"><summary>Bonus assumptions (advisor)</summary>' +
 			'<div class="a4u-row">' + field('Bonus (SRB) per ₹1000 SA', '<input type="number" name="b_srb" min="0" max="200" step="0.5">') +
@@ -135,6 +136,7 @@
 		if (p.type === 'labh') { return t + ' years (pay ' + p.ppt_map[t] + ' years)'; }
 		if (p.type === 'lakshya') { return t + ' years (pay ' + (t - 3) + ' years)'; }
 		if (p.type === 'platinum') { return (t % 100) + ' years (pay ' + Math.floor(t / 100) + ' years)'; } // v4.1: 770 — PPT×100 + term
+		if (p.type === 'term') { var tp = Math.floor(t / 100), tt = t % 100; return tt + ' years (' + (tp === tt ? 'pay every year' : 'pay ' + tp + ' years') + ')'; } // v4.2: 894
 		return t + ' years';
 	}
 	function termLabel(p) { return p.type === 'utsav_sp' ? 'Guaranteed Addition period' : (BY_PPT[p.type] ? 'Premium paying term' : 'Policy term'); }
@@ -158,6 +160,8 @@
 		var single = !!SINGLE[p.type];
 		root.querySelector('.a4u-mode').hidden = single;
 		root.querySelector('.a4u-income').hidden = !(p.type === 'utsav' || p.type === 'utsav_sp');
+		root.querySelector('.a4u-smoker').hidden = p.type !== 'term';
+		if (p.allowed_modes && p.allowed_modes.length && p.allowed_modes.indexOf(f(form, 'mode').value) < 0) { f(form, 'mode').value = p.allowed_modes[0]; }
 		root.querySelector('[data-budget-label]').textContent = single ? 'One-time premium you can invest (₹)' : 'Premium you can pay per installment (₹)';
 		var sa = f(form, 'sa');
 		sa.min = p.min_sa;
@@ -317,6 +321,7 @@
 			case 'lakshya': return { T: sel, P: sel - 3 };
 			case 'ga_endow': return { T: sel, P: sel - (p.ppt_less || 5) }; // 760 Bima Jyoti: PPT = term − 5
 			case 'platinum': return { T: sel % 100, P: Math.floor(sel / 100) }; // 770 Bima Platinum
+			case 'term': return { T: sel % 100, P: Math.floor(sel / 100) };     // 894 Jeevan Raksha (P = T म्हणजे नियमित)
 			case 'umang':
 			case 'utsav': return { T: (p.maturity_age || 100) - age, P: sel };
 			case 'single': return { T: sel, P: 1 };
@@ -356,6 +361,11 @@
 		var single = !!SINGLE[p.type];
 		var tabular = rate * sa / 1000;
 		var rebate = rebatePer1000(p, sa, inp.age) * sa / 1000;
+		if (p.rebate_pct_bands && p.rebate_pct_bands.length) { // v4.2: 894 — tabular premium च्या % मध्ये (वय गट × SA गट)
+			var rp = 0;
+			p.rebate_pct_bands.some(function (b) { if (inp.age <= b[0]) { b[1].forEach(function (x) { if (sa >= x[0]) { rp = x[1]; } }); return true; } return false; });
+			rebate = tabular * rp / 100;
+		}
 		var base = Math.max(0, tabular - rebate); // annualised premium (mode loading शिवाय)
 		var riders = {}, rTotal = 0, term = ctx.T || inp.term;
 		if (inp.r.adb) { riders.adb = riderRate('adb', inp.age, term) * (inp.r.adbSA || sa) / 1000; }
@@ -373,7 +383,7 @@
 			var sp = base * g;
 			return { rebate: rebate, tabular: tabular, base: base, riders: riders, inst: sp + rTotal * g, yearPay: sp + rTotal * g, modes: null };
 		}
-		var modes = Object.keys(MODES).map(function (k) { var y = yearlyIn(k) * g; return [k, y / MODES[k][1], y]; });
+		var modes = Object.keys(MODES).filter(function (k) { return !(p.allowed_modes && p.allowed_modes.length) || p.allowed_modes.indexOf(k) > -1; }).map(function (k) { var y = yearlyIn(k) * g; return [k, y / MODES[k][1], y]; });
 		var yp = yearlyIn(inp.mode) * g;
 		return { rebate: rebate, tabular: tabular, base: base, riders: riders, inst: yp / MODES[inp.mode][1], yearPay: yp, modes: modes };
 	}
@@ -424,6 +434,8 @@
 			var pa = p.ppt_age[P];
 			if (age < pa[0] || age > pa[1]) { errs.length = 0; errs.push('For a ' + P + '-year premium term the entry age must be ' + (pa[0] === 0 ? '30 days' : pa[0] + ' years') + ' to ' + pa[1] + ' years.'); }
 		}
+		if (p.allowed_modes && p.allowed_modes.length && p.allowed_modes.indexOf(inp.mode) < 0) { errs.push('This plan allows only ' + p.allowed_modes.map(function (m) { return MODES[m][0]; }).join(' or ') + ' premium.'); }
+		if (p.max_sa && inp.by === 'sa' && inp.sa > p.max_sa) { errs.push('Maximum Sum Assured for this plan is ' + inr(p.max_sa) + ' per life.'); }
 		if (errs.length) { return { errors: errs }; }
 
 		var key = BY_PPT[p.type] ? P : T;
@@ -431,7 +443,8 @@
 		// दराचा क्रम: CSV (tariff) → खरी quotation → brochure estimate → demo
 		var rate = rates[age + '|' + key], basis = p.verified ? 'verified' : 'csv';
 		if (!rate && p.tariff) { // v4: LIC tariff (दर per 1000 SA) — अचूक
-			var tr = p.tariff.rate_by_ppt ? tgrid(p.tariff.rate_by_ppt[P], age, T) : tgrid(p.tariff.rate, age, key);
+			var tr = p.tariff.rate_by_opt ? tgrid(p.tariff.rate_by_opt[(inp.gender === 'F' ? 'F' : 'M') + '_' + (inp.smoker === 'S' ? 'S' : 'NS') + '_' + (P === T ? 'RP' : 'LP_' + P)], age, T)
+				: (p.tariff.rate_by_ppt ? tgrid(p.tariff.rate_by_ppt[P], age, T) : tgrid(p.tariff.rate, age, key));
 			if (tr) { rate = tr; basis = 'tariff'; }
 		}
 		if (!rate && p.points && p.points[age + '|' + key]) { rate = Number(p.points[age + '|' + key]); basis = 'quote'; }
@@ -444,7 +457,7 @@
 		var bn = bonusFor(p, T);
 		if (inp.srbO !== null) { bn.srb = inp.srbO; }
 		if (inp.fabO !== null) { bn.fab = inp.fabO; }
-		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow' || p.type === 'platinum') ? 0 : T);
+		var bonusYears = p.type === 'umang' ? P : ((p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'ga_endow' || p.type === 'platinum' || p.type === 'term') ? 0 : T);
 
 		var sa = inp.sa;
 		if (inp.by === 'maturity') { // B: लक्ष्य रकमेवरून SA (वर round — लक्ष्य पूर्ण व्हावं म्हणून)
@@ -470,7 +483,11 @@
 		var bonus = bn.srb * sa / 1000 * bonusYears;
 		var fab = (T >= p.fab_min_term || inp.fabO !== null ? bn.fab : 0) * sa / 1000;
 		var ga = (p.ga_per_1000 || 0) * sa / 1000 * (p.type === 'utsav_sp' ? G : (p.type === 'ga_endow' ? T : P));
-		if (p.type === 'platinum') { ga = (p.ga_prem_per_1000 || 70) / 1000 * pr.base * P; } // 770: एकूण वार्षिक premium वर ₹70/1000 (SA-आधारित जादा GA धरलेला नाही)
+		if (p.type === 'platinum') { // 770: एकूण वार्षिक premium वर ₹70/1000 + high SA incentive (brochure Para 10)
+			var gaRate = p.ga_prem_per_1000 || 70;
+			((p.ga_hsa || {})[P] || []).forEach(function (b) { if (sa >= b[0]) { gaRate = (p.ga_prem_per_1000 || 70) + b[1]; } });
+			ga = gaRate / 1000 * pr.base * P;
+		}
 		var hasIncome = p.type === 'umang' || p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'platinum';
 		var survival = hasIncome ? p.survival_pct * sa / 100 : 0;
 		var incomeStart = p.type === 'utsav' ? Math.max(11, P + 3) : (p.type === 'utsav_sp' ? G + 1 : P);
@@ -480,7 +497,7 @@
 		if (p.type === 'utsav_sp') { maturity = Math.max(sa, 1.25 * pr.tabular) + ga; }
 		else if (p.type === 'moneyback') { maturity = (p.mat_pct || 0) * sa / 100 + bonus + fab; }
 		else if (p.type === 'ga_endow' || p.type === 'platinum') { maturity = sa + ga; }
-		else if (p.type !== 'utsav') { maturity = sa + bonus + fab; }
+		else if (p.type !== 'utsav' && p.type !== 'term') { maturity = sa + bonus + fab; }
 		var sbMap = p.type === 'moneyback' ? mbSchedule(p, age) : {};
 
 		var rows = [], cf = [], cum = 0, totalPrem = 0, totalSurv = 0, flexiBal = 0, y;
@@ -710,6 +727,7 @@
 		last = r;
 		var p = r.plan, m = modeName(r), h = '', pr = r.pr;
 		if (r.mode === 'single') { m = 'Single premium'; }
+		if (p.type === 'term') { h += '<div class="a4u-banner a4u-exact">Pure term plan: if the life assured dies during the term, the family gets the Sum Assured. There is no maturity or surrender value.</div>'; }
 		if (r.basis === 'tariff') { h += '<div class="a4u-banner a4u-exact">Premium worked out from the LIC tariff rate for this age and term. Surrender and loan values are estimates.</div>'; }
 		if (r.basis === 'quote') { h += '<div class="a4u-banner a4u-exact">Based on an actual LIC quotation for this age and term.</div>'; }
 		if (r.basis === 'brochure') { h += '<div class="a4u-banner a4u-est">Estimated from the sample premiums in the official LIC sales brochure. The actual premium may differ slightly for this age and term.</div>'; }
@@ -724,15 +742,17 @@
 		h += '<div class="a4u-cards">' +
 			card(SINGLE[p.type] ? 'Single premium' : 'Installment (' + m + ')', inr(r.inst)) +
 			card('Total premium paid', inr(r.totalPrem)) +
-			card(r.totalSurv ? 'Estimated total benefits' : 'Estimated maturity', inr(r.totalBenefit)) +
-			card('Return (IRR, approx.)', r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '% p.a.') +
+			(p.type === 'term' ? card('Life cover (on death)', inr(Math.max(r.deathSA || 0, r.sa))) + card('Cover till age', String(r.age + r.T)) // v4.2: term — maturity नाही
+			: card(r.totalSurv ? 'Estimated total benefits' : 'Estimated maturity', inr(r.totalBenefit)) +
+			card('Return (IRR, approx.)', r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '% p.a.')) +
 			'</div>';
 
 		// v3.2: LIC report सारखा भाग — You pay / You get, timeline, Maturity Details
 		var RI = reportInfo(r), sp1 = !!SINGLE[p.type];
 		h += '<div class="a4u-rep"><div class="a4u-paybox">' +
 			'<div><span>' + RL.paytot + '</span><b>' + inr(r.totalPrem) + '</b>' + (sp1 ? '' : '<small>' + rfmt(rlEN, 'perday', { d: inr(RI.perDay) }) + '</small>') + '</div>' +
-			'<div class="get"><span>' + RL.gettot + '</span><b>' + inr(r.totalBenefit) + '</b>' + (RI.ratio ? '<small>' + rfmt(rlEN, 'every1', { x: RI.ratio.toFixed(2) }) + '</small>' : '') + '</div></div>' +
+			(p.type === 'term' ? '<div class="get"><span>Family gets on death</span><b>' + inr(Math.max(r.deathSA || 0, r.sa)) + '</b><small>Pure protection: nothing is paid if you survive the term</small></div></div>'
+			: '<div class="get"><span>' + RL.gettot + '</span><b>' + inr(r.totalBenefit) + '</b>' + (RI.ratio ? '<small>' + rfmt(rlEN, 'every1', { x: RI.ratio.toFixed(2) }) + '</small>' : '') + '</div></div>') +
 			'<h4>Benefit illustration</h4><div class="a4u-tl">' + timelineSvg(r, '#0b4ea2', '#1f8f4e') + '</div>' +
 			'<p class="a4u-tl-leg"><span class="k pay"></span>' + RL.youpay + ' <span class="k cov"></span>' + RL.lcover + ' <span class="k get"></span>' + RL.youget + ' <em>(age)</em></p>' +
 			'<h4>' + RL.md + '</h4><table class="a4u-sum"><tbody>' + maturityRows(r, rlEN).map(function (q) { return tr(q[0], q[1]); }).join('') + '</tbody></table></div>';
@@ -754,7 +774,7 @@
 			r.sbList.forEach(function (x) { rows += tr('<b>Guaranteed:</b> Money back ' + x[1] + '% of SA at end of year ' + x[0] + ' (age ' + (r.age + x[0]) + ')', inr(x[1] * r.sa / 100)); });
 			rows += tr('<b>Guaranteed:</b> ' + p.mat_pct + '% of SA on maturity (age ' + (r.age + r.T) + ')', inr(p.mat_pct * r.sa / 100));
 		}
-		else if (p.type !== 'utsav') { rows += tr('<b>Guaranteed:</b> Basic Sum Assured on maturity', inr(r.sa)); }
+		else if (p.type !== 'utsav' && p.type !== 'term') { rows += tr('<b>Guaranteed:</b> Basic Sum Assured on maturity', inr(r.sa)); }
 		if (r.totalSurv && p.type !== 'moneyback') {
 			var incName = p.type === 'umang' ? 'Survival benefit' : (r.income === 'flexi' ? 'Flexi income' : 'Regular income');
 			rows += tr('<b>Guaranteed:</b> ' + incName + ' ' + p.survival_pct + '% of SA yearly from year ' + r.incomeStart, inr(r.survival) + ' / yr');
@@ -986,7 +1006,7 @@
 	// Maturity Details — [label, value] यादी
 	function maturityRows(r, t) {
 		var p = r.plan, I = reportInfo(r), out = [];
-		if (p.type !== 'utsav' && p.type !== 'utsav_sp') { out.push([t('m_sa') + (p.type === 'moneyback' ? ' <small>(' + p.mat_pct + '% × ' + inr(r.sa) + ')</small>' : ''), inr(p.type === 'moneyback' ? p.mat_pct * r.sa / 100 : r.sa)]); }
+		if (p.type !== 'utsav' && p.type !== 'utsav_sp' && p.type !== 'term') { out.push([t('m_sa') + (p.type === 'moneyback' ? ' <small>(' + p.mat_pct + '% × ' + inr(r.sa) + ')</small>' : ''), inr(p.type === 'moneyback' ? p.mat_pct * r.sa / 100 : r.sa)]); }
 		if (r.ga) { out.push([t('m_ga') + (I.gaYears ? ' <small>(' + inr(p.ga_per_1000 * r.sa / 1000) + ' × ' + I.gaYears + ')</small>' : ''), inr(r.ga)]); }
 		if (r.bonus) { out.push([t('m_srb') + (I.bonusYears ? ' <small>(' + inr(r.srb * r.sa / 1000) + ' × ' + I.bonusYears + ')</small>' : ''), inr(r.bonus)]); }
 		if (r.fab) { out.push([t('m_fab'), inr(r.fab)]); }
@@ -1217,6 +1237,7 @@
 			target: num('target'),
 			doc: doc,
 			gender: f(form, 'gender').value,
+			smoker: f(form, 'smoker') ? f(form, 'smoker').value : 'NS',
 			srbO: optNum('b_srb'),
 			fabO: optNum('b_fab'),
 			gst: Math.min(28, Math.max(0, parseFloat(f(form, 'gst').value) || 0)),

@@ -26,9 +26,12 @@ CALC = {
     '714': 'endow', '715': 'endow', '717': 'endow', '733': None, '736': 'endow', '760': 'endow',
     '720': None, '721': None, '732': None,
     '745': None, '771': 'utsav', '883': 'utsav_sp',
+    '894': None,  # Jeevan Raksha (term) — surrender value नाही
     '770': None,  # Bima Platinum: दर PPT नुसार वेगळे तक्ते; SSV पडताळलेलं नाही → GSV
 }
 PPT_TABLES = {'770': [7, 10, 12, 15, 18]}
+# 894 Jeevan Raksha: लिंग (M/F) × धूम्रपान (NS/S) × हप्ता पर्याय (RP / LP_10 / LP_15) — single premium वगळला
+OPT_TABLES = {'894': [g + '_' + s + '_' + o for g in ('M', 'F') for s in ('NS', 'S') for o in ('RP', 'LP_10', 'LP_15')]}
 
 
 def num(v):
@@ -86,7 +89,9 @@ def split_cols(c, table, prefix):
 def tariff(c):
     out = {}
     for p, fam in CALC.items():
-        if p in PPT_TABLES:
+        if p in OPT_TABLES:
+            d = {'rate_by_opt': {k: grid(c, f'table_{p}_{k}') for k in OPT_TABLES[p]}}
+        elif p in PPT_TABLES:
             d = {'rate_by_ppt': {str(k): grid(c, f'table_{p}_{k}') for k in PPT_TABLES[p]},
                  'term_rider_by_ppt': {str(k): grid(c, f'TermRider_{p}_{k}') for k in PPT_TABLES[p] if has(c, f'TermRider_{p}_{k}')}}
         else:
