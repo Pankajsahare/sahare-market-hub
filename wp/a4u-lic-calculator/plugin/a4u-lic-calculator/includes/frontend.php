@@ -75,6 +75,7 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 			'ga_hsa'          => (object) ( $p['ga_hsa'] ?? array() ),
 			'rebate_pct_bands' => array_values( (array) ( $p['rebate_pct_bands'] ?? array() ) ),
 			'rebate_pct_bands_sp' => array_values( (array) ( $p['rebate_pct_bands_sp'] ?? array() ) ),
+			'rebate_ppt'          => (object) ( $p['rebate_ppt'] ?? array() ),
 			'allowed_modes'   => array_values( (array) ( $p['allowed_modes'] ?? array() ) ),
 			'max_sa'          => (int) ( $p['max_sa'] ?? 0 ),
 		);

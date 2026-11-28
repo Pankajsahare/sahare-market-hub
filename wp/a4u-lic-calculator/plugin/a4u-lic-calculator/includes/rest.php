@@ -79,6 +79,7 @@ function a4u_lic_rest_lead( WP_REST_Request $req ) {
 		'plan'   => substr( sanitize_text_field( (string) $req->get_param( 'plan' ) ), 0, 100 ),
 		'sa'     => absint( $req->get_param( 'sa' ) ),
 		'page'   => esc_url_raw( (string) $req->get_param( 'page' ) ),
+		'note'   => substr( sanitize_textarea_field( (string) $req->get_param( 'note' ) ), 0, 600 ), // v4.6: Goal Planner निकाल
 	) );
 	return array( 'ok' => 1, 'message' => 'Thank you! Our advisor will contact you shortly.' );
 }

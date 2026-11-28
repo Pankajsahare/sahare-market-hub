@@ -368,6 +368,7 @@
 	/* =====================================================================
 	 * 6. Lead form
 	 * ===================================================================== */
+	var GOAL_NOTE = null;
 	function leadForms() {
 		$$('.a4h-leadform').forEach(function (f) {
 			f.addEventListener('submit', function (e) {
@@ -376,6 +377,7 @@
 				fd.forEach(function (v, k) { body[k] = v; });
 				body.consent = f.consent.checked ? 1 : 0;
 				body.page = location.href.split('#')[0];
+				if (GOAL_NOTE) { body.note = GOAL_NOTE().slice(0, 600); } // v4.6 (S4): Goal Planner चा निकाल advisor ला
 				if (!body.consent || !/^[6-9]\d{9}$/.test(String(body.mobile).replace(/\D/g, '').replace(/^91(?=\d{10}$)/, ''))) { msg.textContent = 'Please enter a valid 10-digit mobile number and tick the consent box.'; return; }
 				var btn = $('button', f);
 				btn.disabled = true; msg.textContent = 'Sending…';
@@ -577,7 +579,20 @@
 		function sip(fv, r, yrs) { var i = r / 1200, n = Math.round(yrs * 12); if (fv <= 0 || n <= 0) { return 0; } if (i === 0) { return fv / n; } return fv * i / ((Math.pow(1 + i, n) - 1) * (1 + i)); }
 		function pvg(a, g, d, n) { if (Math.abs(d - g) < 1e-9) { return a * n; } return a * (1 - Math.pow((1 + g) / (1 + d), n)) / (d - g); }
 		function yrsTxt(y) { return L3(' for ' + y + ' years', ' — ' + y + ' वर्षं', ' — ' + y + ' वर्ष'); }
+		var KEY = 'a4u_goal_v1';
+		function words(n) { // v4.6 (S3): ₹15 लाख / ₹1.2 कोटी
+			n = Math.round(n); if (!(n > 0)) { return ''; }
+			if (n >= 1e7) { return '₹' + +(n / 1e7).toFixed(2) + L3(' crore', ' कोटी', ' करोड़'); }
+			if (n >= 1e5) { return '₹' + +(n / 1e5).toFixed(2) + L3(' lakh', ' लाख', ' लाख'); }
+			if (n >= 1e3) { return '₹' + +(n / 1e3).toFixed(1) + L3(' thousand', ' हजार', ' हज़ार'); }
+			return '₹' + n;
+		}
+		function save() { // v4.6 (S5): या browser मध्येच आकडे लक्षात — server वर काहीच जात नाही
+			try { var d = {}; $$('.a4g input,.a4g select').forEach(function (e) { d[e.id] = e.value; }); localStorage.setItem(KEY, JSON.stringify(d)); } catch (x) {}
+		}
+		try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) { Object.keys(sv).forEach(function (id) { var e = document.getElementById(id); if (e && /^a4g-/.test(id) && sv[id] !== '') { e.value = sv[id]; } }); } } catch (x) {}
 		function show() {
+			$$('.a4g-words').forEach(function (w) { var e = document.getElementById(w.getAttribute('data-for')); w.textContent = e ? words(Number(e.value) || 0) : ''; });
 			var gs = document.getElementById('a4g-goal'), goal = gs.value, type = goal === 'income' ? 'income' : (goal === 'retirement' ? 'retirement' : 'cost');
 			$$('.a4g [data-g]').forEach(function (l) { l.hidden = (' ' + l.getAttribute('data-g') + ' ').indexOf(' ' + type + ' ') < 0; });
 			var i = v('infl') / 100, r = v('ret') / 100, rows = [], gap = 0, need = 0, yrs = 0, sp = 0;
@@ -615,7 +630,8 @@
 				w.document.close(); w.focus(); setTimeout(function () { w.print(); }, 300);
 			}
 		});
-		$$('.a4g input,.a4g select').forEach(function (e) { e.addEventListener('input', show); e.addEventListener('change', show); });
+		$$('.a4g input,.a4g select').forEach(function (e) { e.addEventListener('input', show); e.addEventListener('change', show); e.addEventListener('change', save); });
+		GOAL_NOTE = summary;
 		LANG_HOOKS.push(show); show();
 	}
 

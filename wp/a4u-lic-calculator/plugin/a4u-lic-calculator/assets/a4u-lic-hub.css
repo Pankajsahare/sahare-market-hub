@@ -155,6 +155,7 @@ svg.a4c rect:not(.hov):hover{opacity:.8}
 .a4g .a4g-out { margin-top: 14px; }
 .a4g .a4g-out h3 { margin: 16px 0 6px; font-size: 1.05em; }
 .a4g label[hidden] { display: none !important; }
+.a4g .a4g-words { display: block; min-height: 1.2em; margin-top: 3px; font-size: .82em; font-weight: 600; color: #1a5fb4; }
 
 .a4g-share { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .a4g-share[hidden] { display: none; }

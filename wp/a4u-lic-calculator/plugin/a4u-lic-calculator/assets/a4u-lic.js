@@ -338,8 +338,9 @@
 
 	// दिलेल्या SA साठी premium (riders + GST सकट)
 	// HSA rebate (Rs. per 1000 BSA) — slab नुसार; 883 साठी वयानुसार table
-	function rebatePer1000(p, sa, age) {
+	function rebatePer1000(p, sa, age, P) {
 		var slabs = p.rebate_slabs || [];
+		if (p.rebate_ppt && P && p.rebate_ppt[P]) { slabs = p.rebate_ppt[P]; } // v4.6: PPT प्रमाणे वेगळा high-SA rebate (771)
 		if (p.rebate_bands && p.rebate_bands.length) {
 			slabs = [];
 			for (var i = 0; i < p.rebate_bands.length; i++) { if (age <= p.rebate_bands[i][0]) { slabs = p.rebate_bands[i][1]; break; } }
@@ -363,7 +364,7 @@
 		ctx = ctx || {};
 		var single = !!SINGLE[p.type];
 		var tabular = rate * sa / 1000;
-		var rebate = rebatePer1000(p, sa, inp.age) * sa / 1000;
+		var rebate = rebatePer1000(p, sa, inp.age, ctx.P) * sa / 1000;
 		var rbands = p.type === 'term_sp' && p.rebate_pct_bands_sp && p.rebate_pct_bands_sp.length ? p.rebate_pct_bands_sp : p.rebate_pct_bands;
 		if (rbands && rbands.length) { // v4.2: 894 — tabular premium च्या % मध्ये (वय गट × SA गट); single साठी वेगळा तक्ता
 			var rp = 0;
@@ -501,7 +502,7 @@
 		if (p.type === 'platinum') { // 770: एकूण वार्षिक premium वर ₹70/1000 + high SA incentive (brochure Para 10)
 			var gaRate = p.ga_prem_per_1000 || 70;
 			((p.ga_hsa || {})[P] || []).forEach(function (b) { if (sa >= b[0]) { gaRate = (p.ga_prem_per_1000 || 70) + b[1]; } });
-			ga = gaRate / 1000 * pr.base * P;
+			ga = gaRate / 1000 * pr.base * P * (P + 1) / 2; // v4.6: दरवर्षी आतापर्यंत भरलेल्या एकूण premium वर GA (LIC BI 770 शी तंतोतंत)
 		}
 		var hasIncome = p.type === 'umang' || p.type === 'utsav' || p.type === 'utsav_sp' || p.type === 'platinum';
 		var survival = hasIncome ? p.survival_pct * sa / 100 : 0;
@@ -604,7 +605,7 @@
 			case 'lakshya': // 733: (PUSA + बोनस) × F2 + (मृत्यू-नंतरचं 10% उत्पन्न, भरलेल्या हप्त्यांच्या प्रमाणात) × F1 — खऱ्या report शी पडताळलेलं
 				f1 = tgrid(t.f1, y, o.T); f2 = tgrid(t.f2, y, o.T);
 				if (f1 === null && f2 === null) { return null; }
-				return (pusa + cumAdd) * (f2 || 0) + 0.1 * o.sa * Math.min(paidYears, n) / n * (f1 || 0);
+				return (pusa + (y >= 3 ? cumAdd : 0)) * (f2 || 0) + 0.1 * o.sa * Math.min(paidYears, n) / n * (f1 || 0);
 			case 'umang': // 745: LIC BI (PPT 15 व 30) शी पडताळलेलं
 				f1 = tgrid(t.f1, y, 0);
 				if (f1 === null) { return null; }
@@ -623,8 +624,10 @@
 			case 'utsav':
 				f1 = tgrid(t.f1, y, 0);
 				if (f1 === null) { return null; }
-				f2 = paidYears >= n ? (tgrid(t.f2, y, n) || 0) : 0; // पूर्ण भरलेल्या policy लाच income चं मूल्य
-				return (pusa + cumAdd) * f1 + o.survival * f2;
+				// v4.6: income चं मूल्य हप्ते चालू असतानाही — भरलेल्या हप्त्यांच्या प्रमाणात, टप्प्याटप्प्याने (LIC BI 771, PPT 15 शी तंतोतंत)
+				var fr = Math.min(paidYears, n) / n, kk = y < 3 ? 0 : (fr >= 1 || fr > 0.5 ? 1 : (fr >= 0.4 ? 0.7 : (fr >= 1 / 3 - 1e-9 ? 0.6 : 0.5)));
+				f2 = kk ? (tgrid(t.f2, y, n) || 0) : 0;
+				return (pusa + cumAdd) * f1 + (o.survival || 0) * fr * f2 * kk;
 			case 'utsav_sp':
 				f1 = tgrid(t.f1, y, 0);
 				if (f1 === null) { return null; }
@@ -639,7 +642,7 @@
 		var fp = tgrid(t.gsv_p, y, o.T);
 		if (fp === null) { fp = 0; }
 		var fa = t.gsv_b ? tgrid(t.gsv_b, y, o.T) : (t.gsv_g ? tgrid(t.gsv_g, y, o.T) : (t.gsv_ga ? tgrid(t.gsv_ga, y, o.T) : 0));
-		var prem = single ? (o.pr.tabular || o.pr.base) : cumBase;
+		var prem = single ? o.pr.base : cumBase; // v4.6: rebate नंतरचा भरलेला single premium (LIC BI 717)
 		return Math.max(0, fp * prem + (fa || 0) * cumAdd - (p.gsv_less_income || p.type === 'moneyback' ? sbPaid : 0));
 	}
 	function stepPct(list, y) { // [[वर्ष, %]...] — त्या वर्षापर्यंतचा शेवटचा
@@ -656,10 +659,10 @@
 		var adb = inp.r && inp.r.adb ? Number(inp.r.adbSA) || 0 : 0;
 		var loanRate = (Number(C.loanRate) || 9.5) / 100;
 		for (var y = 1; y <= o.T; y++) {
-			var prem = y <= o.P ? o.pr.yearPay : 0, basePrem = y <= o.P ? (single ? o.pr.tabular || o.pr.base : (o.pr.gsvBase || o.pr.base)) : 0;
+			var prem = y <= o.P ? o.pr.yearPay : 0, basePrem = y <= o.P ? (single ? o.pr.base : (o.pr.gsvBase || o.pr.base)) : 0;
 			cumPrem += prem; cumBase += basePrem; // दाखवायला भरलेला हप्ता; GSV साठी मूळ (tax/rider शिवाय)
 			var add = 0;
-			if (isGA && y <= gaYears) { add = p.type === 'platinum' ? o.ga / o.P : p.ga_per_1000 * o.sa / 1000; }
+			if (isGA && y <= gaYears) { add = p.type === 'platinum' ? o.ga * 2 * y / (o.P * (o.P + 1)) : p.ga_per_1000 * o.sa / 1000; }
 			else if (!isGA && y <= o.bonusYears) { add = o.bn.srb * o.sa / 1000; }
 			cumAdd += add;
 			var inc = 0;
@@ -675,6 +678,8 @@
 			if (tg !== null) { // v4: LIC चे GSV + SSV factors — दोन्हीपैकी जास्त
 				var ts = ssvFor(p, o, y, paidYears, cumAdd, paidOut);
 				cv = Math.max(tg, ts || 0);
+				// v4.6: 771/883 — factor table वय ~90 ला संपतो; LIC BI त्यानंतर शेवटचं SV तसंच ठेवतो
+				if (!(cv > 0) && y > o.P && (p.type === 'utsav' || p.type === 'utsav_sp') && out.length && out[out.length - 1].cv > 0) { cv = out[out.length - 1].cv; }
 				if (y >= (p.loan_from || 1)) {
 					var lp2 = paidYears >= 2 ? (p.loan_pct || 75) / 100 : 0.5;
 					if (p.loan_ga_bands && p.loan_ga_bands.length && y <= gaYears) { lp2 = 0.4; p.loan_ga_bands.forEach(function (b) { if (gaYears >= b[0]) { lp2 = b[1] / 100; } }); }
@@ -683,7 +688,7 @@
 					if (!(loan > 0)) { loan = null; }
 				}
 			} else if (p.gsv_prem && p.gsv_prem.length && y < o.T) {
-				cv = stepPct(p.gsv_prem, y) * (single ? (o.pr.tabular || o.pr.base) : cumBase) + stepPct(p.gsv_add, y) * cumAdd;
+				cv = stepPct(p.gsv_prem, y) * (single ? o.pr.base : cumBase) + stepPct(p.gsv_add, y) * cumAdd;
 				if (p.gsv_less_income) { cv -= paidOut; }
 				cv = Math.max(0, cv);
 				if (y >= (p.loan_from || 2)) {

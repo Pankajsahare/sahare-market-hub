@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 function a4u_lic_tool_head( $k ) {
 	$t = a4u_lic_tools()[ $k ];
 	return '<nav class="a4h-crumb" aria-label="Breadcrumb"><a href="' . esc_url( home_url( '/' ) ) . '">Home</a> › <a href="' . esc_url( home_url( '/' . a4u_lic_hub_slug() . '/' ) ) . '">LIC Plans</a> › <span>' . esc_html( $t[0] ) . '</span></nav>' .
-		'<header class="a4h-hero"><p class="a4h-kicker">LIC tools</p><h1>' . esc_html( $t[0] ) . '</h1><p class="a4h-lede">' . esc_html( $t[1] ) . '</p>' .
+		'<header class="a4h-hero">' . a4u_lic_t( 'LIC tools', 'LIC साधनं', 'LIC टूल्स', 'p', ' class="a4h-kicker"' ) . a4u_lic_t( $t[0], $t[3][0] ?? $t[0], $t[4][0] ?? $t[0], 'h1' ) . a4u_lic_t( $t[1], $t[3][1] ?? $t[1], $t[4][1] ?? $t[1], 'p', ' class="a4h-lede"' ) .
 		'<div class="a4h-langs" role="group" aria-label="Language"><button type="button" data-lang="en" class="on">English</button><button type="button" data-lang="mr">मराठी</button><button type="button" data-lang="hi">हिंदी</button></div></header>';
 }
 
@@ -142,7 +142,7 @@ foreach ( array( 'revival' => 'revival-calculator', 'compare' => 'compare-plans'
  * ===================================================================== */
 add_action( 'a4u_lic_lead_saved', function ( $lead ) {
 	$s    = a4u_lic_data()['settings'];
-	$text = "New LIC lead\nName: {$lead['name']}\nMobile: {$lead['mobile']}\nPlan: {$lead['plan']}" . ( $lead['sa'] ? "\nSum Assured: ₹" . number_format_i18n( $lead['sa'] ) : '' ) . "\nPage: " . ( $lead['page'] ?: '-' );
+	$text = "New LIC lead\nName: {$lead['name']}\nMobile: {$lead['mobile']}\nPlan: {$lead['plan']}" . ( $lead['sa'] ? "\nSum Assured: ₹" . number_format_i18n( $lead['sa'] ) : '' ) . "\nPage: " . ( $lead['page'] ?: '-' ) . ( ! empty( $lead['note'] ) ? "\n\n" . $lead['note'] : '' );
 	$to   = sanitize_email( (string) ( $s['lead_email'] ?? '' ) );
 	if ( $to ) { wp_mail( $to, 'New LIC lead: ' . $lead['name'], $text ); }
 	$tok  = trim( (string) ( $s['tg_token'] ?? '' ) );
@@ -429,7 +429,11 @@ function a4u_lic_goal_html() {
 	}
 	$t = 'a4u_lic_t';
 	$f = function ( $id, $en, $mr, $hi, $val, $step, $extra ) use ( $t ) {
-		return '<label data-g="' . esc_attr( $extra ) . '">' . $t( $en, $mr, $hi ) . '<input type="number" id="a4g-' . $id . '" value="' . esc_attr( $val ) . '" step="' . $step . '" min="0" inputmode="decimal"></label>';
+		// v4.6 (S2): पहिलं ध्येय (शिक्षण = 'cost') सोडून बाकी fields server वरच लपवलेले — JS उशिरा आला तरी गोंधळ नाही
+		$hide  = false === strpos( ' ' . $extra . ' ', ' cost ' ) ? ' hidden' : '';
+		// v4.6 (S3): ₹ fields खाली रक्कम शब्दांत (उदा. ₹15 लाख)
+		$money = false !== strpos( $en, '(₹)' ) ? '<small class="a4g-words" data-for="a4g-' . $id . '"></small>' : '';
+		return '<label data-g="' . esc_attr( $extra ) . '"' . $hide . '>' . $t( $en, $mr, $hi ) . '<input type="number" id="a4g-' . $id . '" value="' . esc_attr( $val ) . '" step="' . $step . '" min="0" inputmode="decimal">' . $money . '</label>';
 	};
 	$opts = array(
 		array( 'education', 'Children\'s education', 'मुलांचं शिक्षण', 'बच्चों की शिक्षा' ),

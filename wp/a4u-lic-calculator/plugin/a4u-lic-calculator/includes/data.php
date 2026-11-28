@@ -20,7 +20,7 @@ function a4u_lic_std_mode() {
 function a4u_lic_brochure_keys() {
 	return array( 'name', 'type', 'min_age', 'max_age', 'min_sa', 'max_maturity', 'min_maturity', 'terms', 'ppt_map', 'ppt_options', 'ppt_max_age_sum',
 		'maturity_age', 'survival_pct', 'ga_per_1000', 'tail_age', 'min_age_by_term', 'sa_slabs', 'rebate_slabs', 'rebate_bands', 'mode_adj',
-		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands', 'ppt_age', 'ga_prem_per_1000', 'booster_pct', 'ga_hsa', 'rebate_pct_bands', 'rebate_pct_bands_sp', 'allowed_modes', 'max_sa', 'loan_pct', 'ppt_less' );
+		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands', 'ppt_age', 'ga_prem_per_1000', 'booster_pct', 'ga_hsa', 'rebate_pct_bands', 'rebate_pct_bands_sp', 'allowed_modes', 'max_sa', 'loan_pct', 'ppt_less', 'rebate_ppt' );
 }
 
 function a4u_lic_default_plans() {
@@ -157,6 +157,8 @@ function a4u_lic_default_plans() {
 			'min_age_by_term' => array( 5 => 8, 6 => 8, 7 => 8, 8 => 8, 9 => 7, 10 => 6, 11 => 5, 12 => 4, 13 => 3, 14 => 2, 15 => 1, 16 => 0 ),
 			'min_sa' => 500000, 'sa_slabs' => array( array( 500000, 25000 ), array( 2400001, 100000 ) ),
 			'rebate_slabs' => array(), // brochure मध्ये टक्के दिलेले नाहीत — admin मध्ये भरा
+			// v4.6: LIC अधिकृत BI (28 Nov 2026) वरून पडताळलेला high-SA rebate: PPT 15, SA ₹10–24 लाख = ₹1.40 / 1000 (इतर टप्पे BI मिळाल्यावर)
+			'rebate_ppt' => array( 15 => array( array( 1000000, 1.40 ) ) ),
 			'mode_adj' => array( 'yearly' => 0, 'half' => 1.75, 'quarter' => 2.5, 'month' => 3.25 ), // Utsav मध्ये rebate नाही, loading आहे
 			'death_pct' => 100, 'riders' => array( 'adb', 'addb', 'term', 'pwb' ),
 			// v3.2: Guaranteed Surrender Value factors + loan नियम (brochure para 12–13)

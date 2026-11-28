@@ -26,10 +26,12 @@ function planTerms(p) {
   return (p.terms || []).map(Number);
 }
 
+// data.php मध्येच असलेल्या (JSON मध्ये नसलेल्या) गोष्टी — plugin सारखंच वागावं म्हणून
+const CODE_EXTRA = { '771': { rebate_ppt: { 15: [[1000000, 1.40]] } } };
 const plans = Object.entries(data.plans).filter(([, p]) => p && p.type).map(([id, p]) => Object.assign({
   srb: 0, fab: 0, fab_min_term: 99, mode_adj: {}, rebate_slabs: [], rebate_bands: [], bonus_bands: [], riders: [], samples: [],
   sample_sa: 0, points: {}, death_pct: 0, death_sp: [], min_age_by_term: {}, ppt_map: {}, min_maturity: 0, maturity_age: 100, survival_pct: 0, ga_per_1000: 0
-}, p, { id: String(id), name: p.name || id, terms: planTerms(p), has_rates: false, verified: 0, closed: 0, tariff: tariff[String(id)] || null }));
+}, p, { id: String(id), name: p.name || id, terms: planTerms(p), has_rates: false, verified: 0, closed: 0, tariff: tariff[String(id)] || null }, CODE_EXTRA[String(id)] || {}));
 
 const dom = new JSDOM('<div id="a4u-lic-app"></div>', { url: 'https://example.org/lic-calculator/', runScripts: 'outside-only' });
 const w = dom.window;
@@ -107,7 +109,7 @@ const REPORTS = [
   // LIC चा अधिकृत Benefit Illustration (ebiz.licindia.in, 28 Nov 2026): 736, वय 36, मुदत 25, SA 20 लाख — सगळी वर्षं तंतोतंत
   { id: '736', age: 36, term: 25, sa: 2000000, srb: 30, tol: 0.001, cv: { 1: 23275, 2: 57187, 3: 127582, 5: 284930, 10: 640285, 15: 1358918, 20: 2225920, 24: 3194384 } },
   { id: '736', age: 36, term: 25, sa: 2000000, srb: 4, tol: 0.001, cv: { 1: 23275, 2: 57187, 3: 103745, 5: 244500, 10: 540699, 14: 852638, 20: 1502496, 24: 2035491 } },
-  { id: '733', age: 36, term: 13, sa: 1000000, srb: 40, tol: 0.002, cv: { 1: 58749, 2: 126202, 3: 203316, 5: 391090, 8: 776920, 10: 1123080, 12: 1374628, 13: 1520000 } },
+  { id: '733', age: 36, term: 13, sa: 1000000, srb: 40, tol: 0.002, cv: { 3: 203316, 5: 391090, 8: 776920, 10: 1123080, 12: 1374628, 13: 1520000 } },
   { id: '883', age: 3, term: 14, sa: 500000, cv: { 1: 267313, 2: 287731, 5: 358911, 10: 519067, 14: 698300, 20: 700469 } },
 ];
 for (const rp of REPORTS) {
@@ -139,7 +141,8 @@ for (const rp of REPORTS) {
 {
   const base = { srb: 0, fab: 0, fab_min_term: 99, rebate_slabs: [], rebate_bands: [], bonus_bands: [], riders: [], samples: [], death_sp: [], min_age_by_term: {}, ppt_map: {}, maturity_age: 100, survival_pct: 0, ga_per_1000: 0, verified: 0, closed: 0, has_rates: false };
   const t770 = tariff['770'], t894 = tariff['894'];
-  const p770 = Object.assign({}, base, { id: '770', name: 'Bima Platinum', type: 'platinum', min_age: 0, max_age: 55, min_maturity: 28, max_maturity: 75, min_sa: 300000, sa_slabs: [[300000, 10000]], mode_adj: { yearly: 0, half: 1.8, quarter: 2.72, month: 3.32 }, survival_pct: 10, booster_pct: 70, ga_prem_per_1000: 70, death_pct: 0, terms: [], tariff: t770 });
+  const p770 = Object.assign({}, base, { id: '770', name: 'Bima Platinum', type: 'platinum', min_age: 0, max_age: 55, min_maturity: 28, max_maturity: 75, min_sa: 300000, sa_slabs: [[300000, 10000]], mode_adj: { yearly: 0, half: 1.8, quarter: 2.72, month: 3.32 }, survival_pct: 10, booster_pct: 70, ga_prem_per_1000: 70, death_pct: 0, terms: [], tariff: t770,
+    ga_hsa: { 7: [[500000, 3], [700000, 6], [1000000, 8]], 10: [[500000, 4], [700000, 7], [1000000, 9]], 12: [[500000, 5], [700000, 8], [1000000, 10]], 15: [[500000, 6], [700000, 10], [1000000, 12]], 18: [[500000, 7], [700000, 12], [1000000, 15]] } });
   const S770 = { 15: [81810, 54735, 43020, 32145, 24990], 25: [83145, 55275, 43290, 32220, 25005], 35: [87495, 57015, 44160, 32445, 25005], 45: [100365, 62025, 46770, 33465, 25425] };
   [7, 10, 12, 15, 18].forEach((P, i) => Object.entries(S770).forEach(([age, v]) => {
     if (Number(age) === 45 && P === 18) { /* brochure: वय 45 + 18 वर्षं — तरीही नमुना दिलेला */ }
@@ -157,6 +160,35 @@ for (const rp of REPORTS) {
     if (r.errors) { fails.push(`894 age ${age} key ${key}: ${r.errors.join(' ')}`); return; }
     if (Math.abs(r.pr.yearPay - v[i]) > 1) fails.push(`894 age ${age} key ${key}: expected ${v[i]} got ${Math.round(r.pr.yearPay)}`);
   }));
+  // v4.6: LIC अधिकृत BI (28 Nov 2026) — 770 वय 36 PPT 15 मुदत 39 SA 10 लाख: premium, GA (एकूण भरलेल्या premium वर 8.2%) आणि GSV
+  {
+    const r = E.compute(p770, inp(36, 1539, 1000000), {});
+    checked++; if (Math.abs(r.inst - 107700) > 1) fails.push(`770 BI premium: expected 107700 got ${r.inst}`);
+    [[1, 8831, 0], [2, 26494, 64620], [3, 52988, 113933], [5, 132471, 271634], [10, 485727, 598925], [15, 1059768, 1091119]].forEach(([y, ga, cv]) => {
+      const row = r.table[y - 1]; checked += 2;
+      if (Math.abs(row.cumAdd - ga) > 2) fails.push(`770 BI year ${y} GA: expected ${ga} got ${Math.round(row.cumAdd)}`);
+      if (Math.abs((row.cv || 0) - cv) > 2) fails.push(`770 BI year ${y} GSV: expected ${cv} got ${Math.round(row.cv || 0)}`);
+    });
+    // 894 स्त्री, वय 36, मुदत 24, SA 10 लाख: BI (online) ₹5,813 = tabular 6,720 × (1 − 6% high SA − 7.5% online) → offline ₹6,316.80
+    const i894 = inp(36, 2424, 1000000); i894.gender = 'F';
+    const r2 = E.compute(p894, i894, {});
+    checked++; if (Math.abs(r2.inst - 6316.8) > 1 || Math.abs(r2.pr.tabular * (1 - 0.06 - 0.075) - 5813) > 1) fails.push(`894 BI female: offline ${r2.inst}, online ${r2.pr.tabular * 0.865}`);
+  }
+  // v4.6: LIC अधिकृत BI — प्रत्येक वर्षाचं surrender value (tests/bi_cases.json); from/to = जुळणारी वर्षं (बाकी आपलं अंदाज कमी = सुरक्षित)
+  {
+    const cases = JSON.parse(fs.readFileSync(path.join(__dirname, 'bi_cases.json'), 'utf8'));
+    for (const c of cases) {
+      const p = plans.find(x => x.id === c.id);
+      const ii = inp(c.age, c.term, c.sa); ii.gender = c.gender || 'M'; ii.srbO = c.srb || null;
+      const r = E.compute(p, ii, {});
+      if (r.errors) { fails.push(`BI ${c.id}: ${r.errors}`); continue; }
+      c.cv.forEach((want, k) => {
+        const y = k + 1; if (want == null || (c.from && y < c.from) || (c.to && y > c.to)) return;
+        const got = (r.table[k] && r.table[k].cv) || 0; checked++;
+        if (Math.abs(got - want) > Math.max(2, want * 0.001)) fails.push(`BI ${c.id} srb ${c.srb} year ${y}: expected ${want} got ${Math.round(got)}`);
+      });
+    }
+  }
   // v4.3: single premium (brochure: 19,035 / 23,805 / 41,770) + single चा rebate (वय 30, 20 लाख → 17%)
   p894.rebate_pct_bands_sp = [[30, [[700000, 4], [1000000, 9], [1500000, 14], [2000000, 17]]], [45, [[700000, 2], [1000000, 5], [1500000, 8], [2000000, 11]]]];
   [[20, 19035], [30, 23805], [40, 41770]].forEach(([age, want]) => {

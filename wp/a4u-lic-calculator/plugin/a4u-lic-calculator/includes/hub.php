@@ -124,16 +124,17 @@ function a4u_lic_plan_url( $p ) { return home_url( '/' . a4u_lic_hub_slug() . '/
 
 // tools (प्रत्येकाचं स्वतंत्र पान /lic-plans/<key>/)
 function a4u_lic_tools() {
+	// [0] title, [1] description, [2] icon, [3] [mr title, mr description], [4] [hi title, hi description] — v4.6 (S1)
 	return array(
-		'premium-calculator'  => array( 'LIC Premium Calculator', 'Premium, maturity, year-wise surrender and loan value for popular LIC plans.', '🧮' ),
-		'compare-plans'       => array( 'Compare LIC Plans', 'Put 2 or 3 LIC plans side by side for the same age and cover.', '⚖️' ),
-		'revival-calculator'  => array( 'Policy Revival Calculator', 'Estimate the amount needed to restart a lapsed LIC policy.', '🔄' ),
-		'bonus-rates'         => array( 'LIC Bonus Rates', 'Bonus rates used for LIC with-profit plans in our illustrations.', '🎁' ),
-		'branch-locator'      => array( 'LIC Branch Locator', 'Find an LIC branch office by city, PIN code or name.', '📍' ),
-		'lic-services'        => array( 'LIC Online Services', 'Official LIC links: pay premium, e-NACH, policy status, NAV, claims.', '🔗' ),
-		'goal-planner'        => array( 'Goal Planner (Needs Analysis)', 'Cost of your goal, cover your family needs, retirement corpus, and the monthly saving to get there, with LIC plans and SIP options to discuss.', '🎯' ),
-		'medical-tests'       => array( 'LIC Medical Tests Checker', 'Which special medical reports LIC may ask for, by age and total sum assured.', '🩺' ),
-		'policy-service-guide' => array( 'LIC Policy Service Guide', 'Loan, nominee, NACH, mode change, bank and PAN update, address change, assignment and ULIP rules, plus older plan versions (914, 915, 936, 945…).', '📘' ),
+		'premium-calculator'  => array( 'LIC Premium Calculator', 'Premium, maturity, year-wise surrender and loan value for popular LIC plans.', '🧮', array( 'LIC Premium Calculator', 'लोकप्रिय LIC plans चा premium, maturity, दरवर्षीचं surrender आणि कर्ज मूल्य.' ), array( 'LIC Premium Calculator', 'लोकप्रिय LIC plans का premium, maturity, हर साल का surrender और लोन मूल्य.' ) ),
+		'compare-plans'       => array( 'Compare LIC Plans', 'Put 2 or 3 LIC plans side by side for the same age and cover.', '⚖️', array( 'LIC Plans ची तुलना', 'एकाच वयासाठी आणि विमा रकमेसाठी 2 किंवा 3 LIC plans शेजारी शेजारी पहा.' ), array( 'LIC Plans की तुलना', 'एक ही उम्र और बीमा राशि के लिए 2 या 3 LIC plans साथ-साथ देखें.' ) ),
+		'revival-calculator'  => array( 'Policy Revival Calculator', 'Estimate the amount needed to restart a lapsed LIC policy.', '🔄', array( 'Policy Revival Calculator', 'बंद पडलेली LIC policy पुन्हा सुरू करायला किती रक्कम लागेल त्याचा अंदाज.' ), array( 'Policy Revival Calculator', 'बंद हुई LIC policy दोबारा शुरू करने के लिए ज़रूरी राशि का अनुमान.' ) ),
+		'bonus-rates'         => array( 'LIC Bonus Rates', 'Bonus rates used for LIC with-profit plans in our illustrations.', '🎁', array( 'LIC Bonus दर', 'आमच्या हिशोबात LIC with-profit plans साठी वापरलेले bonus दर.' ), array( 'LIC Bonus दरें', 'हमारी गणना में LIC with-profit plans के लिए इस्तेमाल bonus दरें.' ) ),
+		'branch-locator'      => array( 'LIC Branch Locator', 'Find an LIC branch office by city, PIN code or name.', '📍', array( 'LIC शाखा शोधा', 'शहर, पिन कोड किंवा नावाने LIC शाखा कार्यालय शोधा.' ), array( 'LIC शाखा खोजें', 'शहर, पिन कोड या नाम से LIC शाखा कार्यालय खोजें.' ) ),
+		'lic-services'        => array( 'LIC Online Services', 'Official LIC links: pay premium, e-NACH, policy status, NAV, claims.', '🔗', array( 'LIC Online सेवा', 'LIC च्या अधिकृत links: premium भरणे, e-NACH, policy status, NAV, claims.' ), array( 'LIC Online सेवाएँ', 'LIC के आधिकारिक links: premium भरें, e-NACH, policy status, NAV, claims.' ) ),
+		'goal-planner'        => array( 'Goal Planner (Needs Analysis)', 'Cost of your goal, cover your family needs, retirement corpus, and the monthly saving to get there, with LIC plans and SIP options to discuss.', '🎯', array( 'ध्येय नियोजन (गरजांचं विश्लेषण)', 'ध्येयाचा खर्च, कुटुंबाला लागणारं cover, निवृत्तीची रक्कम आणि त्यासाठी लागणारी मासिक बचत — चर्चेसाठी LIC plans आणि SIP पर्यायांसह.' ), array( 'लक्ष्य योजना (ज़रूरतों का विश्लेषण)', 'लक्ष्य की लागत, परिवार को ज़रूरी cover, सेवानिवृत्ति राशि और उसके लिए ज़रूरी मासिक बचत — चर्चा के लिए LIC plans और SIP विकल्पों के साथ.' ) ),
+		'medical-tests'       => array( 'LIC Medical Tests Checker', 'Which special medical reports LIC may ask for, by age and total sum assured.', '🩺', array( 'LIC Medical तपासण्या', 'वय आणि एकूण विमा रकमेनुसार LIC कोणते विशेष medical reports मागू शकते.' ), array( 'LIC Medical जाँच', 'उम्र और कुल बीमा राशि के अनुसार LIC कौन-सी विशेष medical reports माँग सकता है.' ) ),
+		'policy-service-guide' => array( 'LIC Policy Service Guide', 'Loan, nominee, NACH, mode change, bank and PAN update, address change, assignment and ULIP rules, plus older plan versions (914, 915, 936, 945…).', '📘', array( 'LIC Policy सेवा मार्गदर्शक', 'कर्ज, nominee, NACH, हप्त्याची पद्धत बदल, बँक आणि PAN update, पत्ता बदल, assignment आणि ULIP नियम, तसेच जुने plans (914, 915, 936, 945…).' ), array( 'LIC Policy सेवा गाइड', 'लोन, nominee, NACH, किस्त का तरीका बदलना, बैंक और PAN update, पता बदलना, assignment और ULIP नियम, साथ में पुराने plans (914, 915, 936, 945…).' ) ),
 	);
 }
 function a4u_lic_tool_url( $k ) { return home_url( '/' . a4u_lic_hub_slug() . '/' . $k . '/' ); }
