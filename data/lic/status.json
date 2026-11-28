@@ -1,5 +1,5 @@
 {
- "run_at": "2026-11-28 06:46",
+ "run_at": "2026-11-28 19:19",
  "registry": {
   "pages_http": {
    "endowment-plans": 200,
@@ -129,8 +129,8 @@
    "pdf_http": 200,
    "pdf_bytes": 1410369,
    "sha256": "347e081a9b18e25f349597a4d01e30bbd2c827cbb83a9da5a75e56768f885550",
-   "model": "two reads disagree (gemini-3.5-flash-lite, gemini-3.1-flash-lite) — needs manual check",
-   "error": "gemini failed: two reads disagree (gemini-3.5-flash-lite, gemini-3.1-flash-lite) — needs manual check"
+   "model": "gemini-3.5-flash-lite+gemini-3.1-flash-lite",
+   "result": "updated"
   },
   "717": {
    "page_http": 200,
