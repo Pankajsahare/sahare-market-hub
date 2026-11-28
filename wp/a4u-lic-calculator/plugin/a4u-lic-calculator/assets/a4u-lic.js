@@ -679,6 +679,8 @@
 			var tg = y < o.T ? gsvFor(p, o, y, cumBase, cumAdd, paidOut, single) : null;
 			if (tg !== null) { // v4: LIC चे GSV + SSV factors — दोन्हीपैकी जास्त
 				var ts = ssvFor(p, o, y, paidYears, cumAdd, paidOut);
+				// v4.6.3: लहान मुलांसाठी risk सुरू होण्याआधीच्या वर्षांत LIC चं SSV कमी असतं (883 वय 1 BI: वर्ष 1–2) — अचूक सूत्र मिळेपर्यंत फक्त GSV (कमी = सुरक्षित)
+				if (y <= riskStart && (p.type === 'utsav' || p.type === 'utsav_sp')) { ts = 0; }
 				cv = Math.max(tg, ts || 0);
 				// v4.6: 771/883 — factor table वय ~90 ला संपतो; LIC BI त्यानंतर शेवटचं SV तसंच ठेवतो
 				if (!(cv > 0) && y > o.P && (p.type === 'utsav' || p.type === 'utsav_sp') && out.length && out[out.length - 1].cv > 0) { cv = out[out.length - 1].cv; }
