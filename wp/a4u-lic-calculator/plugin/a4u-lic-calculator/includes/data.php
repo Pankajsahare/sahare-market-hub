@@ -243,6 +243,7 @@ function a4u_lic_defaults() {
 			'agent_address'  => '46, Bhande Plot, Umred Road, Nagpur - 440024',
 			'agent_email'    => 'advisor4u.insurance@gmail.com',
 			'photo_url'      => '', // रिकामं = plugin मधला फोटो
+			'photo_full_url' => '', // v4.8.1: रिकामं = plugin मधला पूर्ण फोटो (PDF मागचं पान)
 			'loan_rate'      => 9.5, // LIC policy loan व्याज % (brochure 2025-26) — loan मर्यादेसाठी
 			'logo_url'       => '', // रिकामं = plugin मधला logo
 			'color_gold'     => '#B8924A',

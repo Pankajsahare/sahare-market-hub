@@ -389,3 +389,13 @@
 /* v4.8: देवनागरीत letter-spacing मुळे जोडाक्षरं तुटतात */
 .a4p-l-mr *, .a4p-l-hi * { letter-spacing: 0 !important; }
 .a4u-paybox .a4u-w { display: block; font-size: .78em; color: #4b5a6b; margin: 2px 0 4px; }
+
+/* ===== v4.8.1: फोटो स्वतःच्या प्रमाणात — कापणी नाही, blur नाही ===== */
+.a4p-cphoto { height: 690px; display: flex; align-items: center; justify-content: center; border-radius: 0; overflow: visible; box-shadow: none; }
+.a4p-cphoto .ph, .a4p-photo .ph { position: relative; display: inline-block; line-height: 0; }
+.a4p-cphoto .ph > img { display: block; width: auto; height: auto; max-width: 714px; max-height: 690px; border-radius: 18px; box-shadow: 0 8px 24px rgba(31,42,23,.22); }
+.a4p-cphoto.art .ph { width: 100%; height: 100%; } .a4p-cphoto.art .ph > img { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; }
+.a4p-photo { display: flex; justify-content: center; align-items: flex-start; }
+.a4p-photo .ph > img { display: block; width: auto; height: auto; max-width: 318px; max-height: 440px; object-fit: fill; border-radius: 16px; box-shadow: 0 6px 18px rgba(31,42,23,.18); border: 4px solid #fff; outline: 1px solid #e3dccb; }
+.a4p-photo.art .ph > img { width: 318px; height: 430px; max-height: none; object-fit: cover; }
+.a4p-photo .a4p-ribbon { line-height: 1.4; }

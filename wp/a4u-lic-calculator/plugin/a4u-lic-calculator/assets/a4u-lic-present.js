@@ -272,13 +272,15 @@
 			single ? (r.survival ? [tt('income'), inr(r.survival) + ' / yr' + wS(r.survival), tt('age') + ' ' + RI.incAge + '+'] : [tt('f_mat'), inrW(r.maturity), tt('age') + ' ' + RI.matAge]) : [tt('paytot'), inrW(r.totalPrem), r.P + yrs],
 			[isTerm ? tt('lcover') : tt('gettot'), inrW(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), r.maturity > 0 && !(single && !r.survival) ? tt('f_mat') + ' ' + inr(r.maturity) : '']];
 		// v4.8: कव्हर पान — branding header, पूर्ण फोटो (कापणी नाही), खाली नाव
-		if (coverFull) {
-			pages.push('<!--brand--><div class="a4p-cover2"><div class="a4p-cphoto"><img src="' + coverFull + '" alt="">' +
-				(qr ? '<div class="a4p-cqr" data-href="' + esc(waLink(r)) + '"><img src="' + qr + '" alt=""><span>' + tt('wa_cta') + '</span></div>' : '') + '</div>' +
+		if (coverImg) {
+			pages.push('<!--brand--><div class="a4p-cover2"><div class="a4p-cphoto' + (theme === 'custom' ? '' : ' art') + '"><div class="ph"><img src="' + esc(coverImg) + '" alt="">' +
+				(qr ? '<div class="a4p-cqr" data-href="' + esc(waLink(r)) + '"><img src="' + qr + '" alt=""><span>' + tt('wa_cta') + '</span></div>' : '') + '</div></div>' +
 				'<div class="a4p-cname">' + (clientName ? '<small>' + tt('pfor') + '</small><h1>' + esc(clientName) + '</h1>' : '<h1>LIC\'s ' + esc(p.name) + '</h1>') +
 				'<i></i><p class="pl">' + (clientName ? 'LIC\'s ' + esc(p.name) + ' · ' : '') + tt('ill') + '</p><p class="tgl">' + tt('tagline') + '</p><p class="dt">' + tt('pon') + ' ' + today + '</p></div></div>');
 		}
-		var c1 = '<h2 class="a4p-h">' + tt('summary') + '</h2><div class="a4p-fill"><div class="a4p-hero noimg">' +
+		var fImg = frontImg();
+		var c1 = '<h2 class="a4p-h">' + tt('summary') + '</h2><div class="a4p-fill"><div class="a4p-hero' + (fImg ? '' : ' noimg') + '">' +
+			(fImg ? '<div class="a4p-photo' + (frontMode === 'same' && theme !== 'custom' ? ' art' : '') + '"><div class="ph"><img src="' + esc(fImg) + '" alt="">' + (clientName ? '<div class="a4p-ribbon">' + tt('pfor') + ' <b>' + esc(clientName) + '</b></div>' : '') + '</div></div>' : '') +
 			'<div class="a4p-intro"><div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
 			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b><br>' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
 			'<p class="a4p-desc">' + tt('d_' + p.type) + '</p>' +
@@ -500,6 +502,8 @@
 				'<select data-pv="lang" aria-label="Language"><option value="en">English</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option></select>' +
 				'<select data-pv="theme" aria-label="Cover image">' + Object.keys(THEMES).map(function (k) { return '<option value="' + k + '">Cover: ' + THEMES[k] + '</option>'; }).join('') + '<option value="custom">Cover: My image…</option></select>' +
 				'<input data-pv="file" type="file" accept="image/png,image/jpeg,image/webp" hidden>' +
+				'<select data-pv="front" aria-label="Front page photo"><option value="same">Front: same as cover</option><option value="custom">Front: My image…</option><option value="none">Front: No photo</option></select>' +
+				'<input data-pv="ffile" type="file" accept="image/png,image/jpeg,image/webp" hidden>' +
 				'<input data-pv="client" type="text" maxlength="60" placeholder="Client name (optional)" value="' + esc(clientName) + '">' +
 				'<button type="button" data-pv="pdf" class="a4u-btn a4u-gold">Download PDF</button>' +
 				'<button type="button" data-pv="share" class="a4u-btn a4u-wa">Share</button>' +
@@ -514,6 +518,22 @@
 			th.addEventListener('change', function () {
 				if (this.value === 'custom') { modal.querySelector('[data-pv="file"]').click(); return; }
 				theme = this.value; lsSet('a4u_lic_theme', theme); refreshCover();
+			});
+			// v4.8.1: पुढच्या (सारांश) पानासाठी वेगळा फोटो
+			var fr = modal.querySelector('[data-pv="front"]');
+			fr.value = frontMode === 'custom' && !frontCustom ? 'same' : frontMode;
+			fr.addEventListener('change', function () {
+				if (this.value === 'custom') { modal.querySelector('[data-pv="ffile"]').click(); return; }
+				frontMode = this.value; lsSet('a4u_lic_front', frontMode); renderPreview();
+			});
+			modal.querySelector('[data-pv="ffile"]').addEventListener('change', function () {
+				var fl = this.files && this.files[0];
+				if (!fl) { fr.value = frontMode; return; }
+				if (fl.size > 4 * 1024 * 1024) { pvMsg('Image is too large (max 4 MB).'); fr.value = frontMode; return; }
+				shrinkImage(fl).then(function (url) {
+					frontCustom = url; frontMode = 'custom';
+					lsSet('a4u_lic_front_img', url); lsSet('a4u_lic_front', 'custom'); renderPreview();
+				}, function () { pvMsg('Could not read this image.'); fr.value = frontMode; });
 			});
 			modal.querySelector('[data-pv="file"]').addEventListener('change', function () {
 				var fl = this.files && this.files[0];
@@ -533,36 +553,10 @@
 			if (cn) { cn.addEventListener('change', function () { clientName = this.value.trim(); renderPreview(); }); }
 		});
 	}
-	// v4.8: कोणताही फोटो चौकटीत पूर्ण (कापणी नाही) + उरलेल्या जागेत त्याच फोटोची धूसर प्रत
-	function fitPhoto(src, W, H) {
-		return new Promise(function (res) {
-			if (!src) { res(''); return; }
-			var im = new Image();
-			im.onload = function () {
-				try {
-					var S = 1.6, cw = Math.round(W * S), ch = Math.round(H * S), cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
-					var ctx = cv.getContext('2d'), iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height;
-					var cover = Math.max(cw / iw, ch / ih), fit = Math.min(cw / iw, ch / ih);
-					// धूसर background: लहान canvas वर काढून मोठं केलं की blur (Safari मध्ये ctx.filter नसलं तरी चालतं)
-					var t = document.createElement('canvas'); t.width = 28; t.height = Math.max(1, Math.round(28 * ch / cw));
-					var tc = t.getContext('2d'), tw = iw * cover / cw * t.width, th = ih * cover / ch * t.height;
-					tc.drawImage(im, (t.width - tw) / 2, (t.height - th) / 2, tw, th);
-					ctx.imageSmoothingEnabled = true; ctx.drawImage(t, 0, 0, cw, ch);
-					ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(0, 0, cw, ch);
-					var dw = iw * fit, dh = ih * fit;
-					ctx.drawImage(im, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
-					res(cv.toDataURL('image/jpeg', 0.88));
-				} catch (e) { res(src); }
-			};
-			im.onerror = function () { res(''); };
-			im.src = src;
-		});
-	}
-	var coverFull = '';
-	function refreshCover() {
-		coverSrc().then(function (u) { coverImg = u || ''; return fitPhoto(coverImg, 714, 690); })
-			.then(function (f) { coverFull = f; if (modal) { renderPreview(); } });
-	}
+	// v4.8.1: फोटो कधीच कापला / धूसर केला जात नाही — img ला फक्त कमाल रुंदी-उंची (स्वतःच्या प्रमाणात)
+	var frontMode = lsGet('a4u_lic_front', 'same'), frontCustom = lsGet('a4u_lic_front_img', '');
+	function frontImg() { return frontMode === 'none' ? '' : (frontMode === 'custom' ? frontCustom : coverImg); }
+	function refreshCover() { coverSrc().then(function (u) { coverImg = u || ''; if (modal) { renderPreview(); } }); }
 	// upload केलेलं चित्र फक्त या browser मध्ये — 1600px पर्यंत लहान करून ठेवतो (server वर जात नाही)
 	function shrinkImage(fl) {
 		return new Promise(function (res, rej) {
