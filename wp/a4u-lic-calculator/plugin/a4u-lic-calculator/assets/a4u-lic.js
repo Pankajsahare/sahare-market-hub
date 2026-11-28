@@ -558,16 +558,13 @@
 		rows.forEach(function (x) { pvBenefit += x[3] / Math.pow(1 + infl, x[0]); });
 		// G: कर सूचना (10(10D))
 		// v4.6.7: premium > SA च्या 10% किंवा वर्षाला ₹5 लाखांपेक्षा जास्त (single premium सुद्धा) → maturity/उत्पन्न करपात्र, 80C फक्त SA च्या 10% पर्यंत
-		var taxNotes = [], annualPrem = SINGLE[p.type] ? pr.base : pr.base, taxCap = 0.10 * sa, taxLim = 0;
-		if (annualPrem > taxCap) {
-			taxLim = 1;
-			taxNotes.push('Premium is more than 10% of the Sum Assured: Section 80C deduction (old tax regime) is allowed only on ₹' + Math.round(taxCap).toLocaleString('en-IN') + (SINGLE[p.type] ? '' : ' a year') + ', and maturity, survival income and surrender proceeds are taxable (not exempt under Section 10(10D)).');
-		}
-		if ((SINGLE[p.type] ? pr.base : pr.yearPay) > 500000) {
-			taxLim = 1;
-			taxNotes.push('Premium is above ₹5 lakh in a year: for policies issued on or after 1 April 2023, maturity and survival proceeds are taxable.');
-		} else { taxNotes.push('If your total yearly premium across such policies issued on or after 1 April 2023 exceeds ₹5 lakh, maturity proceeds may be taxable.'); }
-		taxNotes.push('Death benefit paid to the nominee is tax-free. Section numbers are from the Income-tax Act, 1961; the Income-tax Act, 2025 (from 1 April 2026) carries similar rules under new numbers.');
+		// v4.6.7/4.6.8: premium > SA च्या 10% किंवा वर्षाला ₹5 लाखांपेक्षा जास्त (single premium सुद्धा) → maturity/उत्पन्न करपात्र; taxKeys = PDF मध्ये मराठी/हिंदी
+		var annualPrem = pr.base, taxCap = 0.10 * sa, taxLim = 0, taxKeys = [];
+		var capTxt = Math.round(taxCap).toLocaleString('en-IN');
+		if (annualPrem > taxCap) { taxLim = 1; taxKeys.push([SINGLE[p.type] ? 'tx_10_sp' : 'tx_10', { c: capTxt }]); }
+		if ((SINGLE[p.type] ? pr.base : pr.yearPay) > 500000) { taxLim = 1; taxKeys.push(['tx_5l', {}]); } else { taxKeys.push(['tx_5l_info', {}]); }
+		taxKeys.push(['tx_death', {}]);
+		var taxNotes = taxKeys.map(function (k) { return (RL[k[0]] || k[0]).replace(/\{(\w+)\}/g, function (m, n) { return k[1][n] !== undefined ? k[1][n] : m; }); });
 		var docD = inp.doc || new Date(), matD = new Date(docD.getTime());
 		matD.setFullYear(matD.getFullYear() + T);
 		// S3: दुसरी परिस्थिती — bonus 50% कमी झाला तर
@@ -575,7 +572,7 @@
 		cfB[T] -= cut;
 		return {
 			totalBenefitLow: totalBenefit - cut, irrLow: cut ? irr(cfB) : irr(cf), bonusCut: cut,
-			pvBenefit: pvBenefit, taxNotes: taxNotes, taxLim: taxLim, taxCap: taxCap, fabRate: bn.fab, gender: inp.gender, smoker: inp.smoker || 'NS', target: inp.by === 'maturity' ? inp.target : 0,
+			pvBenefit: pvBenefit, taxNotes: taxNotes, taxKeys: taxKeys, taxLim: taxLim, taxCap: taxCap, fabRate: bn.fab, gender: inp.gender, smoker: inp.smoker || 'NS', target: inp.by === 'maturity' ? inp.target : 0,
 			docText: niceDate(docD), matText: niceDate(matD),
 			plan: p, age: age, sa: sa, T: T, P: P, G: G, mode: SINGLE[p.type] ? 'single' : inp.mode, by: inp.by, gst: inp.gst, r: inp.r, income: flexi ? 'flexi' : 'regular',
 			basis: basis, demo: demo, rate: rate, pr: pr, inst: pr.inst, totalPrem: totalPrem, bonus: bonus, fab: fab, ga: ga, srb: bn.srb,
@@ -997,7 +994,7 @@
 		t_tax: 'Premium may qualify under Section 80C; maturity under Section 10(10D), subject to conditions.', t_feat: 'Loan and surrender facility, optional riders and nomination.',
 		w1: 'Owned by the Government of India', w2: 'Policy money guaranteed by the Central Government (Section 37, LIC Act 1956)', w3: 'Serving families since 1956', w4: 'Branches and agents across India',
 		feat: 'Plan Features', f_death: 'Death benefit', f_mat: 'Maturity benefit', f_add: 'Additions', f_tax: 'Income tax', f_surr: 'Surrender', f_loan: 'Loan',
-		fv_death: 'At least {d} (never less than 105% of premiums paid)', fv_tax: 'Section 80C and 10(10D), subject to conditions', fv_tax_lim: '80C only on {c}; maturity and income are taxable (premium above the tax-free limit); death benefit tax-free', t_tax_lim: 'Premium is above the tax-free limit: 80C deduction only on {c}; maturity and income are taxable. Death benefit is tax-free.', fv_surr: 'Available after {y} years', fv_loan: 'Available after {y} years, against the surrender value', fv_surr_any: 'Any time during the policy term', fv_death_sp: 'At least {d} (never less than 125% of the single premium) plus Guaranteed Additions', fv_loan_3m: 'Available 3 months after the policy starts, against the surrender value',
+		fv_death: 'At least {d} (never less than 105% of premiums paid)', fv_tax: 'Section 80C and 10(10D), subject to conditions', tx_10: 'Premium is more than 10% of the Sum Assured: Section 80C deduction (old tax regime) is allowed only on ₹{c} a year, and maturity, survival income and surrender proceeds are taxable (not exempt under Section 10(10D)).', tx_10_sp: 'Premium is more than 10% of the Sum Assured: Section 80C deduction (old tax regime) is allowed only on ₹{c}, and maturity, survival income and surrender proceeds are taxable (not exempt under Section 10(10D)).', tx_5l: 'Premium is above ₹5 lakh in a year: for policies issued on or after 1 April 2023, maturity and survival proceeds are taxable.', tx_5l_info: 'If your total yearly premium across such policies issued on or after 1 April 2023 exceeds ₹5 lakh, maturity proceeds may be taxable.', tx_death: 'Death benefit paid to the nominee is tax-free. Section numbers are from the Income-tax Act, 1961; the Income-tax Act, 2025 (from 1 April 2026) carries similar rules under new numbers.', fv_tax_lim: '80C only on {c}; maturity and income are taxable (premium above the tax-free limit); death benefit tax-free', t_tax_lim: 'Premium is above the tax-free limit: 80C deduction only on {c}; maturity and income are taxable. Death benefit is tax-free.', fv_surr: 'Available after {y} years', fv_loan: 'Available after {y} years, against the surrender value', fv_surr_any: 'Any time during the policy term', fv_death_sp: 'At least {d} (never less than 125% of the single premium) plus Guaranteed Additions', fv_loan_3m: 'Available 3 months after the policy starts, against the surrender value',
 		plandet: 'Plan Details', riders: 'Selected riders', none: 'None', custom: 'Plan presentation customised for',
 		d_endowment: 'A savings and protection plan. Your family gets financial support if something happens to you, and you get a lump sum with bonus at maturity.',
 		d_lakshya: 'A plan for your child\'s goals. If something happens to you, the family gets yearly income and the full maturity amount is still paid on time.',

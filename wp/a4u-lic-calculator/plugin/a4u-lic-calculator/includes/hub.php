@@ -336,6 +336,45 @@ function a4u_lic_fact_rows( $p ) {
 	return $rows;
 }
 
+/* =====================================================================
+ * v4.6.8 (S1): प्रत्येक plan प्रकारासाठी कर नियम — en / mr / hi (सामान्य माहिती, plan च्या category + single premium वरून)
+ * ===================================================================== */
+function a4u_lic_tax_rules( $p ) {
+	$cat    = (string) $p['cat'];
+	$modes  = strtolower( (string) ( $p['facts']['modes'] ?? '' ) );
+	$single = false !== strpos( $modes, 'single' );
+	$onlysp = $single && ! preg_match( '/yearly|monthly|quarter|regular|limited/', $modes );
+	$r      = array();
+	$r80c   = array( 'Premium deduction under Section 80C (old tax regime only) is allowed on premium up to 10% of the Sum Assured, within the overall ₹1.5 lakh limit.', 'Premium वर कलम 80C ची वजावट (फक्त जुनी कर पद्धत) विमा रकमेच्या 10% पर्यंतच्या premium वर, एकूण ₹1.5 लाख मर्यादेत मिळते.', 'Premium पर धारा 80C की कटौती (केवल पुरानी कर व्यवस्था) बीमा राशि के 10% तक के premium पर, कुल ₹1.5 लाख सीमा में मिलती है।' );
+	$death  = array( 'Death benefit paid to the nominee is tax-free.', 'Nominee ला मिळणारा मृत्यू लाभ करमुक्त असतो.', 'Nominee को मिलने वाला मृत्यु लाभ करमुक्त होता है।' );
+	if ( 'health' === $cat ) {
+		$r[] = array( 'Premium may qualify for deduction under Section 80D (health insurance, old tax regime).', 'Premium वर कलम 80D (आरोग्य विमा, जुनी कर पद्धत) ची वजावट मिळू शकते.', 'Premium पर धारा 80D (स्वास्थ्य बीमा, पुरानी कर व्यवस्था) की कटौती मिल सकती है।' );
+		$r[] = array( 'Benefit amounts paid on diagnosis or hospitalisation are generally not taxable.', 'आजाराचं निदान किंवा hospital खर्चासाठी मिळणारी रक्कम साधारणपणे करपात्र नसते.', 'बीमारी के निदान या अस्पताल खर्च पर मिलने वाली राशि सामान्यतः करयोग्य नहीं होती।' );
+	} elseif ( 'pension' === $cat ) {
+		$r[] = array( 'Pension (annuity) received is taxable every year as income at your slab rate.', 'मिळणारी pension (annuity) दरवर्षी तुमच्या slab नुसार उत्पन्न म्हणून करपात्र असते.', 'मिलने वाली pension (annuity) हर साल आपके slab के अनुसार आय के रूप में करयोग्य होती है।' );
+		$r[] = array( 'Deduction on the purchase price depends on the plan (some deferred pension plans qualify under Section 80CCC; immediate annuity plans usually do not) - see the LIC note above.', 'खरेदी रकमेवर वजावट plan नुसार ठरते (काही deferred pension plans ना कलम 80CCC; immediate annuity ला साधारणपणे नाही) — वरची LIC ची टीप पहा.', 'खरीद राशि पर कटौती plan पर निर्भर है (कुछ deferred pension plans को धारा 80CCC; immediate annuity को आमतौर पर नहीं) — ऊपर LIC की टिप्पणी देखें।' );
+		$r[] = $death;
+	} elseif ( 'ulip' === $cat ) {
+		$r[] = $r80c;
+		$r[] = array( 'Maturity is tax-free only if the yearly premium is not more than 10% of the Sum Assured and, for ULIPs issued on or after 1 February 2021, your total ULIP premium is not more than ₹2.5 lakh a year; otherwise gains are taxed as capital gains.', 'Maturity करमुक्त फक्त तेव्हा: वर्षाचा premium विमा रकमेच्या 10% पेक्षा जास्त नसेल आणि 1 फेब्रुवारी 2021 नंतरच्या ULIP चा एकूण premium वर्षाला ₹2.5 लाखांपेक्षा जास्त नसेल; नाहीतर नफ्यावर capital gains कर.', 'Maturity करमुक्त तभी: साल का premium बीमा राशि के 10% से अधिक न हो और 1 फरवरी 2021 के बाद के ULIP का कुल premium साल में ₹2.5 लाख से अधिक न हो; अन्यथा लाभ पर capital gains कर।' );
+		$r[] = $death;
+	} else {
+		$r[] = $r80c;
+		if ( 'term' === $cat ) {
+			$r[] = $death;
+			$r[] = array( 'If the plan returns premiums at maturity, that amount follows the same Section 10(10D) conditions as savings plans.', 'Plan मध्ये maturity ला premium परत मिळत असतील तर त्या रकमेला बचत plans सारख्याच कलम 10(10D) च्या अटी लागू.', 'यदि plan में maturity पर premium वापस मिलते हैं तो उस राशि पर बचत plans जैसी ही धारा 10(10D) की शर्तें लागू।' );
+		} else {
+			$r[] = array( 'Maturity, survival benefits (money back / income) and bonus are tax-free under Section 10(10D) only if the premium in every year is not more than 10% of the Sum Assured and, for policies issued on or after 1 April 2023, your total premium on such policies is not more than ₹5 lakh a year. Otherwise they are taxable as income.', 'Maturity, survival लाभ (money back / उत्पन्न) आणि bonus कलम 10(10D) खाली करमुक्त फक्त तेव्हा: प्रत्येक वर्षीचा premium विमा रकमेच्या 10% पेक्षा जास्त नसेल आणि 1 एप्रिल 2023 नंतरच्या अशा policies चा एकूण premium वर्षाला ₹5 लाखांपेक्षा जास्त नसेल. नाहीतर ते उत्पन्न म्हणून करपात्र.', 'Maturity, survival लाभ (money back / आय) और bonus धारा 10(10D) के तहत करमुक्त तभी: हर साल का premium बीमा राशि के 10% से अधिक न हो और 1 अप्रैल 2023 के बाद की ऐसी policies का कुल premium साल में ₹5 लाख से अधिक न हो। अन्यथा आय के रूप में करयोग्य।' );
+			if ( $single ) {
+				$r[] = array( $onlysp ? 'This is a single premium plan: the one-time premium is usually more than 10% of the Sum Assured, so 80C is limited to 10% of the Sum Assured and maturity / income is usually taxable. Our calculator shows this for your figures.' : 'If you choose single premium, the premium is usually more than 10% of the Sum Assured: 80C is then limited to 10% of the Sum Assured and maturity / income is usually taxable.', $onlysp ? 'हा single premium plan आहे: एकरकमी premium साधारणपणे विमा रकमेच्या 10% पेक्षा जास्त असतो, त्यामुळे 80C फक्त विमा रकमेच्या 10% पर्यंत आणि maturity / उत्पन्न साधारणपणे करपात्र. आपला calculator तुमच्या आकड्यांसाठी हे दाखवतो.' : 'Single premium निवडल्यास premium साधारणपणे विमा रकमेच्या 10% पेक्षा जास्त असतो: तेव्हा 80C फक्त 10% पर्यंत आणि maturity / उत्पन्न साधारणपणे करपात्र.', $onlysp ? 'यह single premium plan है: एकमुश्त premium आमतौर पर बीमा राशि के 10% से अधिक होता है, इसलिए 80C केवल बीमा राशि के 10% तक और maturity / आय आमतौर पर करयोग्य। हमारा calculator आपके आँकड़ों के लिए यह दिखाता है।' : 'Single premium चुनने पर premium आमतौर पर बीमा राशि के 10% से अधिक होता है: तब 80C केवल 10% तक और maturity / आय आमतौर पर करयोग्य।' );
+			}
+			$r[] = $death;
+		}
+	}
+	$r[] = array( 'Section numbers are from the Income-tax Act, 1961; the Income-tax Act, 2025 (from 1 April 2026) carries similar rules under new section numbers. General information only - please check with your tax adviser.', 'कलमांचे क्रमांक Income-tax Act, 1961 नुसार; 1 एप्रिल 2026 पासूनच्या Income-tax Act, 2025 मध्ये असेच नियम नवीन क्रमांकांनी आहेत. ही सामान्य माहिती आहे — तुमच्या कर सल्लागाराशी खात्री करा.', 'धाराओं के क्रमांक Income-tax Act, 1961 के अनुसार; 1 अप्रैल 2026 से Income-tax Act, 2025 में ऐसे ही नियम नए क्रमांकों से हैं। यह सामान्य जानकारी है — अपने कर सलाहकार से पुष्टि करें।' );
+	return $r;
+}
+
 function a4u_lic_plan_faq( $p ) {
 	$f  = $p['facts'];
 	$nm = 'LIC ' . $p['name'];
@@ -349,7 +388,8 @@ function a4u_lic_plan_faq( $p ) {
 	}
 	if ( ! empty( $f['loan'] ) ) { $q[] = array( 'Can I take a loan on ' . $nm . '?', $f['loan'] ); }
 	$q[] = array( 'Which proposal form is used for ' . $nm . '?', $p['form'] . '.' );
-	if ( ! empty( $f['tax'] ) ) { $q[] = array( 'Is ' . $nm . ' eligible for tax benefits?', $f['tax'] . ' Tax rules depend on your situation; please check with a tax adviser.' ); }
+	$tx = implode( ' ', array_map( function ( $x ) { return $x[0]; }, a4u_lic_tax_rules( $p ) ) );
+	$q[] = array( 'Is ' . $nm . ' eligible for tax benefits?', ( ! empty( $f['tax'] ) ? 'LIC note: ' . rtrim( $f['tax'], '. ' ) . '. ' : '' ) . $tx ); // v4.6.8
 	$q[] = array( 'Who is ' . $nm . ' best suited for?', $p['best_for'] . '.' );
 	return $q;
 }
@@ -527,6 +567,11 @@ function a4u_lic_render_plan( $p ) {
 	// documents
 	$h .= '<section class="a4h-box"><h2 data-a4h-i18n="docs">Documents usually needed</h2><ul class="a4h-ticks"><li>Proposal form: ' . esc_html( $p['form'] ) . '</li><li>Age proof (birth certificate, school certificate, passport or similar)</li><li>Identity and address proof with KYC (Aadhaar, PAN)</li><li>Recent photograph and bank details for payouts (cancelled cheque)</li><li>Income proof for higher covers; medical reports if LIC asks</li></ul>' .
 		( $p['brochure'] || $p['lic_url'] ? '<p class="a4h-actions">' . ( $p['brochure'] ? '<a class="a4h-btn ghost" target="_blank" rel="noopener" href="' . esc_url( $p['brochure'] ) . '">Official LIC sales brochure (PDF)</a>' : '' ) . ( $p['lic_url'] ? '<a class="a4h-btn ghost" target="_blank" rel="noopener" href="' . esc_url( $p['lic_url'] ) . '">Plan page on licindia.in</a>' : '' ) . '</p>' : '' ) . '</section>';
+
+	// v4.6.8 (S1): कर नियम — en / mr / hi
+	$h .= '<section class="a4h-box a4h-tax">' . a4u_lic_t( 'Income tax: what to know', 'आयकर: काय लक्षात ठेवायचं', 'आयकर: क्या ध्यान रखें', 'h2' ) . '<ul class="a4h-ticks">';
+	foreach ( a4u_lic_tax_rules( $p ) as $x ) { $h .= a4u_lic_t( $x[0], $x[1], $x[2], 'li' ); }
+	$h .= '</ul></section>';
 
 	// FAQ
 	$h .= '<section class="a4h-box a4h-faq"><h2 data-a4h-i18n="faq">Frequently asked questions</h2>';
