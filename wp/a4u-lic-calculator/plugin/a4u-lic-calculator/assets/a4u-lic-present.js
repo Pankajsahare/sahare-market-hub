@@ -280,7 +280,7 @@
 		}
 		var fImg = frontImg();
 		var c1 = '<h2 class="a4p-h">' + tt('summary') + '</h2><div class="a4p-fill"><div class="a4p-hero' + (fImg ? '' : ' noimg') + '">' +
-			(fImg ? '<div class="a4p-photo' + (frontMode === 'same' && theme !== 'custom' ? ' art' : '') + '"><div class="ph"><img src="' + esc(fImg) + '" alt="">' + (clientName ? '<div class="a4p-ribbon">' + tt('pfor') + ' <b>' + esc(clientName) + '</b></div>' : '') + '</div></div>' : '') +
+			(fImg ? '<div class="a4p-photo' + (frontMode === 'same' && theme !== 'custom' ? ' art' : '') + '"><div class="ph"><img src="' + esc(fImg) + '" alt=""></div>' + (clientName ? '<div class="a4p-pfor"><span>' + tt('pfor') + '</span><b>' + esc(clientName) + '</b><small>' + tt('age') + ' ' + r.age + ' · ' + tt('pon') + ' ' + today + '</small></div>' : '') + '</div>' : '') + // v4.9.1 (S1): 'Prepared for' आणि 'Total you get' एकाच design मध्ये, एकाच ओळीत
 			'<div class="a4p-intro"><div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
 			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b><br>' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
 			'<p class="a4p-desc">' + tt('d_' + p.type) + '</p>' +
@@ -348,11 +348,15 @@
 		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
 			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
 			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + inr(r.totalBenefitLow - r.totalPrem) + '</td><td>' + pct(r.irrLow) + '</td></tr>' : '') + '</tbody></table>';
+		var c4xTail = '';
 		if (V4) { // v4.1 (S1): screen वरचेच charts PDF मध्ये
 			var cfs = V4.cashflow(r);
-			c3 += '<h3>' + tt('chart') + '</h3>' + (cfs ? '<img class="a4p-chart" src="' + img(cfs) + '" alt="">' +
-				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#1f8f4e"></span>' + tt('got') + '</p>' : '') +
-				(valOn2 ? '' : valHtml);
+			// v4.9.1 (S3): हा chart "How the plan works" पानाच्या रिकाम्या खालच्या भागात; इथे फक्त value chart
+			var cfHtml = cfs ? '<h3 style="margin-top:16px">' + tt('chart') + '</h3><img class="a4p-chart a4p-chart-s" src="' + img(cfs) + '" alt="">' +
+				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#1f8f4e"></span>' + tt('got') + '</p>' : '';
+			// कराच्या टीपा लांब असतील (taxLim) तर How पानावर जागा नसते — तेव्हा chart इथेच, value chart खाली
+			c3 += valOn2 ? cfHtml : valHtml + (r.taxLim ? cfHtml : '');
+			if (!valOn2 && !r.taxLim) { c4xTail = cfHtml; }
 		} else {
 		c3 += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="' + img(chartSvg(r, GREEN, GOLD)) + '" alt="">' +
 			'<p class="a4p-legend"><span style="background:' + GREEN + '"></span>' + tt('paid') + ' <span style="background:' + GOLD + '"></span>' + tt('got') + '</p>';
@@ -385,15 +389,18 @@
 		pages.push('<h2 class="a4p-h">' + tt('how') + '</h2>' +
 			'<div class="a4p-flow">' + flow.map(function (f, i) { return (i ? '<i>&#10140;</i>' : '') + '<div class="f' + i + '"><span>' + (i + 1) + '</span><em>' + f[0] + '</em><b>' + f[1] + '</b>' + (f[2] ? '<small>' + f[2] + '</small>' : '') + '</div>'; }).join('') + '</div>' +
 			'<div class="a4p-how2">' + how.map(function (q, i) { return '<div style="--c:' + cols[i] + '">' + ico(howIcons[i], cols[i]) + '<div><b><span>' + (i + 1) + '</span>' + tt(q[0]) + '</b><p>' + q[1] + '</p></div></div>'; }).join('') + '</div>' +
-			(p.type === 'anand' && p.tail_age ? '<p class="a4p-note" style="margin-top:14px">' + tt('m_coverto') + ' ' + p.tail_age + '</p>' : '') + c4x);
+			(p.type === 'anand' && p.tail_age ? '<p class="a4p-note" style="margin-top:14px">' + tt('m_coverto') + ' ' + p.tail_age + '</p>' : '') + c4x + c4xTail);
 
 		// 5+. Benefit & Coverage Table (Option 1)
 		var per = 34, tbl = r.table || [];
+		// v4.9.1 (S2): शेवटच्या तक्त्याच्या पानावर जागा असेल तर notes तिथेच — वेगळं रिकामं पान नको
+		var notesHtml = '<h3 class="a4p-nh">' + tt('notes') + '</h3><ol class="a4p-notes"><li>' + tt('d1') + '</li><li>' + tt('d2') + '</li><li>' + fmtT('d3', { no: p.id, uin: p.uin || '—' }) + '</li><li>' + tt('d4') + '</li></ol>';
+		var notesOnTbl = !!BR.photo_full && !(lastCmp && lastCmp.a === r) && r.income !== 'flexi' && (tbl.length % per || per) <= per - 10;
 		for (var i = 0; i < tbl.length; i += per) {
 			var lastPg = i + per >= tbl.length;
 			pages.push('<h2 class="a4p-h">' + tt('bct') + (i > 0 ? ' (' + tt('cont') + ')' : '') + '</h2>' +
 				A.benefitTableHtml(r, tt, 'a4p-t a4p-bct', i, i + per, lastPg) +
-				(lastPg && r.hasCV ? '<p class="a4p-note">' + tt('cvnote') + '</p>' : '') + (lastPg && r.age < 8 ? '<p class="a4p-note">' + tt('risknote') + '</p>' : ''));
+				(lastPg && r.hasCV ? '<p class="a4p-note">' + tt('cvnote') + '</p>' : '') + (lastPg && r.age < 8 ? '<p class="a4p-note">' + tt('risknote') + '</p>' : '') + (lastPg && notesOnTbl ? notesHtml : ''));
 		}
 		// Option 2 — Flexi income
 		if (r.income === 'flexi') {
@@ -436,11 +443,11 @@
 			l += '<h2 class="a4p-h">' + tt('cmp') + '</h2><table class="a4p-t"><thead><tr><th></th><th>' + esc(r.plan.name) + '</th><th>' + esc(b.plan.name) + '</th></tr></thead><tbody>' +
 				rowsC.map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1](r) + '</td><td>' + q[1](b) + '</td></tr>'; }).join('') + '</tbody></table>';
 		}
-		l += '<h2 class="a4p-h">' + tt('notes') + '</h2><ol class="a4p-notes"><li>' + tt('d1') + '</li><li>' + tt('d2') + '</li><li>' + fmtT('d3', { no: p.id, uin: p.uin || '—' }) + '</li><li>' + tt('d4') + '</li></ol>';
+		if (!notesOnTbl) { l += '<h2 class="a4p-h">' + tt('notes') + '</h2>' + notesHtml.replace(/^<h3[^>]*>[\s\S]*?<\/h3>/, ''); }
 		if (BR.photo_full) {
 			// v4.8: मागचं पान — advisor चा पूर्ण फोटो + संपर्क (notes पानावर वेगळं card नको)
 			l += '</div></div>';
-			pages.push(l);
+			if (!notesOnTbl) { pages.push(l); }
 			var web2 = BR.web ? (/^https?:/.test(BR.web) ? BR.web : 'https://' + BR.web) : '', tel2 = String(BR.phone || '').replace(/[^0-9+]/g, ''), em = BR.email2 || BR.email || '';
 			l = '<!--brand--><div class="a4p-back"><div class="a4p-bphoto"><img src="' + esc(BR.photo_full) + '" alt="" crossorigin="anonymous"></div>' +
 				'<div class="a4p-bname"><small>' + tt('contact') + '</small><h1>' + esc(BR.agent || '') + '</h1><i></i>' +

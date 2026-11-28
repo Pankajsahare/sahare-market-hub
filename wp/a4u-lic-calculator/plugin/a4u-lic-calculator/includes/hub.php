@@ -65,10 +65,11 @@ function a4u_lic_catalog() {
 	if ( is_array( $hit ) ) { $out = $hit; return $out; }
 	$facts = (array) ( a4u_lic_json( 'lic-catalog.json' )['plans'] ?? array() );
 	$notes = (array) ( a4u_lic_json( 'lic-plan-notes.json' )['plans'] ?? array() );
+	$extra = (array) ( a4u_lic_json( 'lic-catalog-extra.json' )['plans'] ?? array() ); // v4.9.1 (S7): रिकाम्या जागा
 	$d     = a4u_lic_data();
 	$out   = array();
 	foreach ( $notes as $id => $n ) {
-		$f    = (array) ( $facts[ $id ] ?? array() );
+		$f    = (array) ( $extra[ $id ] ?? array() ) + array_filter( (array) ( $facts[ $id ] ?? array() ), function ( $v ) { return null !== $v && '' !== $v; } );
 		$calc = ! empty( $d['plans'][ $id ]['active'] ) && empty( $d['plans'][ $id ]['closed'] );
 		$out[ (string) $id ] = array(
 			'id'       => (string) $id,
@@ -205,7 +206,7 @@ function a4u_lic_hub_meta() {
 	if ( ! $r ) { return null; }
 	$brand = 'Advisor4u';
 	if ( 'hub' === $r['type'] ) {
-		return array( 'All LIC Plans 2026 — Details, Benefits & Calculators | ' . $brand, 'Every current LIC plan in one place: eligibility, benefits, riders, loan, surrender, tax and proposal form, with free premium calculators.', home_url( '/' . a4u_lic_hub_slug() . '/' ) );
+		return array( 'All LIC Plans 2026 — Details, Benefits & Calculators | ' . $brand, 'All current and recently closed LIC plans in one place: eligibility, benefits, riders, loan, surrender, tax and proposal form, with free premium calculators.', home_url( '/' . a4u_lic_hub_slug() . '/' ) );
 	}
 	if ( 'tool' === $r['type'] ) {
 		$t = a4u_lic_tools()[ $r['key'] ];
@@ -626,3 +627,14 @@ function a4u_lic_hub_inline_assets( $r ) {
 		$done = true;
 	}
 }
+
+/* =====================================================================
+ * v4.9.1 (S8): LIC पानांवर साईटच्या header/footer मधल्या WhatsApp बटणाचा संदेश
+ * "म्युच्युअल फंड सल्ला" ऐवजी LIC बद्दल — फक्त LIC पानांवर, आपल्या plugin बाहेरच्या links साठी
+ * ===================================================================== */
+add_action( 'wp_footer', function () {
+	$is_lic = a4u_lic_hub_route() || ( function_exists( 'a4u_lic_is_main_calc_page' ) && a4u_lic_is_main_calc_page() ) || ( function_exists( 'a4u_lic_current_plan' ) && a4u_lic_current_plan() );
+	if ( ! $is_lic ) { return; }
+	$msg = 'नमस्कार, मला LIC policy बद्दल माहिती हवी आहे. / Hello, I would like information about an LIC policy.';
+	echo '<script>(function(){var m=' . wp_json_encode( $msg ) . ';document.querySelectorAll(\'a[href*="wa.me/"],a[href*="api.whatsapp.com"]\').forEach(function(a){if(a.closest(".a4h,.a4u-lic,.a4u-pv"))return;try{var u=new URL(a.href);var t=u.searchParams.get("text")||"";if(!t||/म्युच्युअल|mutual\s*fund|SIP/i.test(t)){u.searchParams.set("text",m);a.href=u.toString();}}catch(e){}});})();</script>' . "\n"; // phpcs:ignore
+}, 99 );

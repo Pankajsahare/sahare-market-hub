@@ -1,0 +1,27 @@
+{
+ "v": 1,
+ "note": "v4.9.1: LIC catalog मधल्या रिकाम्या / न वाचता येणाऱ्या जागांसाठी (हीच माहिती वरचढ) — स्रोत: LIC press release 05.08.2024 (876/878), LIC launch 14.10.2026 (907/908)",
+ "plans": {
+  "876": {
+   "min_age": "18 years",
+   "max_age": "45 years",
+   "term": "15 to 40 years",
+   "min_sa": "Rs. 50,00,000"
+  },
+  "878": {
+   "min_age": "18 years",
+   "max_age": "45 years",
+   "term": "5 to 30 years",
+   "min_sa": "Rs. 50,00,000"
+  },
+  "907": {
+   "min_sa": "Rs. 15,00,000 to 35,00,000 (by age)",
+   "min_age": "18 years",
+   "max_age": "65 years"
+  },
+  "908": {
+   "term": "10 to 15 years",
+   "min_sa": "Rs. 15,00,000 to 35,00,000 (by age)"
+  }
+ }
+}

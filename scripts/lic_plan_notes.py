@@ -185,7 +185,7 @@ LIC_LIST = {
     '880': ('512N388V01', 'https://licindia.in/web/guest/lic-s-jan-suraksha-880-512n388v01'),
 }
 # LIC यादीत नसलेले पण ज्यांची जागा नवीन plan ने घेतली, किंवा विक्री-काळ संपला
-REPLACED = {'760': '890', '905': '908', '872': '892', '911': None, '869': None, '856': None}
+REPLACED = {'760': '890', '905': '908', '872': '892', '911': None, '912': None, '869': None, '856': None}  # 912: LIC यादीत दिसला तरी विक्री 31 मार्च 2026 ला संपली
 
 
 def slugify(name, pid):
@@ -197,10 +197,10 @@ def slugify(name, pid):
 def main():
     out = {}
     for pid, (name, cat, status, tag, points, best) in N.items():
-        if pid in LIC_LIST:
+        if pid in REPLACED:
+            status = 'closed'        # v4.9.1: बंद plan आधी — LIC च्या यादीत उशिरापर्यंत दिसला तरी
+        elif pid in LIC_LIST:
             status = 'open'          # LIC च्या अधिकृत यादीत आहे
-        elif pid in REPLACED:
-            status = 'closed'
         elif status == 'open':
             status = 'check'         # आपल्याला open वाटत होतं पण LIC यादीत नाही → खात्री करा
         uin, url = LIC_LIST.get(pid, ('', ''))
