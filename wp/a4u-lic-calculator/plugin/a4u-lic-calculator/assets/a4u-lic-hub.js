@@ -531,7 +531,8 @@
 					(viz ? '<div class="viz">' + viz.outerHTML + '</div>' : '') +
 					'<p class="ft">For information only. Not an official LIC document. Final terms as per LIC policy document. ' + esc(br.web || '') + '</p>';
 				document.body.appendChild(el);
-				return window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(function (cv) {
+				// v4.6.2: font तयार झाल्यावरच image — शब्द एकमेकांत घुसू नयेत
+				return (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { return window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }); }).then(function (cv) {
 					var pdf = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' }), W = pdf.internal.pageSize.getWidth(), Hp = pdf.internal.pageSize.getHeight();
 					var w = W - 40, h = cv.height * w / cv.width;
 					if (h > Hp - 40) { h = Hp - 40; w = cv.width * h / cv.height; }

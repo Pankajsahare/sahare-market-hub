@@ -496,7 +496,16 @@
 			var ready = Array.prototype.map.call(imgs, function (im) {
 				return im.complete ? Promise.resolve() : new Promise(function (res) { im.onload = im.onerror = res; });
 			});
-			return Promise.all(ready).then(function () {
+			// v4.6.2: font पूर्ण load होईपर्यंत थांबा — नाहीतर पहिल्या पानावर शब्द एकमेकांत घुसतात (html2canvas माप वेगळ्या font ने घेतं)
+			var fontsReady = function () {
+				var fs = document.fonts;
+				if (!fs || !fs.ready) { return Promise.resolve(); }
+				var ff = getComputedStyle(host.querySelector('.a4p') || host).fontFamily;
+				return Promise.all(['400', '600', '700'].map(function (w) { return fs.load(w + ' 16px ' + ff).catch(function () {}); }))
+					.then(function () { return fs.ready; })
+					.then(function () { return new Promise(function (res) { requestAnimationFrame(function () { requestAnimationFrame(res); }); }); });
+			};
+			return Promise.all(ready).then(fontsReady).then(function () {
 				var pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
 				var pages = host.querySelectorAll('.a4p'), chain = Promise.resolve();
 				Array.prototype.forEach.call(pages, function (pg, i) {

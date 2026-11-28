@@ -428,6 +428,8 @@
 		var minByTerm = p.min_age_by_term ? p.min_age_by_term[inp.term] : undefined;
 		if (minByTerm !== undefined && age < minByTerm) { errs.push('For this term the minimum entry age is ' + (minByTerm === 0 ? '30 days' : minByTerm + ' years') + '.'); }
 		if (BY_PPT[p.type]) {
+			// v4.6.2: यादीबाहेरची मुदत (उदा. 883 साठी 5) — चुकीचा premium दाखवण्याऐवजी स्पष्ट संदेश
+			if (p.ppt_options && p.ppt_options.length && p.ppt_options.map(Number).indexOf(Number(inp.term)) < 0) { errs.push('Choose a term from ' + Math.min.apply(null, p.ppt_options) + ' to ' + Math.max.apply(null, p.ppt_options) + ' years for this plan.'); }
 			if (p.ppt_max_age_sum && age + P > p.ppt_max_age_sum) { errs.push('Age + premium paying term cannot exceed ' + p.ppt_max_age_sum + '. Choose a shorter term.'); }
 		} else {
 			if (age + T > p.max_maturity) { errs.push('Maturity age cannot exceed ' + p.max_maturity + ' years. Choose a shorter term.'); }
