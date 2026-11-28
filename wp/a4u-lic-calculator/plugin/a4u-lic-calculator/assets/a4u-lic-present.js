@@ -70,7 +70,7 @@
 			t_tax: 'प्रीमियमवर कलम 80C आणि मुदतपूर्तीवर कलम 10(10D) — अटींनुसार.', t_feat: 'कर्ज व समर्पण सुविधा, पर्यायी रायडर आणि नामनिर्देशन.',
 			w1: 'भारत सरकारच्या मालकीची कंपनी', w2: 'पॉलिसीच्या रकमेची केंद्र सरकारची हमी (कलम 37, LIC कायदा 1956)', w3: '1956 पासून कुटुंबांच्या सेवेत', w4: 'देशभर शाखा आणि एजंट',
 			feat: 'योजनेची वैशिष्ट्ये', f_death: 'मृत्यू लाभ', f_mat: 'मुदतपूर्ती लाभ', f_add: 'वाढ', f_tax: 'आयकर', f_surr: 'समर्पण (Surrender)', f_loan: 'कर्ज',
-			fv_death: 'किमान {d} (भरलेल्या प्रीमियमच्या 105% पेक्षा कमी नाही)', fv_tax: 'कलम 80C व 10(10D), अटींनुसार', fv_surr: '{y} वर्षांनंतर उपलब्ध', fv_loan: '{y} वर्षांनंतर, समर्पण मूल्यावर उपलब्ध', fv_surr_any: 'Policy च्या मुदतीत कधीही', fv_death_sp: 'किमान {d} (single premium च्या 125% पेक्षा कमी नाही) + Guaranteed Additions', fv_loan_3m: 'Policy सुरू झाल्यापासून 3 महिन्यांनी, समर्पण मूल्यावर उपलब्ध',
+			fv_death: 'किमान {d} (भरलेल्या प्रीमियमच्या 105% पेक्षा कमी नाही)', fv_tax: 'कलम 80C व 10(10D), अटींनुसार', fv_surr: '{y} वर्षांनंतर उपलब्ध', fv_loan: '{y} वर्षांनंतर, समर्पण मूल्यावर उपलब्ध', fv_surr_any: 'Policy च्या मुदतीत कधीही', fv_tax_lim: '80C फक्त {c} वर; maturity आणि उत्पन्न करपात्र (premium कर-मुक्त मर्यादेपेक्षा जास्त); मृत्यू लाभ करमुक्त', t_tax_lim: 'Premium कर-मुक्त मर्यादेपेक्षा जास्त: 80C वजावट फक्त {c} वर; maturity आणि उत्पन्न करपात्र. मृत्यू लाभ करमुक्त.', fv_death_sp: 'किमान {d} (single premium च्या 125% पेक्षा कमी नाही) + Guaranteed Additions', fv_loan_3m: 'Policy सुरू झाल्यापासून 3 महिन्यांनी, समर्पण मूल्यावर उपलब्ध',
 			plandet: 'योजनेचा तपशील', riders: 'निवडलेले रायडर', none: 'नाही', custom: 'यांच्यासाठी खास तयार केलेले सादरीकरण',
 			d_endowment: 'बचत आणि संरक्षण देणारी योजना. तुम्हाला काही झाले तर कुटुंबाला आर्थिक आधार, आणि मुदतपूर्तीला बोनससह एकरकमी रक्कम.',
 			d_lakshya: 'मुलांच्या ध्येयांसाठी योजना. तुम्हाला काही झाले तर कुटुंबाला वार्षिक उत्पन्न, आणि मुदतपूर्तीची पूर्ण रक्कम वेळेवर मिळते.',
@@ -118,7 +118,7 @@
 			t_tax: 'प्रीमियम पर धारा 80C और परिपक्वता पर धारा 10(10D) — शर्तों के अधीन।', t_feat: 'ऋण और सरेंडर सुविधा, वैकल्पिक राइडर और नामांकन।',
 			w1: 'भारत सरकार के स्वामित्व वाली कंपनी', w2: 'पॉलिसी राशि पर केंद्र सरकार की गारंटी (धारा 37, LIC अधिनियम 1956)', w3: '1956 से परिवारों की सेवा में', w4: 'पूरे देश में शाखाएँ और एजेंट',
 			feat: 'योजना की विशेषताएँ', f_death: 'मृत्यु लाभ', f_mat: 'परिपक्वता लाभ', f_add: 'वृद्धि', f_tax: 'आयकर', f_surr: 'सरेंडर', f_loan: 'ऋण',
-			fv_death: 'कम से कम {d} (भरे गए प्रीमियम के 105% से कम नहीं)', fv_tax: 'धारा 80C और 10(10D), शर्तों के अधीन', fv_surr: '{y} वर्ष बाद उपलब्ध', fv_loan: '{y} वर्ष बाद, सरेंडर मूल्य पर उपलब्ध', fv_surr_any: 'Policy अवधि में कभी भी', fv_death_sp: 'कम से कम {d} (single premium के 125% से कम नहीं) + Guaranteed Additions', fv_loan_3m: 'Policy शुरू होने के 3 महीने बाद, सरेंडर मूल्य पर उपलब्ध',
+			fv_death: 'कम से कम {d} (भरे गए प्रीमियम के 105% से कम नहीं)', fv_tax: 'धारा 80C और 10(10D), शर्तों के अधीन', fv_surr: '{y} वर्ष बाद उपलब्ध', fv_loan: '{y} वर्ष बाद, सरेंडर मूल्य पर उपलब्ध', fv_surr_any: 'Policy अवधि में कभी भी', fv_tax_lim: '80C केवल {c} पर; maturity और आय करयोग्य (premium कर-मुक्त सीमा से अधिक); मृत्यु लाभ करमुक्त', t_tax_lim: 'Premium कर-मुक्त सीमा से अधिक: 80C कटौती केवल {c} पर; maturity और आय करयोग्य। मृत्यु लाभ करमुक्त।', fv_death_sp: 'कम से कम {d} (single premium के 125% से कम नहीं) + Guaranteed Additions', fv_loan_3m: 'Policy शुरू होने के 3 महीने बाद, सरेंडर मूल्य पर उपलब्ध',
 			plandet: 'योजना का विवरण', riders: 'चुने गए राइडर', none: 'कोई नहीं', custom: 'इनके लिए विशेष रूप से तैयार प्रस्तुति',
 			d_endowment: 'बचत और सुरक्षा देने वाली योजना। आपको कुछ होने पर परिवार को आर्थिक सहारा, और परिपक्वता पर बोनस सहित एकमुश्त राशि।',
 			d_lakshya: 'बच्चों के लक्ष्यों के लिए योजना। आपको कुछ होने पर परिवार को वार्षिक आय, और परिपक्वता की पूरी राशि समय पर मिलती है।',
@@ -258,7 +258,7 @@
 			(r.maturity > 0 ? '<li><b>' + tt('f_mat') + ':</b> ' + inr(r.maturity) + ' (' + tt('age') + ' ' + RI.matAge + ')</li>' : '') +
 			(r.survival ? '<li><b>' + tt('income') + ':</b> ' + inr(r.survival) + ' / yr (' + tt('age') + ' ' + RI.incAge + '+)</li>' : '') +
 			(r.ga ? '<li><b>' + tt('f_add') + ':</b> ' + tt('m_ga') + ' ' + inr(r.ga) + '</li>' : (r.bonus ? '<li><b>' + tt('f_add') + ':</b> ' + tt('m_srb') + ' ' + inr(r.bonus + r.fab) + '</li>' : '')) +
-			'<li><b>' + tt('f_tax') + ':</b> ' + tt('fv_tax') + '</li>' +
+			'<li><b>' + tt('f_tax') + ':</b> ' + (r.taxLim ? fmtT('fv_tax_lim', { c: inr(r.taxCap) }) : tt('fv_tax')) + '</li>' +
 			// v4.6.5: 883 brochure — surrender कधीही, कर्ज 3 महिन्यांनी
 			'<li><b>' + tt('f_surr') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_surr_any') : fmtT('fv_surr', { y: single ? 1 : (p.surr_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li>' +
 			'<li><b>' + tt('f_loan') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_loan_3m') : fmtT('fv_loan', { y: single ? 1 : (p.loan_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li></ul></div></div>';
@@ -307,7 +307,7 @@
 		var acc = r.ga ? fmtT('t_acc_ga', { r: '₹' + p.ga_per_1000 }) : (r.bonus ? fmtT('t_acc_b', { r: '₹' + r.srb }) : tt('t_acc_n'));
 		var matTxt = r.maturity > 0 ? fmtT('t_mat', { m: inr(r.maturity), g: RI.matAge }) : fmtT('t_mat0', { s: inr(r.survival), g: RI.incAge });
 		var how = [['h_prem', single ? fmtT('t_prem1', { i: inr(r.inst) }) : fmtT('t_prem', { i: inr(r.inst), m: mName, p: r.P })],
-			['h_cov', fmtT('t_cov', { a: inr(RI.coverMin), b: inr(RI.coverMax) })], ['h_mat', matTxt], ['h_acc', acc], ['h_tax', tt('t_tax')], ['h_feat', tt('t_feat')]];
+			['h_cov', fmtT('t_cov', { a: inr(RI.coverMin), b: inr(RI.coverMax) })], ['h_mat', matTxt], ['h_acc', acc], ['h_tax', r.taxLim ? fmtT('t_tax_lim', { c: inr(r.taxCap) }) : tt('t_tax')], ['h_feat', tt('t_feat')]];
 		var ic = function (path) { return '<img width="34" height="34" alt="" src="' + img('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" width="34" height="34"><circle cx="17" cy="17" r="17" fill="' + GREEN + '"/>' + path + '</svg>') + '">'; };
 		var icons = [
 			'<path d="M9 25h16M11 25V15m4 10V15m4 10V15m4 10V15M8 13l9-6 9 6z" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/>',
