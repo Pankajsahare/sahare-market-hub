@@ -13,7 +13,7 @@
 	var lang = 'en', clientName = '';
 	var I18N = {
 		en: {
-			ill: 'Benefit Illustration', pfor: 'Prepared for', cont: 'continued', valchart: 'Life cover and surrender value, year by year', ms_h: 'Key milestones', glance_h: 'Your money at a glance', ms_start: 'Policy starts', ms_risk: 'Full life cover starts', ms_ppt: 'Last premium', ms_ga: 'Guaranteed Additions stop', ms_inc: 'Yearly income starts', ms_mat: 'Maturity', ms_cover: 'Life cover continues', tot_inc: 'Total income', every: 'Back for every ₹1', wa_cta: 'Chat on WhatsApp', tap: 'Tap to open',  pon: 'Prepared on', pby: 'Presented by', details: 'Your plan details',
+			ill: 'Benefit Illustration', pfor: 'Prepared for', cont: 'continued', summary: 'Plan Summary', tagline: 'A secure step for a bright future', biok: 'Premium and values checked against LIC\'s official Benefit Illustration', thanks: 'Thank you for your trust. Call or WhatsApp any time.', valchart: 'Life cover and surrender value, year by year', ms_h: 'Key milestones', glance_h: 'Your money at a glance', ms_start: 'Policy starts', ms_risk: 'Full life cover starts', ms_ppt: 'Last premium', ms_ga: 'Guaranteed Additions stop', ms_inc: 'Yearly income starts', ms_mat: 'Maturity', ms_cover: 'Life cover continues', tot_inc: 'Total income', every: 'Back for every ₹1', wa_cta: 'Chat on WhatsApp', tap: 'Tap to open',  pon: 'Prepared on', pby: 'Presented by', details: 'Your plan details',
 			age: 'Age', sa: 'Basic Sum Assured', term: 'Policy term', ppt: 'Premium paying term', gap: 'Guaranteed Addition period', mode: 'Payment mode', yrs: 'years', once: 'Single premium',
 			glance: 'Plan at a glance', inst: 'Installment', tprem: 'Total premium payable', tben: 'Estimated total benefits', irr: 'Return (IRR, approx.)',
 			bymode: 'Premium by payment mode', ytot: 'Yearly total', pdet: 'Premium details', tab: 'Tabular premium', hsa: 'High Sum Assured rebate', rider: 'Riders', gst: 'GST',
@@ -34,7 +34,7 @@
 			mix: 'Suggested product mix', mixtot: 'Combined', first: 'First-year premium', mixirr: 'Combined return (IRR, approx.)', illid: 'Illustration ID', mb: 'Money back'
 		},
 		mr: {
-			ill: 'लाभांचे उदाहरण (Benefit Illustration)', pfor: 'यांच्यासाठी', cont: 'पुढे चालू', valchart: 'दरवर्षीचं विमा संरक्षण आणि surrender मूल्य', ms_h: 'महत्त्वाचे टप्पे', glance_h: 'तुमचे पैसे एका नजरेत', ms_start: 'Policy सुरू', ms_risk: 'पूर्ण जीवन विमा सुरू', ms_ppt: 'शेवटचा हप्ता', ms_ga: 'Guaranteed Additions थांबतात', ms_inc: 'वार्षिक उत्पन्न सुरू', ms_mat: 'मुदतपूर्ती', ms_cover: 'विमा संरक्षण सुरू', tot_inc: 'एकूण उत्पन्न', every: '₹1 मागे परत', wa_cta: 'WhatsApp वर बोला', tap: 'उघडण्यासाठी दाबा',  pon: 'दिनांक', pby: 'सादरकर्ते', details: 'तुमच्या योजनेचा तपशील',
+			ill: 'लाभांचे उदाहरण (Benefit Illustration)', pfor: 'यांच्यासाठी', cont: 'पुढे चालू', summary: 'योजनेचा सारांश', tagline: 'उज्ज्वल भविष्यासाठी एक सुरक्षित पाऊल', biok: 'Premium आणि मूल्यं LIC च्या अधिकृत Benefit Illustration शी तपासलेली', thanks: 'तुमच्या विश्वासाबद्दल धन्यवाद. केव्हाही फोन किंवा WhatsApp करा.', valchart: 'दरवर्षीचं विमा संरक्षण आणि surrender मूल्य', ms_h: 'महत्त्वाचे टप्पे', glance_h: 'तुमचे पैसे एका नजरेत', ms_start: 'Policy सुरू', ms_risk: 'पूर्ण जीवन विमा सुरू', ms_ppt: 'शेवटचा हप्ता', ms_ga: 'Guaranteed Additions थांबतात', ms_inc: 'वार्षिक उत्पन्न सुरू', ms_mat: 'मुदतपूर्ती', ms_cover: 'विमा संरक्षण सुरू', tot_inc: 'एकूण उत्पन्न', every: '₹1 मागे परत', wa_cta: 'WhatsApp वर बोला', tap: 'उघडण्यासाठी दाबा',  pon: 'दिनांक', pby: 'सादरकर्ते', details: 'तुमच्या योजनेचा तपशील',
 			age: 'वय', sa: 'मूळ विमा रक्कम', term: 'पॉलिसी मुदत', ppt: 'हप्ता भरण्याची मुदत', gap: 'हमी वाढ (GA) कालावधी', mode: 'हप्त्याचा प्रकार', yrs: 'वर्षे', once: 'एकरकमी हप्ता',
 			glance: 'योजना एका नजरेत', inst: 'हप्ता', tprem: 'एकूण भरायचा हप्ता', tben: 'अंदाजे एकूण लाभ', irr: 'परतावा (IRR, अंदाजे)',
 			bymode: 'हप्त्याच्या प्रकारानुसार रक्कम', ytot: 'वर्षाची एकूण रक्कम', pdet: 'हप्त्याचा तपशील', tab: 'मूळ (tabular) हप्ता', hsa: 'जास्त विमा रकमेवरील सूट', rider: 'रायडर', gst: 'GST',
@@ -83,7 +83,7 @@
 			d_moneyback: 'मनी बॅक योजना: ठराविक अंतराने विमा रकमेचा काही भाग, आणि उरलेली रक्कम बोनससह मुदतपूर्तीला.'
 		},
 		hi: {
-			ill: 'लाभ का उदाहरण (Benefit Illustration)', pfor: 'के लिए', cont: 'जारी', valchart: 'हर साल बीमा सुरक्षा और surrender मूल्य', ms_h: 'मुख्य पड़ाव', glance_h: 'आपका पैसा एक नज़र में', ms_start: 'Policy शुरू', ms_risk: 'पूरा जीवन बीमा शुरू', ms_ppt: 'आख़िरी किस्त', ms_ga: 'Guaranteed Additions रुकते हैं', ms_inc: 'वार्षिक आय शुरू', ms_mat: 'परिपक्वता', ms_cover: 'बीमा सुरक्षा जारी', tot_inc: 'कुल आय', every: '₹1 पर वापसी', wa_cta: 'WhatsApp पर बात करें', tap: 'खोलने के लिए दबाएँ',  pon: 'दिनांक', pby: 'प्रस्तुतकर्ता', details: 'आपकी योजना का विवरण',
+			ill: 'लाभ का उदाहरण (Benefit Illustration)', pfor: 'के लिए', cont: 'जारी', summary: 'योजना सारांश', tagline: 'उज्ज्वल भविष्य के लिए एक सुरक्षित कदम', biok: 'Premium और मूल्य LIC के आधिकारिक Benefit Illustration से जाँचे गए', thanks: 'आपके भरोसे के लिए धन्यवाद। कभी भी फ़ोन या WhatsApp करें।', valchart: 'हर साल बीमा सुरक्षा और surrender मूल्य', ms_h: 'मुख्य पड़ाव', glance_h: 'आपका पैसा एक नज़र में', ms_start: 'Policy शुरू', ms_risk: 'पूरा जीवन बीमा शुरू', ms_ppt: 'आख़िरी किस्त', ms_ga: 'Guaranteed Additions रुकते हैं', ms_inc: 'वार्षिक आय शुरू', ms_mat: 'परिपक्वता', ms_cover: 'बीमा सुरक्षा जारी', tot_inc: 'कुल आय', every: '₹1 पर वापसी', wa_cta: 'WhatsApp पर बात करें', tap: 'खोलने के लिए दबाएँ',  pon: 'दिनांक', pby: 'प्रस्तुतकर्ता', details: 'आपकी योजना का विवरण',
 			age: 'आयु', sa: 'मूल बीमा राशि', term: 'पॉलिसी अवधि', ppt: 'प्रीमियम भुगतान अवधि', gap: 'गारंटीड एडिशन अवधि', mode: 'भुगतान का तरीका', yrs: 'वर्ष', once: 'एकमुश्त प्रीमियम',
 			glance: 'योजना एक नज़र में', inst: 'किस्त', tprem: 'कुल देय प्रीमियम', tben: 'अनुमानित कुल लाभ', irr: 'रिटर्न (IRR, अनुमानित)',
 			bymode: 'भुगतान के तरीके अनुसार प्रीमियम', ytot: 'वार्षिक कुल', pdet: 'प्रीमियम विवरण', tab: 'मूल (tabular) प्रीमियम', hsa: 'अधिक बीमा राशि पर छूट', rider: 'राइडर', gst: 'GST',
@@ -223,7 +223,8 @@
 	function pageWrap(inner, r, n, total) {
 		var p = r.plan, head, brandFoot = '';
 		var web = BR.web ? (/^https?:/.test(BR.web) ? BR.web : 'https://' + BR.web) : '', tel = String(BR.phone || '').replace(/[^0-9+]/g, '');
-		if (n === 1) {
+		var brand = inner.indexOf('<!--brand-->') === 0; // v4.8: कव्हर आणि मागचं पान — branding header
+		if (brand) {
 			head = '<div class="a4p-head"><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"><div><b>' + esc(BR.name || '') + '</b><span>' +
 				(web ? '<a data-href="' + esc(web) + '">' + esc(BR.web) + '</a>' : '') + (tel ? ' · <a data-href="tel:' + esc(tel) + '">' + esc(BR.phone) + '</a>' : '') + '</span></div></div>';
 		} else {
@@ -234,12 +235,19 @@
 				(web ? ' · <a data-href="' + esc(web) + '">' + esc(BR.web) + '</a>' : '') + (tel ? ' · <a data-href="tel:' + esc(tel) + '">' + esc(BR.phone) + '</a>' : '') +
 				(C.whatsapp ? ' · <a class="wa" data-href="' + esc(waLink(r)) + '">' + tt('wa_cta') + '</a>' : '') + '</div>';
 		}
-		return '<div class="a4p' + (n === 1 ? ' a4p-p1' : '') + '">' + head +
+		return '<div class="a4p a4p-l-' + lang + (brand ? ' a4p-brandpg' : '') + '">' + head +
 			'<div class="a4p-body">' + inner + '</div>' +
 			'<div class="a4p-foot">' + brandFoot + '<div>' + esc(BR.agent || '') + (BR.type ? ', ' + esc(BR.type) : '') + (BR.code ? ' · Agency Code: ' + esc(BR.code) : '') + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') + '</div>' +
 			'<div>LIC ' + esc(p.name) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ' · ' + esc(tt('solicit')) + '</div>' +
 			'<div class="a4p-pn">' + (illId ? tt('illid') + ': ' + esc(illId) + ' · ' : '') + tt('page') + ' ' + n + ' ' + tt('of') + ' ' + total + '</div></div></div>';
 	}
+
+	// v4.8: रक्कम अक्षरांत — engine (a4u-lic.js) मधून, PDF च्या भाषेत
+	function inWords(v, L) { return A.inWords ? A.inWords(v, L || lang) : ''; }
+	// v4.8 (S4): LIC च्या अधिकृत Benefit Illustration शी तपासलेले plans
+	var BI_OK = { 714: 1, 715: 1, 717: 1, 720: 1, 733: 1, 736: 1, 745: 1, 770: 1, 771: 1, 883: 1, 894: 1 };
+	function wS(v) { return '<small class="a4p-w">' + esc(inWords(v)) + '</small>'; }
+	function inrW(v) { return inr(v) + '<small class="a4p-w">' + esc(inWords(v)) + '</small>'; }
 
 	function kv(label, val) { return '<tr><th>' + label + '</th><td>' + val + '</td></tr>'; }
 
@@ -259,11 +267,18 @@
 		// 1. Cover — योजनेचं नाव, कोणासाठी, वर्णन, तपशील, वैशिष्ट्ये
 		// v4.7: पान 1 — डावीकडे portrait फोटो (अर्धं पान), उजवीकडे योजनेचं नाव + 3 मुख्य आकडे
 		var isTerm = p.type === 'term' || p.type === 'term_sp';
-		var hl = [[single ? tt('once') : tt('inst'), inr(r.inst), single ? '' : mName],
+		var hl = [[single ? tt('once') : tt('inst'), inrW(r.inst), single ? '' : mName],
 			// single premium मध्ये "एकूण भरता" = तोच आकडा — त्याऐवजी वार्षिक उत्पन्न / maturity
-			single ? (r.survival ? [tt('income'), inr(r.survival) + ' / yr', tt('age') + ' ' + RI.incAge + '+'] : [tt('f_mat'), inr(r.maturity), tt('age') + ' ' + RI.matAge]) : [tt('paytot'), inr(r.totalPrem), r.P + yrs],
-			[isTerm ? tt('lcover') : tt('gettot'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), r.maturity > 0 && !(single && !r.survival) ? tt('f_mat') + ' ' + inr(r.maturity) : '']];
-		var c1 = '<div class="a4p-fill"><div class="a4p-hero' + (coverImg ? '' : ' noimg') + '">' + (coverImg ? '<div class="a4p-photo"><img src="' + esc(coverImg) + '" alt="">' + (clientName ? '<div class="a4p-ribbon">' + tt('pfor') + ' <b>' + esc(clientName) + '</b></div>' : '') + '</div>' : '') +
+			single ? (r.survival ? [tt('income'), inr(r.survival) + ' / yr' + wS(r.survival), tt('age') + ' ' + RI.incAge + '+'] : [tt('f_mat'), inrW(r.maturity), tt('age') + ' ' + RI.matAge]) : [tt('paytot'), inrW(r.totalPrem), r.P + yrs],
+			[isTerm ? tt('lcover') : tt('gettot'), inrW(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), r.maturity > 0 && !(single && !r.survival) ? tt('f_mat') + ' ' + inr(r.maturity) : '']];
+		// v4.8: कव्हर पान — branding header, पूर्ण फोटो (कापणी नाही), खाली नाव
+		if (coverFull) {
+			pages.push('<!--brand--><div class="a4p-cover2"><div class="a4p-cphoto"><img src="' + coverFull + '" alt="">' +
+				(qr ? '<div class="a4p-cqr" data-href="' + esc(waLink(r)) + '"><img src="' + qr + '" alt=""><span>' + tt('wa_cta') + '</span></div>' : '') + '</div>' +
+				'<div class="a4p-cname">' + (clientName ? '<small>' + tt('pfor') + '</small><h1>' + esc(clientName) + '</h1>' : '<h1>LIC\'s ' + esc(p.name) + '</h1>') +
+				'<i></i><p class="pl">' + (clientName ? 'LIC\'s ' + esc(p.name) + ' · ' : '') + tt('ill') + '</p><p class="tgl">' + tt('tagline') + '</p><p class="dt">' + tt('pon') + ' ' + today + '</p></div></div>');
+		}
+		var c1 = '<h2 class="a4p-h">' + tt('summary') + '</h2><div class="a4p-fill"><div class="a4p-hero noimg">' +
 			'<div class="a4p-intro"><div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
 			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b><br>' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
 			'<p class="a4p-desc">' + tt('d_' + p.type) + '</p>' +
@@ -292,9 +307,9 @@
 		if (r.survival && RI.incAge) { ms.push([RI.incAge, tt('ms_inc'), inr(r.survival) + ' / yr', 'in']); }
 		if (r.maturity > 0) { ms.push([RI.matAge, tt('ms_mat'), inr(r.maturity), 'in']); } else if (isTerm) { ms.push([RI.coverTo, tt('lcover'), inr(Math.max(r.deathSA || 0, r.sa)), 'cov']); }
 		ms.sort(function (a, b) { return a[0] - b[0]; });
-		var glance = [[tt('paytot'), inr(r.totalPrem)]];
-		if (r.totalSurv) { glance.push([tt('tot_inc'), inr(r.totalSurv)]); }
-		glance.push([isTerm ? tt('lcover') : tt('gettot'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit)]);
+		var glance = [[tt('paytot'), inrW(r.totalPrem)]];
+		if (r.totalSurv) { glance.push([tt('tot_inc'), inrW(r.totalSurv)]); }
+		glance.push([isTerm ? tt('lcover') : tt('gettot'), inrW(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit)]);
 		if (!isTerm && RI.ratio) { glance.push([tt('every'), '₹' + RI.ratio.toFixed(2)]); }
 		if (!isTerm && r.irr) { glance.push([tt('irr'), pct(r.irr)]); }
 		glance = glance.slice(0, 4);
@@ -309,7 +324,7 @@
 			'<div class="a4p-2c2"><div><h3>' + tt('ms_h') + '</h3><ol class="a4p-ms">' + ms.map(function (q) { return '<li class="' + q[3] + '"><i>' + tt('age') + ' ' + q[0] + '</i><b>' + q[1] + '</b>' + (q[2] ? '<span>' + q[2] + '</span>' : '') + '</li>'; }).join('') + '</ol></div>' +
 			'<div><h3>' + tt('md') + '</h3><table class="a4p-t a4p-kv2"><tbody>' + A.maturityRows(r, tt).map(function (q) { return kv(q[0], q[1]); }).join('') + '</tbody></table></div></div>' +
 			(r.bonus || r.fab ? '<p class="a4p-note">' + tt('bonusas') + ': SRB ₹' + r.srb + (r.fabRate ? ' · FAB ₹' + r.fabRate : '') + ' — ' + tt('d2') + '</p>' : '') +
-			(r.basis !== 'verified' && r.basis !== 'quote' ? '<p class="a4p-note">' + tt('est') + '</p>' : '');
+			(BI_OK[p.id] ? '<p class="a4p-note a4p-ok">✓ ' + tt('biok') + '</p>' : (r.basis !== 'verified' && r.basis !== 'quote' ? '<p class="a4p-note">' + tt('est') + '</p>' : ''));
 		// v4.7.1: policy value chart पान 3 वरून पान 2 वर (पान 2 रिकामं वाटू नये, पान 3 भरगच्च होतं)
 		var valHtml = V4 ? '<h3 style="margin-top:18px">' + tt('valchart') + '</h3>' + '<img class="a4p-chart" src="' + img(V4.value(r)) + '" alt="">' +
 				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#d9822b"></span>' + tt('lcover') + (r.table && r.table.some(function (x) { return x.cv > 0; }) ? ' <span style="background:#7a4bc2"></span>Surrender value' : '') + '</p>' : '';
@@ -326,7 +341,7 @@
 		} else {
 			c3 += '<div class="a4p-modes"><div class="sel"><span>' + tt('once') + '</span><b>' + inr(r.inst) + '</b></div></div>';
 		}
-		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inr(r.totalPrem) + '</b></div><div class="get"><span>' + (p.type === 'term' || p.type === 'term_sp' ? tt('lcover') : tt('gettot')) + '</span><b>' + inr(p.type === 'term' || p.type === 'term_sp' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + '</b></div></div>' +
+		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inrW(r.totalPrem) + '</b></div><div class="get"><span>' + (p.type === 'term' || p.type === 'term_sp' ? tt('lcover') : tt('gettot')) + '</span><b>' + inr(p.type === 'term' || p.type === 'term_sp' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + wS(p.type === 'term' || p.type === 'term_sp' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + '</b></div></div>' +
 			(RI.ratio ? '<p class="a4p-every">' + fmtT('every1', { x: RI.ratio.toFixed(2) }) + '</p>' : '');
 		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
 			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
@@ -362,8 +377,8 @@
 			'<path d="M14 10h9l5 5v15H14zM23 10v5h5M17 20h8M17 24h8" ' + W + '/>',
 			'<circle cx="16" cy="22" r="5" ' + W + '/><path d="M20 19l9-9M26 13l3 3M23 16l2 2" ' + W + '/>'
 		];
-		var grow = r.ga ? inr(r.ga) : (r.bonus || r.fab ? inr(r.bonus + r.fab) : '');
-		var flow = [[tt('youpay'), inr(r.totalPrem), single ? tt('once') : r.P + yrs], [tt('h_acc'), grow || '—', r.ga ? tt('m_ga') : (r.bonus ? tt('m_srb') : '')], [tt('youget'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), isTerm ? tt('lcover') : '']];
+		var grow = r.ga ? inrW(r.ga) : (r.bonus || r.fab ? inrW(r.bonus + r.fab) : '');
+		var flow = [[tt('youpay'), inrW(r.totalPrem), single ? tt('once') : r.P + yrs], [tt('h_acc'), grow || '—', r.ga ? tt('m_ga') : (r.bonus ? tt('m_srb') : '')], [tt('youget'), inrW(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), isTerm ? tt('lcover') : '']];
 		var cols = ['#0b4ea2', GREEN, '#1f8f4e', '#d9822b', '#7a4fa0', GOLD];
 		pages.push('<h2 class="a4p-h">' + tt('how') + '</h2>' +
 			'<div class="a4p-flow">' + flow.map(function (f, i) { return (i ? '<i>&#10140;</i>' : '') + '<div class="f' + i + '"><span>' + (i + 1) + '</span><em>' + f[0] + '</em><b>' + f[1] + '</b>' + (f[2] ? '<small>' + f[2] + '</small>' : '') + '</div>'; }).join('') + '</div>' +
@@ -420,11 +435,26 @@
 				rowsC.map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1](r) + '</td><td>' + q[1](b) + '</td></tr>'; }).join('') + '</tbody></table>';
 		}
 		l += '<h2 class="a4p-h">' + tt('notes') + '</h2><ol class="a4p-notes"><li>' + tt('d1') + '</li><li>' + tt('d2') + '</li><li>' + fmtT('d3', { no: p.id, uin: p.uin || '—' }) + '</li><li>' + tt('d4') + '</li></ol>';
+		if (BR.photo_full) {
+			// v4.8: मागचं पान — advisor चा पूर्ण फोटो + संपर्क (notes पानावर वेगळं card नको)
+			l += '</div></div>';
+			pages.push(l);
+			var web2 = BR.web ? (/^https?:/.test(BR.web) ? BR.web : 'https://' + BR.web) : '', tel2 = String(BR.phone || '').replace(/[^0-9+]/g, ''), em = BR.email2 || BR.email || '';
+			l = '<!--brand--><div class="a4p-back"><div class="a4p-bphoto"><img src="' + esc(BR.photo_full) + '" alt="" crossorigin="anonymous"></div>' +
+				'<div class="a4p-bname"><small>' + tt('contact') + '</small><h1>' + esc(BR.agent || '') + '</h1><i></i>' +
+				'<p class="ti">' + esc(BR.title || BR.type || '') + (BR.type && BR.title ? '<br>' + esc(BR.type) : '') + '</p>' +
+				'<ul>' + (BR.code ? '<li>Agency Code: <b>' + esc(BR.code) + '</b>' + (BR.branch ? ' · Branch: <b>' + esc(BR.branch) + '</b>' : '') + '</li>' : '') +
+				(tel2 ? '<li><a data-href="tel:' + esc(tel2) + '">📞 ' + esc(BR.phone) + '</a></li>' : '') + (em ? '<li><a data-href="mailto:' + esc(em) + '">✉ ' + esc(em) + '</a></li>' : '') +
+				(web2 ? '<li><a data-href="' + esc(web2) + '">🌐 ' + esc(BR.web) + '</a></li>' : '') + (BR.address ? '<li>📍 ' + esc(BR.address) + '</li>' : '') + '</ul>' +
+				(qr ? '<div class="a4p-bqr" data-href="' + esc(waLink(r)) + '"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span><em>' + tt('wa_cta') + '</em></div>' : '') +
+				'<p class="ty">' + tt('thanks') + '</p></div></div>';
+		} else {
 		l += '</div><div class="a4p-card a4p-advisor"><div class="a4p-me">' + (BR.photo ? '<img class="ph" src="' + esc(BR.photo) + '" alt="" crossorigin="anonymous">' : '') +
 			'<div><h3>' + tt('contact') + '</h3><p><b>' + esc(BR.agent || '') + '</b><br>' + esc(BR.title || BR.type || '') + (BR.type && BR.title ? ' · ' + esc(BR.type) : '') +
 			(BR.code ? '<br>Agency Code: ' + esc(BR.code) + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') : '') +
 			(BR.address ? '<br>' + esc(BR.address) : '') + '<br>' + esc(BR.phone || '') + (BR.email2 || BR.email ? ' · ' + esc(BR.email2 || BR.email) : '') + '<br>' + esc(BR.web || '') + '</p></div></div>' +
 			(qr ? '<div class="a4p-qr" data-href="' + esc(waLink(r)) + '"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span><em>' + tt('wa_cta') + '</em></div>' : '') + '</div></div>';
+		}
 		pages.push(l);
 
 		return pages.map(function (inner, k) { return pageWrap(inner, r, k + 1, pages.length); }).join('');
@@ -503,7 +533,36 @@
 			if (cn) { cn.addEventListener('change', function () { clientName = this.value.trim(); renderPreview(); }); }
 		});
 	}
-	function refreshCover() { coverSrc().then(function (u) { coverImg = u || ''; if (modal) { renderPreview(); } }); }
+	// v4.8: कोणताही फोटो चौकटीत पूर्ण (कापणी नाही) + उरलेल्या जागेत त्याच फोटोची धूसर प्रत
+	function fitPhoto(src, W, H) {
+		return new Promise(function (res) {
+			if (!src) { res(''); return; }
+			var im = new Image();
+			im.onload = function () {
+				try {
+					var S = 1.6, cw = Math.round(W * S), ch = Math.round(H * S), cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+					var ctx = cv.getContext('2d'), iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height;
+					var cover = Math.max(cw / iw, ch / ih), fit = Math.min(cw / iw, ch / ih);
+					// धूसर background: लहान canvas वर काढून मोठं केलं की blur (Safari मध्ये ctx.filter नसलं तरी चालतं)
+					var t = document.createElement('canvas'); t.width = 28; t.height = Math.max(1, Math.round(28 * ch / cw));
+					var tc = t.getContext('2d'), tw = iw * cover / cw * t.width, th = ih * cover / ch * t.height;
+					tc.drawImage(im, (t.width - tw) / 2, (t.height - th) / 2, tw, th);
+					ctx.imageSmoothingEnabled = true; ctx.drawImage(t, 0, 0, cw, ch);
+					ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(0, 0, cw, ch);
+					var dw = iw * fit, dh = ih * fit;
+					ctx.drawImage(im, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+					res(cv.toDataURL('image/jpeg', 0.88));
+				} catch (e) { res(src); }
+			};
+			im.onerror = function () { res(''); };
+			im.src = src;
+		});
+	}
+	var coverFull = '';
+	function refreshCover() {
+		coverSrc().then(function (u) { coverImg = u || ''; return fitPhoto(coverImg, 714, 690); })
+			.then(function (f) { coverFull = f; if (modal) { renderPreview(); } });
+	}
 	// upload केलेलं चित्र फक्त या browser मध्ये — 1600px पर्यंत लहान करून ठेवतो (server वर जात नाही)
 	function shrinkImage(fl) {
 		return new Promise(function (res, rej) {
@@ -513,11 +572,12 @@
 				var im = new Image();
 				im.onerror = rej;
 				im.onload = function () {
-					var w = Math.min(1588, im.width), h = Math.round(im.height * w / im.width);
-					var cv = document.createElement('canvas'); cv.width = w; cv.height = Math.min(h, Math.round(w * 0.38)); // cover band ratio
-					var ctx = cv.getContext('2d'), sy = Math.max(0, (h - cv.height) / 2) * (im.width / w);
-					ctx.drawImage(im, 0, sy, im.width, cv.height * im.width / w, 0, 0, cv.width, cv.height);
-					res(cv.toDataURL('image/jpeg', 0.82));
+					// v4.8: आधी फोटोची मधली आडवी पट्टी (38%) कापली जायची — म्हणून चेहरा कापला जात होता.
+					// आता पूर्ण फोटो, फक्त मोठी बाजू 1600px पर्यंत लहान; browser EXIF प्रमाणे फोटो सरळ करतो
+					var sc = Math.min(1, 1600 / Math.max(im.width, im.height)), w = Math.round(im.width * sc), h = Math.round(im.height * sc);
+					var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+					cv.getContext('2d').drawImage(im, 0, 0, w, h);
+					res(cv.toDataURL('image/jpeg', 0.85));
 				};
 				im.src = rd.result;
 			};

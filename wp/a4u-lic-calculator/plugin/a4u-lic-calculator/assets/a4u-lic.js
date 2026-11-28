@@ -802,9 +802,9 @@
 		// v3.2: LIC report सारखा भाग — You pay / You get, timeline, Maturity Details
 		var RI = reportInfo(r), sp1 = !!SINGLE[p.type];
 		h += '<div class="a4u-rep"><div class="a4u-paybox">' +
-			'<div><span>' + RL.paytot + '</span><b>' + inr(r.totalPrem) + '</b>' + (sp1 ? '' : '<small>' + rfmt(rlEN, 'perday', { d: inr(RI.perDay) }) + '</small>') + '</div>' +
+			'<div><span>' + RL.paytot + '</span><b>' + inr(r.totalPrem) + '</b><small class="a4u-w">' + inWords(r.totalPrem) + '</small>' + (sp1 ? '' : '<small>' + rfmt(rlEN, 'perday', { d: inr(RI.perDay) }) + '</small>') + '</div>' +
 			(TERMS[p.type] ? '<div class="get"><span>Family gets on death</span><b>' + inr(Math.max(r.deathSA || 0, r.sa)) + '</b><small>Pure protection: nothing is paid if you survive the term</small></div></div>'
-			: '<div class="get"><span>' + RL.gettot + '</span><b>' + inr(r.totalBenefit) + '</b>' + (RI.ratio ? '<small>' + rfmt(rlEN, 'every1', { x: RI.ratio.toFixed(2) }) + '</small>' : '') + '</div></div>') +
+			: '<div class="get"><span>' + RL.gettot + '</span><b>' + inr(r.totalBenefit) + '</b><small class="a4u-w">' + inWords(r.totalBenefit) + '</small>' + (RI.ratio ? '<small>' + rfmt(rlEN, 'every1', { x: RI.ratio.toFixed(2) }) + '</small>' : '') + '</div></div>') +
 			'<h4>Benefit illustration</h4><div class="a4u-tl">' + timelineSvg(r, '#0b4ea2', '#1f8f4e') + '</div>' +
 			'<p class="a4u-tl-leg"><span class="k pay"></span>' + RL.youpay + ' <span class="k cov"></span>' + RL.lcover + ' <span class="k get"></span>' + RL.youget + ' <em>(age)</em></p>' +
 			'<h4>' + RL.md + '</h4><table class="a4u-sum"><tbody>' + maturityRows(r, rlEN).map(function (q) { return tr(q[0], q[1]); }).join('') + '</tbody></table></div>';
@@ -1101,13 +1101,41 @@
 		return out;
 	}
 
+	/* ---------- v4.8: रक्कम अक्षरांत (भारतीय पद्धत: कोटी / लाख / हजार) — en / mr / hi ---------- */
+	var W_EN = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+	var T_EN = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+	var W_MR = ' एक दोन तीन चार पाच सहा सात आठ नऊ दहा अकरा बारा तेरा चौदा पंधरा सोळा सतरा अठरा एकोणीस वीस एकवीस बावीस तेवीस चोवीस पंचवीस सव्वीस सत्तावीस अठ्ठावीस एकोणतीस तीस एकतीस बत्तीस तेहेतीस चौतीस पस्तीस छत्तीस सदतीस अडतीस एकोणचाळीस चाळीस एक्केचाळीस बेचाळीस त्रेचाळीस चव्वेचाळीस पंचेचाळीस सेहेचाळीस सत्तेचाळीस अठ्ठेचाळीस एकोणपन्नास पन्नास एक्कावन्न बावन्न त्रेपन्न चोपन्न पंचावन्न छप्पन्न सत्तावन्न अठ्ठावन्न एकोणसाठ साठ एकसष्ट बासष्ट त्रेसष्ट चौसष्ट पासष्ट सहासष्ट सदुसष्ट अडुसष्ट एकोणसत्तर सत्तर एक्काहत्तर बाहत्तर त्र्याहत्तर चौऱ्याहत्तर पंच्याहत्तर शहात्तर सत्याहत्तर अठ्ठ्याहत्तर एकोणऐंशी ऐंशी एक्याऐंशी ब्याऐंशी त्र्याऐंशी चौऱ्याऐंशी पंच्याऐंशी शहाऐंशी सत्याऐंशी अठ्ठ्याऐंशी एकोणनव्वद नव्वद एक्याण्णव ब्याण्णव त्र्याण्णव चौऱ्याण्णव पंच्याण्णव शहाण्णव सत्त्याण्णव अठ्ठ्याण्णव नव्व्याण्णव'.split(' ');
+	var W_HI = ' एक दो तीन चार पाँच छह सात आठ नौ दस ग्यारह बारह तेरह चौदह पंद्रह सोलह सत्रह अठारह उन्नीस बीस इक्कीस बाईस तेईस चौबीस पच्चीस छब्बीस सत्ताईस अट्ठाईस उनतीस तीस इकतीस बत्तीस तैंतीस चौंतीस पैंतीस छत्तीस सैंतीस अड़तीस उनतालीस चालीस इकतालीस बयालीस तैंतालीस चवालीस पैंतालीस छियालीस सैंतालीस अड़तालीस उनचास पचास इक्यावन बावन तिरपन चौवन पचपन छप्पन सत्तावन अट्ठावन उनसठ साठ इकसठ बासठ तिरसठ चौंसठ पैंसठ छियासठ सड़सठ अड़सठ उनहत्तर सत्तर इकहत्तर बहत्तर तिहत्तर चौहत्तर पचहत्तर छिहत्तर सतहत्तर अठहत्तर उनासी अस्सी इक्यासी बयासी तिरासी चौरासी पचासी छियासी सत्तासी अट्ठासी नवासी नब्बे इक्यानबे बानबे तिरानबे चौरानबे पचानबे छियानबे सत्तानबे अट्ठानबे निन्यानबे'.split(' ');
+	function w99(n, L) {
+		if (L === 'mr') { return W_MR[n]; }
+		if (L === 'hi') { return W_HI[n]; }
+		return n < 20 ? W_EN[n] : T_EN[Math.floor(n / 10)] + (n % 10 ? '-' + W_EN[n % 10] : '');
+	}
+	function w999(n, L) {
+		var h = Math.floor(n / 100), r = n % 100, out = [];
+		if (h) { out.push(L === 'mr' ? (h === 1 ? 'एकशे' : W_MR[h] + 'शे') : (L === 'hi' ? W_HI[h] + ' सौ' : W_EN[h] + ' Hundred')); }
+		if (r) { out.push(w99(r, L)); }
+		return out.join(' ');
+	}
+	function inWords(v, L) {
+		L = L || 'en'; var n = Math.round(Math.abs(Number(v) || 0));
+		if (!n) { return ''; }
+		var U = L === 'mr' ? ['कोटी', 'लाख', 'हजार', 'रुपये'] : (L === 'hi' ? ['करोड़', 'लाख', 'हज़ार', 'रुपये'] : ['Crore', 'Lakh', 'Thousand', 'Rupees']);
+		var cr = Math.floor(n / 1e7), lk = Math.floor(n / 1e5) % 100, th = Math.floor(n / 1e3) % 100, rest = n % 1000, out = [];
+		if (cr) { out.push((cr > 99 ? inWords(cr * 1, L).replace(new RegExp('\\s*' + U[3] + '$'), '') : w99(cr, L)) + ' ' + U[0]); }
+		if (lk) { out.push(w99(lk, L) + ' ' + U[1]); }
+		if (th) { out.push(w99(th, L) + ' ' + U[2]); }
+		if (rest) { out.push(w999(rest, L)); }
+		return out.join(' ') + ' ' + U[3];
+	}
+
 	window.A4U_LIC_API = {
 		C: C, inr: inr, esc: esc, pct: pct, MODES: MODES, SINGLE: SINGLE, chartSvg: chartSvg, track: track, vendor: vendor, load: getRates, // v4.1: load = tariff + rates
 		last: function () { return last; }, cmp: function () { return lastCmp; }, client: function () { return clientInfo(); },
 		rr: function () { return lastRR && last && lastRR.r === last ? lastRR : null; }, mix: function () { return mixList.slice(); }, mixIrr: function () { return mixList.length ? mixTotals().irr : null; }, api: api, post: post,
 		// golden tests (GitHub Actions) साठी engine थेट वापरता यावा
 		compute: compute, planById: planById, resolveTerms: resolveTerms,
-		RL: RL, rfmt: rfmt, reportInfo: reportInfo, timelineSvg: timelineSvg, maturityRows: maturityRows, benefitTableHtml: benefitTableHtml, flexiRows: flexiRows
+		RL: RL, rfmt: rfmt, reportInfo: reportInfo, timelineSvg: timelineSvg, maturityRows: maturityRows, benefitTableHtml: benefitTableHtml, flexiRows: flexiRows, inWords: inWords
 	};
 
 	/* ---------- v3.1: Ready Reckoner ---------- */

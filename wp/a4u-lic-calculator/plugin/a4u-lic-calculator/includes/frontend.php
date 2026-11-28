@@ -121,6 +121,8 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 			'address' => (string) ( $s['agent_address'] ?? '' ),
 			'email2'  => (string) ( $s['agent_email'] ?? '' ),
 			'photo'   => '' !== (string) ( $s['photo_url'] ?? '' ) ? (string) $s['photo_url'] : plugin_dir_url( A4U_LIC_FILE ) . 'assets/advisor-photo.jpg',
+			// v4.8: PDF च्या शेवटच्या पानासाठी advisor चा पूर्ण (पारदर्शक) फोटो
+			'photo_full' => '' !== (string) ( $s['photo_full_url'] ?? '' ) ? (string) $s['photo_full_url'] : plugin_dir_url( A4U_LIC_FILE ) . 'assets/advisor-full.webp',
 			'logo'   => '' !== (string) ( $s['logo_url'] ?? '' ) ? (string) $s['logo_url'] : plugin_dir_url( A4U_LIC_FILE ) . 'assets/brand-logo.png',
 			'gold'   => (string) ( $s['color_gold'] ?? '#B8924A' ),
 			'green'  => (string) ( $s['color_green'] ?? '#3F5A22' ),

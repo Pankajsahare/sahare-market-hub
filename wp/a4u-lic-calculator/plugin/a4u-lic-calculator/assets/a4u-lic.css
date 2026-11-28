@@ -351,3 +351,41 @@
 .a4p-t td.in, .a4u-lic td.in { color: #1f7a3a; }
 .a4p-t td.in b { color: #1f7a3a; }
 .a4p-qr em { display: block; margin-top: 4px; font-style: normal; font-weight: 700; color: #fff; background: #1f8f4e; border-radius: 10px; padding: 2px 8px; }
+
+/* ===== v4.8: कव्हर, मागचं पान, अक्षरांत रक्कम ===== */
+.a4p-w { display: block; font-size: 10.5px; font-weight: 500; line-height: 1.3; letter-spacing: 0; text-transform: none; opacity: .85; margin-top: 2px; }
+.a4p-hl .a4p-w { font-size: 11px; }
+.a4p-flow .a4p-w { color: #fff; font-size: 10px; }
+.a4p-ok { color: #1f7a3a; font-weight: 600; }
+.a4p-cover2 { display: flex; flex-direction: column; height: 100%; }
+.a4p-cphoto { position: relative; height: 690px; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 24px rgba(31,42,23,.22); }
+.a4p-cphoto > img { display: block; width: 100%; height: 100%; }
+.a4p-cqr { position: absolute; right: 14px; bottom: 14px; background: #fff; border-radius: 12px; padding: 8px 8px 6px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+.a4p-cqr img { width: 84px; height: 84px; display: block; image-rendering: pixelated; }
+.a4p-cqr span { display: block; font-size: 9.5px; font-weight: 700; color: #1f8f4e; margin-top: 3px; }
+.a4p-cname { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 14px 0 0; }
+.a4p-cname small { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold, #B8924A); font-weight: 700; }
+.a4p-cname h1 { margin: 4px 0 0; font-size: 40px; line-height: 1.15; color: var(--green, #3F5A22); font-family: Georgia, "Times New Roman", "Noto Serif Devanagari", serif; }
+.a4p-cname i, .a4p-bname i { display: block; width: 140px; height: 3px; margin: 10px auto; background: linear-gradient(90deg, transparent, var(--gold, #B8924A), transparent); }
+.a4p-cname .pl { margin: 0; font-size: 15px; font-weight: 600; color: #3b4433; }
+.a4p-cname .tgl { margin: 6px 0 0; font-size: 14px; font-style: italic; color: var(--gold, #B8924A); }
+.a4p-cname .dt { margin: 4px 0 0; font-size: 11.5px; color: #6b6f62; }
+.a4p-back { display: grid; grid-template-columns: 330px 1fr; gap: 20px; height: 100%; align-items: end; }
+.a4p-bphoto { height: 100%; display: flex; align-items: flex-end; justify-content: center; background: radial-gradient(circle at 50% 62%, #f4ecd8 0, #f4ecd8 44%, transparent 45%), linear-gradient(180deg, #fff, #f6f2e6); border-radius: 18px 18px 0 0; overflow: hidden; }
+.a4p-bphoto img { display: block; max-width: 100%; max-height: 96%; width: auto; height: auto; }
+.a4p-bname { align-self: center; }
+.a4p-bname small { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold, #B8924A); font-weight: 700; }
+.a4p-bname h1 { margin: 4px 0 0; font-size: 34px; line-height: 1.15; color: var(--green, #3F5A22); font-family: Georgia, "Times New Roman", "Noto Serif Devanagari", serif; }
+.a4p-bname i { margin: 10px 0; }
+.a4p-bname .ti { margin: 0 0 10px; font-size: 13px; color: #3b4433; font-weight: 600; }
+.a4p-bname ul { list-style: none; margin: 0 0 14px; padding: 0; }
+.a4p-bname li { font-size: 13px; padding: 6px 0; border-bottom: 1px dashed #e3dccb; }
+.a4p-bqr { display: block; width: 160px; text-align: center; background: #fff; border: 1px solid #e3dccb; border-radius: 12px; padding: 10px 12px; }
+.a4p-bqr img { width: 120px; height: 120px; display: block; margin: 0 auto 4px; image-rendering: pixelated; }
+.a4p-bqr span { display: block; font-size: 10.5px; color: #5b5f52; }
+.a4p-bqr em { display: block; margin-top: 4px; font-style: normal; font-weight: 700; color: #fff; background: #1f8f4e; border-radius: 10px; padding: 3px 8px; font-size: 11px; }
+.a4p-bname .ty { margin: 14px 0 0; font-size: 13px; font-style: italic; color: var(--gold, #B8924A); }
+.a4p-body > .a4p-cover2, .a4p-body > .a4p-back { min-height: 100%; }
+/* v4.8: देवनागरीत letter-spacing मुळे जोडाक्षरं तुटतात */
+.a4p-l-mr *, .a4p-l-hi * { letter-spacing: 0 !important; }
+.a4u-paybox .a4u-w { display: block; font-size: .78em; color: #4b5a6b; margin: 2px 0 4px; }
