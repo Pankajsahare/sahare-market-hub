@@ -988,7 +988,7 @@
 		t_tax: 'Premium may qualify under Section 80C; maturity under Section 10(10D), subject to conditions.', t_feat: 'Loan and surrender facility, optional riders and nomination.',
 		w1: 'Owned by the Government of India', w2: 'Policy money guaranteed by the Central Government (Section 37, LIC Act 1956)', w3: 'Serving families since 1956', w4: 'Branches and agents across India',
 		feat: 'Plan Features', f_death: 'Death benefit', f_mat: 'Maturity benefit', f_add: 'Additions', f_tax: 'Income tax', f_surr: 'Surrender', f_loan: 'Loan',
-		fv_death: 'At least {d} (never less than 105% of premiums paid)', fv_tax: 'Section 80C and 10(10D), subject to conditions', fv_surr: 'Available after {y} years', fv_loan: 'Available after {y} years, against the surrender value',
+		fv_death: 'At least {d} (never less than 105% of premiums paid)', fv_tax: 'Section 80C and 10(10D), subject to conditions', fv_surr: 'Available after {y} years', fv_loan: 'Available after {y} years, against the surrender value', fv_surr_any: 'Any time during the policy term', fv_death_sp: 'At least {d} (never less than 125% of the single premium) plus Guaranteed Additions', fv_loan_3m: 'Available 3 months after the policy starts, against the surrender value',
 		plandet: 'Plan Details', riders: 'Selected riders', none: 'None', custom: 'Plan presentation customised for',
 		d_endowment: 'A savings and protection plan. Your family gets financial support if something happens to you, and you get a lump sum with bonus at maturity.',
 		d_lakshya: 'A plan for your child\'s goals. If something happens to you, the family gets yearly income and the full maturity amount is still paid on time.',
