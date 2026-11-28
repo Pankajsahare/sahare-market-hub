@@ -634,7 +634,8 @@
 				f1 = tgrid(t.f1, y, 0);
 				if (f1 === null) { return null; }
 				var gaYr = (p.ga_per_1000 || 0) * o.sa / 1000;
-				return (o.sa + cumAdd) * f1 + o.survival * (tgrid(t.f3, y, o.G) || 0) + gaYr * (tgrid(t.f4, y, o.G) || 0);
+				// v4.6.4: 125% premium चा death SA (मोठा single premium) असेल तर SSV त्यावर — LIC BI 883 वय 8 सगळी वर्षं
+				return (Math.max(o.deathSA || 0, o.sa) + cumAdd) * f1 + o.survival * (tgrid(t.f3, y, o.G) || 0) + gaYr * (tgrid(t.f4, y, o.G) || 0);
 		}
 		return null;
 	}
