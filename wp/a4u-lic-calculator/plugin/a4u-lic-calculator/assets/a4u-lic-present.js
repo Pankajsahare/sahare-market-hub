@@ -13,7 +13,7 @@
 	var lang = 'en', clientName = '';
 	var I18N = {
 		en: {
-			ill: 'Benefit Illustration', pfor: 'Prepared for', pon: 'Prepared on', pby: 'Presented by', details: 'Your plan details',
+			ill: 'Benefit Illustration', pfor: 'Prepared for', cont: 'continued', valchart: 'Life cover and surrender value, year by year', ms_h: 'Key milestones', glance_h: 'Your money at a glance', ms_start: 'Policy starts', ms_risk: 'Full life cover starts', ms_ppt: 'Last premium', ms_ga: 'Guaranteed Additions stop', ms_inc: 'Yearly income starts', ms_mat: 'Maturity', ms_cover: 'Life cover continues', tot_inc: 'Total income', every: 'Back for every ₹1', wa_cta: 'Chat on WhatsApp', tap: 'Tap to open',  pon: 'Prepared on', pby: 'Presented by', details: 'Your plan details',
 			age: 'Age', sa: 'Basic Sum Assured', term: 'Policy term', ppt: 'Premium paying term', gap: 'Guaranteed Addition period', mode: 'Payment mode', yrs: 'years', once: 'Single premium',
 			glance: 'Plan at a glance', inst: 'Installment', tprem: 'Total premium payable', tben: 'Estimated total benefits', irr: 'Return (IRR, approx.)',
 			bymode: 'Premium by payment mode', ytot: 'Yearly total', pdet: 'Premium details', tab: 'Tabular premium', hsa: 'High Sum Assured rebate', rider: 'Riders', gst: 'GST',
@@ -34,7 +34,7 @@
 			mix: 'Suggested product mix', mixtot: 'Combined', first: 'First-year premium', mixirr: 'Combined return (IRR, approx.)', illid: 'Illustration ID', mb: 'Money back'
 		},
 		mr: {
-			ill: 'लाभांचे उदाहरण (Benefit Illustration)', pfor: 'यांच्यासाठी', pon: 'दिनांक', pby: 'सादरकर्ते', details: 'तुमच्या योजनेचा तपशील',
+			ill: 'लाभांचे उदाहरण (Benefit Illustration)', pfor: 'यांच्यासाठी', cont: 'पुढे चालू', valchart: 'दरवर्षीचं विमा संरक्षण आणि surrender मूल्य', ms_h: 'महत्त्वाचे टप्पे', glance_h: 'तुमचे पैसे एका नजरेत', ms_start: 'Policy सुरू', ms_risk: 'पूर्ण जीवन विमा सुरू', ms_ppt: 'शेवटचा हप्ता', ms_ga: 'Guaranteed Additions थांबतात', ms_inc: 'वार्षिक उत्पन्न सुरू', ms_mat: 'मुदतपूर्ती', ms_cover: 'विमा संरक्षण सुरू', tot_inc: 'एकूण उत्पन्न', every: '₹1 मागे परत', wa_cta: 'WhatsApp वर बोला', tap: 'उघडण्यासाठी दाबा',  pon: 'दिनांक', pby: 'सादरकर्ते', details: 'तुमच्या योजनेचा तपशील',
 			age: 'वय', sa: 'मूळ विमा रक्कम', term: 'पॉलिसी मुदत', ppt: 'हप्ता भरण्याची मुदत', gap: 'हमी वाढ (GA) कालावधी', mode: 'हप्त्याचा प्रकार', yrs: 'वर्षे', once: 'एकरकमी हप्ता',
 			glance: 'योजना एका नजरेत', inst: 'हप्ता', tprem: 'एकूण भरायचा हप्ता', tben: 'अंदाजे एकूण लाभ', irr: 'परतावा (IRR, अंदाजे)',
 			bymode: 'हप्त्याच्या प्रकारानुसार रक्कम', ytot: 'वर्षाची एकूण रक्कम', pdet: 'हप्त्याचा तपशील', tab: 'मूळ (tabular) हप्ता', hsa: 'जास्त विमा रकमेवरील सूट', rider: 'रायडर', gst: 'GST',
@@ -83,7 +83,7 @@
 			d_moneyback: 'मनी बॅक योजना: ठराविक अंतराने विमा रकमेचा काही भाग, आणि उरलेली रक्कम बोनससह मुदतपूर्तीला.'
 		},
 		hi: {
-			ill: 'लाभ का उदाहरण (Benefit Illustration)', pfor: 'के लिए', pon: 'दिनांक', pby: 'प्रस्तुतकर्ता', details: 'आपकी योजना का विवरण',
+			ill: 'लाभ का उदाहरण (Benefit Illustration)', pfor: 'के लिए', cont: 'जारी', valchart: 'हर साल बीमा सुरक्षा और surrender मूल्य', ms_h: 'मुख्य पड़ाव', glance_h: 'आपका पैसा एक नज़र में', ms_start: 'Policy शुरू', ms_risk: 'पूरा जीवन बीमा शुरू', ms_ppt: 'आख़िरी किस्त', ms_ga: 'Guaranteed Additions रुकते हैं', ms_inc: 'वार्षिक आय शुरू', ms_mat: 'परिपक्वता', ms_cover: 'बीमा सुरक्षा जारी', tot_inc: 'कुल आय', every: '₹1 पर वापसी', wa_cta: 'WhatsApp पर बात करें', tap: 'खोलने के लिए दबाएँ',  pon: 'दिनांक', pby: 'प्रस्तुतकर्ता', details: 'आपकी योजना का विवरण',
 			age: 'आयु', sa: 'मूल बीमा राशि', term: 'पॉलिसी अवधि', ppt: 'प्रीमियम भुगतान अवधि', gap: 'गारंटीड एडिशन अवधि', mode: 'भुगतान का तरीका', yrs: 'वर्ष', once: 'एकमुश्त प्रीमियम',
 			glance: 'योजना एक नज़र में', inst: 'किस्त', tprem: 'कुल देय प्रीमियम', tben: 'अनुमानित कुल लाभ', irr: 'रिटर्न (IRR, अनुमानित)',
 			bymode: 'भुगतान के तरीके अनुसार प्रीमियम', ytot: 'वार्षिक कुल', pdet: 'प्रीमियम विवरण', tab: 'मूल (tabular) प्रीमियम', hsa: 'अधिक बीमा राशि पर छूट', rider: 'राइडर', gst: 'GST',
@@ -219,12 +219,24 @@
 		return 'https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent(msg);
 	}
 
+	// v4.7.1: पान 1 वर branding header; पान 2 पासून पानाचं शीर्षक header मध्ये आणि branding footer मध्ये. data-href = PDF मध्ये दाबता येणारी link
 	function pageWrap(inner, r, n, total) {
-		var p = r.plan;
-		return '<div class="a4p">' +
-			'<div class="a4p-head"><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"><div><b>' + esc(BR.name || '') + '</b><span>' + esc(BR.web || '') + ' · ' + esc(BR.phone || '') + '</span></div></div>' +
+		var p = r.plan, head, brandFoot = '';
+		var web = BR.web ? (/^https?:/.test(BR.web) ? BR.web : 'https://' + BR.web) : '', tel = String(BR.phone || '').replace(/[^0-9+]/g, '');
+		if (n === 1) {
+			head = '<div class="a4p-head"><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"><div><b>' + esc(BR.name || '') + '</b><span>' +
+				(web ? '<a data-href="' + esc(web) + '">' + esc(BR.web) + '</a>' : '') + (tel ? ' · <a data-href="tel:' + esc(tel) + '">' + esc(BR.phone) + '</a>' : '') + '</span></div></div>';
+		} else {
+			var m = inner.match(/<h2 class="a4p-h"[^>]*>([\s\S]*?)<\/h2>/), title = m ? m[1] : '';
+			if (m) { inner = inner.slice(0, m.index) + inner.slice(m.index + m[0].length); }
+			head = '<div class="a4p-head a4p-th"><h2>' + title + '</h2><span>LIC ' + esc(p.name) + '</span></div>';
+			brandFoot = '<div class="a4p-fb"><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"><b>' + esc(BR.name || '') + '</b>' +
+				(web ? ' · <a data-href="' + esc(web) + '">' + esc(BR.web) + '</a>' : '') + (tel ? ' · <a data-href="tel:' + esc(tel) + '">' + esc(BR.phone) + '</a>' : '') +
+				(C.whatsapp ? ' · <a class="wa" data-href="' + esc(waLink(r)) + '">' + tt('wa_cta') + '</a>' : '') + '</div>';
+		}
+		return '<div class="a4p' + (n === 1 ? ' a4p-p1' : '') + '">' + head +
 			'<div class="a4p-body">' + inner + '</div>' +
-			'<div class="a4p-foot"><div>' + esc(BR.agent || '') + (BR.type ? ', ' + esc(BR.type) : '') + (BR.code ? ' · Agency Code: ' + esc(BR.code) : '') + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') + '</div>' +
+			'<div class="a4p-foot">' + brandFoot + '<div>' + esc(BR.agent || '') + (BR.type ? ', ' + esc(BR.type) : '') + (BR.code ? ' · Agency Code: ' + esc(BR.code) : '') + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') + '</div>' +
 			'<div>LIC ' + esc(p.name) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ' · ' + esc(tt('solicit')) + '</div>' +
 			'<div class="a4p-pn">' + (illId ? tt('illid') + ': ' + esc(illId) + ' · ' : '') + tt('page') + ' ' + n + ' ' + tt('of') + ' ' + total + '</div></div></div>';
 	}
@@ -251,7 +263,7 @@
 			// single premium मध्ये "एकूण भरता" = तोच आकडा — त्याऐवजी वार्षिक उत्पन्न / maturity
 			single ? (r.survival ? [tt('income'), inr(r.survival) + ' / yr', tt('age') + ' ' + RI.incAge + '+'] : [tt('f_mat'), inr(r.maturity), tt('age') + ' ' + RI.matAge]) : [tt('paytot'), inr(r.totalPrem), r.P + yrs],
 			[isTerm ? tt('lcover') : tt('gettot'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), r.maturity > 0 && !(single && !r.survival) ? tt('f_mat') + ' ' + inr(r.maturity) : '']];
-		var c1 = '<div class="a4p-hero' + (coverImg ? '' : ' noimg') + '">' + (coverImg ? '<div class="a4p-photo"><img src="' + esc(coverImg) + '" alt=""></div>' : '') +
+		var c1 = '<div class="a4p-fill"><div class="a4p-hero' + (coverImg ? '' : ' noimg') + '">' + (coverImg ? '<div class="a4p-photo"><img src="' + esc(coverImg) + '" alt="">' + (clientName ? '<div class="a4p-ribbon">' + tt('pfor') + ' <b>' + esc(clientName) + '</b></div>' : '') + '</div>' : '') +
 			'<div class="a4p-intro"><div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
 			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b><br>' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
 			'<p class="a4p-desc">' + tt('d_' + p.type) + '</p>' +
@@ -268,19 +280,42 @@
 			'<li><b>' + tt('f_tax') + ':</b> ' + (r.taxLim ? fmtT('fv_tax_lim', { c: inr(r.taxCap) }) : tt('fv_tax')) + '</li>' +
 			// v4.6.5: 883 brochure — surrender कधीही, कर्ज 3 महिन्यांनी
 			'<li><b>' + tt('f_surr') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_surr_any') : fmtT('fv_surr', { y: single ? 1 : (p.surr_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li>' +
-			'<li><b>' + tt('f_loan') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_loan_3m') : fmtT('fv_loan', { y: single ? 1 : (p.loan_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li></ul></div></div>';
+			'<li><b>' + tt('f_loan') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_loan_3m') : fmtT('fv_loan', { y: single ? 1 : (p.loan_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li></ul></div></div></div>';
 		pages.push(c1);
 
 		// 2. Benefit Illustration — timeline + Maturity Details
+		// v4.7.1: टप्पे आणि एका नजरेत आकडे
+		var ms = [[r.age, tt('ms_start'), (single ? tt('once') + ' ' : '') + inr(r.inst), 'out']];
+		if (r.age < 8) { ms.push([r.age + Math.min(2, 8 - r.age), tt('ms_risk'), inr(Math.max(r.deathSA || 0, r.sa)), 'cov']); }
+		if (!single && r.P > 1) { ms.push([r.age + r.P - 1, tt('ms_ppt'), inr(r.inst), 'out']); }
+		if (r.ga && RI.gaYears) { ms.push([r.age + RI.gaYears, tt('ms_ga'), inr(r.ga), 'cov']); }
+		if (r.survival && RI.incAge) { ms.push([RI.incAge, tt('ms_inc'), inr(r.survival) + ' / yr', 'in']); }
+		if (r.maturity > 0) { ms.push([RI.matAge, tt('ms_mat'), inr(r.maturity), 'in']); } else if (isTerm) { ms.push([RI.coverTo, tt('lcover'), inr(Math.max(r.deathSA || 0, r.sa)), 'cov']); }
+		ms.sort(function (a, b) { return a[0] - b[0]; });
+		var glance = [[tt('paytot'), inr(r.totalPrem)]];
+		if (r.totalSurv) { glance.push([tt('tot_inc'), inr(r.totalSurv)]); }
+		glance.push([isTerm ? tt('lcover') : tt('gettot'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit)]);
+		if (!isTerm && RI.ratio) { glance.push([tt('every'), '₹' + RI.ratio.toFixed(2)]); }
+		if (!isTerm && r.irr) { glance.push([tt('irr'), pct(r.irr)]); }
+		glance = glance.slice(0, 4);
 		var c2 = '<h2 class="a4p-h">' + tt('ill') + '</h2>' +
 			(V4 ? '<div class="a4p-tl"><img src="' + img(V4.timeline(r)) + '" alt=""></div>' +
 				'<p class="a4p-tlleg"><i style="background:#0b4ea2"></i>' + tt('youpay') + ' <i style="background:#d9822b;opacity:.55"></i>' + tt('lcover') + ' <i style="background:#1f8f4e"></i>' + tt('youget') + ' <small>(' + tt('age') + ')</small></p>'
 			: '<div class="a4p-tl"><img src="' + img(A.timelineSvg(r, GREEN, GOLD)) + '" alt=""></div>' +
 			'<p class="a4p-tlleg"><i style="background:' + GREEN + '"></i>' + tt('youpay') + ' <i style="background:' + GOLD + ';opacity:.4"></i>' + tt('lcover') +
 			' <i style="background:' + GOLD + '"></i>' + tt('youget') + ' <small>(' + tt('age') + ')</small></p>') +
-			'<h3>' + tt('md') + '</h3><table class="a4p-t a4p-kv2"><tbody>' + A.maturityRows(r, tt).map(function (q) { return kv(q[0], q[1]); }).join('') + '</tbody></table>' +
+			// v4.7.1: पान 2 — एका नजरेत 4 आकडे + टप्पे (timeline) आणि मुदतपूर्ती तपशील दोन स्तंभांत
+			'<div class="a4p-glance">' + glance.map(function (g, i) { return '<div class="g' + i + '"><span>' + g[0] + '</span><b>' + g[1] + '</b></div>'; }).join('') + '</div>' +
+			'<div class="a4p-2c2"><div><h3>' + tt('ms_h') + '</h3><ol class="a4p-ms">' + ms.map(function (q) { return '<li class="' + q[3] + '"><i>' + tt('age') + ' ' + q[0] + '</i><b>' + q[1] + '</b>' + (q[2] ? '<span>' + q[2] + '</span>' : '') + '</li>'; }).join('') + '</ol></div>' +
+			'<div><h3>' + tt('md') + '</h3><table class="a4p-t a4p-kv2"><tbody>' + A.maturityRows(r, tt).map(function (q) { return kv(q[0], q[1]); }).join('') + '</tbody></table></div></div>' +
 			(r.bonus || r.fab ? '<p class="a4p-note">' + tt('bonusas') + ': SRB ₹' + r.srb + (r.fabRate ? ' · FAB ₹' + r.fabRate : '') + ' — ' + tt('d2') + '</p>' : '') +
 			(r.basis !== 'verified' && r.basis !== 'quote' ? '<p class="a4p-note">' + tt('est') + '</p>' : '');
+		// v4.7.1: policy value chart पान 3 वरून पान 2 वर (पान 2 रिकामं वाटू नये, पान 3 भरगच्च होतं)
+		var valHtml = V4 ? '<h3 style="margin-top:18px">' + tt('valchart') + '</h3>' + '<img class="a4p-chart" src="' + img(V4.value(r)) + '" alt="">' +
+				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#d9822b"></span>' + tt('lcover') + (r.table && r.table.some(function (x) { return x.cv > 0; }) ? ' <span style="background:#7a4bc2"></span>Surrender value' : '') + '</p>' : '';
+		// 5 पेक्षा कमी टप्पे असतील तर पान 2 वर जागा पुरते; नाहीतर पान 3 वर
+		var valOn2 = ms.length <= 4;
+		if (valOn2) { c2 += valHtml; }
 		pages.push(c2);
 
 		// 3. Premium chart — modes, दिवसाला किती, भरता vs मिळते, IRR
@@ -300,8 +335,7 @@
 			var cfs = V4.cashflow(r);
 			c3 += '<h3>' + tt('chart') + '</h3>' + (cfs ? '<img class="a4p-chart" src="' + img(cfs) + '" alt="">' +
 				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#1f8f4e"></span>' + tt('got') + '</p>' : '') +
-				'<img class="a4p-chart" src="' + img(V4.value(r)) + '" alt="">' +
-				'<p class="a4p-legend"><span style="background:#0b4ea2"></span>' + tt('paid') + ' <span style="background:#d9822b"></span>' + tt('lcover') + (r.table && r.table.some(function (x) { return x.cv > 0; }) ? ' <span style="background:#7a4bc2"></span>Surrender value' : '') + '</p>';
+				(valOn2 ? '' : valHtml);
 		} else {
 		c3 += '<h3>' + tt('chart') + '</h3><img class="a4p-chart" src="' + img(chartSvg(r, GREEN, GOLD)) + '" alt="">' +
 			'<p class="a4p-legend"><span style="background:' + GREEN + '"></span>' + tt('paid') + ' <span style="background:' + GOLD + '"></span>' + tt('got') + '</p>';
@@ -340,7 +374,7 @@
 		var per = 34, tbl = r.table || [];
 		for (var i = 0; i < tbl.length; i += per) {
 			var lastPg = i + per >= tbl.length;
-			pages.push('<h2 class="a4p-h">' + tt('bct') + (tbl.length > per ? ' (' + (i / per + 1) + ')' : '') + '</h2>' +
+			pages.push('<h2 class="a4p-h">' + tt('bct') + (i > 0 ? ' (' + tt('cont') + ')' : '') + '</h2>' +
 				A.benefitTableHtml(r, tt, 'a4p-t a4p-bct', i, i + per, lastPg) +
 				(lastPg && r.hasCV ? '<p class="a4p-note">' + tt('cvnote') + '</p>' : '') + (lastPg && r.age < 8 ? '<p class="a4p-note">' + tt('risknote') + '</p>' : ''));
 		}
@@ -348,7 +382,7 @@
 		if (r.income === 'flexi') {
 			var fx = A.flexiRows(r);
 			for (var j = 0; j < fx.length; j += 36) {
-				pages.push('<h2 class="a4p-h">' + tt('opt2') + '</h2><table class="a4p-t a4p-yw"><thead><tr><th>' + tt('c_yr') + '</th><th>' + tt('c_age') + '</th><th>' + tt('c_inc') + '</th><th>' + tt('c_bal') + '</th></tr></thead><tbody>' +
+				pages.push('<h2 class="a4p-h">' + tt('opt2') + (j > 0 ? ' (' + tt('cont') + ')' : '') + '</h2><table class="a4p-t a4p-yw"><thead><tr><th>' + tt('c_yr') + '</th><th>' + tt('c_age') + '</th><th>' + tt('c_inc') + '</th><th>' + tt('c_bal') + '</th></tr></thead><tbody>' +
 					fx.slice(j, j + 36).map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1] + '</td><td>' + inr(q[2]) + '</td><td>' + inr(q[3]) + '</td></tr>'; }).join('') + '</tbody></table>');
 			}
 		}
@@ -390,7 +424,7 @@
 			'<div><h3>' + tt('contact') + '</h3><p><b>' + esc(BR.agent || '') + '</b><br>' + esc(BR.title || BR.type || '') + (BR.type && BR.title ? ' · ' + esc(BR.type) : '') +
 			(BR.code ? '<br>Agency Code: ' + esc(BR.code) + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') : '') +
 			(BR.address ? '<br>' + esc(BR.address) : '') + '<br>' + esc(BR.phone || '') + (BR.email2 || BR.email ? ' · ' + esc(BR.email2 || BR.email) : '') + '<br>' + esc(BR.web || '') + '</p></div></div>' +
-			(qr ? '<div class="a4p-qr"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span></div>' : '') + '</div></div>';
+			(qr ? '<div class="a4p-qr" data-href="' + esc(waLink(r)) + '"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span><em>' + tt('wa_cta') + '</em></div>' : '') + '</div></div>';
 		pages.push(l);
 
 		return pages.map(function (inner, k) { return pageWrap(inner, r, k + 1, pages.length); }).join('');
@@ -529,9 +563,16 @@
 				Array.prototype.forEach.call(pages, function (pg, i) {
 					chain = chain.then(function () {
 						pvMsg('Creating page ' + (i + 1) + ' of ' + pages.length + '…');
+						// v4.7.1: दाबता येणाऱ्या links (website, फोन, WhatsApp) — image वर PDF link क्षेत्र
+						var base = pg.getBoundingClientRect(), k = 210 / base.width;
+						var links = Array.prototype.map.call(pg.querySelectorAll('[data-href]'), function (a) { var b = a.getBoundingClientRect(); return [b.left - base.left, b.top - base.top, b.width, b.height, a.getAttribute('data-href')]; });
+						var hd = pg.querySelector('.a4p-th h2');
 						return window.html2canvas(pg, { scale: 1.6, backgroundColor: '#ffffff', useCORS: true, logging: false, windowWidth: 794 }).then(function (cv) {
 							if (i) { pdf.addPage(); }
 							pdf.addImage(cv.toDataURL('image/jpeg', 0.86), 'JPEG', 0, 0, 210, 297);
+							links.forEach(function (l) { if (l[2] > 0 && l[3] > 0) { pdf.link(l[0] * k, l[1] * k, l[2] * k, l[3] * k, { url: l[4] }); } });
+							// PDF bookmarks — बाजूच्या पट्टीतून थेट पानावर
+							if (pdf.outline) { try { pdf.outline.add(null, i ? (hd ? hd.textContent : 'Page ' + (i + 1)) : 'LIC ' + r.plan.name, { pageNumber: i + 1 }); } catch (x) { /* जुनं jsPDF */ } }
 						});
 					});
 				});

@@ -1081,8 +1081,8 @@
 		var head = ['c_age', 'c_yr', 'c_prem', 'c_cum', 'c_add', 'c_cumadd', 'c_cover'].concat(adb ? ['c_acc'] : []).concat(cv ? ['c_loan', 'c_cv'] : []).concat(['c_ret']);
 		var d = function (v) { return v ? inr(v) : '—'; };
 		var body = tb.slice(from || 0, to === undefined ? tb.length : to).map(function (x) {
-			return '<tr><td>' + x.age + '</td><td>' + x.y + '</td><td>' + d(x.prem) + '</td><td>' + d(x.cumPrem) + '</td><td>' + d(x.add) + '</td><td>' + d(x.cumAdd) + '</td><td>' + d(x.cover) + '</td>' +
-				(adb ? '<td>' + d(x.acc) + '</td>' : '') + (cv ? '<td>' + (x.loan ? inr(x.loan) : '—') + '</td><td>' + (x.cv ? inr(x.cv) : '—') + '</td>' : '') + '<td>' + (x.ret ? '<b>' + inr(x.ret) + '</b>' : '—') + '</td></tr>';
+			return '<tr><td>' + x.age + '</td><td>' + x.y + '</td><td' + (x.prem ? ' class="out"' : '') + '>' + d(x.prem) + '</td><td>' + d(x.cumPrem) + '</td><td>' + d(x.add) + '</td><td>' + d(x.cumAdd) + '</td><td>' + d(x.cover) + '</td>' +
+				(adb ? '<td>' + d(x.acc) + '</td>' : '') + (cv ? '<td>' + (x.loan ? inr(x.loan) : '—') + '</td><td>' + (x.cv ? inr(x.cv) : '—') + '</td>' : '') + '<td' + (x.ret ? ' class="in"' : '') + '>' + (x.ret ? '<b>' + inr(x.ret) + '</b>' : '—') + '</td></tr>'; // v4.7.1: बाहेर जाणारे लाल, येणारे हिरवे
 		}).join('');
 		if (withTotal) {
 			body += '<tr class="tot"><td colspan="2">' + t('totpaid') + '</td><td colspan="' + (head.length - 4) + '">' + inr(r.totalPrem) + '</td><td>' + t('totret') + '</td><td>' + inr(r.totalBenefit) + '</td></tr>';

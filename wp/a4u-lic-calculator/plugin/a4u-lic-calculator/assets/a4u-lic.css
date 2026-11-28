@@ -319,3 +319,35 @@
 .a4p-how2 p { margin: 0; font-size: 12.5px; color: #3b4433; line-height: 1.5; }
 .a4p-body > .a4p-fill { min-height: 100%; display: flex; flex-direction: column; }
 .a4p-fill > .a4p-advisor { margin-top: auto; margin-bottom: 0; }
+
+/* ===== v4.7.1: header/footer, पान 1, पान 2, तक्त्याचे रंग ===== */
+.a4p .a4p-head.a4p-th { justify-content: space-between; align-items: flex-end; text-align: left; padding: 22px 40px 10px; background: linear-gradient(90deg, #f6f2e6, #fff); }
+.a4p-th h2 { margin: 0; font-size: 22px; color: var(--green, #3F5A22); }
+.a4p-th span { font-size: 11.5px; color: #6b6f62; font-weight: 600; }
+.a4p-fb { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 10.5px; color: var(--green, #3F5A22); padding-bottom: 5px; margin-bottom: 4px; border-bottom: 1px dashed #e3dccb; }
+.a4p-fb img { height: 20px; width: auto; } .a4p-fb b { font-size: 11.5px; }
+.a4p a[data-href] { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
+.a4p-fb a.wa { color: #fff; background: #1f8f4e; border-radius: 10px; padding: 1px 8px; border: 0; font-weight: 600; }
+.a4p-photo { position: relative; }
+.a4p-photo img { object-position: center 22%; }
+.a4p-ribbon { position: absolute; left: 12px; right: 12px; bottom: 12px; background: rgba(63,90,34,.92); color: #fff; border-radius: 10px; padding: 8px 12px; font-size: 12px; text-align: center; border-left: 4px solid var(--gold, #B8924A); }
+.a4p-ribbon b { display: block; font-size: 16px; }
+.a4p-fill > .a4p-2col { margin-top: auto; }
+.a4p-glance { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 6px; }
+.a4p-glance div { border-radius: 12px; padding: 12px; text-align: center; background: #f4f1e6; border-bottom: 4px solid var(--gold, #B8924A); }
+.a4p-glance .g0 { border-bottom-color: #b42318; } .a4p-glance .g1, .a4p-glance .g2 { border-bottom-color: #1f7a3a; }
+.a4p-glance span { display: block; font-size: 11px; color: #5b5f52; text-transform: uppercase; letter-spacing: .3px; }
+.a4p-glance b { display: block; font-size: 19px; color: var(--green, #3F5A22); margin-top: 3px; }
+.a4p-2c2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.a4p-ms { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 3px solid #e3dccb; }
+.a4p-ms li { position: relative; padding: 0 0 14px 10px; }
+.a4p-ms li::before { content: ""; position: absolute; left: -27px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--gold, #B8924A); border: 3px solid #fff; box-shadow: 0 0 0 1px #e3dccb; }
+.a4p-ms li.out::before { background: #b42318; } .a4p-ms li.in::before { background: #1f7a3a; } .a4p-ms li.cov::before { background: #0b4ea2; }
+.a4p-ms i { display: block; font-style: normal; font-size: 11px; color: #6b6f62; font-weight: 700; }
+.a4p-ms b { display: block; font-size: 13.5px; color: #1f2a17; }
+.a4p-ms span { font-size: 13px; font-weight: 700; color: var(--green, #3F5A22); }
+.a4p-ms li.out span { color: #b42318; } .a4p-ms li.in span { color: #1f7a3a; }
+.a4p-t td.out, .a4u-lic td.out { color: #b42318; font-weight: 600; }
+.a4p-t td.in, .a4u-lic td.in { color: #1f7a3a; }
+.a4p-t td.in b { color: #1f7a3a; }
+.a4p-qr em { display: block; margin-top: 4px; font-style: normal; font-weight: 700; color: #fff; background: #1f8f4e; border-radius: 10px; padding: 2px 8px; }
