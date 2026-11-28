@@ -15,16 +15,27 @@ function a4u_lic_remote_info( $force = false ) {
 		$url = (string) ( $d['settings']['update_url'] ?? '' );
 		if ( 'beta' === ( $d['settings']['update_channel'] ?? 'stable' ) ) { $url = str_replace( 'update.json', 'update-beta.json', $url ); }
 		$info = array();
-		if ( '' !== $url ) {
-			$res = wp_remote_get( add_query_arg( 'nc', time(), $url ), array( 'timeout' => 15 ) );
+		$ok   = false;
+		// v4.6.1 (S1): आधी GitHub raw; ते अयशस्वी झालं तर jsDelivr (main branch) — एक मार्ग बंद असला तरी update दिसावा
+		$urls = array( $url );
+		if ( preg_match( '#^https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/(.+)$#', $url, $m ) ) {
+			$urls[] = 'https://cdn.jsdelivr.net/gh/' . $m[1] . '/' . $m[2] . '@' . $m[3] . '/' . $m[4];
+		}
+		foreach ( '' !== $url ? $urls : array() as $u ) {
+			$res = wp_remote_get( add_query_arg( 'nc', time(), $u ), array( 'timeout' => 15 ) );
 			if ( ! is_wp_error( $res ) && 200 === wp_remote_retrieve_response_code( $res ) ) {
 				$j = json_decode( wp_remote_retrieve_body( $res ), true );
-				if ( is_array( $j ) && ! empty( $j['version'] ) && ! empty( $j['download_url'] ) ) { $info = $j; }
+				if ( is_array( $j ) && ! empty( $j['version'] ) && ! empty( $j['download_url'] ) ) {
+					// दोघांपैकी जे नवीन version सांगेल ते (jsDelivr थोडा जुना असू शकतो)
+					if ( empty( $info['version'] ) || version_compare( $j['version'], $info['version'], '>' ) ) { $info = $j; }
+					$ok = true;
+					if ( version_compare( $j['version'], A4U_LIC_VER, '>' ) ) { break; }
+				}
 			}
 		}
-		// नवीन version नसेल तर फक्त 20 मिनिटं cache (पुढचं update लवकर दिसावं); असेल तर 3 तास
+		// नवीन version असेल तर 3 तास; नसेल तर 20 मिनिटं; दोन्ही मार्ग अयशस्वी झाले तर फक्त 5 मिनिटं (लगेच पुन्हा प्रयत्न)
 		$newer = ! empty( $info['version'] ) && version_compare( $info['version'], A4U_LIC_VER, '>' );
-		set_transient( 'a4u_lic_update_info', $info, $newer ? 3 * HOUR_IN_SECONDS : 20 * MINUTE_IN_SECONDS );
+		set_transient( 'a4u_lic_update_info', $info, $newer ? 3 * HOUR_IN_SECONDS : ( $ok ? 20 * MINUTE_IN_SECONDS : 5 * MINUTE_IN_SECONDS ) );
 	}
 	return $info;
 }
