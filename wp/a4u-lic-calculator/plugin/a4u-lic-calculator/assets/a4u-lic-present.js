@@ -260,8 +260,8 @@
 			(r.ga ? '<li><b>' + tt('f_add') + ':</b> ' + tt('m_ga') + ' ' + inr(r.ga) + '</li>' : (r.bonus ? '<li><b>' + tt('f_add') + ':</b> ' + tt('m_srb') + ' ' + inr(r.bonus + r.fab) + '</li>' : '')) +
 			'<li><b>' + tt('f_tax') + ':</b> ' + tt('fv_tax') + '</li>' +
 			// v4.6.5: 883 brochure — surrender कधीही, कर्ज 3 महिन्यांनी
-			'<li><b>' + tt('f_surr') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_surr_any') : fmtT('fv_surr', { y: single ? 1 : (p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li>' +
-			'<li><b>' + tt('f_loan') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_loan_3m') : fmtT('fv_loan', { y: single ? 1 : (p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li></ul></div></div>';
+			'<li><b>' + tt('f_surr') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_surr_any') : fmtT('fv_surr', { y: single ? 1 : (p.surr_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li>' +
+			'<li><b>' + tt('f_loan') + ':</b> ' + (single && p.loan_from === 1 ? tt('fv_loan_3m') : fmtT('fv_loan', { y: single ? 1 : (p.loan_after || p.loan_from || 2) }).replace(/\b1 years\b/, '1 year')) + '</li></ul></div></div>';
 		pages.push(c1);
 
 		// 2. Benefit Illustration — timeline + Maturity Details

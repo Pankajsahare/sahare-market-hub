@@ -674,6 +674,8 @@
 			if (p.type === 'platinum' && y === o.P + 5 && y < o.T) { inc += (p.booster_pct || 70) * o.sa / 100; } // 770 booster
 			var ret = inc + (y === o.T ? o.maturity : 0);
 			var cover = y <= riskStart ? cumPrem : Math.max(o.deathSA || 0, o.sa) + cumAdd;
+			// v4.6.6: 771 brochure — मृत्यू लाभ भरलेल्या premium च्या 105% पेक्षा कमी नाही
+			if (p.type === 'utsav' && y > riskStart) { cover = Math.max(cover, 1.05 * cumPrem); }
 			// Guaranteed Surrender Value (brochure factors असतील तरच)
 			var cv = null, loan = null;
 			var paidYears = Math.min(y, o.P);

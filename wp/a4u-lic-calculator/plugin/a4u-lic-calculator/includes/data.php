@@ -20,7 +20,7 @@ function a4u_lic_std_mode() {
 function a4u_lic_brochure_keys() {
 	return array( 'name', 'type', 'min_age', 'max_age', 'min_sa', 'max_maturity', 'min_maturity', 'terms', 'ppt_map', 'ppt_options', 'ppt_max_age_sum',
 		'maturity_age', 'survival_pct', 'ga_per_1000', 'tail_age', 'min_age_by_term', 'sa_slabs', 'rebate_slabs', 'rebate_bands', 'mode_adj',
-		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands', 'ppt_age', 'ga_prem_per_1000', 'booster_pct', 'ga_hsa', 'rebate_pct_bands', 'rebate_pct_bands_sp', 'allowed_modes', 'max_sa', 'loan_pct', 'ppt_less', 'rebate_ppt' );
+		'death_pct', 'death_sp', 'riders', 'samples', 'sample_sa', 'brochure', 'closed', 'uin', 'sb_years', 'sb_ages', 'mat_pct', 'mb_ppt', 'mb_end_age', 'gsv_prem', 'gsv_add', 'gsv_less_income', 'loan_from', 'loan_ga_bands', 'surr_after', 'loan_after', 'ppt_age', 'ga_prem_per_1000', 'booster_pct', 'ga_hsa', 'rebate_pct_bands', 'rebate_pct_bands_sp', 'allowed_modes', 'max_sa', 'loan_pct', 'ppt_less', 'rebate_ppt' );
 }
 
 function a4u_lic_default_plans() {
@@ -160,6 +160,8 @@ function a4u_lic_default_plans() {
 			// v4.6: LIC अधिकृत BI (28 Nov 2026) वरून पडताळलेला high-SA rebate: PPT 15, SA ₹10–24 लाख = ₹1.40 / 1000 (इतर टप्पे BI मिळाल्यावर)
 			'rebate_ppt' => array( 15 => array( array( 1000000, 1.40 ) ) ),
 			'mode_adj' => array( 'yearly' => 0, 'half' => 1.75, 'quarter' => 2.5, 'month' => 3.25 ), // Utsav मध्ये rebate नाही, loading आहे
+			// v4.6.6: brochure para 12–13 — surrender आणि कर्ज पहिलं पूर्ण वर्ष (1 वर्षाचा premium) भरल्यावर
+			'surr_after' => 1, 'loan_after' => 1,
 			'death_pct' => 100, 'riders' => array( 'adb', 'addb', 'term', 'pwb' ),
 			// v3.2: Guaranteed Surrender Value factors + loan नियम (brochure para 12–13)
 			'gsv_prem' => array( array( 1, 0 ), array( 2, 30 ), array( 3, 35 ), array( 4, 50 ), array( 8, 51.48 ), array( 9, 52.96 ), array( 10, 54.44 ), array( 11, 55.93 ), array( 12, 57.41 ), array( 13, 58.89 ), array( 14, 60.37 ), array( 15, 61.85 ), array( 16, 63.33 ), array( 17, 64.81 ), array( 18, 66.30 ), array( 19, 67.78 ), array( 20, 69.26 ), array( 21, 70.74 ), array( 22, 72.22 ), array( 23, 73.70 ), array( 24, 75.19 ), array( 25, 76.67 ), array( 26, 78.15 ), array( 27, 79.63 ), array( 28, 81.11 ), array( 29, 82.59 ), array( 30, 84.07 ), array( 31, 85.56 ), array( 32, 87.04 ), array( 33, 88.52 ), array( 34, 90 ) ), 'gsv_add' => array( array( 1, 0 ), array( 3, 2 ), array( 4, 3.03 ), array( 5, 4.06 ), array( 6, 5.09 ), array( 7, 6.13 ), array( 8, 7.16 ), array( 9, 8.19 ), array( 10, 9.22 ), array( 11, 10.25 ), array( 12, 11.28 ), array( 13, 12.31 ), array( 14, 13.34 ), array( 15, 14.38 ), array( 16, 15.41 ), array( 17, 16.44 ), array( 18, 17.47 ), array( 19, 18.50 ), array( 20, 19.53 ), array( 21, 20.56 ), array( 22, 21.59 ), array( 23, 22.63 ), array( 24, 23.66 ), array( 25, 24.69 ), array( 26, 25.72 ), array( 27, 26.75 ), array( 28, 27.78 ), array( 29, 28.81 ), array( 30, 29.84 ), array( 31, 30.88 ), array( 32, 31.91 ), array( 33, 32.94 ), array( 34, 33.97 ), array( 35, 35 ) ), 'gsv_less_income' => 1, 'loan_from' => 2,

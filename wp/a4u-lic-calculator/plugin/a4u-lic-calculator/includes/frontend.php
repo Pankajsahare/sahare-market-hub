@@ -41,6 +41,8 @@ function a4u_lic_build_config( $init = '', $title = '' ) {
 			'gsv_add'         => array_values( (array) ( $p['gsv_add'] ?? array() ) ),
 			'gsv_less_income' => (int) ( $p['gsv_less_income'] ?? 0 ),
 			'loan_from'       => (int) ( $p['loan_from'] ?? 2 ),
+			'surr_after'      => (int) ( $p['surr_after'] ?? 0 ),
+			'loan_after'      => (int) ( $p['loan_after'] ?? 0 ),
 			'loan_ga_bands'   => array_values( (array) ( $p['loan_ga_bands'] ?? array() ) ),
 			'survival_pct'    => (float) ( $p['survival_pct'] ?? 0 ),
 			'tail_age'        => (int) ( $p['tail_age'] ?? 0 ),
