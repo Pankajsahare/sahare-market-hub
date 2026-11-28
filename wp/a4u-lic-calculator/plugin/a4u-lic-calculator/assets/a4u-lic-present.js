@@ -245,10 +245,17 @@
 		var ridList = Object.keys(pr.riders).map(function (k) { return (RN[k] || k) + (k === 'adb' && r.r && r.r.adbSA ? ' (' + inr(r.r.adbSA) + ')' : '') + ' — ' + inr(pr.riders[k]) + ' / yr'; });
 
 		// 1. Cover — योजनेचं नाव, कोणासाठी, वर्णन, तपशील, वैशिष्ट्ये
-		var c1 = (coverImg ? '<div class="a4p-banner"><img class="a4p-coverimg" src="' + esc(coverImg) + '" alt=""><span><img src="' + esc(BR.logo || '') + '" alt="" crossorigin="anonymous"></span></div>' : '') +
-			'<div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
-			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b> · ' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
+		// v4.7: पान 1 — डावीकडे portrait फोटो (अर्धं पान), उजवीकडे योजनेचं नाव + 3 मुख्य आकडे
+		var isTerm = p.type === 'term' || p.type === 'term_sp';
+		var hl = [[single ? tt('once') : tt('inst'), inr(r.inst), single ? '' : mName],
+			// single premium मध्ये "एकूण भरता" = तोच आकडा — त्याऐवजी वार्षिक उत्पन्न / maturity
+			single ? (r.survival ? [tt('income'), inr(r.survival) + ' / yr', tt('age') + ' ' + RI.incAge + '+'] : [tt('f_mat'), inr(r.maturity), tt('age') + ' ' + RI.matAge]) : [tt('paytot'), inr(r.totalPrem), r.P + yrs],
+			[isTerm ? tt('lcover') : tt('gettot'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), r.maturity > 0 && !(single && !r.survival) ? tt('f_mat') + ' ' + inr(r.maturity) : '']];
+		var c1 = '<div class="a4p-hero' + (coverImg ? '' : ' noimg') + '">' + (coverImg ? '<div class="a4p-photo"><img src="' + esc(coverImg) + '" alt=""></div>' : '') +
+			'<div class="a4p-intro"><div class="a4p-plan"><h1>LIC\'s ' + esc(p.name) + '</h1><span class="no">(Plan No: ' + esc(p.id) + (p.uin ? ' · UIN ' + esc(p.uin) : '') + ')</span></div>' +
+			'<p class="a4p-cust">' + (clientName ? tt('custom') + ' <b>' + esc(clientName) + '</b><br>' : '') + tt('age') + ' ' + r.age + (r.gender ? ' · ' + (r.gender === 'F' ? 'Female' : 'Male') : '') + ' · ' + tt('pon') + ' ' + today + '</p>' +
 			'<p class="a4p-desc">' + tt('d_' + p.type) + '</p>' +
+			'<div class="a4p-hl">' + hl.map(function (x, i) { return '<div class="h' + i + '"><span>' + x[0] + '</span><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '</div>'; }).join('') + '</div></div></div>' +
 			'<div class="a4p-2col"><div class="a4p-card"><h3>' + tt('plandet') + '</h3><table class="a4p-kv">' +
 			kv(tt('sa'), inr(r.sa)) + kv(termLbl, termVal) + (single ? '' : kv(tt('ppt'), r.P + yrs)) + kv(tt('mode'), mName) +
 			kv(single ? tt('once') : tt('inst'), '<b>' + inr(r.inst) + '</b>') + kv(tt('doc'), r.docText) + kv(tt('matdate'), r.matText) + '</table>' +
@@ -310,15 +317,23 @@
 		var matTxt = r.maturity > 0 ? fmtT('t_mat', { m: inr(r.maturity), g: RI.matAge }) : fmtT('t_mat0', { s: inr(r.survival), g: RI.incAge });
 		var how = [['h_prem', single ? fmtT('t_prem1', { i: inr(r.inst) }) : fmtT('t_prem', { i: inr(r.inst), m: mName, p: r.P })],
 			['h_cov', fmtT('t_cov', { a: inr(RI.coverMin), b: inr(RI.coverMax) })], ['h_mat', matTxt], ['h_acc', acc], ['h_tax', r.taxLim ? fmtT('t_tax_lim', { c: inr(r.taxCap) }) : tt('t_tax')], ['h_feat', tt('t_feat')]];
-		var ic = function (path) { return '<img width="34" height="34" alt="" src="' + img('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" width="34" height="34"><circle cx="17" cy="17" r="17" fill="' + GREEN + '"/>' + path + '</svg>') + '">'; };
-		var icons = [
-			'<path d="M9 25h16M11 25V15m4 10V15m4 10V15m4 10V15M8 13l9-6 9 6z" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/>',
-			'<path d="M17 7l8 3v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10v-6z" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 17l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/>',
-			'<circle cx="17" cy="17" r="8" fill="none" stroke="#fff" stroke-width="2"/><path d="M17 12v5l3 3" stroke="#fff" stroke-width="2" fill="none"/>',
-			'<circle cx="17" cy="17" r="8" fill="none" stroke="#fff" stroke-width="2"/><path d="M9 17h16M17 9c3 3 3 13 0 16M17 9c-3 3-3 13 0 16" stroke="#fff" stroke-width="1.5" fill="none"/>'
+		// v4.7: "How the plan works" — वर 3 टप्प्यांचा प्रवास (भरता → वाढतं → मिळतं), खाली क्रमांक + icon असलेली कार्डं; "Why LIC" काढलं
+		var ico = function (path, bg) { return '<img width="40" height="40" alt="" src="' + img('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="20" fill="' + bg + '"/>' + path + '</svg>') + '">'; };
+		var W = 'stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+		var howIcons = [
+			'<path d="M14 12h12M14 17h12M20 17c4 0 6 2 6 4s-2 4-6 4h-3l8 7" ' + W + '/>',
+			'<path d="M20 9l9 3.5v6.5c0 6-4 9.5-9 11.5-5-2-9-5.5-9-11.5v-6.5z" ' + W + '/><path d="M16 20l3 3 5-6" ' + W + '/>',
+			'<path d="M12 29h16M14 29V19h12v10M11 19h18v-4H11zM20 15v14M20 15c-2-4-7-4-6-1s6 1 6 1c2-4 7-4 6-1s-6 1-6 1" ' + W + '/>',
+			'<path d="M11 28l6-7 5 4 8-11M24 14h6v6" ' + W + '/>',
+			'<path d="M14 10h9l5 5v15H14zM23 10v5h5M17 20h8M17 24h8" ' + W + '/>',
+			'<circle cx="16" cy="22" r="5" ' + W + '/><path d="M20 19l9-9M26 13l3 3M23 16l2 2" ' + W + '/>'
 		];
-		pages.push('<h2 class="a4p-h">' + tt('how') + '</h2><div class="a4p-how">' + how.map(function (q) { return '<div><b>' + tt(q[0]) + '</b><p>' + q[1] + '</p></div>'; }).join('') + '</div>' +
-			'<h2 class="a4p-h" style="margin-top:24px">' + tt('why') + '</h2><div class="a4p-why">' + ['w1', 'w2', 'w3', 'w4'].map(function (k, i) { return '<div>' + ic(icons[i]) + '<span>' + tt(k) + '</span></div>'; }).join('') + '</div>' +
+		var grow = r.ga ? inr(r.ga) : (r.bonus || r.fab ? inr(r.bonus + r.fab) : '');
+		var flow = [[tt('youpay'), inr(r.totalPrem), single ? tt('once') : r.P + yrs], [tt('h_acc'), grow || '—', r.ga ? tt('m_ga') : (r.bonus ? tt('m_srb') : '')], [tt('youget'), inr(isTerm ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit), isTerm ? tt('lcover') : '']];
+		var cols = ['#0b4ea2', GREEN, '#1f8f4e', '#d9822b', '#7a4fa0', GOLD];
+		pages.push('<h2 class="a4p-h">' + tt('how') + '</h2>' +
+			'<div class="a4p-flow">' + flow.map(function (f, i) { return (i ? '<i>&#10140;</i>' : '') + '<div class="f' + i + '"><span>' + (i + 1) + '</span><em>' + f[0] + '</em><b>' + f[1] + '</b>' + (f[2] ? '<small>' + f[2] + '</small>' : '') + '</div>'; }).join('') + '</div>' +
+			'<div class="a4p-how2">' + how.map(function (q, i) { return '<div style="--c:' + cols[i] + '">' + ico(howIcons[i], cols[i]) + '<div><b><span>' + (i + 1) + '</span>' + tt(q[0]) + '</b><p>' + q[1] + '</p></div></div>'; }).join('') + '</div>' +
 			(p.type === 'anand' && p.tail_age ? '<p class="a4p-note" style="margin-top:14px">' + tt('m_coverto') + ' ' + p.tail_age + '</p>' : '') + c4x);
 
 		// 5+. Benefit & Coverage Table (Option 1)
@@ -361,7 +376,7 @@
 		}
 
 		// Last: compare + notes + contact
-		var l = '';
+		var l = '<div class="a4p-fill"><div>';
 		if (lastCmp && lastCmp.a === r) {
 			var b = lastCmp.b;
 			var rowsC = [[tt('sa'), function (x) { return inr(x.sa); }], [tt('term') + ' / ' + tt('ppt'), function (x) { return x.T + ' / ' + (SINGLE[x.plan.type] ? '1' : x.P); }],
@@ -371,11 +386,11 @@
 				rowsC.map(function (q) { return '<tr><td>' + q[0] + '</td><td>' + q[1](r) + '</td><td>' + q[1](b) + '</td></tr>'; }).join('') + '</tbody></table>';
 		}
 		l += '<h2 class="a4p-h">' + tt('notes') + '</h2><ol class="a4p-notes"><li>' + tt('d1') + '</li><li>' + tt('d2') + '</li><li>' + fmtT('d3', { no: p.id, uin: p.uin || '—' }) + '</li><li>' + tt('d4') + '</li></ol>';
-		l += '<div class="a4p-card a4p-advisor"><div class="a4p-me">' + (BR.photo ? '<img class="ph" src="' + esc(BR.photo) + '" alt="" crossorigin="anonymous">' : '') +
+		l += '</div><div class="a4p-card a4p-advisor"><div class="a4p-me">' + (BR.photo ? '<img class="ph" src="' + esc(BR.photo) + '" alt="" crossorigin="anonymous">' : '') +
 			'<div><h3>' + tt('contact') + '</h3><p><b>' + esc(BR.agent || '') + '</b><br>' + esc(BR.title || BR.type || '') + (BR.type && BR.title ? ' · ' + esc(BR.type) : '') +
 			(BR.code ? '<br>Agency Code: ' + esc(BR.code) + (BR.branch ? ' · Branch: ' + esc(BR.branch) : '') : '') +
 			(BR.address ? '<br>' + esc(BR.address) : '') + '<br>' + esc(BR.phone || '') + (BR.email2 || BR.email ? ' · ' + esc(BR.email2 || BR.email) : '') + '<br>' + esc(BR.web || '') + '</p></div></div>' +
-			(qr ? '<div class="a4p-qr"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span></div>' : '') + '</div>';
+			(qr ? '<div class="a4p-qr"><img src="' + qr + '" alt=""><span>' + tt('scan') + '</span></div>' : '') + '</div></div>';
 		pages.push(l);
 
 		return pages.map(function (inner, k) { return pageWrap(inner, r, k + 1, pages.length); }).join('');
