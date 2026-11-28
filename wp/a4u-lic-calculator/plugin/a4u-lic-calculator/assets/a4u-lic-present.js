@@ -59,7 +59,7 @@
 			how: 'योजना कशी काम करते', why: 'LIC च का?', bct: 'लाभ आणि संरक्षण तक्ता', opt2: 'फ्लेक्सी उत्पन्न — रक्कम न काढल्यास',
 			c_age: 'वय', c_yr: 'वर्ष', c_prem: 'प्रीमियम', c_cum: 'एकूण प्रीमियम', c_add: 'GA / बोनस (वर्ष)', c_cumadd: 'GA / बोनस (एकूण)', c_cover: 'सामान्य मृत्यू संरक्षण',
 			c_acc: 'अपघाती मृत्यू संरक्षण', c_loan: 'कर्ज*', c_cv: 'रोख मूल्य*', c_ret: 'परतावा', c_inc: 'जमा झालेले उत्पन्न', c_bal: '5.5% ने जमा रक्कम',
-			cvnote: '* कर्ज आणि रोख मूल्य LIC brochure मधील किमान हमी समर्पण मूल्यावर (GSV) आधारित आहेत. प्रत्यक्ष विशेष समर्पण मूल्य (SSV) साधारणपणे जास्त असते.',
+			cvnote: '* रोख मूल्य = LIC चं Special Surrender Value (LIC चे factors असलेल्या plans साठी, अधिकृत Benefit Illustration शी तपासलेलं); नाहीतर किमान हमी समर्पण मूल्य (GSV). कर्ज = brochure नुसार त्याची ठरावीक टक्केवारी.', c_rcv: 'आत्तापर्यंत मिळालं',
 			risknote: '8 वर्षांखालील मुलासाठी जोखीम संरक्षण उशिरा सुरू होते; तोपर्यंत मृत्यू लाभ म्हणजे भरलेला प्रीमियम परत.',
 			totpaid: 'एकूण भरलेला प्रीमियम', totret: 'एकूण परतावा',
 			m_sa: 'मूळ विमा रक्कम', m_ga: 'हमी वाढ (Guaranteed Additions)', m_srb: 'बोनस (अंदाजे)', m_fab: 'अंतिम अतिरिक्त बोनस (अंदाजे)', m_inc: 'दरवर्षी उत्पन्न', m_incage: 'उत्पन्न सुरू होण्याचे वय',
@@ -107,7 +107,7 @@
 			how: 'योजना कैसे काम करती है', why: 'LIC ही क्यों?', bct: 'लाभ और सुरक्षा तालिका', opt2: 'फ्लेक्सी आय — राशि न निकालने पर',
 			c_age: 'आयु', c_yr: 'वर्ष', c_prem: 'प्रीमियम', c_cum: 'कुल प्रीमियम', c_add: 'GA / बोनस (वर्ष)', c_cumadd: 'GA / बोनस (कुल)', c_cover: 'सामान्य मृत्यु सुरक्षा',
 			c_acc: 'दुर्घटना मृत्यु सुरक्षा', c_loan: 'ऋण*', c_cv: 'नकद मूल्य*', c_ret: 'रिटर्न', c_inc: 'जमा आय', c_bal: '5.5% पर जमा राशि',
-			cvnote: '* ऋण और नकद मूल्य LIC ब्रोशर के न्यूनतम गारंटीड सरेंडर मूल्य (GSV) पर आधारित हैं। वास्तविक स्पेशल सरेंडर मूल्य (SSV) आमतौर पर अधिक होता है।',
+			cvnote: '* नकद मूल्य = LIC का Special Surrender Value (जिन plans के LIC factors हमारे पास हैं, आधिकारिक Benefit Illustration से जाँचा गया); अन्यथा न्यूनतम गारंटीड सरेंडर मूल्य (GSV)। ऋण = ब्रोशर के अनुसार उसका तय प्रतिशत।', c_rcv: 'अब तक मिला',
 			risknote: '8 वर्ष से कम आयु के बच्चे के लिए जोखिम सुरक्षा बाद में शुरू होती है; तब तक मृत्यु लाभ भरे गए प्रीमियम की वापसी है।',
 			totpaid: 'कुल भरा गया प्रीमियम', totret: 'कुल रिटर्न',
 			m_sa: 'मूल बीमा राशि', m_ga: 'गारंटीड एडिशन', m_srb: 'बोनस (अनुमानित)', m_fab: 'अंतिम अतिरिक्त बोनस (अनुमानित)', m_inc: 'हर साल आय', m_incage: 'आय शुरू होने की आयु',
@@ -585,7 +585,7 @@
 
 	function fileName(r) {
 		var who = (clientName || '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
-		return 'LIC-' + r.plan.id + '-Illustration' + (who ? '-' + who : '') + '.pdf';
+		return 'LIC-' + r.plan.id + (who ? '-' + who : '-Illustration') + '.pdf'; // v4.9 (S3): साधं नाव
 	}
 
 	// प्रत्येक A4 पान html2canvas ने image करून jsPDF मध्ये — मराठी अक्षरंही बरोबर दिसतात
@@ -607,7 +607,7 @@
 				var fs = document.fonts;
 				if (!fs || !fs.ready) { return Promise.resolve(); }
 				var ff = getComputedStyle(host.querySelector('.a4p') || host).fontFamily;
-				return Promise.all(['400', '600', '700'].map(function (w) { return fs.load(w + ' 16px ' + ff).catch(function () {}); }))
+				return Promise.all(['400', '600', '700'].map(function (w) { return fs.load(w + ' 16px ' + ff, 'Aa₹अ').catch(function () {}); })) // v4.9: इंग्रजी + देवनागरी font (plugin मधलाच)
 					.then(function () { return fs.ready; })
 					.then(function () { return new Promise(function (res) { requestAnimationFrame(function () { requestAnimationFrame(res); }); }); });
 			};
@@ -621,9 +621,11 @@
 						var base = pg.getBoundingClientRect(), k = 210 / base.width;
 						var links = Array.prototype.map.call(pg.querySelectorAll('[data-href]'), function (a) { var b = a.getBoundingClientRect(); return [b.left - base.left, b.top - base.top, b.width, b.height, a.getAttribute('data-href')]; });
 						var hd = pg.querySelector('.a4p-th h2');
-						return window.html2canvas(pg, { scale: 1.6, backgroundColor: '#ffffff', useCORS: true, logging: false, windowWidth: 794 }).then(function (cv) {
+						// v4.9: फोटो असलेली पानं 1.6x, बाकी 1.35x — PDF जवळजवळ अर्धी हलकी
+						var hasPhoto = !!pg.querySelector('.a4p-cphoto, .a4p-photo, .a4p-bphoto');
+						return window.html2canvas(pg, { scale: hasPhoto ? 1.6 : 1.35, backgroundColor: '#ffffff', useCORS: true, logging: false, windowWidth: 794 }).then(function (cv) {
 							if (i) { pdf.addPage(); }
-							pdf.addImage(cv.toDataURL('image/jpeg', 0.86), 'JPEG', 0, 0, 210, 297);
+							pdf.addImage(cv.toDataURL('image/jpeg', hasPhoto ? 0.86 : 0.8), 'JPEG', 0, 0, 210, 297);
 							links.forEach(function (l) { if (l[2] > 0 && l[3] > 0) { pdf.link(l[0] * k, l[1] * k, l[2] * k, l[3] * k, { url: l[4] }); } });
 							// PDF bookmarks — बाजूच्या पट्टीतून थेट पानावर
 							if (pdf.outline) { try { pdf.outline.add(null, i ? (hd ? hd.textContent : 'Page ' + (i + 1)) : 'LIC ' + r.plan.name, { pageNumber: i + 1 }); } catch (x) { /* जुनं jsPDF */ } }

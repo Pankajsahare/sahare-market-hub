@@ -59,6 +59,14 @@ function a4u_lic_install() {
 				$d['plans']['883']['quotes']           = array_merge( (array) ( $d['plans']['883']['quotes'] ?? array() ), $def['plans']['883']['quotes'] );
 			}
 		}
+		// v4.9 (db 15): 4.6.x मधले brochure बदल (883 कर्ज 3 महिन्यांनी, 771 surrender/कर्ज 1 वर्षानंतर, high-SA rebate) साठवलेल्या data वर लिहा
+		if ( $old_ver < 15 ) {
+			foreach ( array( 'loan_from', 'surr_after', 'loan_after', 'rebate_ppt', 'loan_ga_bands' ) as $k ) {
+				foreach ( array( '883', '771' ) as $id ) {
+					if ( isset( $d['plans'][ $id ], $def['plans'][ $id ] ) && array_key_exists( $k, $def['plans'][ $id ] ) ) { $d['plans'][ $id ][ $k ] = $def['plans'][ $id ][ $k ]; }
+				}
+			}
+		}
 		foreach ( $d['plans'] as $id => $p ) {
 			$d['plans'][ $id ]['rates'] = a4u_lic_rates_to_map( $p['rates'] ?? array() );
 			foreach ( (array) ( $p['history'] ?? array() ) as $i => $h ) {

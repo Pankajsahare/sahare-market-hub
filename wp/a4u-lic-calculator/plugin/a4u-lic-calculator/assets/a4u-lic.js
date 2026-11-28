@@ -983,7 +983,7 @@
 		how: 'How the plan works', why: 'Why LIC', bct: 'Benefit & Coverage Table', opt2: 'Flexi Income — if you do not withdraw',
 		c_age: 'Age', c_yr: 'Year', c_prem: 'Premium', c_cum: 'Total premium', c_add: 'GA / Bonus (year)', c_cumadd: 'GA / Bonus (total)', c_cover: 'Normal death cover',
 		c_acc: 'Accident death cover', c_loan: 'Loan*', c_cv: 'Cash value*', c_ret: 'Returns', c_inc: 'Income credited', c_bal: 'Accumulated @ 5.5%',
-		cvnote: '* Loan and cash value use the Guaranteed Surrender Value (minimum) from the LIC brochure. The actual Special Surrender Value is usually higher.',
+		cvnote: '* Cash value is LIC\'s Special Surrender Value where we have LIC\'s factors (checked against official Benefit Illustrations), otherwise the Guaranteed Surrender Value (minimum). Loan is the brochure percentage of it.', c_rcv: 'Received so far',
 		risknote: 'For a child below 8 years, risk cover starts later; till then the death benefit is a refund of premiums paid.',
 		totpaid: 'Total premium paid', totret: 'Total returns',
 		m_sa: 'Basic Sum Assured', m_ga: 'Guaranteed Additions', m_srb: 'Bonus (estimated)', m_fab: 'Final Additional Bonus (est.)', m_inc: 'Income every year', m_incage: 'Income starts at age',
@@ -1078,16 +1078,22 @@
 	// Benefit & Coverage Table — from..to ओळी (PDF मध्ये पानं पाडायला)
 	function benefitTableHtml(r, t, cls, from, to, withTotal) {
 		var tb = r.table || [], cv = r.hasCV, adb = tb.some(function (x) { return x.acc !== x.cover; });
-		var head = ['c_age', 'c_yr', 'c_prem', 'c_cum', 'c_add', 'c_cumadd', 'c_cover'].concat(adb ? ['c_acc'] : []).concat(cv ? ['c_loan', 'c_cv'] : []).concat(['c_ret']);
+		// v4.9 (S2): "आत्तापर्यंत मिळालं" स्तंभ — उत्पन्न / money back असेल तेव्हाच
+		var rcv = tb.filter(function (x) { return x.ret > 0; }).length > 1, run = 0, cum = tb.map(function (x) { run += x.ret || 0; return run; });
+		var head = ['c_age', 'c_yr', 'c_prem', 'c_cum', 'c_add', 'c_cumadd', 'c_cover'].concat(adb ? ['c_acc'] : []).concat(cv ? ['c_loan', 'c_cv'] : []).concat(['c_ret']).concat(rcv ? ['c_rcv'] : []);
 		var d = function (v) { return v ? inr(v) : '—'; };
-		var body = tb.slice(from || 0, to === undefined ? tb.length : to).map(function (x) {
-			return '<tr><td>' + x.age + '</td><td>' + x.y + '</td><td' + (x.prem ? ' class="out"' : '') + '>' + d(x.prem) + '</td><td>' + d(x.cumPrem) + '</td><td>' + d(x.add) + '</td><td>' + d(x.cumAdd) + '</td><td>' + d(x.cover) + '</td>' +
-				(adb ? '<td>' + d(x.acc) + '</td>' : '') + (cv ? '<td>' + (x.loan ? inr(x.loan) : '—') + '</td><td>' + (x.cv ? inr(x.cv) : '—') + '</td>' : '') + '<td' + (x.ret ? ' class="in"' : '') + '>' + (x.ret ? '<b>' + inr(x.ret) + '</b>' : '—') + '</td></tr>'; // v4.7.1: बाहेर जाणारे लाल, येणारे हिरवे
+		var f0 = from || 0, body = tb.slice(f0, to === undefined ? tb.length : to).map(function (x, k) {
+			var i = f0 + k, pv = tb[i - 1], nx = tb[i + 1];
+			// v4.9: महत्त्वाचे टप्पे सोनेरी ओळीत — पूर्ण विमा सुरू, GA थांबतात, उत्पन्न सुरू, शेवटचं वर्ष
+			var ms = !nx || (x.ret > 0 && pv && !(pv.ret > 0)) || (x.add > 0 && nx && !(nx.add > 0)) || (pv && pv.cover === pv.cumPrem && pv.cumPrem > 0 && x.cover > x.cumPrem && r.age < 8);
+			return '<tr' + (ms ? ' class="ms"' : '') + '><td>' + x.age + '</td><td>' + x.y + '</td><td' + (x.prem ? ' class="out"' : '') + '>' + d(x.prem) + '</td><td>' + d(x.cumPrem) + '</td><td>' + d(x.add) + '</td><td>' + d(x.cumAdd) + '</td><td>' + d(x.cover) + '</td>' +
+				(adb ? '<td>' + d(x.acc) + '</td>' : '') + (cv ? '<td>' + (x.loan ? inr(x.loan) : '—') + '</td><td>' + (x.cv ? inr(x.cv) : '—') + '</td>' : '') + '<td' + (x.ret ? ' class="in"' : '') + '>' + (x.ret ? '<b>' + inr(x.ret) + '</b>' : '—') + '</td>' + // बाहेर जाणारे लाल, येणारे हिरवे
+				(rcv ? '<td' + (cum[i] ? ' class="in"' : '') + '>' + d(cum[i]) + '</td>' : '') + '</tr>';
 		}).join('');
 		if (withTotal) {
-			body += '<tr class="tot"><td colspan="2">' + t('totpaid') + '</td><td colspan="' + (head.length - 4) + '">' + inr(r.totalPrem) + '</td><td>' + t('totret') + '</td><td>' + inr(r.totalBenefit) + '</td></tr>';
+			body += '<tr class="tot"><td colspan="2">' + t('totpaid') + '</td><td class="out" colspan="' + (head.length - 4 - (rcv ? 1 : 0)) + '">' + inr(r.totalPrem) + '</td><td>' + t('totret') + '</td><td class="in"' + (rcv ? ' colspan="2"' : '') + '>' + inr(r.totalBenefit) + '</td></tr>';
 		}
-		return '<table class="' + cls + '"><thead><tr>' + head.map(function (k) { return '<th>' + t(k) + '</th>'; }).join('') + '</tr></thead><tbody>' + body + '</tbody></table>';
+		return '<table class="' + cls + ' a4u-bt"><thead><tr>' + head.map(function (k) { return '<th>' + t(k) + '</th>'; }).join('') + '</tr></thead><tbody>' + body + '</tbody></table>';
 	}
 
 	// Option 2 — Flexi income न काढल्यास 5.5% ने जमा
@@ -1128,6 +1134,28 @@
 		if (rest) { out.push(w999(rest, L)); }
 		return out.join(' ') + ' ' + U[3];
 	}
+
+
+	// v4.9: रक्कम टाइप करताना लगेच अक्षरांत — उदा. 1000000 → (Ten Lakh Rupees)
+	(function () {
+		var MONEY = /(^|_|-)(sa|sum|budget|target|prem|premium|amount|income|cover|corpus|cost|need|save|rsa|csa|rprem)($|_|-)|^a4h-(csa|rprem)$/i, SKIP = /age|term|year|ppt|rate|pct|mob|pin|suc/i;
+		function upd(el) {
+			if (!el || el.type !== 'number' || el.closest('.a4g')) { return; }
+			var key = (el.name || el.id || ''); if (!MONEY.test(key) || SKIP.test(key)) { return; }
+			var sp = el.nextElementSibling && el.nextElementSibling.classList.contains('a4u-live') ? el.nextElementSibling : null;
+			if (!sp) { sp = document.createElement('small'); sp.className = 'a4u-live'; el.insertAdjacentElement('afterend', sp); }
+			var v = Number(el.value) || 0, L = document.documentElement.getAttribute('data-a4h-lang') || 'en';
+			var tx = v >= 100 ? '(' + inWords(v, L) + ')' : '';
+			if (sp.textContent !== tx) { sp.textContent = tx; } // बदल असेल तरच — observer चं चक्र टळतं
+		}
+		document.addEventListener('input', function (e) { upd(e.target); }, true);
+		document.addEventListener('change', function (e) { upd(e.target); }, true);
+		function all() { Array.prototype.forEach.call(document.querySelectorAll('input[type=number]'), upd); }
+		if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(all, 300); }); } else { setTimeout(all, 300); }
+		// भाषा बदलली किंवा form पुन्हा तयार झाला तरी मजकूर ताजा
+		var tmr; if (window.MutationObserver) { new MutationObserver(function () { clearTimeout(tmr); tmr = setTimeout(all, 250); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-a4h-lang'], childList: true, subtree: true }); }
+		window.A4U_LIVE_WORDS = all;
+	})();
 
 	window.A4U_LIC_API = {
 		C: C, inr: inr, esc: esc, pct: pct, MODES: MODES, SINGLE: SINGLE, chartSvg: chartSvg, track: track, vendor: vendor, load: getRates, // v4.1: load = tariff + rates
