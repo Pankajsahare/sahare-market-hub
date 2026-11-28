@@ -83,6 +83,8 @@ function a4u_lic_default_plans() {
 			'ppt_age' => array( 7 => array( 11, 55 ), 10 => array( 8, 55 ), 12 => array( 6, 53 ), 15 => array( 3, 50 ), 18 => array( 0, 47 ) ),
 			'min_sa' => 300000, 'sa_slabs' => array( array( 300000, 10000 ) ), 'rebate_slabs' => array(),
 			'survival_pct' => 10, 'booster_pct' => 70, 'ga_prem_per_1000' => 70, 'loan_pct' => 75, 'loan_from' => 1,
+			// v4.9.2: LIC BI (PPT 18, मुदत 39) — surrender value मधून आधी दिलेलं regular/booster income वजा होतं (वर्ष 19–23 मध्ये आपलं cv 1 लाख/वर्ष जास्त येत होतं)
+			'gsv_less_income' => 1,
 			// brochure: yearly factor 1.0 (सूट नाही); half 0.5090×2, quarter 0.2568×4, monthly 0.0861×12
 			'mode_adj' => array( 'yearly' => 0, 'half' => 1.8, 'quarter' => 2.72, 'month' => 3.32 ),
 			// high SA incentive: GA दरात वाढ (₹ per 1000 annualised premium) — PPT => [[SA पासून, वाढ]]
@@ -157,8 +159,9 @@ function a4u_lic_default_plans() {
 			'min_age_by_term' => array( 5 => 8, 6 => 8, 7 => 8, 8 => 8, 9 => 7, 10 => 6, 11 => 5, 12 => 4, 13 => 3, 14 => 2, 15 => 1, 16 => 0 ),
 			'min_sa' => 500000, 'sa_slabs' => array( array( 500000, 25000 ), array( 2400001, 100000 ) ),
 			'rebate_slabs' => array(), // brochure मध्ये टक्के दिलेले नाहीत — admin मध्ये भरा
-			// v4.6: LIC अधिकृत BI (28 Nov 2026) वरून पडताळलेला high-SA rebate: PPT 15, SA ₹10–24 लाख = ₹1.40 / 1000 (इतर टप्पे BI मिळाल्यावर)
-			'rebate_ppt' => array( 15 => array( array( 1000000, 1.40 ) ) ),
+			// v4.6: LIC अधिकृत BI (28 Nov 2026) वरून पडताळलेला high-SA rebate: PPT 15, SA ₹10–24 लाख = ₹1.40 / 1000
+			// v4.9.2: PPT 16, SA ₹10 लाख = ₹1.30 / 1000 (BI 261128190552624317: हप्ता 59,400) — इतर PPT टप्पे BI मिळाल्यावर
+			'rebate_ppt' => array( 15 => array( array( 1000000, 1.40 ) ), 16 => array( array( 1000000, 1.30 ) ) ),
 			'mode_adj' => array( 'yearly' => 0, 'half' => 1.75, 'quarter' => 2.5, 'month' => 3.25 ), // Utsav मध्ये rebate नाही, loading आहे
 			// v4.6.6: brochure para 12–13 — surrender आणि कर्ज पहिलं पूर्ण वर्ष (1 वर्षाचा premium) भरल्यावर
 			'surr_after' => 1, 'loan_after' => 1,

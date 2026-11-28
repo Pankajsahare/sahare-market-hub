@@ -124,6 +124,9 @@
 		'<div data-riders></div>' +
 		field('GST % on premium', '<input type="number" name="gst" min="0" max="28" step="0.01" value="' + Number(C.gst) + '">') +
 		'</details>' +
+		'<details class="a4u-adv"><summary>Tax (optional)</summary>' +
+		field('Your income-tax slab', '<select name="tax_slab"><option value="0">Not selected</option><option value="5">5%</option><option value="10">10%</option><option value="15">15%</option><option value="20">20%</option><option value="30">30%</option></select>') +
+		'<small>Used only to show the after-tax return (4% cess is added). Tax is applied only when maturity is taxable under the rules below.</small></details>' +
 		'<div class="a4u-error" role="alert" hidden></div>' +
 		'<button type="submit" class="a4u-btn a4u-calc">Calculate</button>' +
 		'</form>' +
@@ -570,7 +573,21 @@
 		// S3: दुसरी परिस्थिती — bonus 50% कमी झाला तर
 		var cut = 0.5 * (bonus + fab), cfB = cf.slice();
 		cfB[T] -= cut;
+		// v4.9.2: करानंतरचा IRR — फक्त जिथे maturity करपात्र (taxLim): नफा (एकूण लाभ − एकूण premium) × slab × 1.04 (4% cess). हा कर मिळणाऱ्या प्रत्येक लाभातून त्या प्रमाणात वजा (उत्पन्नासाठी वर्षागणिक, maturity साठी शेवटी). 80C ची बचत धरलेली नाही.
+		var slabPct = Number(inp.taxSlab) || 0, taxGain = 0, taxAmt = 0, irrTax = null, irrLowTax = null, taxExempt = 0;
+		if (slabPct > 0 && !TERMS[p.type]) {
+			if (taxLim) {
+				var taxCf = function (base, tot, cutT) {
+					var g = Math.max(0, tot - totalPrem), tx = g * slabPct / 100 * 1.04, sh = tot > 0 ? tx / tot : 0, o2 = base.slice();
+					for (var yy = 1; yy <= T; yy++) { o2[yy] -= (rows[yy - 1][3] - (yy === T ? cutT : 0)) * sh; }
+					return { cf: o2, g: g, tx: tx };
+				};
+				var tA = taxCf(cf, totalBenefit, 0), tB = taxCf(cfB, totalBenefit - cut, cut);
+				taxGain = tA.g; taxAmt = tA.tx; irrTax = irr(tA.cf); irrLowTax = cut ? irr(tB.cf) : irrTax;
+			} else { taxExempt = 1; irrTax = irr(cf); irrLowTax = cut ? irr(cfB) : irrTax; }
+		}
 		return {
+			taxSlab: slabPct, taxGain: taxGain, taxAmt: taxAmt, irrTax: irrTax, irrLowTax: irrLowTax, taxExempt: taxExempt,
 			totalBenefitLow: totalBenefit - cut, irrLow: cut ? irr(cfB) : irr(cf), bonusCut: cut,
 			pvBenefit: pvBenefit, taxNotes: taxNotes, taxKeys: taxKeys, taxLim: taxLim, taxCap: taxCap, fabRate: bn.fab, gender: inp.gender, smoker: inp.smoker || 'NS', target: inp.by === 'maturity' ? inp.target : 0,
 			docText: niceDate(docD), matText: niceDate(matD),
@@ -747,6 +764,14 @@
 
 	function pct(x) { return x === null || x === undefined ? '—' : (x * 100).toFixed(2) + '%'; }
 	function card(label, value) { return '<div class="a4u-card"><span>' + label + '</span><strong>' + value + '</strong></div>'; }
+	// v4.9.2: करानंतरचा IRR — card आणि टीप
+	function atOn(r) { return r.taxSlab > 0 && r.irr !== null && r.irr !== undefined && r.irrTax !== null && !TERMS[r.plan.type]; }
+	function atCard(r) { return atOn(r) ? card('After-tax return (IRR, approx.)', pct(r.irrTax) + ' p.a.') : ''; }
+	function atNote(r) {
+		if (!atOn(r)) { return ''; }
+		return '<p class="a4u-note">' + (r.taxExempt ? 'Premium is within the Section 10(10D) limits, so maturity is expected to be tax-free (subject to conditions) and the after-tax return is the same as the return above.'
+			: 'After-tax return assumes your ' + r.taxSlab + '% slab plus 4% cess on the total gain of ' + inr(r.taxGain) + ' = ' + inr(r.taxAmt) + ', taken from the benefits as you receive them. Simple estimate, not tax advice; 80C benefit is not included.') + '</p>';
+	}
 	function tr(label, value) { return '<tr><th>' + label + '</th><td>' + value + '</td></tr>'; }
 
 	// S2 (v1.2): एकूण भरलेला premium vs एकूण मिळालेला benefit — साधा SVG chart
@@ -796,8 +821,8 @@
 			card('Total premium paid', inr(r.totalPrem)) +
 			(TERMS[p.type] ? card('Life cover (on death)', inr(Math.max(r.deathSA || 0, r.sa))) + card('Cover till age', String(r.age + r.T)) // v4.2: term — maturity नाही
 			: card(r.totalSurv ? 'Estimated total benefits' : 'Estimated maturity', inr(r.totalBenefit)) +
-			card('Return (IRR, approx.)', r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '% p.a.')) +
-			'</div>';
+			card('Return (IRR, approx.)', r.irr === null ? '—' : (r.irr * 100).toFixed(2) + '% p.a.') + atCard(r)) +
+			'</div>' + atNote(r);
 
 		// v3.2: LIC report सारखा भाग — You pay / You get, timeline, Maturity Details
 		var RI = reportInfo(r), sp1 = !!SINGLE[p.type];
@@ -841,9 +866,10 @@
 		rows += tr('Total benefits in today\'s money <small>(at ' + C.inflation + '% inflation)</small>', inr(r.pvBenefit));
 		h += '<table class="a4u-sum"><tbody>' + rows + '</tbody></table>';
 		if (r.bonusCut) {
-			h += '<div class="a4u-scroll a4u-modes"><table><thead><tr><th>Bonus scenario</th><th>Total benefits</th><th>IRR</th></tr></thead><tbody>' +
-				'<tr><td>At current bonus rates</td><td>' + inr(r.totalBenefit) + '</td><td>' + pct(r.irr) + '</td></tr>' +
-				'<tr><td>If bonus is 50% lower</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + pct(r.irrLow) + '</td></tr></tbody></table></div>';
+			var at = atOn(r);
+			h += '<div class="a4u-scroll a4u-modes"><table><thead><tr><th>Bonus scenario</th><th>Total benefits</th><th>IRR</th>' + (at ? '<th>After-tax IRR</th>' : '') + '</tr></thead><tbody>' +
+				'<tr><td>At current bonus rates</td><td>' + inr(r.totalBenefit) + '</td><td>' + pct(r.irr) + '</td>' + (at ? '<td>' + pct(r.irrTax) + '</td>' : '') + '</tr>' +
+				'<tr><td>If bonus is 50% lower</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + pct(r.irrLow) + '</td>' + (at ? '<td>' + pct(r.irrLowTax) + '</td>' : '') + '</tr></tbody></table></div>';
 		}
 		if (p.type === 'anand' && p.tail_age) { h += '<p class="a4u-note">After maturity, life cover equal to Basic Sum Assured continues till age ' + p.tail_age + '.</p>'; }
 		if (p.type === 'utsav') { h += '<p class="a4u-note">Whole-life plan with no maturity benefit. Flexi Income lets you withdraw up to 75% of the accumulated amount once a year.</p>'; }
@@ -1358,6 +1384,7 @@
 			srbO: optNum('b_srb'),
 			fabO: optNum('b_fab'),
 			gst: Math.min(28, Math.max(0, parseFloat(f(form, 'gst').value) || 0)),
+			taxSlab: f(form, 'tax_slab') ? (parseFloat(f(form, 'tax_slab').value) || 0) : 0, // v4.9.2: करानंतरच्या IRR साठी
 			r: {
 				adb: chk('r_adb'), adbSA: num('r_adb_sa') || 0,
 				addb: chk('r_addb'),

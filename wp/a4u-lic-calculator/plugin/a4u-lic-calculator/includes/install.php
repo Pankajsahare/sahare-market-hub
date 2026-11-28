@@ -67,6 +67,14 @@ function a4u_lic_install() {
 				}
 			}
 		}
+		// v4.9.2 (db 16): 771 PPT 16 चा high-SA rebate (LIC BI वरून) साठवलेल्या data वर लिहा
+		if ( $old_ver < 16 && isset( $d['plans']['771'], $def['plans']['771']['rebate_ppt'] ) ) {
+			$d['plans']['771']['rebate_ppt'] = $def['plans']['771']['rebate_ppt'];
+		}
+		// v4.9.2 (db 16): 770 — surrender value मधून दिलेलं income वजा (LIC BI)
+		if ( $old_ver < 16 && isset( $d['plans']['770'], $def['plans']['770']['gsv_less_income'] ) ) {
+			$d['plans']['770']['gsv_less_income'] = $def['plans']['770']['gsv_less_income'];
+		}
 		foreach ( $d['plans'] as $id => $p ) {
 			$d['plans'][ $id ]['rates'] = a4u_lic_rates_to_map( $p['rates'] ?? array() );
 			foreach ( (array) ( $p['history'] ?? array() ) as $i => $h ) {

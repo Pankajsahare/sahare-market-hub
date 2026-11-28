@@ -27,7 +27,7 @@ function planTerms(p) {
 }
 
 // data.php मध्येच असलेल्या (JSON मध्ये नसलेल्या) गोष्टी — plugin सारखंच वागावं म्हणून
-const CODE_EXTRA = { '771': { rebate_ppt: { 15: [[1000000, 1.40]] } } };
+const CODE_EXTRA = { '771': { rebate_ppt: { 15: [[1000000, 1.40]], 16: [[1000000, 1.30]] } } };
 const plans = Object.entries(data.plans).filter(([, p]) => p && p.type).map(([id, p]) => Object.assign({
   srb: 0, fab: 0, fab_min_term: 99, mode_adj: {}, rebate_slabs: [], rebate_bands: [], bonus_bands: [], riders: [], samples: [],
   sample_sa: 0, points: {}, death_pct: 0, death_sp: [], min_age_by_term: {}, ppt_map: {}, min_maturity: 0, maturity_age: 100, survival_pct: 0, ga_per_1000: 0
@@ -142,7 +142,7 @@ for (const rp of REPORTS) {
 {
   const base = { srb: 0, fab: 0, fab_min_term: 99, rebate_slabs: [], rebate_bands: [], bonus_bands: [], riders: [], samples: [], death_sp: [], min_age_by_term: {}, ppt_map: {}, maturity_age: 100, survival_pct: 0, ga_per_1000: 0, verified: 0, closed: 0, has_rates: false };
   const t770 = tariff['770'], t894 = tariff['894'];
-  const p770 = Object.assign({}, base, { id: '770', name: 'Bima Platinum', type: 'platinum', min_age: 0, max_age: 55, min_maturity: 28, max_maturity: 75, min_sa: 300000, sa_slabs: [[300000, 10000]], mode_adj: { yearly: 0, half: 1.8, quarter: 2.72, month: 3.32 }, survival_pct: 10, booster_pct: 70, ga_prem_per_1000: 70, death_pct: 0, terms: [], tariff: t770,
+  const p770 = Object.assign({}, base, { id: '770', name: 'Bima Platinum', type: 'platinum', min_age: 0, max_age: 55, min_maturity: 28, max_maturity: 75, min_sa: 300000, sa_slabs: [[300000, 10000]], mode_adj: { yearly: 0, half: 1.8, quarter: 2.72, month: 3.32 }, survival_pct: 10, booster_pct: 70, ga_prem_per_1000: 70, gsv_less_income: 1, death_pct: 0, terms: [], tariff: t770,
     ga_hsa: { 7: [[500000, 3], [700000, 6], [1000000, 8]], 10: [[500000, 4], [700000, 7], [1000000, 9]], 12: [[500000, 5], [700000, 8], [1000000, 10]], 15: [[500000, 6], [700000, 10], [1000000, 12]], 18: [[500000, 7], [700000, 12], [1000000, 15]] } });
   const S770 = { 15: [81810, 54735, 43020, 32145, 24990], 25: [83145, 55275, 43290, 32220, 25005], 35: [87495, 57015, 44160, 32445, 25005], 45: [100365, 62025, 46770, 33465, 25425] };
   [7, 10, 12, 15, 18].forEach((P, i) => Object.entries(S770).forEach(([age, v]) => {
@@ -170,6 +170,19 @@ for (const rp of REPORTS) {
       if (Math.abs(row.cumAdd - ga) > 2) fails.push(`770 BI year ${y} GA: expected ${ga} got ${Math.round(row.cumAdd)}`);
       if (Math.abs((row.cv || 0) - cv) > 2) fails.push(`770 BI year ${y} GSV: expected ${cv} got ${Math.round(row.cv || 0)}`);
     });
+    // v4.9.2: 770 BI (वय 36, PPT 18, मुदत 39, SA 10 लाख) — premium, प्रत्येक वर्षाचं GA आणि GSV; SSV अजून आपल्याकडे नाही, म्हणून आपलं cv कधीच LIC च्या payable पेक्षा जास्त नको
+    {
+      const b = JSON.parse(fs.readFileSync(path.join(__dirname, 'bi_770_ppt18.json'), 'utf8'));
+      const rb = E.compute(p770, inp(b.age, b.ppt * 100 + b.term, b.sa), {});
+      checked++; if (rb.errors || Math.abs(rb.inst - b.premium) > 1) fails.push(`770 BI PPT18 premium: expected ${b.premium} got ${rb.inst}`);
+      if (!rb.errors) Object.entries(b.rows).forEach(([y, v]) => {
+        const row = rb.table[y - 1]; if (!row) return; checked += 3;
+        const gsv = v[6], payable = v[8];
+        if (Math.abs(row.cumAdd - v[3]) > 2) fails.push(`770 BI PPT18 year ${y} GA: expected ${v[3]} got ${Math.round(row.cumAdd)}`);
+        if (gsv > 0 && Math.abs((row.cv || 0) - gsv) > 2) fails.push(`770 BI PPT18 year ${y} GSV: expected ${gsv} got ${Math.round(row.cv || 0)}`);
+        if ((row.cv || 0) > payable + 2) fails.push(`770 BI PPT18 year ${y}: surrender value overstated (${Math.round(row.cv)} > ${payable})`);
+      });
+    }
     // 894 स्त्री, वय 36, मुदत 24, SA 10 लाख: BI (online) ₹5,813 = tabular 6,720 × (1 − 6% high SA − 7.5% online) → offline ₹6,316.80
     const i894 = inp(36, 2424, 1000000); i894.gender = 'F';
     const r2 = E.compute(p894, i894, {});
@@ -208,6 +221,34 @@ for (const rp of REPORTS) {
   checked++;
   const a = E.compute(p894, inp(30, 2020, 500000), {}), b = E.compute(p894, inp(30, 2020, 2000000), {});
   if (Math.abs(b.pr.yearPay - a.pr.yearPay * 4 * 0.82) > 2) fails.push(`894 rebate at 20 lakh: expected ${Math.round(a.pr.yearPay * 4 * 0.82)} got ${Math.round(b.pr.yearPay)}`);
+}
+// 4d. v4.9.2: करानंतरचा IRR — taxLim असेल तरच कर; कर = नफा × slab × 1.04, मिळणाऱ्या लाभांतून प्रमाणात वजा; IRR स्वतंत्रपणे पुन्हा तपासला
+{
+  const npvAt = (rate, cf) => cf.reduce((s, v, k) => s + v / Math.pow(1 + rate, k), 0);
+  const cfOf = (r, share) => { const cf = new Array(r.T + 1).fill(0); r.rows.forEach(([y, , prem, ben]) => { cf[y - 1] -= prem; cf[y] += ben * (1 - share); }); return cf; };
+  const mk = (id, age, term, sa, slab) => { const p = plans.find(x => x.id === id); const ii = inp(age, term, sa); ii.taxSlab = slab; return E.compute(p, ii, {}); };
+  // करपात्र: 717 वय 36 मुदत 25 SA 10 लाख (single premium ₹4.75 लाख > SA च्या 10%)
+  [5, 20, 30].forEach(slab => {
+    const r = mk('717', 36, 25, 1000000, slab); checked += 4;
+    if (r.errors) { fails.push(`tax 717: ${r.errors}`); return; }
+    const wantTax = Math.max(0, r.totalBenefit - r.totalPrem) * slab / 100 * 1.04;
+    if (!r.taxLim || r.taxExempt) fails.push(`tax 717: expected taxable (taxLim)`);
+    if (Math.abs(r.taxAmt - wantTax) > 1) fails.push(`tax 717 slab ${slab}: expected tax ${Math.round(wantTax)} got ${Math.round(r.taxAmt)}`);
+    if (!(r.irrTax < r.irr)) fails.push(`tax 717 slab ${slab}: after-tax IRR must be lower (${r.irrTax} vs ${r.irr})`);
+    const npv = npvAt(r.irrTax, cfOf(r, wantTax / r.totalBenefit));
+    if (Math.abs(npv) > 1) fails.push(`tax 717 slab ${slab}: IRR does not zero the taxed cash flows (npv ${npv.toFixed(2)})`);
+  });
+  const a5 = mk('717', 36, 25, 1000000, 5), a30 = mk('717', 36, 25, 1000000, 30); checked++;
+  if (!(a5.irrTax > a30.irrTax)) fails.push('tax 717: a lower slab must give a higher after-tax IRR');
+  // income देणारा plan (883 single, उत्पन्न दरवर्षी) — आधी कर शेवटच्या वर्षी वजा केल्याने IRR null येत होता
+  const w = mk('883', 36, 17, 1000000, 30); checked++;
+  if (w.errors || !(w.irrTax > 0 && w.irrTax < w.irr)) fails.push(`tax 883: after-tax IRR should exist and be lower (${w.irrTax} vs ${w.irr})`);
+  // करमुक्त: 715 वय 36 मुदत 25 SA 10 लाख — करानंतर = करापूर्वी
+  const e = mk('715', 36, 25, 1000000, 30); checked += 2;
+  if (e.taxLim || !e.taxExempt || e.irrTax !== e.irr) fails.push('tax 715: tax-free policy must show after-tax IRR equal to IRR');
+  // slab निवडला नसेल तर काहीच नाही
+  const n = mk('715', 36, 25, 1000000, 0);
+  if (n.irrTax !== null || n.taxAmt !== 0) fails.push('tax: no slab selected must not produce an after-tax IRR');
 }
 // 5. v4: tariff असलेल्या plans मध्ये premium tariff वरूनच येतो का
 for (const p of plans) {

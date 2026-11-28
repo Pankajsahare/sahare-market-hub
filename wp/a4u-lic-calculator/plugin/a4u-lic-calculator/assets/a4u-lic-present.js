@@ -19,6 +19,7 @@
 			bymode: 'Premium by payment mode', ytot: 'Yearly total', pdet: 'Premium details', tab: 'Tabular premium', hsa: 'High Sum Assured rebate', rider: 'Riders', gst: 'GST',
 			ben: 'Benefits', g: 'Guaranteed', ng: 'Non-guaranteed', bsa: 'Basic Sum Assured on maturity', surv: 'Survival / income benefit', ga: 'Guaranteed Additions',
 			srb: 'Simple Reversionary Bonus (est.)', fab: 'Final Additional Bonus (est.)', death: 'Sum Assured on death (approx.)', matage: 'Maturity at age', cover: 'Life cover till age',
+			atirr: 'After-tax IRR', atn1: 'After-tax IRR assumes your {s}% income-tax slab plus 4% cess on the total gain of {g}, i.e. {t}, taken out of the benefits as you receive them. This is a simple estimate, not tax advice; the 80C benefit is not included.', atn0: 'Premium is within the Section 10(10D) limits, so maturity is expected to be tax-free (subject to conditions) and the after-tax IRR is the same as the IRR.',
 			scen: 'Bonus scenarios', sc1: 'At current bonus rates', sc2: 'If bonus is 50% lower', chart: 'Premium paid vs benefits received', paid: 'Total premium paid', got: 'Total benefits received',
 			insight: 'You pay {p} and are estimated to receive {b} — about {x} times your premium.',
 			yw: 'Year-wise cash flow', yr: 'Year', prem: 'Premium', bene: 'Benefit', net: 'Net (cumulative)', cmp: 'Plan comparison', notes: 'Important notes',
@@ -40,6 +41,7 @@
 			bymode: 'हप्त्याच्या प्रकारानुसार रक्कम', ytot: 'वर्षाची एकूण रक्कम', pdet: 'हप्त्याचा तपशील', tab: 'मूळ (tabular) हप्ता', hsa: 'जास्त विमा रकमेवरील सूट', rider: 'रायडर', gst: 'GST',
 			ben: 'लाभ', g: 'हमी असलेले', ng: 'हमी नसलेले', bsa: 'मुदतपूर्तीला मूळ विमा रक्कम', surv: 'हयातीचा / उत्पन्न लाभ', ga: 'हमी वाढ (Guaranteed Additions)',
 			srb: 'साधा बोनस (अंदाजे)', fab: 'अंतिम अतिरिक्त बोनस (अंदाजे)', death: 'मृत्यू झाल्यास विमा रक्कम (अंदाजे)', matage: 'मुदतपूर्ती वय', cover: 'विमा संरक्षण या वयापर्यंत',
+			atirr: 'करानंतरचा IRR', atn1: 'करानंतरचा IRR काढताना तुमचा {s}% कर slab आणि 4% cess एकूण नफ्यावर ({g}) म्हणजे {t} इतका कर मिळणाऱ्या लाभांतून त्या प्रमाणात वजा धरला आहे. हा साधा अंदाज आहे, कर सल्ला नाही; 80C ची बचत धरलेली नाही.', atn0: 'Premium कलम 10(10D) च्या मर्यादेत असल्याने मुदतपूर्तीची रक्कम करमुक्त असण्याची अपेक्षा आहे (अटींनुसार), म्हणून करानंतरचा IRR आणि IRR सारखाच आहे.',
 			scen: 'बोनसच्या दोन परिस्थिती', sc1: 'सध्याच्या बोनस दराने', sc2: 'बोनस 50% कमी झाल्यास', chart: 'भरलेला हप्ता विरुद्ध मिळालेला लाभ', paid: 'एकूण भरलेला हप्ता', got: 'एकूण मिळालेला लाभ',
 			insight: 'तुम्ही {p} भरता आणि अंदाजे {b} मिळतात — म्हणजे हप्त्याच्या साधारण {x} पट.',
 			yw: 'वर्षवार रोख प्रवाह', yr: 'वर्ष', prem: 'हप्ता', bene: 'लाभ', net: 'निव्वळ (एकूण)', cmp: 'योजनांची तुलना', notes: 'महत्त्वाच्या सूचना',
@@ -89,6 +91,7 @@
 			bymode: 'भुगतान के तरीके अनुसार प्रीमियम', ytot: 'वार्षिक कुल', pdet: 'प्रीमियम विवरण', tab: 'मूल (tabular) प्रीमियम', hsa: 'अधिक बीमा राशि पर छूट', rider: 'राइडर', gst: 'GST',
 			ben: 'लाभ', g: 'गारंटीड', ng: 'गैर-गारंटीड', bsa: 'परिपक्वता पर मूल बीमा राशि', surv: 'उत्तरजीविता / आय लाभ', ga: 'गारंटीड एडिशन',
 			srb: 'साधारण प्रत्यावर्ती बोनस (अनुमानित)', fab: 'अंतिम अतिरिक्त बोनस (अनुमानित)', death: 'मृत्यु पर बीमा राशि (अनुमानित)', matage: 'परिपक्वता आयु', cover: 'बीमा सुरक्षा इस आयु तक',
+			atirr: 'कर के बाद IRR', atn1: 'कर के बाद IRR में आपका {s}% कर स्लैब और 4% cess कुल लाभ ({g}) यानी {t} पर, मिलने वाले लाभों से अनुपात में घटाया गया है। यह सरल अनुमान है, कर सलाह नहीं; 80C का लाभ शामिल नहीं है।', atn0: 'Premium धारा 10(10D) की सीमा में है, इसलिए परिपक्वता राशि करमुक्त होने की अपेक्षा है (शर्तों के अधीन); अतः कर के बाद IRR और IRR समान हैं।',
 			scen: 'बोनस की दो स्थितियाँ', sc1: 'वर्तमान बोनस दर पर', sc2: 'बोनस 50% कम होने पर', chart: 'भरा प्रीमियम बनाम मिला लाभ', paid: 'कुल भरा प्रीमियम', got: 'कुल मिला लाभ',
 			insight: 'आप {p} भरते हैं और अनुमानित {b} पाते हैं — यानी प्रीमियम का लगभग {x} गुना।',
 			yw: 'वर्षवार नकद प्रवाह', yr: 'वर्ष', prem: 'प्रीमियम', bene: 'लाभ', net: 'शुद्ध (संचयी)', cmp: 'योजनाओं की तुलना', notes: 'महत्वपूर्ण सूचनाएँ',
@@ -345,9 +348,11 @@
 		}
 		c3 += '<div class="a4p-pg"><div><span>' + tt('paytot') + '</span><b>' + inrW(r.totalPrem) + '</b></div><div class="get"><span>' + (p.type === 'term' || p.type === 'term_sp' ? tt('lcover') : tt('gettot')) + '</span><b>' + inr(p.type === 'term' || p.type === 'term_sp' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + wS(p.type === 'term' || p.type === 'term_sp' ? Math.max(r.deathSA || 0, r.sa) : r.totalBenefit) + '</b></div></div>' +
 			(RI.ratio ? '<p class="a4p-every">' + fmtT('every1', { x: RI.ratio.toFixed(2) }) + '</p>' : '');
-		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th></tr></thead><tbody>' +
-			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td></tr>' +
-			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + inr(r.totalBenefitLow - r.totalPrem) + '</td><td>' + pct(r.irrLow) + '</td></tr>' : '') + '</tbody></table>';
+		var showAT = r.taxSlab > 0 && r.irr !== null && r.irr !== undefined && r.irrTax !== null && r.irrTax !== undefined && !isTerm; // v4.9.2: करानंतरचा IRR
+		c3 += '<table class="a4p-t"><thead><tr><th></th><th>' + tt('tben') + '</th><th>' + tt('gain') + '</th><th>' + tt('irr') + '</th>' + (showAT ? '<th>' + tt('atirr') + '</th>' : '') + '</tr></thead><tbody>' +
+			'<tr><td>' + tt('sc1') + '</td><td>' + inr(r.totalBenefit) + '</td><td>' + inr(r.totalBenefit - r.totalPrem) + '</td><td>' + pct(r.irr) + '</td>' + (showAT ? '<td>' + pct(r.irrTax) + '</td>' : '') + '</tr>' +
+			(r.bonusCut ? '<tr><td>' + tt('sc2') + '</td><td>' + inr(r.totalBenefitLow) + '</td><td>' + inr(r.totalBenefitLow - r.totalPrem) + '</td><td>' + pct(r.irrLow) + '</td>' + (showAT ? '<td>' + pct(r.irrLowTax) + '</td>' : '') + '</tr>' : '') + '</tbody></table>' +
+			(showAT ? '<p class="a4p-note">' + (r.taxExempt ? tt('atn0') : fmtT('atn1', { s: r.taxSlab, g: inr(r.taxGain), t: inr(r.taxAmt) })) + '</p>' : '');
 		var c4xTail = '';
 		if (V4) { // v4.1 (S1): screen वरचेच charts PDF मध्ये
 			var cfs = V4.cashflow(r);
