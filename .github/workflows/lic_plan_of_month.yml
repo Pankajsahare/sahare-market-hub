@@ -1,10 +1,9 @@
+# बंद केलं (2026-11-28): मासिक schedule काढली — आता फक्त हाताने चालतं.
 # S4: दर महिन्याच्या 1 तारखेला (सकाळी 10:17 IST) "LIC Plan of the Month" Telegram channel वर
 #   हाताने चालवायचं: Actions → "LIC plan of the month" → Run workflow (हवा तर plan नंबर द्या)
 name: LIC plan of the month
 
 on:
-  schedule:
-    - cron: "47 4 1 * *"
   workflow_dispatch:
     inputs:
       plan_id:

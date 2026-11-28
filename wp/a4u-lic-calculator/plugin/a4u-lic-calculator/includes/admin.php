@@ -199,7 +199,7 @@ function a4u_lic_admin_page() {
 			$log = (array) get_option( 'a4u_lic_sync_log', array() ); $hist = (array) get_option( 'a4u_lic_sync_history', array() ); $prev = get_option( 'a4u_lic_data_presync' );
 			$su  = wp_nonce_url( admin_url( 'admin-post.php?action=a4u_lic_sync' ), 'a4u_lic_sync' );
 			?>
-			<p style="max-width:860px;">A GitHub Action reads the official LIC sales brochures every day (with Gemini), checks every sample premium again (golden tests) and publishes <code>lic-plans.json</code>. This site checks it daily and <strong>applies new data automatically</strong>. If something looks wrong, use <strong>Undo last update</strong>.</p>
+			<p style="max-width:860px;">The plan data is checked against the official LIC benefit illustrations (BI) and published as <code>lic-plans.json</code> on GitHub. This site checks it daily and <strong>applies new data automatically</strong> when a new version is published. The automatic LIC-website reading is switched off. If something looks wrong, use <strong>Undo last update</strong>.</p>
 			<table class="widefat striped" style="max-width:700px;"><tbody>
 				<tr><td>Last check</td><td><?php echo esc_html( $log['checked_at'] ?? 'never' ); ?> &mdash; <?php echo esc_html( $log['msg'] ?? '' ); ?></td></tr>
 				<tr><td>LIC data version (applied / latest)</td><td><?php echo (int) get_option( 'a4u_lic_sync_applied', 0 ); ?> / <?php echo (int) ( $log['remote'] ?? 0 ); ?> <span style="color:#666;">(pipeline checked LIC on <?php echo esc_html( $log['remote_checked'] ?? '?' ); ?>)</span></td></tr>

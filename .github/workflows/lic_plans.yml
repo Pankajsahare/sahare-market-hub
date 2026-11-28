@@ -1,3 +1,4 @@
+# बंद केलं (2026-11-28): schedule आणि push trigger काढले — आता फक्त हाताने चालतं. LIC data official BI PDF वरून तपासलं जातं.
 # LIC plans data — आठवड्यातून दोनदा (सोम, गुरु) सकाळी 9:43 IST ला LIC च्या साईटवरून brochures तपासतो
 #   (काही बदललं नसेल तर Gemini वापरला जात नाही आणि run 1 मिनिटात संपतो)
 #   scripts/fetch_lic_plans.py → data/lic/lic-plans.json (A4U LIC Calculator plugin हाच वाचतो)
@@ -7,21 +8,12 @@
 name: Update LIC plans data
 
 on:
-  schedule:
-    - cron: "13 4 * * 1,4"   # 04:13 UTC = 9:43 AM IST, सोम + गुरु (brochures क्वचितच बदलतात; Actions मिनिटं वाचतात)
   workflow_dispatch:
     inputs:
       force:
         description: "1 = brochure बदललं नसलं तरी Gemini ने पुन्हा वाचा"
         required: false
         default: "0"
-  push:
-    branches: [main]
-    paths:
-      - scripts/fetch_lic_plans.py
-      - data/lic/plans_watch.json
-      - .github/workflows/lic_plans.yml
-      - wp/a4u-lic-calculator/tests/golden.js
 
 permissions:
   contents: write
